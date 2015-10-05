@@ -1,0 +1,16 @@
+Binaries/Win64/Rade.exp
+Binaries/Win64/Rade.lib
+DerivedDataCache
+Intermediate
+Saved
+Releases
+*.bat
+*.exe
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.pdb
+*-DebugGame.dll
+*.log
+*.target.xml
