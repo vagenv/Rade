@@ -272,8 +272,9 @@ void AWeapon::EquipStart()
 				ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject()->GetClass() == GetClass())
 			{
 				
-					MainFire = ThePlayer->TheInventory->Items[i].WeaponStats;
-					break;			
+				MainFire = ThePlayer->TheInventory->Items[i].MainFireStats;
+				AlternativeFire = ThePlayer->TheInventory->Items[i].AltFireStats;
+				break;			
 			}
 
 		}
@@ -288,6 +289,7 @@ void AWeapon::EquipEnd()
 {
 	BP_Equip_End();
 
+	if (ThePlayer && ThePlayer->TheInventory) ThePlayer->TheInventory->SaveInventory();
 }
 
 
@@ -303,8 +305,11 @@ void AWeapon::UnEquipEnd()
 {
 	BP_Unequip_End();
 
-	//printg("Unequip End");
+	if (ThePlayer && ThePlayer->TheInventory) ThePlayer->TheInventory->SaveInventory();
 
+	//printg("Unequip End");
+	//SaveCurrentWeaponStats();
+	/*
 	if (ThePlayer && ThePlayer->TheInventory)
 	{
 		for (int32 i = 0; i < ThePlayer->TheInventory->Items.Num(); i++)
@@ -315,7 +320,7 @@ void AWeapon::UnEquipEnd()
 				ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject() &&
 				ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject()->GetClass() == GetClass())
 			{
-				//printg("Weapon Data saved");
+				printb("Weapon Data saved");
 				ThePlayer->TheInventory->Items[i].WeaponStats = MainFire;
 				break;
 			}
@@ -323,7 +328,7 @@ void AWeapon::UnEquipEnd()
 
 		}
 	}
-
+	*/
 	Destroy();
 
 }
@@ -373,17 +378,21 @@ bool AWeapon::CanShoot()
 // Save Weapon Data
 void AWeapon::SaveCurrentWeaponStats()
 {
+	if (!ThePlayer || !ThePlayer->TheInventory)return;
+
 	for (int32 i = 0; i < ThePlayer->TheInventory->Items.Num(); i++)
 	{
 		
-		if (ThePlayer->TheInventory->Items[i].Archetype->GetClass() == GetClass())
+		if (ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject()->GetClass() == GetClass())
 		{
-			//printg("Weapon Data Saved");
-			ThePlayer->TheInventory->Items[i].WeaponStats = MainFire;
+		//	printg("Weapon Data Saved");
+			ThePlayer->TheInventory->Items[i].MainFireStats = MainFire;
+			ThePlayer->TheInventory->Items[i].AltFireStats = AlternativeFire;
 			return;
 			
 		}
 	}
+	//printr("Weapon Not Found");
 }
 
 void AWeapon::UseMainFireAmmo(){

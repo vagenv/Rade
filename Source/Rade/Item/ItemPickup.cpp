@@ -135,7 +135,8 @@ void AItemPickup::PickedUp(AActor * Player)
 	// Add Item
 	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory && FVector::Dist(CurrentLoc, Player->GetActorLocation())<PickupDistance)
 	{
-		Cast<ARadeCharacter>(Player)->TheInventory->AddItem(Item);
+		Cast<ARadeCharacter>(Player)->TheInventory->ItemPickedUp(this);
+		//Cast<ARadeCharacter>(Player)->TheInventory->AddItem(Item);
 		//printg("Player Picked Up");
 	}
 	Destroy();

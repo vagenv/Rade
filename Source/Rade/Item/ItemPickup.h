@@ -37,8 +37,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 		TSubclassOf<class AItem> Item;
 
-	FFireStats MainFire;
-	FFireStats AltFire;
+	///
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	bool bOverideItemData = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	FItemData OverideItemData;
 
 
 	UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
