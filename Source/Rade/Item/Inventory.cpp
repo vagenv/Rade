@@ -152,6 +152,13 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 					newPickup->SkeletalMesh->WakeRigidBody();
 				}
 				newPickup->bAutoPickup = true;
+				if (newItem)
+				{
+					newPickup->bOverideItemData = true;
+					newPickup->OverideItemData = Items[ItemIndex];
+					printg("Dropped Item Data overriden");
+				}
+
 
 				if (Items[ItemIndex].ItemCount > 1)
 				{
@@ -172,6 +179,8 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 					newPickup->SkeletalMesh->AddForce(rot.Vector() * 16000, NAME_None, true);
 					//newPickup->SkeletalMesh->ComponentVelocity = rot.Vector() * 1000000;
 				}
+			
+
 				UpdateInfo();
 			}		
 		}
@@ -186,20 +195,42 @@ void AInventory::ThrowOut(AItem* ItemRef)
 }
 
 
+void AInventory::ItemPickedUp(AItemPickup* ThePickup)
+{
+	if (!ThePickup || !ThePickup->Item)return;
+
+
+
+	
+	if (ThePickup->bOverideItemData)
+	{
+		FItemData* NewData = AddItem(ThePickup->Item);
+		if (NewData)
+		{
+			NewData->SetItemData(ThePickup->OverideItemData);
+	
+		}
+		
+	}
+	else 
+	{
+		AddItem(ThePickup->Item);
+	}
+
+}
+
 
 // Basic Inventory Operations
-void AInventory::AddItem(TSubclassOf<AItem> newItem)
+FItemData* AInventory::AddItem(TSubclassOf<AItem> newItem)
 {
-	if (newItem == NULL || ThePlayer == NULL)return;
+	if (newItem == NULL || ThePlayer == NULL)return NULL;
 
-
-	//printr("Add item");
 
 	// If same weapon that is currently equiped
 	if (ThePlayer->TheWeapon && ThePlayer->TheWeapon->GetClass()== newItem->GetClass())
 	{
 		ThePlayer->TheWeapon->AddAmmo(newItem->GetDefaultObject<AWeapon>());
-		return;
+		return NULL;
 	}
 	else
 	{
@@ -212,30 +243,35 @@ void AInventory::AddItem(TSubclassOf<AItem> newItem)
 
 				if (newItem->GetDefaultObject<AItem>())newItem->GetDefaultObject<AItem>()->ItemUpdated();
 	
-				// IF Weapon add ammo, else add cound
+				// IF Weapon add ammo, else add count
 				if (Cast<AWeapon>(newItem->GetDefaultObject<AItem>()))
 				{
-					//print("ADD AMMO");
-					Items[i].WeaponStats.AddAmmo(newItem->GetDefaultObject<AWeapon>()->MainFire.CurrentAmmo, newItem->GetDefaultObject<AWeapon>()->MainFire.ClipNumber);
+					Items[i].MainFireStats.AddAmmo(newItem->GetDefaultObject<AWeapon>()->MainFire.CurrentAmmo, newItem->GetDefaultObject<AWeapon>()->MainFire.ClipNumber);
 				}
 				else Items[i].ItemCount++;
 
 
-				//UpdateInfo();
-				SaveInventory();
-				return;
+				SaveInventory(); 
+				UpdateInfo();
+				return &Items[i];
 			}
 		}
 	}
 
-
 	// New Item
 	AItem* newItemBase = newItem->GetDefaultObject<AItem>();
-	//newItemBase->SpawedItemArchtype = newItem;
-	Items.Add(FItemData(newItem, newItemBase->ItemName, newItemBase->ItemIcon, newItemBase->Weight, newItemBase->ItemCount));
-	//printg("Add New Item");
+	FItemData newData = FItemData(newItem, newItemBase->ItemName, newItemBase->ItemIcon, newItemBase->Weight, newItemBase->ItemCount);
+	Items.Add(newData);
 	UpdateInfo();
+
+	return &Items[Items.Num()-1];
 }
+
+void AInventory::AddNewItem(TSubclassOf<AItem> newItem)
+{
+	AddItem(newItem);
+}
+
 void AInventory::RemoveItem(AItem* DeleteItem)
 {
 	if (DeleteItem == NULL)return;

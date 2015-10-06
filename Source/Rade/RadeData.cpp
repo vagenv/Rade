@@ -17,8 +17,25 @@ FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* n
 
 	if (Item && Item->GetDefaultObject<AWeapon>())
 	{
-		WeaponStats = Item->GetDefaultObject<AWeapon>()->MainFire;
+		MainFireStats = Item->GetDefaultObject<AWeapon>()->MainFire;
+		AltFireStats = Item->GetDefaultObject<AWeapon>()->AlternativeFire;
 	}
+}
+
+void FItemData::SetItemData(FItemData newData)
+{
+	ItemName=newData.ItemName;
+
+	ItemIcon=newData.ItemIcon;
+
+	ItemCount=newData.ItemCount;
+
+	Weight=newData.Weight;
+
+	Archetype=newData.Archetype;
+
+	MainFireStats=newData.MainFireStats;
+	AltFireStats=newData.AltFireStats;
 }
 
 FBlockData::FBlockData(ALevelBlock* newLevelItem, TSubclassOf <ALevelBlock> newArchetype, FVector newGlobalPosition, FVector newConstructorPosition)

@@ -120,12 +120,16 @@ public:
 		TSubclassOf<class AItem> Archetype;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
-		FFireStats WeaponStats;
+		FFireStats MainFireStats;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
+		FFireStats AltFireStats;
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 	//FAdditionalItemData AdditionalData;
 
 	FItemData(){};
 	FItemData(TSubclassOf<class AItem> Item, FString newItemName = FString(""), UTexture2D* newItemIcon = NULL, float newWeight = 0.1, int32 newItemCount = 1);
+
+	void SetItemData(FItemData newData);
 	/*
 	{
 		//	print("new ItemData");

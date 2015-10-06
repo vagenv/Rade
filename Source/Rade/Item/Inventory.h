@@ -38,7 +38,9 @@ public:
 		void UpdateInfo();
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
-		void AddItem(TSubclassOf<AItem> NewItem);
+		void AddNewItem(TSubclassOf<AItem> NewItem);
+
+	FItemData* AddItem(TSubclassOf<AItem> NewItem);
 
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
@@ -50,6 +52,9 @@ public:
 	virtual bool ActionIndex_Validate(int32 index);
 	virtual void ActionIndex_Implementation(int32 index);
 	*/
+
+
+	void ItemPickedUp(class AItemPickup* ThePickup);
 
 
 	UFUNCTION(BlueprintCallable, Category = "Item")

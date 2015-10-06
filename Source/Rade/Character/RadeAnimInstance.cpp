@@ -59,7 +59,7 @@ bool URadeAnimInstance::CanFireInAir()
 
 void URadeAnimInstance::InAirIdleStateEntered()
 {
-	if (PlayerCurrentAnimState == EAnimState::JumpStart && ThePlayer && ThePlayer->CharacterMovement && !ThePlayer->CharacterMovement->IsMovingOnGround())
+	if (PlayerCurrentAnimState == EAnimState::JumpStart && ThePlayer && ThePlayer->PlayerMovementComponent && !ThePlayer->PlayerMovementComponent->IsMovingOnGround())
 		PlayerCurrentAnimState = EAnimState::Jumploop;
 }
 
