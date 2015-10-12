@@ -127,7 +127,7 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 				if (newItem)
 				{
 
-					newItem->ItemDroped(newPickup);
+					newItem->BP_ItemDroped(newPickup);
 
 					newPickup->Item = newItem->GetClass();
 					if (newItem->PickupMesh)
@@ -241,7 +241,7 @@ FItemData* AInventory::AddItem(TSubclassOf<AItem> newItem)
 			if (Items[i].Archetype.GetDefaultObject()->GetClass() == newItem.GetDefaultObject()->GetClass())
 			{
 
-				if (newItem->GetDefaultObject<AItem>())newItem->GetDefaultObject<AItem>()->ItemUpdated();
+				if (newItem->GetDefaultObject<AItem>())newItem->GetDefaultObject<AItem>()->BP_ItemUpdated();
 	
 				// IF Weapon add ammo, else add count
 				if (Cast<AWeapon>(newItem->GetDefaultObject<AItem>()))

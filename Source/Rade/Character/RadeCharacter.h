@@ -53,9 +53,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		ECameraState DefaultCameraState = ECameraState::FP_Camera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
-		FVector2D CameraMaxVerticalAngle = FVector2D(300,85);
-
 	UPROPERTY(ReplicatedUsing = UpdateComponentsVisibility)
 	ECameraState CurrentCameraState = ECameraState::FP_Camera;
 
@@ -135,6 +132,11 @@ public:
 
 	UPROPERTY(Replicated)
 		bool bInventoryOpen = false;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+		float DefaultWeaponEquipDelay=0.4f;
+
 
 	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Item")
 		void SetInventoryVisible(bool bVisible);

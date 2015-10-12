@@ -99,7 +99,8 @@ void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherC
 {
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && Cast<ARadeCharacter>(OtherActor) != NULL && Cast<ARadeCharacter>(OtherActor)->TheInventory!=NULL)
 	{
-	
+		
+		BP_PlayerEntered(Cast<ARadeCharacter>(OtherActor));
 		if (bAutoPickup)
 		{
 			PickedUp(OtherActor);
@@ -117,6 +118,7 @@ void AItemPickup::OnEndOverlap(AActor* OtherActor, UPrimitiveComponent* OtherCom
 {
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && Cast<ARadeCharacter>(OtherActor) != NULL)
 	{
+		BP_PlayerExited(Cast<ARadeCharacter>(OtherActor));
 		if (Cast<ARadeCharacter>(OtherActor)->currentPickup == this)
 		{
 			Cast<ARadeCharacter>(OtherActor)->currentPickup = NULL;
@@ -136,6 +138,7 @@ void AItemPickup::PickedUp(AActor * Player)
 	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory && FVector::Dist(CurrentLoc, Player->GetActorLocation())<PickupDistance)
 	{
 		Cast<ARadeCharacter>(Player)->TheInventory->ItemPickedUp(this);
+		BP_PickedUp(Cast<ARadeCharacter>(Player));
 		//Cast<ARadeCharacter>(Player)->TheInventory->AddItem(Item);
 		//printg("Player Picked Up");
 	}

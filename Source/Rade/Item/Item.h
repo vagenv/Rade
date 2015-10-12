@@ -56,13 +56,13 @@ public:
 
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
-		void ItemUsed();
+		void BP_ItemUsed();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
-		void ItemDroped(class AItemPickup* thePickup);
+		void BP_ItemDroped(class AItemPickup* thePickup);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
-		void ItemUpdated();
+		void BP_ItemUpdated();
 
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
@@ -78,7 +78,7 @@ public:
 		{
 			ThePlayer = Player;
 		}
-		ItemUsed();
+		BP_ItemUsed();
 
 	};
 

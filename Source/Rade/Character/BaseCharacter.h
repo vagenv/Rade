@@ -32,9 +32,9 @@ public:
 	//							Basic Props
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		float MaxHealth=100;
-	UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		float Health=50;
 
 	UPROPERTY(Replicated)

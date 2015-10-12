@@ -349,7 +349,7 @@ void ARadeCharacter::UnEquipStart()
 	else 
 	{
 		FTimerHandle myHandle;
-		GetWorldTimerManager().SetTimer(myHandle, this, &ARadeCharacter::UnEquipEnd, 0.1f, false);
+		GetWorldTimerManager().SetTimer(myHandle, this, &ARadeCharacter::UnEquipEnd, DefaultWeaponEquipDelay, false);
 	}
 
 	UpdateComponentsVisibility();
@@ -771,12 +771,12 @@ void ARadeCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)
 	}
 }
 
-void ARadeCharacter::AddControllerPitchInput(float Rate)
-{
-
+// Vertical Input
+void ARadeCharacter::AddControllerPitchInput(float Rate){
 	Super::AddControllerPitchInput(Rate*CameraMouseSensivity);
-
 }
+
+// Horizontal Input
 void ARadeCharacter::AddControllerYawInput(float Rate){
 	Super::AddControllerYawInput(Rate*CameraMouseSensivity);
 }
