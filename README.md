@@ -7,6 +7,7 @@ UE Dynamic Shooter Template.
 ![alt tag](https://raw.github.com/vagenv/rade/master/Content/Rade/Splash/Splash.png)
 
 
+Youtube Link :
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/SYnKJm-M-XA/0.jpg)](http://www.youtube.com/watch?v=SYnKJm-M-XA)
 
 
