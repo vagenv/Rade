@@ -61,5 +61,13 @@ public:
 		void OnEndOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	void PickedUp(AActor* Player);
-	
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Pickup")
+		void BP_PickedUp(class ARadeCharacter* Player);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Pickup")
+		void BP_PlayerEntered(class ARadeCharacter* Player);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Pickup")
+		void BP_PlayerExited(class ARadeCharacter* Player);
 };
