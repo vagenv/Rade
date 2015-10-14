@@ -57,7 +57,7 @@ void AItemPickup::BeginPlay()
 	SetReplicates(true);
 
 	FTimerHandle MyHandle;
-	GetWorldTimerManager().SetTimer(MyHandle, this, &AItemPickup::ActivatePickupOverlap, PickupCollisionDelay, false);
+	GetWorldTimerManager().SetTimer(MyHandle, this, &AItemPickup::ActivatePickupOverlap, PickupActivationDelay, false);
 
 }
 void AItemPickup::ActivatePickupOverlap()
@@ -70,7 +70,6 @@ void AItemPickup::ActivatePickupOverlap()
 
 void AItemPickup::ActivatePickup()
 {
-
 	if (Mesh->StaticMesh)
 	{
 		SkeletalMesh->DestroyComponent();
@@ -80,7 +79,6 @@ void AItemPickup::ActivatePickup()
 		Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		Mesh->SetSimulatePhysics(true);
 		Mesh->WakeRigidBody();
-		//Mesh->SetIsReplicated(true);
 	}
 	else if (SkeletalMesh->SkeletalMesh)
 	{
@@ -91,7 +89,6 @@ void AItemPickup::ActivatePickup()
 		SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		SkeletalMesh->SetSimulatePhysics(true);
 		SkeletalMesh->WakeRigidBody();		
-	//	SkeletalMesh->SetIsReplicated(true);
 	}
 }
 
@@ -99,7 +96,6 @@ void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherC
 {
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && Cast<ARadeCharacter>(OtherActor) != NULL && Cast<ARadeCharacter>(OtherActor)->TheInventory!=NULL)
 	{
-		
 		BP_PlayerEntered(Cast<ARadeCharacter>(OtherActor));
 		if (bAutoPickup)
 		{
@@ -134,13 +130,10 @@ void AItemPickup::PickedUp(AActor * Player)
 	FVector CurrentLoc;
 	if (SkeletalMesh)CurrentLoc = SkeletalMesh->GetComponentLocation();
 	else if (Mesh)CurrentLoc = Mesh->GetComponentLocation();
-	// Add Item
-	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory && FVector::Dist(CurrentLoc, Player->GetActorLocation())<PickupDistance)
+	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory && FVector::Dist(GetActorLocation(), Player->GetActorLocation())<PickupDistance)
 	{
 		Cast<ARadeCharacter>(Player)->TheInventory->ItemPickedUp(this);
 		BP_PickedUp(Cast<ARadeCharacter>(Player));
-		//Cast<ARadeCharacter>(Player)->TheInventory->AddItem(Item);
-		//printg("Player Picked Up");
 	}
 	Destroy();
 }

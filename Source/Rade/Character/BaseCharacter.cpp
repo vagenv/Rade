@@ -14,6 +14,7 @@ ABaseCharacter::ABaseCharacter(const class FObjectInitializer& PCIP):Super(PCIP)
 	bReplicates = true;
 
 
+	// Default fall damage Curve
 	FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve();
 	FallDamageCurveData->AddKey(FallAcceptableValue, 10);
 	FallDamageCurveData->AddKey(1500 ,40);
@@ -28,18 +29,23 @@ void ABaseCharacter::BeginPlay()
 
 	if (Role >= ROLE_Authority && GetWorld())
 	{
-		//!TheInventory && 
+		// Spawning Inventory At Server
+
 		FActorSpawnParameters SpawnParam;
 		SpawnParam.Owner = this;
 		SpawnParam.Instigator = Instigator;
 		TheInventory = GetWorld()->SpawnActor<AInventory>(SpawnParam);
 
-		// Add Default Inventory
+		// Add Default Inventory Items
 		if (TheInventory)
 		{
 			for (int32 i = 0; i< DefaultInventoryItems.Num(); i++)
 			{
-				TheInventory->AddItem(DefaultInventoryItems[i]);
+				if (DefaultInventoryItems.IsValidIndex(i))
+				{
+					TheInventory->AddItem(DefaultInventoryItems[i]);
+				}
+					
 			}
 		}
 	
@@ -49,28 +55,27 @@ void ABaseCharacter::BeginPlay()
 
 float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
+	// 
 	if (bDead)
 	{
 		return 0;
 	}
+
 	Health -= DamageAmount;
 
-
-	//print("Health Left:  "+FString::FromInt(Health));
-
+	// Death Event
 	if (Health <= 0)
 	{
 		Health = 0;
 		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 		ServerDie();
-		//print("Character died");
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Character Died"));
 	}
-	/*
-	*/
+
 
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
+
+// Server Death
 void ABaseCharacter::ServerDie()
 {
 	if (Health>0 && !bDead)return;
@@ -78,24 +83,20 @@ void ABaseCharacter::ServerDie()
 	GlobalDeath();
 }
 
+// Implementation on all Clients
 void ABaseCharacter::GlobalDeath_Implementation()
 {
-	//if (TheInventory)TheInventory->DropEverything();
-	//GetMovementComponent()->Deactivate();
 	ForceRagdoll();
 	BP_Death();
 }
 
+// Enable Ragdoll
 void ABaseCharacter::ForceRagdoll()
 {
-	//printg("The ID is :  "+FString::FromInt(GetUniqueID()));
-	//GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("NoCollision");
 	Cast<USkeletalMeshComponent>(GetMesh())->BodyInstance.SetCollisionProfileName("Ragdoll");
 	Cast<USkeletalMeshComponent>(GetMesh())->SetSimulatePhysics(true);
 }
 
-void ABaseCharacter::CurrentWeaponUpdated(){
-}
 
 void ABaseCharacter::Landed(const FHitResult& Hit)
 {
@@ -117,10 +118,10 @@ void ABaseCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 }
 
+// Replication 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//	DOREPLIFETIME(ABaseCharacter, Mesh);
 	DOREPLIFETIME(ABaseCharacter, TheInventory);
 	DOREPLIFETIME(ABaseCharacter, bDead);
 	DOREPLIFETIME(ABaseCharacter, TheWeapon);

@@ -24,7 +24,8 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
-		float PickupCollisionDelay=1;
+		float PickupActivationDelay=1;
+
 	void ActivatePickupOverlap();
 
 

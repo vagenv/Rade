@@ -83,7 +83,7 @@ void ALevelBlockConstructor::BeginPlay()
 
 void ALevelBlockConstructor::PostBeginPlay()
 {
-	if (Role >= ROLE_Authority && bLoadBLocks)
+	if (Role >= ROLE_Authority && bLoadBlocks)
 	{
 		//FTimerHandle MyHandle;
 		//GetWorldTimerManager().SetTimer(MyHandle,this,&ALevelBlockConstructor::LoadBlocks,2,false);

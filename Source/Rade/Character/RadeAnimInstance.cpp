@@ -8,47 +8,30 @@
 URadeAnimInstance::URadeAnimInstance(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
-
-	bInAir = false;
 }
 
 
 void URadeAnimInstance::BeginPlay()
 {
-
+	// Set default state
 	PlayerCurrentAnimState = EAnimState::Idle_Run;
-
-	EAnimArchetype Anim = EAnimArchetype::Pistol;
-	AnimArchetype = Anim;
-
+	AnimArchetype = EAnimArchetype::EmptyHand;
 }
 
+// Set Anim State Value
 void URadeAnimInstance::PlayLocalAnim(EAnimState AnimID)
 {
 	PlayerCurrentAnimState = AnimID;
-
-	/*
-	if (bOriginalAnimInstance && thePlayer)
-	{
-		//	print("Send anim id");
-		thePlayer->ServerSetAnimID((uint8)PlayerCurrentAnimState);
-	}
-	*/
 }
 
+// Recieve anim state value
 void URadeAnimInstance::RecieveGlobalAnimID(EAnimState currentAnimCheck)
 {
-	//if (bOriginalAnimInstance)return;
-
 	AnimStartedBPEvent(currentAnimCheck);
 	PlayLocalAnim(currentAnimCheck);
 }
 
-// Animation Ended from Bluprint
-void URadeAnimInstance::AnimEnded(EAnimState currentAnimState)
-{
-
-}
+// Get Value from player class
 bool URadeAnimInstance::CanFireInAir()
 {
 	if (ThePlayer)return ThePlayer->bCanFireInAir;
@@ -57,17 +40,22 @@ bool URadeAnimInstance::CanFireInAir()
 }
 
 
+// Called in blueprint when Jump_Start -> Jump_Idle 
 void URadeAnimInstance::InAirIdleStateEntered()
 {
-	if (PlayerCurrentAnimState == EAnimState::JumpStart && ThePlayer && ThePlayer->PlayerMovementComponent && !ThePlayer->PlayerMovementComponent->IsMovingOnGround())
-		PlayerCurrentAnimState = EAnimState::Jumploop;
+	if (ThePlayer && PlayerCurrentAnimState == EAnimState::JumpStart && 
+		ThePlayer->PlayerMovementComponent && !ThePlayer->PlayerMovementComponent->IsMovingOnGround())
+		ThePlayer->ServerSetAnimID(EAnimState::Jumploop);
 }
 
+// In Air State Check
 bool URadeAnimInstance::IsInAir()
 {
 	if (PlayerCurrentAnimState == EAnimState::JumpEnd || PlayerCurrentAnimState == EAnimState::Jumploop || PlayerCurrentAnimState == EAnimState::JumpStart)return true;
 	else return false;
 }
+
+// States checking
 
 bool URadeAnimInstance::IsAnimState(EAnimState checkState)
 {
@@ -78,10 +66,4 @@ bool URadeAnimInstance::IsAnimArchetype(EAnimArchetype AnimArchtypeCheck)
 {
 	if (AnimArchtypeCheck == AnimArchetype)return true;
 	else return false;
-}
-
-
-EAnimState URadeAnimInstance::GetCurrentAnimID()
-{
-	return PlayerCurrentAnimState;
 }

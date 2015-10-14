@@ -5,19 +5,6 @@
 #include "Object.h"
 #include "RadeData.generated.h"
 
-UENUM(BlueprintType)
-namespace EItemType
-{
-	//256 entries max
-	enum Type
-	{
-		Base		UMETA(DisplayName = "Base"),
-		Useable		UMETA(DisplayName = "Useable / Event Driven"),
-		Quest		UMETA(DisplayName = "Quest Item"),
-		Weapon		UMETA(DisplayName = "Weapon"),
-		Armor		UMETA(DisplayName = "Armor"),
-	};
-}
 
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class ECameraState : uint8
@@ -89,7 +76,7 @@ struct FFireStats
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class EAnimArchetype : uint8
 {
-	EmptyHand					UMETA(DisplayName = "Empty Hand"),
+	EmptyHand					UMETA(DisplayName = "Empty Hands"),
 	Pistol						UMETA(DisplayName = "Hand Gun"),
 	Semi						UMETA(DisplayName = "Semi-Auto"),
 	Rifle						UMETA(DisplayName = "Rifle")
@@ -123,31 +110,11 @@ public:
 		FFireStats MainFireStats;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		FFireStats AltFireStats;
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
-	//FAdditionalItemData AdditionalData;
 
 	FItemData(){};
 	FItemData(TSubclassOf<class AItem> Item, FString newItemName = FString(""), UTexture2D* newItemIcon = NULL, float newWeight = 0.1, int32 newItemCount = 1);
 
 	void SetItemData(FItemData newData);
-	/*
-	{
-		//	print("new ItemData");
-
-		Archetype = Item;
-		ItemName = newItemName;
-		ItemIcon = newItemIcon;
-		ItemCount = newItemCount;
-		Weight = newWeight;
-
-		if (Item && Item->GetDefaultObject<AWeapon>())
-		{
-			WeaponStats = Item->GetDefaultObject<AWeapon>()->MainFire;
-		}
-
-
-	}
-	*/
 };
 
 
@@ -190,7 +157,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Block")
 		TSubclassOf <class ALevelBlock> Archetype;
 
-	//FName ArchetypePath;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Block")
 		FVector GlobalPosition;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Block")
@@ -199,14 +165,6 @@ public:
 	FBlockData(){};
 
 	FBlockData(ALevelBlock* newLevelItem, TSubclassOf <ALevelBlock> newArchetype, FVector newGlobalPosition, FVector newConstructorPosition);
-		/*
-	{
-		LevelItem = newLevelItem;
-		Archetype = newArchetype;
-		GlobalPosition = newGlobalPosition;
-		ConstructorPosition = newConstructorPosition;
-	}
-	*/
 };
 
 
