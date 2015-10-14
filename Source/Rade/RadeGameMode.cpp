@@ -15,19 +15,16 @@ void ARadeGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Start Post begin delay
 	FTimerHandle MyHandle;
 	GetWorldTimerManager().SetTimer(MyHandle, this, &ARadeGameMode::PostBeginPlay, 0.1f, false);
 
 }
 
+// Post begin Play
 void ARadeGameMode::PostBeginPlay()
 {
 	if (Role < ROLE_Authority)return;
-
-	UE_LOG(YourLog, Warning, TEXT("               "));
-	UE_LOG(YourLog, Warning, TEXT("Game Started"));
-	UE_LOG(YourLog, Warning, TEXT("              "));
-
 
 
 	// Loading Save file
@@ -37,8 +34,7 @@ void ARadeGameMode::PostBeginPlay()
 		LoadGameInstance = Cast<USystemSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
 		if (LoadGameInstance)
 		{
-			//printr("File Loaded");
-
+			// Save File Found
 			SaveFile = LoadGameInstance;
 		}
 	}
@@ -46,6 +42,7 @@ void ARadeGameMode::PostBeginPlay()
 
 	if (SaveFile)
 	{
+		// Load leve block that were saved
 		if (TheLevelBlockConstructor && TheLevelBlockConstructor->bLoadBlocks)
 		{
 			TheLevelBlockConstructor->CurrentBlocks = SaveFile->LevelBlocks;
@@ -55,47 +52,30 @@ void ARadeGameMode::PostBeginPlay()
 	}
 }
 
-
+// End Game
 void ARadeGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason) 
 {
 	
 	if (Role>=ROLE_Authority)
 	{
 		
+		// No Save File, Creating new
 		if (!SaveFile)
 		{
-			UE_LOG(YourLog, Warning, TEXT("               "));
-			UE_LOG(YourLog, Warning, TEXT("Create new Save file"));
-			UE_LOG(YourLog, Warning, TEXT("               "));
 			USystemSaveGame* SaveFile = Cast<USystemSaveGame>(UGameplayStatics::CreateSaveGameObject(USystemSaveGame::StaticClass()));
 			UGameplayStatics::SaveGameToSlot(SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
 		}
 
 		if (SaveFile)
 		{
+			// Saving level block
 			if (TheLevelBlockConstructor && TheLevelBlockConstructor->bSaveBlocks)
 			{
 				SaveFile->LevelBlocks = TheLevelBlockConstructor->CurrentBlocks;
-				UE_LOG(YourLog, Warning, TEXT("               "));
-				UE_LOG(YourLog, Warning, TEXT("Blocks Saved"));
-				UE_LOG(YourLog, Warning, TEXT("               "));
 			}
-
-			FString t = FString::FromInt(SaveFile->LevelBlocks.Num());
-			UE_LOG(YourLog, Warning, TEXT("               "));
-			UE_LOG(YourLog, Warning, TEXT("Saving Level Blocks :   %s"), *t);
-			UE_LOG(YourLog, Warning, TEXT("               "));
-
+			// Saving Save File
 			UGameplayStatics::SaveGameToSlot(SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
-
-
 		}
-
-
 	}
-
-	UE_LOG(YourLog, Warning, TEXT("               "));
-	UE_LOG(YourLog, Warning, TEXT("Game Mode Ended"));
-	UE_LOG(YourLog, Warning, TEXT("               "));
 	Super::EndPlay(EndPlayReason);
 }

@@ -5,20 +5,18 @@
 #include "Weapon/Weapon.h"
 #include "LauncherWeapon.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RADE_API ALauncherWeapon : public AWeapon
 {
 	GENERATED_BODY()
 	
 public:
-		virtual void Fire()override;
 
+	// Fire Event 
+	virtual void Fire()override;
 
+	// Projectile Class
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire Projectile")
 		TSubclassOf <class AProjectile> GrenadeArchetype;
-	
 	
 };

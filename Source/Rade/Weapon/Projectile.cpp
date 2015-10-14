@@ -9,9 +9,6 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 
-	//RootPoint = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("RootPoint"));
-
-	//		The Collision Component 
 	CollisionComp = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->MoveIgnoreActors.Add(this);
 	CollisionComp->InitSphereRadius(5.0f);
@@ -34,45 +31,50 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 
+
 	bReplicates = true;
 
-
+	// Set default radial Damage Curve
 	FRichCurve* RadialDamageCurveData = RadialDamageCurve.GetRichCurve();
 	RadialDamageCurveData->AddKey(0, 90);
 	RadialDamageCurveData->AddKey(380, 40);
 	RadialDamageCurveData->AddKey(900, 0);
 	
-
+	// Set default Radial Impulse Curve
 	FRichCurve* RadialImpulseCurveData = RadialImpulseCurve.GetRichCurve();
 	RadialImpulseCurveData->AddKey(0, 15000);
 	RadialImpulseCurveData->AddKey(900, 9000);
-
-
-	
 }
+
 
 void AProjectile::BeginPlay()
 {
 	if (Role < ROLE_Authority)
 		return;
 
+	// Set Mobility
 	Mesh->SetMobility(EComponentMobility::Movable);
-	const UWorld* theWorld = GetWorld();
-	if (theWorld)
+
+	const UWorld* TheWorld = GetWorld();
+	if (TheWorld)
 	{
-		//printg("Timer started");
+		// Set Death Delay
 		FTimerHandle DeathHandle;
-		theWorld->GetTimerManager().SetTimer(DeathHandle, this, &AProjectile::Explode, LifeTime,false);
+		TheWorld->GetTimerManager().SetTimer(DeathHandle, this, &AProjectile::Explode, LifeTime, false);
 	
+		// Set Enabled Delay
 		FTimerHandle EnableDelayhandle;
-		theWorld->GetTimerManager().SetTimer(EnableDelayhandle, this, &AProjectile::EnableProjectile, EnableDelay, false);
+		TheWorld->GetTimerManager().SetTimer(EnableDelayhandle, this, &AProjectile::EnableProjectile, EnableDelay, false);
 	}
 	
 }
-void AProjectile::EnableProjectile()
-{
+
+// Can Explode
+void AProjectile::EnableProjectile(){
 	bCanExplode = true;
 }
+
+// Hit Something
 void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 
@@ -80,12 +82,13 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp!=Mesh)
 	{
+		// Hit Something
+		BP_Hit(OtherComp,Hit);
+
+		// Boooooooom
 		Explode();	
 	}
-	else 
-	{
-		BP_Hit(OtherComp,Hit);
-	}
+
 }
 
 void AProjectile::Explode()
@@ -94,7 +97,6 @@ void AProjectile::Explode()
 	
 
 	const FVector Loc = GetActorLocation();
-
 	for (TActorIterator<AActor> aItr(GetWorld()); aItr; ++aItr)
 	{
 		const float distance = GetDistanceTo(*aItr);
@@ -112,31 +114,31 @@ void AProjectile::Explode()
 			//If Player apply damage
 			if (theChar && RadialDamageCurveData)
 			{
-				//printr("Apply Damage");
+				// BP Explosion Hit Enemy
+				BP_Explode_HitEnemy(theChar, RadialDamageCurveData->Eval(distance));
+
+				// Apply Damage to Character
 				UGameplayStatics::ApplyDamage(theChar, RadialDamageCurveData->Eval(distance), NULL, this, ExplosionDamageType);
 			}
 			
+			// Apply impulse on physics actors
 			if (RadialImpulseCurveData && aItr->GetRootComponent()->IsSimulatingPhysics() && Cast<UPrimitiveComponent>(aItr->GetRootComponent()))
 			{
 				Cast<UPrimitiveComponent>(aItr->GetRootComponent())->AddImpulse(dir*RadialImpulseCurveData->Eval(distance));
 				
 			}
 		}
-
 	}
-
-
-
 
 	Destroy();
 }
+
+// Apply Velocity to Projectile
 void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
-
 	if (ProjectileMovement)
 	{
-		//print("Init Velocity");
-		// set the projectile's velocity to the desired direction
+		// Set Movement velocity
 		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
 	}
 }

@@ -8,22 +8,25 @@
 void ALauncherWeapon::Fire()
 {
 	Super::Fire();
-	// try and fire a projectile
-	if (GrenadeArchetype != NULL)
+
+
+	if (GrenadeArchetype)
 	{
 		UWorld* const World = GetWorld();
 		if (World && Mesh1P)
 		{
+			// Set Spawn Paramets
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = Instigator;
 
-			AProjectile* theProjectile = World->SpawnActor<AProjectile>(GrenadeArchetype, Mesh1P->GetSocketLocation(TEXT("MuzzleFlashSocket")), Mesh1P->GetSocketRotation(TEXT("MuzzleFlashSocket")));
+			// Spawn at socket location
+			AProjectile* TheProjectile = World->SpawnActor<AProjectile>(GrenadeArchetype, Mesh1P->GetSocketLocation(TEXT("MuzzleFlashSocket")), Mesh1P->GetSocketRotation(TEXT("MuzzleFlashSocket")));
 
-			if (theProjectile)
+			// Set Projectile Velocity
+			if (TheProjectile)
 			{
-				// find launch direction
-				theProjectile->InitVelocity(Mesh1P->GetSocketRotation(TEXT("MuzzleFlashSocket")).Vector());
+				TheProjectile->InitVelocity(Mesh1P->GetSocketRotation(TEXT("MuzzleFlashSocket")).Vector());
 			}
 		}
 	}

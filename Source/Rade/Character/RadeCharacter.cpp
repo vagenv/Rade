@@ -198,7 +198,7 @@ void ARadeCharacter::FAction_Implementation()
 	BP_FAction();
 
 	// Thow out Current item selected
-	if (TheInventory && bInventoryOpen)
+	if (TheInventory && bInventoryOpen && IsAnimState(EAnimState::Idle_Run))
 	{
 		TheInventory->ThrowOutIndex(CurrentItemSelectIndex);
 	}

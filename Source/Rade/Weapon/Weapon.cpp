@@ -12,77 +12,86 @@
 #include "RadePC.h"
 
 
-
 AWeapon::AWeapon(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 	RootComponent = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root Component"));
 
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh1P"));
-	//Mesh1P->bReceivesDecals = false;
 	Mesh1P->CastShadow = false;
 	Mesh1P->AttachParent = RootComponent;
 	Mesh1P->bOnlyOwnerSee = true;
 	Mesh1P->bVisible = true;
 
 	Mesh3P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh3P"));
-	//Mesh3P->bReceivesDecals = false;
 	Mesh3P->CastShadow = true;
 	Mesh3P->AttachParent = RootComponent;
 	Mesh3P->bOwnerNoSee = true;
 	Mesh3P->bVisible = true;
-	PrimaryActorTick.bCanEverTick = false;
-	
+
+
 	bReplicates = true;
+
 	Mesh1P->SetIsReplicated(true);
-	Mesh3P->SetIsReplicated(true);		
+	Mesh3P->SetIsReplicated(true);	
+
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Double check at the begining
 	bReloading = false;
 	bShooting = false;
 }
 
-/////////////////////////////////   Main Fire Part
+// Player Pressed Fire
 void AWeapon::FireStart()
 {
-
+	// BP Fire Started
 	BP_FirePress_Start();
 
-	// If not currently in main and alternative shooting mode/delay 
+	// If not currently in main and alternative shooting mode/delay  call The Fire event
 	if (ThePlayer && !ThePlayer->GetWorldTimerManager().IsTimerActive(PreFireTimeHandle) &&
 		!ThePlayer->GetWorldTimerManager().IsTimerActive(PreAltFireTimeHandle))
 		ThePlayer->GetWorldTimerManager().SetTimer(PreFireTimeHandle, this, &AWeapon::PreFire, MainFire.FireSpeed, true, 0);
 
+	// Shooting Enabled
 	bShooting = true;
 
 }
 
+// Player Released Fire
 void AWeapon::FireEnd()
 {
+	// BP Fire Released
 	BP_FirePress_End();
+
+	// Shooting Disabled
 	bShooting = false;
 }
 
-
-
+// Pre Fire
 void AWeapon::PreFire()
 {
+	// BP Pre Fire
 	BP_PreFire();
 
 	if (!ThePlayer)return;
 
+	// If player stopped shooting stop event
 	if (!bShooting )
 	{
 		ThePlayer->GetWorldTimerManager().ClearTimer(PreFireTimeHandle);
 		return;
 	}
 
-	// Currently Equiping the weapon
+	// Currently Equiping this weapon, delay a bit
 	if (ThePlayer->ArmsAnimInstance && ThePlayer->ArmsAnimInstance->IsAnimState(EAnimState::Equip))
 	{
+		// try after a small delay
 		FTimerHandle MyHandle;
 		ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::PreFire, 0.2, false);
 		return;
@@ -94,61 +103,66 @@ void AWeapon::PreFire()
 	// Ammo Check
 	if (!MainFire.CanFire())
 	{
+		//  BP No Ammo
 		BP_NoAmmo();
+
+		// if have ammo, start reloading
 		if (CanReload())ReloadWeaponStart();
 		return;
 	}
 
-	// Whole fire event
+	// The real fire event
 	Fire();
 
+	// Use Ammo
 	if (bUseAmmo)UseMainFireAmmo();
 
 
-	// Play Anim
+	// Set Player Anim State
 	ThePlayer->ServerSetAnimID(EAnimState::Fire);
 
 	// Decrease move speed when shooting
 	ThePlayer->ResetMoveSpeed();
-
-	///	??
-	FTimerHandle MyHandle;
-	ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::StopFireAnim, 0.08, false);
 }
 
 
-
-/////////////////////////////////////////////  Alt Fire Part
-
+// Alt Fire Pressed
 void AWeapon::AltFireStart()
 {
 	// IF alt fire enabled
 	if (!bAltFireEnabled)return;
 
-	bShooting = true;
-
-	// If not currently in main and alternative shooting mode/delay 
+	// If not currently in main and alternative shooting mode/delay , call the Pre Fire event
 	BP_AltFirePress_Start();
 	if (!ThePlayer->GetWorldTimerManager().IsTimerActive(PreFireTimeHandle) && !ThePlayer->GetWorldTimerManager().IsTimerActive(PreAltFireTimeHandle))
 		ThePlayer->GetWorldTimerManager().SetTimer(PreAltFireTimeHandle, this, &AWeapon::PreAltFire, AlternativeFire.FireSpeed, true, 0);
 
+	// Start shooting
+	bShooting = true;
+
 }
 
+// Alt Fire Released
 void AWeapon::AltFireEnd()
 {
+	// Stop Shooting
 	bShooting = false;
 
+	// BP Stop Alt Fire
 	BP_AltFirePress_End();
 
+	// Clear Fire Timer
 	if (ThePlayer->GetWorldTimerManager().IsTimerActive(PreAltFireTimeHandle))
 		ThePlayer->GetWorldTimerManager().ClearTimer(PreAltFireTimeHandle);
 
 }
 
+// Pre Alt Fire
 void AWeapon::PreAltFire()
 {
 	if (!ThePlayer)return;
 
+	// Bp Pre Alternative Fire
 	BP_PreAltFire();
 
 	// If not shooting , stop everything
@@ -159,9 +173,10 @@ void AWeapon::PreAltFire()
 	}
 
 
-	// Currently Equiping the weapon
+	// Currently Equiping this weapon
 	if (ThePlayer->ArmsAnimInstance && ThePlayer->ArmsAnimInstance->IsAnimState(EAnimState::Equip))
 	{
+		// Try after a small delay
 		FTimerHandle MyHandle;
 		ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::PreAltFire, 0.2, false);
 		return;
@@ -170,87 +185,58 @@ void AWeapon::PreAltFire()
 	// Wrong Player Anim State
 	if (!CanShoot())return;
 
-	// Ammo Check
+	// Seprate Ammo check
 	if (bAltFireSeparateAmmo)
 	{
-		// Seprate Ammo check
+		
 		if (!AlternativeFire.CanFire())
 		{
+			// BP no ammo for Alt fire
 			BP_NoAmmo();
 			return;
 		}
 	}
-	else 
+	// Unified ammo Check
+	else if (AlternativeFire.FireCost > 0 && AlternativeFire.FireCost > MainFire.CurrentAmmo)
 	{
-		// Unified ammo Check
-		if (AlternativeFire.FireCost > 0 && AlternativeFire.FireCost > MainFire.CurrentAmmo)
-		{
 			BP_NoAmmo();
 			return;
-		}
 	}
 
-	
 
-	// Whole fire event
+	// The real Alt fire event
 	AltFire();
 
-	UseAltFireAmmo();
+	// Use Alt Fire Ammo
+	if (bUseAmmo)UseAltFireAmmo();
 
 
-
-	// Play Anim
+	// Set Player Anim State
 	ThePlayer->ServerSetAnimID(EAnimState::Fire);
+
+	// Decrease move speed when shooting
 	ThePlayer->ResetMoveSpeed();
-
-
-	FTimerHandle MyHandle;
-	ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::StopFireAnim, 0.08, false);
-
-}
-
-// For What?????
-
-void AWeapon::StopFireAnim()
-{
-	if (!ThePlayer)return;
-
-	//IsMovingOnGround
-	if (ThePlayer->PlayerMovementComponent && ThePlayer->PlayerMovementComponent->IsMovingOnGround())ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
-	else
-	{
-		//print("End shoot in air");
-		ThePlayer->ServerSetAnimID(EAnimState::Jumploop);
-	}
-
 }
 
 
 
-// Use Item
-
-void AWeapon::InventoryUse(ARadeCharacter* player)
-{
-	Super::InventoryUse(player);
-
-	if (!ThePlayer) return;
-}
-
-
-
+// Equip Start
 void AWeapon::EquipStart()
 {
 	if (!ThePlayer)return;
 
+	// Bp Equip Start
 	BP_Equip_Start();
 
-	//->TheWeapon = this;
 
+	// Attach First person Mesh
 	if (Mesh1P)	{
 		AttachRootComponentTo(ThePlayer->Mesh1P, FName("WeaponSocket"));
 		Mesh1P->RelativeLocation = (Mesh1P->RelativeLocation);
 		Mesh1P->RelativeRotation = (Mesh1P->RelativeRotation);
 	}
+
+	// Attach Third Person Mesh
 	if (Mesh3P)	{
 		
 		Mesh3P->AttachTo(ThePlayer->GetMesh(), FName("WeaponSocket"));
@@ -260,7 +246,7 @@ void AWeapon::EquipStart()
 		Mesh3P->bOwnerNoSee = true;
 	}
 
-	// Load Weapon Data
+	// Load Weapon Data from inventory
 	if (ThePlayer && ThePlayer->TheInventory)
 	{
 		for (int32 i = 0; i < ThePlayer->TheInventory->Items.Num(); i++)
@@ -279,84 +265,86 @@ void AWeapon::EquipStart()
 
 		}
 	}
+
+	// Delay equip end
 	FTimerHandle myHandle;
 	ThePlayer->GetWorldTimerManager().SetTimer(myHandle, this, &AWeapon::EquipEnd, EquipTime, false);
 
 }
 
-
+// Equip Ended
 void AWeapon::EquipEnd()
 {
+	// BP equip Ended
 	BP_Equip_End();
 
-	if (ThePlayer && ThePlayer->TheInventory) ThePlayer->TheInventory->SaveInventory();
+	// Save Inventory
+	if (ThePlayer && ThePlayer->TheInventory) 
+		ThePlayer->TheInventory->SaveInventory();
 }
 
-
+// Unequip Start
 void AWeapon::UnEquipStart()
 {
+	// Save the weapon stats
 	SaveCurrentWeaponStats();
+
+	// BP UnEquip Start
 	BP_Unequip_Start();
+
+	//delay unequip End
 	FTimerHandle myHandle;
 	ThePlayer->GetWorldTimerManager().SetTimer(myHandle, this, &AWeapon::UnEquipEnd, EquipTime, false);
-
 }
+
+// Unequip End
 void AWeapon::UnEquipEnd()
 {
+	// BP unequip End
 	BP_Unequip_End();
 
+	// Save Inventory
 	if (ThePlayer && ThePlayer->TheInventory) ThePlayer->TheInventory->SaveInventory();
 
-	//printg("Unequip End");
-	//SaveCurrentWeaponStats();
-	/*
-	if (ThePlayer && ThePlayer->TheInventory)
-	{
-		for (int32 i = 0; i < ThePlayer->TheInventory->Items.Num(); i++)
-		{
-
-			if (ThePlayer->TheInventory->Items.IsValidIndex(i) &&
-				ThePlayer->TheInventory->Items[i].Archetype &&
-				ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject() &&
-				ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject()->GetClass() == GetClass())
-			{
-				printb("Weapon Data saved");
-				ThePlayer->TheInventory->Items[i].WeaponStats = MainFire;
-				break;
-			}
-			//else printb("wrong item");
-
-		}
-	}
-	*/
+	// Destroy the Weapon Actor
 	Destroy();
-
 }
 
+// Reload Start
 void AWeapon::ReloadWeaponStart()
 {
 	if (!ThePlayer)return;
+
+	// BP reload Start
 	BP_Reload_Start();
 
+	// Set reload State in weapon adn player
 	bReloading = true;
 	ThePlayer->ServerSetAnimID(EAnimState::Reload);
+
+	// Delay reload End
 	FTimerHandle myHandle;
 	ThePlayer->GetWorldTimerManager().SetTimer(myHandle, this, &AWeapon::ReloadWeaponEnd, ReloadTime, false);
 }
 
+// reload Ended
 void AWeapon::ReloadWeaponEnd()
 {
+	// Bp Reload Ended
 	BP_Reload_End();
 
+	// Substract clip number
 	MainFire.ClipNumber--;
+
+	// Set Current Ammo to clip size
 	MainFire.CurrentAmmo = MainFire.ClipSize;
+
+	// Stop Fire State in weapon and Player
 	bReloading = false;
-
 	ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
-
 }
 
-
+// Can Weapon Reload ?
 bool AWeapon::CanReload()
 {
 	if (bReloading || !ThePlayer || !MainFire.CanReload())
@@ -366,10 +354,10 @@ bool AWeapon::CanReload()
 	return true;
 }
 
+// Can Weapon and Player Fire
 bool AWeapon::CanShoot()
 {
-
-	if (!ThePlayer || !ThePlayer->ArmsAnimInstance || !ThePlayer->CanShoot())return false;
+	if (!ThePlayer || !ThePlayer->CanShoot())return false;
 
 	return true;
 }
@@ -380,34 +368,42 @@ void AWeapon::SaveCurrentWeaponStats()
 {
 	if (!ThePlayer || !ThePlayer->TheInventory)return;
 
+	// Find Weapon data in item list
 	for (int32 i = 0; i < ThePlayer->TheInventory->Items.Num(); i++)
 	{
 		
-		if (ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject()->GetClass() == GetClass())
+		if (ThePlayer->TheInventory->Items.IsValidIndex(i) && ThePlayer->TheInventory->Items[i].Archetype->GetDefaultObject()->GetClass() == GetClass())
 		{
-		//	printg("Weapon Data Saved");
+			// Set The Inventory item data to this weapon data
 			ThePlayer->TheInventory->Items[i].MainFireStats = MainFire;
 			ThePlayer->TheInventory->Items[i].AltFireStats = AlternativeFire;
 			return;
-			
 		}
 	}
-	//printr("Weapon Not Found");
 }
 
-void AWeapon::UseMainFireAmmo(){
-
+// Use Main Fire Ammo
+void AWeapon::UseMainFireAmmo()
+{
+	// BP Ammo Used
 	BP_Ammo_Used();
+
+	// Substract Fire Cost
 	MainFire.CurrentAmmo -= MainFire.FireCost;
-	//printr("Ammo Left" + FString::FromInt(MainFire.CurrentAmmo));
 }
-void  AWeapon::UseAltFireAmmo(){
+
+// use Alt Fire Ammo
+void  AWeapon::UseAltFireAmmo()
+{
+	// BP Alt Ammo Used
 	BP_AltAmmo_Used();
+
+	// Check which ammo to substract from
 	if (bAltFireSeparateAmmo)AlternativeFire.CurrentAmmo -= AlternativeFire.FireCost;
 	else MainFire.CurrentAmmo -= AlternativeFire.FireCost;
 }
 
-// Add Ammo
+// Add Ammo from weapon pointer
 void AWeapon::AddAmmo(AWeapon* weapAmmo)
 {
 	if (weapAmmo)
@@ -415,6 +411,8 @@ void AWeapon::AddAmmo(AWeapon* weapAmmo)
 		MainFire.AddAmmo(weapAmmo->MainFire.CurrentAmmo, weapAmmo->MainFire.ClipNumber);
 	}
 }
+
+// Add Ammo as a number
 void AWeapon::AddAmmo(float newAmmo, int32 newClip)
 {
 	MainFire.AddAmmo(newAmmo,newClip);
@@ -427,6 +425,4 @@ void AWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 	DOREPLIFETIME(AWeapon, AlternativeFire);
 	DOREPLIFETIME(AWeapon, Mesh1P);
 	DOREPLIFETIME(AWeapon, Mesh3P);
-
-
 }
