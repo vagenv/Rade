@@ -34,7 +34,7 @@ public:
 		bool bSaveBlocks = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor")
-		bool bLoadBLocks=false;
+		bool bLoadBlocks=false;
 
 	UPROPERTY(ReplicatedUsing = ClientBlocksUpdated, EditAnywhere, BlueprintReadWrite, Category = "Constructor")
 		TArray<FBlockData>  CurrentBlocks;

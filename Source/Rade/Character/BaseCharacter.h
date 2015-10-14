@@ -41,12 +41,12 @@ public:
 		bool bDead;
 
 
-	// Default inventory
+	// Default inventory items
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 		TArray<TSubclassOf<class AItem> >  DefaultInventoryItems;
 
-	// Change Fall Damage
 
+	//  Fall damage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Falling")
 		float FallAcceptableValue=1000;
 
@@ -58,7 +58,7 @@ public:
 
 	// Called When Weapon Changed 
 	UFUNCTION()
-		virtual void CurrentWeaponUpdated();
+		virtual void CurrentWeaponUpdated(){};
 
 
 
@@ -70,6 +70,9 @@ public:
 	virtual void Landed(const FHitResult& Hit)override;
 
 
+
+
+	// Death Events
 	virtual void ServerDie();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -82,9 +85,6 @@ public:
 		void BP_Death();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Character State")
 		void BP_Revive();
-
-
-
 
 
 

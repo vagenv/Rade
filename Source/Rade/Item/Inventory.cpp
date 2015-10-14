@@ -34,23 +34,16 @@ void AInventory::ActionIndex(int32 ItemIndex)
 {
 	if (Items.IsValidIndex(ItemIndex) && Items[ItemIndex].Archetype && Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
 	{
-		//printg("Index Use");
 		Action(Items[ItemIndex].Archetype->GetDefaultObject<AItem>());
 	}
 }
 
-
-
-
-
 void AInventory::Action(AItem* ItemRef)
 {
-	//print("Start Action");
 	if (!ItemRef || !ThePlayer)
 		return;
 		
-	//printg(ItemRef->GetName());
-	
+	// Call Events in the BP
 	ItemRef->InventoryUse(ThePlayer);
 	ThePlayer->BP_ItemUsed(ItemRef);
 
@@ -58,7 +51,6 @@ void AInventory::Action(AItem* ItemRef)
 	if (Cast<AWeapon>(ItemRef))
 	{
 		AWeapon* TheWeapon = Cast<AWeapon>(ItemRef);
-		
 
 		// Is in state To Equip/deequip weapon
 		if (ThePlayer->ArmsAnimInstance && !ThePlayer->ArmsAnimInstance->IsAnimState(EAnimState::Idle_Run))return;
@@ -88,21 +80,19 @@ void AInventory::Action(AItem* ItemRef)
 void AInventory::ThrowOutIndex(int32 ItemIndex)
 {
 
-//	printr("Drop item");
 	if (Items.IsValidIndex(ItemIndex) && ThePlayer)
 	{
 
 		/// Modify
 
+		//printr("Throw out");
+		// Check if current weapon
 		if (Items[ItemIndex].Archetype && ThePlayer->TheWeapon 
 			&& ThePlayer->TheWeapon->GetClass() == Items[ItemIndex].Archetype.GetDefaultObject()->GetClass())
 		{
-
-			//print("Weapon equiped");
 			return;
 		}
 		
-		//&& Items[ItemIndex].Archetype == player->Weapon->SpawedItemArchtype
 	
 
 		UWorld* const World = ThePlayer->GetWorld();
@@ -114,7 +104,6 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 			FVector spawnLoc = rot.Vector() * 200 + ThePlayer->FirstPersonCameraComponent->GetComponentLocation()+ FVector(0, 0, -50);
 			AItemPickup* newPickup;
 			AItem* newItem=Items[ItemIndex].Archetype->GetDefaultObject<AItem>();
-			// ThePlayer->GetActorLocation() 
 
 			if (newItem && newItem->ItemPickupArchetype)
 				newPickup = World->SpawnActor<AItemPickup>(newItem->ItemPickupArchetype, spawnLoc, rot);
@@ -123,7 +112,6 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 			if (newPickup)
 			{
 				newPickup->SetReplicates(true);
-				// Item Will be throwed	
 				if (newItem)
 				{
 
@@ -152,11 +140,11 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 					newPickup->SkeletalMesh->WakeRigidBody();
 				}
 				newPickup->bAutoPickup = true;
-				if (newItem)
+				if (Cast<AWeapon>(newItem))
 				{
 					newPickup->bOverideItemData = true;
 					newPickup->OverideItemData = Items[ItemIndex];
-					printg("Dropped Item Data overriden");
+
 				}
 
 
@@ -168,23 +156,19 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 
 				
 				newPickup->ActivatePickup();
-				//newPickup->GetRootComponent()->
 				if (newPickup->Mesh)
 				{
 					newPickup->Mesh->AddImpulse(rot.Vector(), NAME_None, true);
 				}
 				if (newPickup->SkeletalMesh)
 				{
-					//newPickup->SkeletalMesh->AddImpulse(rot.Vector()*1000000, NAME_None, true);
 					newPickup->SkeletalMesh->AddForce(rot.Vector() * 16000, NAME_None, true);
-					//newPickup->SkeletalMesh->ComponentVelocity = rot.Vector() * 1000000;
 				}
 			
 
 				UpdateInfo();
 			}		
 		}
-		//else printr("Error with refs");
 	}
 }
 
@@ -197,9 +181,10 @@ void AInventory::ThrowOut(AItem* ItemRef)
 
 void AInventory::ItemPickedUp(AItemPickup* ThePickup)
 {
-	if (!ThePickup || !ThePickup->Item)return;
-
-
+	if (!ThePickup || !ThePickup->Item)
+	{
+		return;
+	}
 
 	
 	if (ThePickup->bOverideItemData)
@@ -214,6 +199,7 @@ void AInventory::ItemPickedUp(AItemPickup* ThePickup)
 	}
 	else 
 	{
+		//printg("Add Item");
 		AddItem(ThePickup->Item);
 	}
 
@@ -223,16 +209,18 @@ void AInventory::ItemPickedUp(AItemPickup* ThePickup)
 // Basic Inventory Operations
 FItemData* AInventory::AddItem(TSubclassOf<AItem> newItem)
 {
-	if (newItem == NULL || ThePlayer == NULL)return NULL;
+	if (newItem == NULL)
+		return NULL;
+
 
 
 	// If same weapon that is currently equiped
-	if (ThePlayer->TheWeapon && ThePlayer->TheWeapon->GetClass()== newItem->GetClass())
+	if (ThePlayer && ThePlayer->TheWeapon && ThePlayer->TheWeapon->GetClass() == newItem->GetClass())
 	{
 		ThePlayer->TheWeapon->AddAmmo(newItem->GetDefaultObject<AWeapon>());
 		return NULL;
 	}
-	else
+	else if (Items.Num()>0)
 	{
 		for (int32 i = 0; i < Items.Num(); i++)
 		{

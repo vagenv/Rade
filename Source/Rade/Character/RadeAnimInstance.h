@@ -8,8 +8,6 @@
 
 
 
-
-
 UCLASS()
 class RADE_API URadeAnimInstance : public UAnimInstance
 {
@@ -17,60 +15,55 @@ class RADE_API URadeAnimInstance : public UAnimInstance
 
 public:
 
+	// Default Events
 	URadeAnimInstance(const class FObjectInitializer& PCIP);
-
 
 	void BeginPlay();
 
-	bool bOriginalAnimInstance=false;
 
+	// Main Properties
 
+	// Current Weapon Archtype
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 		EAnimArchetype AnimArchetype;
 
+	// Current Animation playing
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Anim State")
 		EAnimState PlayerCurrentAnimState;
 
-	UPROPERTY()
+	// Reference to the player
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class ARadeCharacter* ThePlayer;
 
-
-	UFUNCTION(BlueprintCallable, Category = "Player Anim State")
-		void AnimEnded(EAnimState currentAnimCheck);
-
+	// Notification in blueprint that animation started
 	UFUNCTION(BlueprintImplementableEvent, Category = "Player Anim State")
 		void AnimStartedBPEvent(EAnimState currentAnimCheck);
 
-
+	// Set new Animation
 	void PlayLocalAnim(EAnimState currentAnimCheck);
 
+	// Recieve the anim from player Class
 	void RecieveGlobalAnimID(EAnimState currentAnimCheck);
 
 
-	/// Global Anim Check
+	/// Global Anim state Check
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
 		bool IsAnimState(EAnimState currentAnimCheck);
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
 		bool IsAnimArchetype(EAnimArchetype AnimArchtypeCheck);
 
+	// Check value from player class
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
 		bool CanFireInAir();
 
+	// Event called in blueprint when Jump_Start -> Jump_Idle 
 	UFUNCTION(BlueprintCallable, Category = "Player Anim State")
 		void InAirIdleStateEntered();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
-		EAnimState GetCurrentAnimID();
 
-
-
-	bool bInAir;
+	// In air check from current anim state
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
 		bool IsInAir();
-
-	//UFUNCTION(BlueprintImplementableEvent, Category = "Anim Events")
-	//	void SetFireAnimStart(bool value);
-
 
 	
 };
