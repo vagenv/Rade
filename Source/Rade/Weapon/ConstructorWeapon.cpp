@@ -82,7 +82,10 @@ void AConstructorWeapon::AltFire()
 		FVector Direction = CamRot.Vector();
 		FVector EndTrace = StartTrace + Direction *MainFire.FireDistance;
 
-		if (TheLevelBlockConstructor->DestroyBlock(EndTrace, this))    UseAltFireAmmo();
+		if (TheLevelBlockConstructor->DestroyBlock(EndTrace, this)) 
+		{
+			MainFire.AddAmmo(MainFire.FireCost,0);
+		}
 
 
 	}
@@ -143,7 +146,7 @@ void AConstructorWeapon::DrawBox()
 
 
 void AConstructorWeapon::AmmoRestore(){
-	MainFire.AddAmmo(1,0);
+	MainFire.AddAmmo(AmmoRestoreValue, 0);
 }
 
 
@@ -161,7 +164,7 @@ void AConstructorWeapon::EquipEnd()
 		if (ThePlayer->ThePC)
 		{
 			GetWorldTimerManager().SetTimer(DrawCubeHandle, this, &AConstructorWeapon::DrawBox, BoxDrawUpdate, true);
-			if (AmmoRestoreTime>0)GetWorldTimerManager().SetTimer(AmmoRestoreHandle, this, &AConstructorWeapon::AmmoRestore, AmmoRestoreTime, true);
+			if (bRestoreAmmo && AmmoRestoreTime>0)GetWorldTimerManager().SetTimer(AmmoRestoreHandle, this, &AConstructorWeapon::AmmoRestore, AmmoRestoreTime, true);
 		}
 		else 
 		{

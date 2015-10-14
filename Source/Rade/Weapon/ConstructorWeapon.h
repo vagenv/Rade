@@ -44,12 +44,20 @@ public:
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
-		bool bAutoDestroBlocks = false;
+		bool bAutoDestroyBlocks = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
-		float BlockRestoreTime = 10;
+		float BlockRestoreTime = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
+		bool bRestoreAmmoAfterBlockDestroy = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
+		bool bRestoreAmmo = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
 		float AmmoRestoreTime = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
+		float AmmoRestoreValue = 1;
 
 
 protected:
