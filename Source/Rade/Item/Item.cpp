@@ -10,21 +10,21 @@
 AItem::AItem(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
-
 }
 
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
+// Get Player Pointer
 ARadeCharacter* AItem::GetPlayer()const
 {
 	if (ThePlayer)return ThePlayer;
 	else return NULL;
 }
 
+// Get World Pointer
 UWorld* AItem::GetPlayerWorld()const
 {
 	if (ThePlayer && ThePlayer->GetWorld())return ThePlayer->GetWorld();
