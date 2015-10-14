@@ -18,69 +18,73 @@ public:
 	virtual void BeginPlay() override;
 
 
-
-	//			Item Refs
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
-	//	TSubclassOf<AItem> SpawedItemArchtype;
-
+	// Pickup Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Pickup")
 		UStaticMesh* PickupMesh;
+
+	// Pickup Skeletal mesg
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Pickup")
 		USkeletalMesh* PickupSkelMesh;
 
-
+	// Player Pointer
 	UPROPERTY(Replicated)
-	class ARadeCharacter* ThePlayer;
+		class ARadeCharacter* ThePlayer;
 
 
-	//			Item Props
-
+	// Item Name
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		FString ItemName = FString("Name of Item");
 
+	// Item Icon
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		UTexture2D* ItemIcon;
 
+	// Item Count
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		int32 ItemCount=1;
 
+	// Item Weight
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		float Weight =1;
+
+	// Item Pickup Override Archtype
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		TSubclassOf<AItemPickup> ItemPickupArchetype;
 
 
-		float PickupScale=1;
 	//			 Item Events
 
-
+	// BP Event- Item Was Used
 	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
 		void BP_ItemUsed();
 
+	// BP Event- Item Was Dropped
 	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
 		void BP_ItemDroped(class AItemPickup* thePickup);
 
+	// BP Event- Item Was Updated
 	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
 		void BP_ItemUpdated();
 
-
+	// Get Player Ref
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
 		class ARadeCharacter* GetPlayer()const;
 
+	// Get World Ref
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
 		class UWorld* GetPlayerWorld()const;
 
 
+	// Item Was Used
 	virtual void InventoryUse(class ARadeCharacter* Player)
 	{
+		// Set Player Ref if player ref in empty or wrong
 		if (ThePlayer == Player || ThePlayer != Player)
 		{
 			ThePlayer = Player;
 		}
+
+		// BP event called
 		BP_ItemUsed();
-
 	};
-
-	
 };
