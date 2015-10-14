@@ -22,46 +22,65 @@ public:
 	void EnableProjectile();
 
 
-	// weapon mesh: 1st person view //
+	// The Mesh
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		UStaticMeshComponent* Mesh;
 
-		/** Sphere collision component */
+	// Collision Component
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 		USphereComponent* CollisionComp;
 
-	/** Projectile movement component */
+	// Movement Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 		class UProjectileMovementComponent* ProjectileMovement;
 
+	// Life time of projectile
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 		float LifeTime=5;
+
+	// Projectile Enabled after delay - Not to explode near player
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-		float EnableDelay = 0.3f;
+		float EnableDelay = 0.1f;
+
+	// Projectile Affect Area
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 		float AffectArea = 800;
+
+	// Projectile Explosion Damage Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 		TSubclassOf<class UDamageType> ExplosionDamageType;
+
+	// Radial Damage Curve
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 		FRuntimeFloatCurve RadialDamageCurve;
+
+	// Radial Impulse Curve
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 		FRuntimeFloatCurve RadialImpulseCurve;
 
 
 
-	/** called when projectile hits something */
+	// Called when hit something
 	UFUNCTION()
 		void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	// Apply Velocity 
 	void InitVelocity(const FVector& ShootDirection);
 
-
+	// Explode 
 	virtual void Explode();
+
+	// BP explode 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
 		void BP_Explode();
 
+	// BP Hit
 	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
-		void BP_Hit(UPrimitiveComponent* OtherComp,const FHitResult& Hit);
+		void BP_Hit(UPrimitiveComponent* OtherComp, const FHitResult& Hit);
+
+	// Explosion hit Enemy
+	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
+		void BP_Explode_HitEnemy(class ABaseCharacter* TheCharacter,float HitDamage);
 
 	
 };

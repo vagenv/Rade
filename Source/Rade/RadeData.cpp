@@ -7,14 +7,15 @@
 
 FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* newItemIcon, float newWeight , int32 newItemCount)
 {
-	//	print("new ItemData");
 
+	// Set Item Data
 	Archetype = Item;
 	ItemName = newItemName;
 	ItemIcon = newItemIcon;
 	ItemCount = newItemCount;
 	Weight = newWeight;
 
+	// if Weapon Set Main and Alt Fire
 	if (Item && Item->GetDefaultObject<AWeapon>())
 	{
 		MainFireStats = Item->GetDefaultObject<AWeapon>()->MainFire;
@@ -22,6 +23,7 @@ FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* n
 	}
 }
 
+// Set Item Data from other data
 void FItemData::SetItemData(FItemData newData)
 {
 	ItemName=newData.ItemName;
@@ -47,7 +49,7 @@ FBlockData::FBlockData(ALevelBlock* newLevelItem, TSubclassOf <ALevelBlock> newA
 }
 
 
-
+// Add Ammo To Fire Stats
 void FFireStats::AddAmmo(float newAmmo, int32 newClip)
 {
 	if (newAmmo>0)
@@ -62,20 +64,20 @@ void FFireStats::AddAmmo(float newAmmo, int32 newClip)
 	}
 }
 
+// Can Reload 
 bool FFireStats::CanReload()
 {
 	if (ClipNumber > 0 && CurrentAmmo < ClipSize)
 	{
 		return true;
 	}
-
 	return false;
 }
 
+// Can Fire
 bool FFireStats::CanFire()
 {
 	if (FireCost > 0 && FireCost > CurrentAmmo)return false;
-
 	return true;
 }
 

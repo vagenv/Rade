@@ -194,7 +194,7 @@ public:
 
 	// Jetpack Struct properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
-		FJetPackProp JumpJetPack;
+		FJetPackData JumpJetPack;
 
 	// Jetpack restore timer handle
 	FTimerHandle JetPackHandle;

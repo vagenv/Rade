@@ -13,6 +13,6 @@ class RADE_API ARifleWeapon : public AWeapon
 {
 	GENERATED_BODY()
 	
-		virtual void Fire()override;
-
+	// Main Fire Event
+	virtual void Fire()override;
 };

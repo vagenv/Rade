@@ -14,16 +14,15 @@ class RADE_API AShotGunWeapon : public AWeapon
 	GENERATED_BODY()
 public:
 
-	
-		virtual void Fire()override;
+	// Override The Fire Event
+	virtual void Fire()override;
 
-
-
+	// Cone fire Spead Value
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 		float SpreadValue;
+
+	// Number of Fires
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 		int32 BallsPerShot;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-		bool bDrawDebugLines = false;
 	
 };
