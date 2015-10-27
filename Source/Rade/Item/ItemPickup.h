@@ -49,10 +49,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 		bool bAutoPickup;
 
-	//Pickup Distance Checking
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
-		float PickupDistance=600;
-
 	// Pickup Item Class
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 		TSubclassOf<class AItem> Item;

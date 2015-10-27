@@ -143,7 +143,7 @@ void AItemPickup::OnEndOverlap(AActor* OtherActor, UPrimitiveComponent* OtherCom
 void AItemPickup::PickedUp(AActor * Player)
 {
 	// check the distance between pickup and player 
-	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory && FVector::Dist(GetActorLocation(), Player->GetActorLocation())<PickupDistance)
+	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory )
 	{
 		//  Add item to inventory
 		Cast<ARadeCharacter>(Player)->TheInventory->ItemPickedUp(this);
