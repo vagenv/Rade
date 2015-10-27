@@ -20,24 +20,26 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 
 	SkeletalMesh = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("SkeletalMesh"));
 	SkeletalMesh->AttachParent = RootComponent;
-	SkeletalMesh->SetNetAddressable(); 
-	SkeletalMesh->SetIsReplicated(true);
 	
-	SkeletalMesh->bRenderCustomDepth = true;
-	SkeletalMesh->MarkRenderStateDirty();
-	SkeletalMesh->SetRenderCustomDepth(false);
+	//SkeletalMesh->SetNetAddressable(); 
+	//SkeletalMesh->SetIsReplicated(true);
+	
+	//SkeletalMesh->bRenderCustomDepth = true;
+	//SkeletalMesh->MarkRenderStateDirty();
+	//SkeletalMesh->SetRenderCustomDepth(false);
 
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
 	Mesh->AttachParent = RootComponent;
-	Mesh->SetNetAddressable();
-	Mesh->SetIsReplicated(true);
-	Mesh->SetRenderCustomDepth(false);
+	//Mesh->SetNetAddressable();
+//	Mesh->SetIsReplicated(true);
+//	Mesh->SetRenderCustomDepth(false);
 
 	TriggerSphere = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("TriggerSphere"));
 	TriggerSphere->InitSphereRadius(300);
 	TriggerSphere->AttachParent = RootComponent;
 
 	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 
@@ -45,8 +47,15 @@ void AItemPickup::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetReplicateMovement(true);
+	SetReplicates(true);
+
 	// Set Pickup Skeletal Mesh Outline
-	if (SkeletalMesh)SkeletalMesh->SetRenderCustomDepth(false);
+	if (SkeletalMesh)
+	{
+		SkeletalMesh->SetRenderCustomDepth(false);
+		SkeletalMesh->SetIsReplicated(true);
+	}
 
 	// Set Pickup Mesh Outline
 	if (Mesh)Mesh->SetRenderCustomDepth(false);
@@ -55,7 +64,6 @@ void AItemPickup::BeginPlay()
 	if (Role < ROLE_Authority)
 		return;
 
-	SetReplicates(true);
 
 	// Start Activate Delay on server
 	FTimerHandle MyHandle;
@@ -77,6 +85,7 @@ void AItemPickup::ActivatePickupPhysics()
 		SkeletalMesh->DestroyComponent();
 		TriggerSphere->AttachTo(Mesh);
 
+		Mesh->SetMobility(EComponentMobility::Movable);
 		Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		Mesh->SetSimulatePhysics(true);
@@ -87,6 +96,7 @@ void AItemPickup::ActivatePickupPhysics()
 		Mesh->DestroyComponent();
 		TriggerSphere->AttachTo(SkeletalMesh,NAME_None, EAttachLocation::SnapToTarget);
 
+		SkeletalMesh->SetMobility(EComponentMobility::Movable);
 		SkeletalMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		SkeletalMesh->SetSimulatePhysics(true);

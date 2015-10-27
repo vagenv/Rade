@@ -112,17 +112,7 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 					}
 
 				}
-				if (newPickup->Mesh)
-				{
-					newPickup->Mesh->SetSimulatePhysics(true);
-					newPickup->Mesh->WakeRigidBody();
-				
-				}
-				else if (newPickup->SkeletalMesh)
-				{
-					newPickup->SkeletalMesh->SetSimulatePhysics(true);
-					newPickup->SkeletalMesh->WakeRigidBody();
-				}
+
 				newPickup->bAutoPickup = true;
 				if (Cast<AWeapon>(newItem))
 				{
@@ -142,11 +132,11 @@ void AInventory::ThrowOutIndex(int32 ItemIndex)
 				newPickup->ActivatePickupPhysics();
 				if (newPickup->Mesh)
 				{
-					newPickup->Mesh->AddImpulse(rot.Vector(), NAME_None, true);
+					newPickup->Mesh->AddImpulse(rot.Vector() * 12000, NAME_None, true);
 				}
 				if (newPickup->SkeletalMesh)
 				{
-					newPickup->SkeletalMesh->AddForce(rot.Vector() * 16000, NAME_None, true);
+					newPickup->SkeletalMesh->AddForce(rot.Vector() * 12000, NAME_None, true);
 				}
 		
 				UpdateInfo();

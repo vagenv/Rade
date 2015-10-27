@@ -41,7 +41,7 @@ void ARifleWeapon::Fire()
 				BP_HitEnemy(Hit);
 
 				// Apply Damage
-				UGameplayStatics::ApplyDamage(EnemyPlayer, MainFire.FireDamage, ThePlayer->Controller, Cast<AActor>(this), UDamageType().StaticClass());
+				UGameplayStatics::ApplyDamage(EnemyPlayer, MainFire.FireDamage, ThePlayer->Controller, Cast<AActor>(this), UDamageType::StaticClass());
 			}
 		}
 	}

@@ -53,13 +53,15 @@ void AWeapon::FireStart()
 	// BP Fire Started
 	BP_FirePress_Start();
 
+	// Shooting Enabled
+	bShooting = true;
+
 	// If not currently in main and alternative shooting mode/delay  call The Fire event
 	if (ThePlayer && !ThePlayer->GetWorldTimerManager().IsTimerActive(PreFireTimeHandle) &&
 		!ThePlayer->GetWorldTimerManager().IsTimerActive(PreAltFireTimeHandle))
 		ThePlayer->GetWorldTimerManager().SetTimer(PreFireTimeHandle, this, &AWeapon::PreFire, MainFire.FireSpeed, true, 0);
 
-	// Shooting Enabled
-	bShooting = true;
+	
 
 }
 
@@ -89,7 +91,7 @@ void AWeapon::PreFire()
 	}
 
 	// Currently Equiping this weapon, delay a bit
-	if (ThePlayer->ArmsAnimInstance && ThePlayer->ArmsAnimInstance->IsAnimState(EAnimState::Equip))
+	if (ThePlayer->IsAnimState(EAnimState::Equip))
 	{
 		// try after a small delay
 		FTimerHandle MyHandle;
@@ -97,7 +99,7 @@ void AWeapon::PreFire()
 		return;
 	}
 
-	// Wrong Player Anim State
+	// Wrong Weapon or Player Anim State
 	if (!CanShoot())return;
 
 	// Ammo Check
@@ -123,6 +125,10 @@ void AWeapon::PreFire()
 
 	// Decrease move speed when shooting
 	ThePlayer->ResetMoveSpeed();
+
+	///	Stop Fire Anim
+	FTimerHandle MyHandle;
+	ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::StopFireAnim, 0.1, false);
 }
 
 
@@ -216,6 +222,11 @@ void AWeapon::PreAltFire()
 
 	// Decrease move speed when shooting
 	ThePlayer->ResetMoveSpeed();
+
+
+	///	Stop Fire Anim
+	FTimerHandle MyHandle;
+	ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::StopFireAnim, 0.1, false);
 }
 
 
@@ -269,6 +280,23 @@ void AWeapon::EquipStart()
 	// Delay equip end
 	FTimerHandle myHandle;
 	ThePlayer->GetWorldTimerManager().SetTimer(myHandle, this, &AWeapon::EquipEnd, EquipTime, false);
+
+}
+
+
+
+// Stop Fire Anim after some time
+void AWeapon::StopFireAnim()
+{
+	if (!ThePlayer)return;
+
+	//IsMovingOnGround
+	if (ThePlayer->PlayerMovementComponent && ThePlayer->PlayerMovementComponent->IsMovingOnGround())ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
+	else
+	{
+		//print("End shoot in air");
+		ThePlayer->ServerSetAnimID(EAnimState::Jumploop);
+	}
 
 }
 

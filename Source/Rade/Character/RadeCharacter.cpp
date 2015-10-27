@@ -484,7 +484,7 @@ void ARadeCharacter::AltFireEnd_Implementation()
 bool ARadeCharacter::CanShoot()
 {
 	// Player and mesh is in the state where he can shoot
-	if (ArmsAnimInstance && (IsAnimState(EAnimState::Idle_Run) || (IsAnimState(EAnimState::Jumploop) && bCanFireInAir)))
+	if (IsAnimState(EAnimState::Idle_Run) || (IsAnimState(EAnimState::Jumploop) && bCanFireInAir))
 		return true;
 	
 	return false;

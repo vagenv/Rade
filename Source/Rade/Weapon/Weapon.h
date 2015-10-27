@@ -120,6 +120,8 @@ public:
 	// Save the current/equiped weapon stats to inventory
 	void SaveCurrentWeaponStats();
 
+	// Reset player anim state to idle after fire
+	void StopFireAnim();
 
 	// Equip Started
 	virtual void EquipStart();
