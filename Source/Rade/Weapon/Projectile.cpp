@@ -31,8 +31,8 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 
-
 	bReplicates = true;
+
 
 	// Set default radial Damage Curve
 	FRichCurve* RadialDamageCurveData = RadialDamageCurve.GetRichCurve();
@@ -43,7 +43,6 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 		RadialDamageCurveData->AddKey(900, 0);
 	}
 
-	
 	// Set default Radial Impulse Curve
 	FRichCurve* RadialImpulseCurveData = RadialImpulseCurve.GetRichCurve();
 	if (RadialImpulseCurveData)
