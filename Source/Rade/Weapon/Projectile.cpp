@@ -36,14 +36,22 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 
 	// Set default radial Damage Curve
 	FRichCurve* RadialDamageCurveData = RadialDamageCurve.GetRichCurve();
-	RadialDamageCurveData->AddKey(0, 90);
-	RadialDamageCurveData->AddKey(380, 40);
-	RadialDamageCurveData->AddKey(900, 0);
+	if (RadialDamageCurveData)
+	{
+		RadialDamageCurveData->AddKey(0, 90);
+		RadialDamageCurveData->AddKey(380, 40);
+		RadialDamageCurveData->AddKey(900, 0);
+	}
+
 	
 	// Set default Radial Impulse Curve
 	FRichCurve* RadialImpulseCurveData = RadialImpulseCurve.GetRichCurve();
-	RadialImpulseCurveData->AddKey(0, 15000);
-	RadialImpulseCurveData->AddKey(900, 9000);
+	if (RadialImpulseCurveData)
+	{
+		RadialImpulseCurveData->AddKey(0, 15000);
+		RadialImpulseCurveData->AddKey(900, 9000);
+	}
+
 }
 
 
