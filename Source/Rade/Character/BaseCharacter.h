@@ -23,7 +23,7 @@ public:
 	//							Basic Refs
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-	class AInventory* TheInventory;
+	class UInventory* TheInventory;
 
 
 	UPROPERTY(ReplicatedUsing = CurrentWeaponUpdated, EditAnywhere, BlueprintReadWrite, Category = "Weapon")

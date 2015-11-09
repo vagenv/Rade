@@ -27,7 +27,7 @@ void URadeAnimInstance::PlayLocalAnim(EAnimState AnimID)
 // Recieve anim state value
 void URadeAnimInstance::RecieveGlobalAnimID(EAnimState currentAnimCheck)
 {
-	AnimStartedBPEvent(currentAnimCheck);
+	BP_AnimStarted(currentAnimCheck);
 	PlayLocalAnim(currentAnimCheck);
 }
 

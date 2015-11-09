@@ -1,19 +1,19 @@
 // Copyright 2015 Vagen Ayrapetyan
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "RadeData.h"
 #include "Inventory.generated.h"
 
-//UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
-UCLASS()
-class RADE_API AInventory : public AActor
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class RADE_API UInventory : public UActorComponent
 {
 	GENERATED_BODY()
 public:	
 
 	// Base events
-	AInventory(const class FObjectInitializer& PCIP);
+	UInventory(const class FObjectInitializer& PCIP);
 	virtual void BeginPlay() override;
 
 

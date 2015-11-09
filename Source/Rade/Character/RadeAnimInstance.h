@@ -37,7 +37,7 @@ public:
 
 	// Notification in blueprint that animation started
 	UFUNCTION(BlueprintImplementableEvent, Category = "Player Anim State")
-		void AnimStartedBPEvent(EAnimState currentAnimCheck);
+		void BP_AnimStarted(EAnimState currentAnimCheck);
 
 	// Set new Animation
 	void PlayLocalAnim(EAnimState currentAnimCheck);

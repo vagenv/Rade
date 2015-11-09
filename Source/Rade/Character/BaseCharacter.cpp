@@ -20,6 +20,10 @@ ABaseCharacter::ABaseCharacter(const class FObjectInitializer& PCIP):Super(PCIP)
 	FallDamageCurveData->AddKey(1500 ,40);
 	FallDamageCurveData->AddKey(2000, 100);
 
+
+
+	TheInventory = CreateDefaultSubobject<UInventory>(TEXT("TheInventory"));
+	TheInventory->SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned
@@ -30,11 +34,11 @@ void ABaseCharacter::BeginPlay()
 	if (Role >= ROLE_Authority && GetWorld())
 	{
 		// Spawning Inventory At Server
-
-		FActorSpawnParameters SpawnParam;
-		SpawnParam.Owner = this;
-		SpawnParam.Instigator = Instigator;
-		TheInventory = GetWorld()->SpawnActor<AInventory>(SpawnParam);
+		if (!TheInventory)
+		{
+			printr("No Inventory");
+			TheInventory = GetWorld()->SpawnActor<UInventory>();
+		}
 
 		// Add Default Inventory Items
 		if (TheInventory)
