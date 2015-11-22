@@ -126,6 +126,10 @@ void ARadeCharacter::BeginPlay()
 	bCanFillJetPack = true;
 	GetWorldTimerManager().SetTimer(JetPackHandle, this, &ARadeCharacter::JetPackFillUp, JumpJetPack.RestoreSpeed, true);
 
+
+	FVector RandomLoc = FVector(FMath::RandRange(-100, 100), FMath::RandRange(-100, 100), 0);
+	SetActorLocation(GetActorLocation() + RandomLoc);
+
 }
 
 
