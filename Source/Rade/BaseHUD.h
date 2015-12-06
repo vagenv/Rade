@@ -32,11 +32,11 @@ public:
 
 	// The Player pointer
 	UPROPERTY()
-		class ARadeCharacter* ThePlayer;
+		class ARadePlayer* ThePlayer;
 
 	// Get Player Function
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
-		class ARadeCharacter* GetPlayer()const;
+		class ARadePlayer* GetPlayer()const;
 
 	// get Player health percent
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")

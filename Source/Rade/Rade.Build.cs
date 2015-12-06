@@ -6,9 +6,29 @@ public class Rade : ModuleRules
 {
 	public Rade(TargetInfo Target)
 	{
+
+        MinFilesUsingPrecompiledHeaderOverride = 1;
+        bFasterWithoutUnity = true;
+
+
+
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "OnlineSubsystem", "OnlineSubsystemUtils", "UMG" });
+
+    
+        PrivateDependencyModuleNames.Add("OnlineSubsystem");
+        DynamicallyLoadedModuleNames.Add("OnlineSubsystemNull");
+
+
+
+        /*
+
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+         */
+
+
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

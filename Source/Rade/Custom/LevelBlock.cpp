@@ -2,7 +2,7 @@
 
 #include "Rade.h"
 
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 #include "Item/Inventory.h"
 
 #include "Custom/LevelBlock.h"

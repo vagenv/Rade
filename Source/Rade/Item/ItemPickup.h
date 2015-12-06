@@ -32,6 +32,11 @@ public:
 	// Trigger Sphere
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	class USphereComponent* TriggerSphere;
+
+
+	// The player that is picking up
+	UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
+	class ARadePlayer* ThePickupPlayer;
 	
 
 	// Activation delay
@@ -40,7 +45,6 @@ public:
 
 	// Activate Pickup Overlap Tracking
 	void ActivatePickupOverlap();
-
 
 	// Activate Pickup Physics
 	void ActivatePickupPhysics();
@@ -62,6 +66,8 @@ public:
 	FItemData OverideItemData;
 
 
+
+
 	// Player Entered
 	UFUNCTION()
 		void OnBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -74,15 +80,26 @@ public:
 	void PickedUp(AActor* Player);
 
 
+
+	UPROPERTY(ReplicatedUsing = OnRep_ToggleHighlighted, EditAnywhere, BlueprintReadOnly, Category = " ")
+		bool bIsHighlighted=false;
+
+	UFUNCTION()
+		void OnRep_ToggleHighlighted();
+
+
+
+
+
 	// BP Event that item Was Picked Up
 	UFUNCTION(BlueprintImplementableEvent, Category = "Pickup")
-		void BP_PickedUp(class ARadeCharacter* Player);
+		void BP_PickedUp(class ARadePlayer* Player);
 
 	// BP Event that Player Entered Pickup Area
 	UFUNCTION(BlueprintImplementableEvent, Category = "Pickup")
-		void BP_PlayerEntered(class ARadeCharacter* Player);
+		void BP_PlayerEntered(class ARadePlayer* Player);
 
 	// BP Event that Player Exited Pickup Area
 	UFUNCTION(BlueprintImplementableEvent, Category = "Pickup")
-		void BP_PlayerExited(class ARadeCharacter* Player);
+		void BP_PlayerExited(class ARadePlayer* Player);
 };

@@ -1,7 +1,7 @@
 // Copyright 2015 Vagen Ayrapetyan
 
 #include "Rade.h"
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 #include "Item/ItemPickup.h"
 #include "Item/Inventory.h"
@@ -107,10 +107,10 @@ void AItemPickup::ActivatePickupPhysics()
 // Player Entered The Pickup Area
 void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && Cast<ARadeCharacter>(OtherActor) != NULL && Cast<ARadeCharacter>(OtherActor)->TheInventory!=NULL)
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && Cast<ARadePlayer>(OtherActor) != nullptr && Cast<ARadePlayer>(OtherActor)->TheInventory != NULL)
 	{
 		// BP Event that player entered
-		BP_PlayerEntered(Cast<ARadeCharacter>(OtherActor));
+		BP_PlayerEntered(Cast<ARadePlayer>(OtherActor));
 
 		// Auto give player the item
 		if (bAutoPickup)
@@ -122,11 +122,12 @@ void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherC
 		else
 		{
 			// Set player ref of item pickup
-			Cast<ARadeCharacter>(OtherActor)->currentPickup = this;
+			Cast<ARadePlayer>(OtherActor)->currentPickup = this;
 
-			// Activate highlight
-			if (SkeletalMesh)SkeletalMesh->SetRenderCustomDepth(true);
-			if (Mesh)Mesh->SetRenderCustomDepth(true);
+			ThePickupPlayer = Cast<ARadePlayer>(OtherActor);
+
+			bIsHighlighted = true;
+			OnRep_ToggleHighlighted();
 		}
 	}
 }
@@ -134,18 +135,21 @@ void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherC
 // Player Exited The Pickup Area
 void AItemPickup::OnEndOverlap(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && Cast<ARadeCharacter>(OtherActor) != NULL)
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && Cast<ARadePlayer>(OtherActor) != nullptr)
 	{
 		// BP Event that player Exited
-		BP_PlayerExited(Cast<ARadeCharacter>(OtherActor));
+		BP_PlayerExited(Cast<ARadePlayer>(OtherActor));
 
 		// Clean Pickup reference in player class 
-		if (Cast<ARadeCharacter>(OtherActor)->currentPickup == this)
-			Cast<ARadeCharacter>(OtherActor)->currentPickup = NULL;
+		if (Cast<ARadePlayer>(OtherActor)->currentPickup == this)
+			Cast<ARadePlayer>(OtherActor)->currentPickup = nullptr;
 
-		// Disable pickup highlight
-		if (SkeletalMesh)SkeletalMesh->SetRenderCustomDepth(false);
-		if (Mesh)Mesh->SetRenderCustomDepth(false);
+		// Disable pickup highligh
+		bIsHighlighted = false;
+
+		OnRep_ToggleHighlighted();
+
+	//	ThePickupPlayer = nullptr;
 	}
 }
 
@@ -153,20 +157,51 @@ void AItemPickup::OnEndOverlap(AActor* OtherActor, UPrimitiveComponent* OtherCom
 void AItemPickup::PickedUp(AActor * Player)
 {
 	// check the distance between pickup and player 
-	if (Player && Item != NULL && Cast<ARadeCharacter>(Player)->TheInventory )
+	if (Player && Item != nullptr && Cast<ARadePlayer>(Player)->TheInventory )
 	{
 		//  Add item to inventory
-		Cast<ARadeCharacter>(Player)->TheInventory->ItemPickedUp(this);
+		Cast<ARadePlayer>(Player)->TheInventory->ItemPickedUp(this);
 
 		// BP event that item was picked up in player blueprint
-		BP_PickedUp(Cast<ARadeCharacter>(Player));
+		BP_PickedUp(Cast<ARadePlayer>(Player));
 	}
 	Destroy();
+}
+
+
+void AItemPickup::OnRep_ToggleHighlighted()
+{
+	if (ThePickupPlayer && ThePickupPlayer->IsLocallyControlled())
+	{
+		if (bIsHighlighted)
+		{
+		//	printg("Show");
+			// Activate highlight
+			if (SkeletalMesh)SkeletalMesh->SetRenderCustomDepth(true);
+			if (Mesh)Mesh->SetRenderCustomDepth(true);
+		}
+		else
+		{
+			if (SkeletalMesh)SkeletalMesh->SetRenderCustomDepth(false);
+			if (Mesh)Mesh->SetRenderCustomDepth(false);
+
+			//printg("Hide");
+		}
+	}
+
+
+
+
 }
 
 void AItemPickup::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(AItemPickup, Mesh);
 	DOREPLIFETIME(AItemPickup, SkeletalMesh);
+
+	DOREPLIFETIME(AItemPickup, ThePickupPlayer);
+
+	DOREPLIFETIME(AItemPickup, bIsHighlighted);
 }

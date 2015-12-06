@@ -3,6 +3,9 @@
 #pragma once
 
 #include "Engine.h"
+#include "UnrealNetwork.h"
+#include "Online.h"
+#include "OnlineSubsystem.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);
 

@@ -5,7 +5,7 @@
 
 #include "Weapon/ConstructorWeapon.h"
 
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 #include "Custom/LevelBlockConstructor.h"
 #include "Custom/LevelBlock.h"
@@ -104,9 +104,9 @@ void AConstructorWeapon::AltFire()
 void AConstructorWeapon::DrawBox()
 {
 	// Get pointer to player
-	if (!ThePlayer && GetOwner()  && Cast<ARadeCharacter>(GetOwner()))
+	if (!ThePlayer && GetOwner()  && Cast<ARadePlayer>(GetOwner()))
 	{
-		ThePlayer = Cast<ARadeCharacter>(GetOwner());
+		ThePlayer = Cast<ARadePlayer>(GetOwner());
 	}
 
 	if (ThePlayer && ThePlayer->Controller && Mesh1P)

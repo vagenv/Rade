@@ -2,7 +2,7 @@
 
 #include "Rade.h"
 #include "Character/RadeAnimInstance.h"
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 
 URadeAnimInstance::URadeAnimInstance(const class FObjectInitializer& PCIP)

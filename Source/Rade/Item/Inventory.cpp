@@ -5,14 +5,14 @@
 #include "RadeGameMode.h"
 #include "BaseHUD.h"
 
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 #include "Character/RadeAnimInstance.h"
 
 #include "Item/Inventory.h"
 #include "Item/ItemPickup.h"
 #include "Weapon/Weapon.h"
 
-#include "Custom/SystemSaveGame.h"
+#include "System/SystemSaveGame.h"
 #include "UnrealNetwork.h"
 
 

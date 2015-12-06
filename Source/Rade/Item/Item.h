@@ -28,7 +28,7 @@ public:
 
 	// Player Pointer
 	UPROPERTY(Replicated)
-		class ARadeCharacter* ThePlayer;
+		class ARadePlayer* ThePlayer;
 
 
 	// Item Name
@@ -68,7 +68,7 @@ public:
 
 	// Get Player Ref
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
-		class ARadeCharacter* GetPlayer()const;
+		class ARadePlayer* GetPlayer()const;
 
 	// Get World Ref
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
@@ -76,7 +76,7 @@ public:
 
 
 	// Item Was Used
-	virtual void InventoryUse(class ARadeCharacter* Player)
+	virtual void InventoryUse(class ARadePlayer* Player)
 	{
 		// Set Player Ref if player ref in empty or wrong
 		if (ThePlayer == Player || ThePlayer != Player)

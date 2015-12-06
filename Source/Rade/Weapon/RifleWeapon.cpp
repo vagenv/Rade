@@ -2,7 +2,7 @@
 
 #include "Rade.h"
 #include "Weapon/RifleWeapon.h"
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 
 void ARifleWeapon::Fire()
@@ -34,7 +34,7 @@ void ARifleWeapon::Fire()
 		{
 
 			// Check if player character
-			ABaseCharacter* EnemyPlayer = Cast<ABaseCharacter>(Hit.GetActor());
+			ARadeCharacter* EnemyPlayer = Cast<ARadeCharacter>(Hit.GetActor());
 			if (EnemyPlayer)
 			{
 				// Hit Enemy

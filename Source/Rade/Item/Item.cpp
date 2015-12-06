@@ -2,7 +2,7 @@
 
 #include "Rade.h"
 
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 #include "Item/Item.h"
 #include "UnrealNetwork.h"
@@ -18,7 +18,7 @@ void AItem::BeginPlay()
 }
 
 // Get Player Pointer
-ARadeCharacter* AItem::GetPlayer()const
+ARadePlayer* AItem::GetPlayer()const
 {
 	if (ThePlayer)return ThePlayer;
 	else return NULL;

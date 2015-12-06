@@ -33,7 +33,7 @@ public:
 
 	// Reference to the player
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class ARadeCharacter* ThePlayer;
+		class ARadePlayer* ThePlayer;
 
 	// Notification in blueprint that animation started
 	UFUNCTION(BlueprintImplementableEvent, Category = "Player Anim State")

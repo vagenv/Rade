@@ -19,7 +19,7 @@ public:
 
 	// Player pointer
 	UPROPERTY(Replicated)
-		class ARadeCharacter* ThePlayer;
+		class ARadePlayer* ThePlayer;
 
 	// Game Mode Pointer
 	UPROPERTY()

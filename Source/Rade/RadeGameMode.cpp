@@ -2,12 +2,19 @@
 
 #include "Rade.h"
 #include "RadeGameMode.h"
-#include "Custom/SystemSaveGame.h"
+
+#include "System/SystemSaveGame.h"
+#include "System/RadeGameState.h"
+#include "System/RadePlayerState.h"
+
 #include "Custom/LevelBlockConstructor.h"
 
 
 ARadeGameMode::ARadeGameMode(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
+
+	PlayerStateClass = ARadePlayerState::StaticClass();
+	GameStateClass = ARadeGameState::StaticClass();
 
 }
 

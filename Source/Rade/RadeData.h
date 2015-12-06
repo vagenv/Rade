@@ -6,6 +6,62 @@
 #include "RadeData.generated.h"
 
 
+
+
+
+
+////////////////////////        Online Message Type
+USTRUCT(BlueprintType)
+struct FRadeOnineMessageData
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		FString TheMessage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		FString MessageOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		FDateTime MessageTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		FLinearColor MessageColor;
+
+
+	FRadeOnineMessageData(){};
+	FRadeOnineMessageData(FString NewMessage, class ARadePlayer* ThePlayer);
+
+
+};
+
+
+class FOnlineSessionSearchResult;
+// Fire State Struct
+USTRUCT(BlueprintType)
+struct FAvaiableSessionsData
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		FString OwnerName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		int32 Ping;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		int32 NumberOfConnections;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		int32 NumberOfAvaiableConnections;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	FOnlineSessionSearchResult SessionData;
+
+	FAvaiableSessionsData(){};
+	FAvaiableSessionsData(class FOnlineSessionSearchResult newSessionData);
+
+};
+
+
+
 // Camera State Enum
 UENUM(BlueprintType)	
 enum class ECameraState : uint8

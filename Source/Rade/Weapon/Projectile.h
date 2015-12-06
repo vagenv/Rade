@@ -80,7 +80,7 @@ public:
 
 	// Explosion hit Enemy
 	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
-		void BP_Explode_HitEnemy(class ABaseCharacter* TheCharacter,float HitDamage);
+		void BP_Explode_HitEnemy(class ARadeCharacter* TheCharacter,float HitDamage);
 
 	
 };

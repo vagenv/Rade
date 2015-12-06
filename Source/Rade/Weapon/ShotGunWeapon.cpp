@@ -3,7 +3,7 @@
 #include "Rade.h"
 
 #include "Weapon/ShotGunWeapon.h"
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 
 // The Fire Event
@@ -56,7 +56,7 @@ void AShotGunWeapon::Fire()
 			if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace + offsetVector, ECC_WorldStatic, TraceParams))
 			{
 				// Check if hit actor is player
-				ABaseCharacter* EnemyPlayer = Cast<ABaseCharacter>(Hit.GetActor());
+				ARadeCharacter* EnemyPlayer = Cast<ARadeCharacter>(Hit.GetActor());
 				if (EnemyPlayer)
 				{
 					// Hit Enemy

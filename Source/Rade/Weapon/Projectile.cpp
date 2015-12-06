@@ -1,9 +1,8 @@
 // Copyright 2015 Vagen Ayrapetyan
 
 #include "Rade.h"
-
 #include "Weapon/Projectile.h"
-#include "Character/BaseCharacter.h"
+#include "Character/RadeCharacter.h"
 
 AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
@@ -109,30 +108,26 @@ void AProjectile::Explode()
 		const float distance = GetDistanceTo(*aItr);
 		if (distance<AffectArea && aItr && aItr->GetRootComponent() && aItr->GetRootComponent()->Mobility == EComponentMobility::Movable)
 		{
+
 			FVector dir = aItr->GetActorLocation() - Loc;
 			dir.Normalize();
-
-			FRichCurve* RadialDamageCurveData = RadialDamageCurve.GetRichCurve();
-			FRichCurve* RadialImpulseCurveData = RadialImpulseCurve.GetRichCurve();
-
-
-			ABaseCharacter* theChar = Cast<ABaseCharacter>(*aItr);
+			ARadeCharacter* TheChar = Cast<ARadeCharacter>(*aItr);
 
 			//If Player apply damage
-			if (theChar && RadialDamageCurveData)
+			if (TheChar)
 			{
 				// BP Explosion Hit Enemy
-				BP_Explode_HitEnemy(theChar, RadialDamageCurveData->Eval(distance));
+				BP_Explode_HitEnemy(TheChar, RadialDamageCurve.GetRichCurve()->Eval(distance));
 
 				// Apply Damage to Character
-				UGameplayStatics::ApplyDamage(theChar, RadialDamageCurveData->Eval(distance), NULL, this, ExplosionDamageType);
+				UGameplayStatics::ApplyDamage(TheChar, RadialDamageCurve.GetRichCurve()->Eval(distance), NULL, this, ExplosionDamageType);
 			}
-			
+
 			// Apply impulse on physics actors
-			if (RadialImpulseCurveData && aItr->GetRootComponent()->IsSimulatingPhysics() && Cast<UPrimitiveComponent>(aItr->GetRootComponent()))
+			if (aItr->GetRootComponent()->IsSimulatingPhysics() && Cast<UPrimitiveComponent>(aItr->GetRootComponent()))
 			{
-				Cast<UPrimitiveComponent>(aItr->GetRootComponent())->AddImpulse(dir*RadialImpulseCurveData->Eval(distance));
-				
+				Cast<UPrimitiveComponent>(aItr->GetRootComponent())->AddImpulse(dir*RadialImpulseCurve.GetRichCurve()->Eval(distance));
+
 			}
 		}
 	}

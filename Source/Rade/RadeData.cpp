@@ -4,6 +4,41 @@
 #include "RadeData.h"
 #include "Weapon/Weapon.h"
 #include "Custom/LevelBlock.h"
+#include "Character/RadePlayer.h"
+
+
+
+
+FRadeOnineMessageData::FRadeOnineMessageData(FString NewMessage, ARadePlayer* ThePlayer)
+{
+
+	MessageTime = FDateTime::Now();
+	TheMessage = NewMessage;
+	if (ThePlayer)
+	{
+		MessageOwner = ThePlayer->CharacterName;
+		MessageColor = ThePlayer->CharacterColor;
+	}
+
+
+}
+
+
+FAvaiableSessionsData::FAvaiableSessionsData(FOnlineSessionSearchResult newSessionData)
+{
+	SessionData = newSessionData;
+
+	OwnerName = newSessionData.Session.OwningUserName;
+	Ping = newSessionData.PingInMs;
+	NumberOfConnections = newSessionData.Session.SessionSettings.NumPublicConnections;
+	NumberOfAvaiableConnections = NumberOfConnections - newSessionData.Session.NumOpenPublicConnections;
+}
+
+
+
+
+
+
 
 FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* newItemIcon, float newWeight , int32 newItemCount)
 {

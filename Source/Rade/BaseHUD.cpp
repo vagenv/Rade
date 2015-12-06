@@ -2,7 +2,7 @@
 
 #include "Rade.h"
 #include "BaseHUD.h"
-#include "Character/RadeCharacter.h"
+#include "Character/RadePlayer.h"
 
 void ABaseHUD::BeginPlay()
 {
@@ -13,24 +13,24 @@ void ABaseHUD::BeginPlay()
 
 	bInventoryOpen = false;
 
-	if (GetOwningPawn() && Cast<ARadeCharacter>(GetOwningPawn()))
+	if (GetOwningPawn() && Cast<ARadePlayer>(GetOwningPawn()))
 	{
-		ThePlayer = Cast<ARadeCharacter>(GetOwningPawn());
-		Cast<ARadeCharacter>(GetOwningPawn())->TheHUD = this;
+		ThePlayer = Cast<ARadePlayer>(GetOwningPawn());
+		Cast<ARadePlayer>(GetOwningPawn())->TheHUD = this;
 	}
 
 }
 
 void ABaseHUD::PostBeginPlay()
 {
-	if (!ThePlayer && GetOwningPawn() && Cast<ARadeCharacter>(GetOwningPawn()))
+	if (!ThePlayer && GetOwningPawn() && Cast<ARadePlayer>(GetOwningPawn()))
 	{
-		ThePlayer = Cast<ARadeCharacter>(GetOwningPawn());
-		Cast<ARadeCharacter>(GetOwningPawn())->TheHUD = this;
+		ThePlayer = Cast<ARadePlayer>(GetOwningPawn());
+		Cast<ARadePlayer>(GetOwningPawn())->TheHUD = this;
 	}
 }
 
-ARadeCharacter* ABaseHUD::GetPlayer()const
+ARadePlayer* ABaseHUD::GetPlayer()const
 {
 	if (ThePlayer)
 		return  ThePlayer;
