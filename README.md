@@ -7,7 +7,15 @@ UE Dynamic Shooter Template.
 ![alt tag](https://raw.github.com/vagenv/rade/master/Content/Rade/Splash/Splash.png)
 
 
-[ Donate to support me as developer](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL "Paypal Donation")
+
+
+
+
+[ Donate to support me as developer
+-------------------------------------](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL "Paypal Donation")
+
+
+
 
 
 Youtube Link :
