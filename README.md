@@ -10,7 +10,7 @@ UE Dynamic Shooter Template.
 
 
 
-[! [Donate to support me as developer](http://img.youtube.com/vi/_7bOnaS1KZ8/0.jpg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
+[! [Donate to support me as developer](https://www.paypalobjects.com/en_US/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
 
 
 
