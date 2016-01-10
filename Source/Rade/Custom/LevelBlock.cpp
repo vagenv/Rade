@@ -7,7 +7,7 @@
 
 #include "Custom/LevelBlock.h"
 #include "Custom/LevelBlockConstructor.h"
-#include "Weapon/Weapon.h"
+#include "Weapon/ConstructorWeapon.h"
 
 
 ALevelBlock::ALevelBlock(const class FObjectInitializer& PCIP)
@@ -29,11 +29,14 @@ void ALevelBlock::BeginPlay()
 }
 
 // Start the block restore event (Called by weapon)
-void ALevelBlock::StartTimedRestore(AWeapon* newParentWeapon, float Time)
+void ALevelBlock::StartTimedRestore(AConstructorWeapon* newParentWeapon, float Time)
 {
 	if (newParentWeapon)
 	{
+		// Assign Weapon that spawned block
 		ParentWeapon = newParentWeapon;
+
+		// If the 
 		if (Time>0)
 		{
 			FTimerHandle MyHandle;

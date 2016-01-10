@@ -40,24 +40,30 @@ void UInventory::ActionIndex(int32 ItemIndex)
 // Use Item With Ref
 void UInventory::Action(AItem* ItemRef)
 {
-	if (!ItemRef || !ThePlayer)
+	if (!ItemRef || !TheCharacter)
 		return;
-		
-	// Call Events in the BP
-	ItemRef->InventoryUse(ThePlayer);
-	ThePlayer->BP_ItemUsed(ItemRef);
 
-	// If a weapon and player in right state -> equip it
-	if (Cast<AWeapon>(ItemRef) && ThePlayer->IsAnimState(EAnimState::Idle_Run))
+	ARadePlayer* ThePlayer = Cast<ARadePlayer>(TheCharacter);
+
+	// Only Player Can Use Items
+	if (ThePlayer)
 	{
-		AWeapon* TheWeapon = Cast<AWeapon>(ItemRef);
+		// Call Events in the BP
+		ItemRef->InventoryUse(ThePlayer);
+		ThePlayer->BP_ItemUsed(ItemRef);
 
-		// Current Weapon Selected, Unequip it
-		if (ThePlayer->TheWeapon && ThePlayer->TheWeapon->GetClass() == ItemRef->GetClass())
-			ThePlayer->UnEquipCurrentWeapon();
-	
-		// New Weapon Selected, Equip It 
-		else ThePlayer->EquipWeapon(TheWeapon);	
+		// If a weapon and player in right state -> equip it
+		if (Cast<AWeapon>(ItemRef) && ThePlayer->IsAnimState(EAnimState::Idle_Run))
+		{
+			AWeapon* TheWeapon = Cast<AWeapon>(ItemRef);
+
+			// Current Weapon Selected, Unequip it
+			if (ThePlayer->TheWeapon && ThePlayer->TheWeapon->GetClass() == ItemRef->GetClass())
+				ThePlayer->UnEquipCurrentWeapon();
+
+			// New Weapon Selected, Equip It 
+			else ThePlayer->EquipWeapon(TheWeapon);
+		}
 	}
 }
 
@@ -66,22 +72,22 @@ void UInventory::Action(AItem* ItemRef)
 void UInventory::ThrowOutIndex(int32 ItemIndex)
 {
 	// Inside the list of items
-	if (Items.IsValidIndex(ItemIndex) && ThePlayer && ThePlayer->IsAnimState(EAnimState::Idle_Run))
+	if (Items.IsValidIndex(ItemIndex) && TheCharacter && TheCharacter->IsAnimState(EAnimState::Idle_Run))
 	{
 		// Check if current weapon, can't throw out weapon that is equiped
-		if (Items[ItemIndex].Archetype && ThePlayer->TheWeapon 
-			&& ThePlayer->TheWeapon->GetClass() == Items[ItemIndex].Archetype.GetDefaultObject()->GetClass())
+		if (Items[ItemIndex].Archetype && TheCharacter->TheWeapon
+			&& TheCharacter->TheWeapon->GetClass() == Items[ItemIndex].Archetype.GetDefaultObject()->GetClass())
 		{
 			return;
 		}
 		
 
-		UWorld* const World = ThePlayer->GetWorld();
+		UWorld* const World = TheCharacter->GetWorld();
 		if (World && Items[ItemIndex].Archetype && Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
 		{
 			// Get Player Rotation
-			FRotator rot = ThePlayer->GetActorRotation();
-			FVector spawnLoc = rot.Vector() * 200 + ThePlayer->FirstPersonCameraComponent->GetComponentLocation()+ FVector(0, 0, -50);
+			FRotator rot = TheCharacter->GetActorRotation();
+			FVector spawnLoc = TheCharacter->GetActorLocation() + rot.Vector() * 200 + FVector(0, 0, 50);
 
 
 			AItemPickup* newPickup;
@@ -132,7 +138,7 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 				newPickup->ActivatePickupPhysics();
 				if (newPickup->Mesh && newPickup->Mesh->IsSimulatingPhysics())
 				{
-					newPickup->Mesh->AddImpulse(rot.Vector() * 12000, NAME_None, true);
+					newPickup->Mesh->AddImpulse(rot.Vector() * 120, NAME_None, true);
 				}
 				if (newPickup->SkeletalMesh && newPickup->SkeletalMesh->IsSimulatingPhysics())
 				{
@@ -159,6 +165,76 @@ void UInventory::ThrowOut(AItem* ItemRef)
 		}
 	}
 }
+
+// Throw out all Items
+void UInventory::ThrowOutAllItems()
+{
+	for (int32 ItemIndex = 0; ItemIndex < Items.Num(); ItemIndex++)
+	{
+		// Inside the list of items
+		if (Items.IsValidIndex(ItemIndex) && TheCharacter)
+		{
+
+
+			UWorld* const World = TheCharacter->GetWorld();
+			if (World && Items[ItemIndex].Archetype && Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
+			{
+
+				// Get Player Rotation
+				FRotator rot = TheCharacter->GetActorRotation();
+				FVector spawnLoc = TheCharacter->GetActorLocation()+ rot.Vector() * 200 + FVector(FMath::RandRange(-200, 200), FMath::RandRange(-200, 200), 50);
+
+
+				AItemPickup* newPickup;
+				AItem* newItem = Items[ItemIndex].Archetype->GetDefaultObject<AItem>();
+
+				// Spawn Item Pickup archtype
+				if (newItem && newItem->ItemPickupArchetype)
+					newPickup = World->SpawnActor<AItemPickup>(newItem->ItemPickupArchetype, spawnLoc, rot);
+
+				// Spawn Default pickup
+				else newPickup = World->SpawnActor<AItemPickup>(AItemPickup::StaticClass(), spawnLoc, rot);
+
+				if (newPickup)
+				{
+					newPickup->SetReplicates(true);
+					if (newItem)
+					{
+						//printr("Death Item "+newItem->ItemName);
+						newItem->BP_ItemDroped(newPickup);
+						newItem->ItemCount = Items[ItemIndex].ItemCount;
+						newPickup->Item = newItem->GetClass();
+					
+						if (newItem->PickupMesh)
+						{
+							newPickup->Mesh->SetStaticMesh(newItem->PickupMesh);
+						}
+						else if (newItem->PickupSkelMesh)
+						{
+							newPickup->SkeletalMesh->SetSkeletalMesh(newItem->PickupSkelMesh);
+						}
+
+					}
+
+					newPickup->bAutoPickup = true;
+					newPickup->ActivatePickupPhysics();
+					if (newPickup->Mesh && newPickup->Mesh->IsSimulatingPhysics())
+					{
+						newPickup->Mesh->AddImpulse(rot.Vector() * 120, NAME_None, true);
+					}
+					if (newPickup->SkeletalMesh && newPickup->SkeletalMesh->IsSimulatingPhysics())
+					{
+						newPickup->SkeletalMesh->AddForce(rot.Vector() * 12000, NAME_None, true);
+					}
+				}
+			}
+		}
+	}
+	Items.Empty();
+}
+
+
+
 
 // Item Picked up from the pickup
 void UInventory::ItemPickedUp(AItemPickup* ThePickup)
@@ -194,15 +270,15 @@ FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 	{
 
 		// If new Item is weapon and same type as current weapon
-		if (newItem->GetDefaultObject<AWeapon>() && ThePlayer && ThePlayer->TheWeapon && ThePlayer->TheWeapon->GetClass() == newItem->GetDefaultObject<AWeapon>()->GetClass())
+		if (newItem->GetDefaultObject<AWeapon>() && TheCharacter && TheCharacter->TheWeapon && TheCharacter->TheWeapon->GetClass() == newItem->GetDefaultObject<AWeapon>()->GetClass())
 		{
 			// Add Ammo to the current weapon equiped
-			ThePlayer->TheWeapon->AddAmmo(newItem->GetDefaultObject<AWeapon>());
+			TheCharacter->TheWeapon->AddAmmo(newItem->GetDefaultObject<AWeapon>());
 
 			// Find the weapon data and return it.
 			for (int32 i = 0; i < Items.Num(); i++)
 			{
-				if (Items.IsValidIndex(i) && Items[i].Archetype.GetDefaultObject()->GetClass() == ThePlayer->TheWeapon->GetClass())
+				if (Items.IsValidIndex(i) && Items[i].Archetype.GetDefaultObject()->GetClass() == TheCharacter->TheWeapon->GetClass())
 					return &Items[i];
 			}
 			return NULL;
@@ -237,6 +313,9 @@ FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 
 	// New Item 
 	AItem* newItemBase = newItem->GetDefaultObject<AItem>();
+
+	if (!newItemBase)return nullptr;
+
 	FItemData newData = FItemData(newItem, newItemBase->ItemName, newItemBase->ItemIcon, newItemBase->Weight, newItemBase->ItemCount);
 
 	// Add New item to item list and update inventory
@@ -246,12 +325,13 @@ FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 	return &Items[Items.Num()-1];
 }
 
-// Same as AddItem but with value struct return
+// BP Function. Returns AddItem Result
 FItemData UInventory::AddNewItem(TSubclassOf<AItem> newItem)
 {
 	return *(AddItem(newItem));
 }
-// Remp with ID
+
+// Remove item with ID
 void UInventory::RemoveItemIndex(int32 ItemID)
 {
 	if (!Items.IsValidIndex(ItemID))return;
@@ -267,18 +347,44 @@ void UInventory::RemoveItem(AItem* DeleteItem)
 	// Find Item in item list
 	for (int32 i = 0; i < Items.Num(); i++)
 	{
-		if (!Items.IsValidIndex(i) && Items[i].Archetype->GetDefaultObject()->GetClass() == DeleteItem->GetClass())
+		if (Items.IsValidIndex(i) && Items[i].Archetype->GetDefaultObject()->GetClass() == DeleteItem->GetClass())
 			RemoveItemIndex(i);
 	}
 }
+
+// Remp with ID
+void UInventory::RemoveItemIndex_Count(int32 ItemID, int32 ItemRemoveCount)
+{
+	if (!Items.IsValidIndex(ItemID))return;
+	if (Items[ItemID].ItemCount>ItemRemoveCount)
+	{
+		Items[ItemID].ItemCount -= ItemRemoveCount;
+	}
+	else Items.RemoveAt(ItemID);
+	UpdateInfo();
+}
+
+// Remove Item with ref
+void UInventory::RemoveItem_Count(AItem* DeleteItem,int32 ItemRemoveCount)
+{
+	if (!DeleteItem)return;
+
+	// Find Item in item list
+	for (int32 i = 0; i < Items.Num(); i++)
+	{
+		if (Items.IsValidIndex(i) && Items[i].Archetype->GetDefaultObject()->GetClass() == DeleteItem->GetClass())
+			RemoveItemIndex_Count(i,ItemRemoveCount);
+	}
+}
+
+
 
 
 // Inventory Updated
 void UInventory::UpdateInfo()
 {
-
 	// Event in HUD that Inventory Updated
-	if (ThePlayer && ThePlayer->TheHUD)  ThePlayer->TheHUD->BP_InventoryUpdated();
+	if (TheCharacter && Cast<ARadePlayer>(TheCharacter) && Cast<ARadePlayer>(TheCharacter)->TheHUD)  Cast<ARadePlayer>(TheCharacter)->TheHUD->BP_InventoryUpdated();
 
 	if (Items.Num()<1)return;
 
@@ -294,10 +400,10 @@ void UInventory::UpdateInfo()
 }
 
 // Update Item List, Called on client
-void UInventory::ClientReceiveUpdatedItemList()
+void UInventory::OnRep_ItemListUpdated()
 {
-	if (ThePlayer && ThePlayer->TheHUD)  
-		ThePlayer->TheHUD->BP_InventoryUpdated();
+	if (TheCharacter && Cast<ARadePlayer>(TheCharacter) && Cast<ARadePlayer>(TheCharacter)->TheHUD)
+		Cast<ARadePlayer>(TheCharacter)->TheHUD->BP_InventoryUpdated();
 }
 
 // Load Inventory
@@ -313,10 +419,10 @@ void UInventory::LoadInventory()
 		}
 	}
 	// Error With Game Mode or Save file ref, retry after 0.5 sec
-	if (!TheGM || !TheGM->SaveFile && ThePlayer)
+	if (!TheGM || !TheGM->SaveFile && TheCharacter)
 	{
 		FTimerHandle MyHandle;
-		ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &UInventory::LoadInventory, 0.5, false);
+		TheCharacter->GetWorldTimerManager().SetTimer(MyHandle, this, &UInventory::LoadInventory, 0.5, false);
 	}
 
 	// Set Inventory Items data to items data from save file
@@ -327,7 +433,7 @@ void UInventory::LoadInventory()
 void UInventory::SaveInventory()
 {
 	// Save current weapon stats
-	if (ThePlayer && ThePlayer->TheWeapon)ThePlayer->TheWeapon->SaveCurrentWeaponStats();
+	if (TheCharacter && TheCharacter->TheWeapon)TheCharacter->TheWeapon->SaveCurrentWeaponStats();
 
 	// Set Savefile items
 	if (TheGM && TheGM->SaveFile)TheGM->SaveFile->Items = Items;
@@ -338,5 +444,5 @@ void UInventory::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UInventory, Items);
 	DOREPLIFETIME(UInventory, TotalWeight);
-	DOREPLIFETIME(UInventory, ThePlayer);
+	DOREPLIFETIME(UInventory, TheCharacter);
 }

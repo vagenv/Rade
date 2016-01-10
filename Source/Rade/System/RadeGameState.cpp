@@ -5,15 +5,11 @@
 #include "RadeGameState.h"
 #include "UnrealNetwork.h"
 
-
-
-ARadeGameState::ARadeGameState()
-{
+ARadeGameState::ARadeGameState(){
 	bReplicates = true;
 }
 
-void ARadeGameState::BeginPlay()
-{
+void ARadeGameState::BeginPlay(){
 	Super::BeginPlay();
 }
 
@@ -22,16 +18,16 @@ void ARadeGameState::OnRep_MessagesList()
 {
 	ChatUpdateDelegate.Broadcast();
 }
+
 // Called on server to add new message
 void ARadeGameState::AddNewChatMessage(FString  TheMessage, class ARadePlayer* ThePlayer)
 {
+	// Add Message
 	TheMessages.Add(FRadeOnineMessageData(TheMessage, ThePlayer));
-
 
 	// Update HUD on server
 	ChatUpdateDelegate.Broadcast();
 }
-
 
 
 // Replication of data

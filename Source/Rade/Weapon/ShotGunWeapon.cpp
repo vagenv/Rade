@@ -18,10 +18,10 @@ void AShotGunWeapon::Fire()
 		FRotator CamRot;
 		ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot); 
 
-		// Get Mesh Fire Socket Location and calculatre Fire end point
-		const FVector StartTrace = Mesh1P->GetSocketLocation(TEXT("MuzzleFlashSocket"));
+		// Get Current Mesh Fire Socket Location and calculatre Fire end point
+		const FVector StartTrace = GetFireSocketTransform().GetLocation();
 		const FVector Direction = CamRot.Vector();
-		const FVector EndTrace = StartTrace + Direction *MainFire.FireDistance;
+		const FVector EndTrace = StartTrace + Direction * MainFire.FireDistance;
 
 		// Derivation by X and Y of each Fire
 		float localx;
@@ -30,19 +30,23 @@ void AShotGunWeapon::Fire()
 		FVector offsetVector;
 		for (int32 i = 0; i < BallsPerShot; i++)
 		{
-			// Get Random withing range
-			localx = FMath::FRandRange(-1, 1);
-			localy = FMath::FRandRange(-1, 1);
+			// Seed out the Direction Angles
+			localx = FMath::FRandRange(-SpreadAngle, SpreadAngle);
+			localy = FMath::FRandRange(-SpreadAngle, SpreadAngle);
 
-			// If not withing circle, divide it
-			if (FMath::Pow(localx, 2) + FMath::Pow(localy, 2) > 1)
+
+			// Check if withing Circle
+			if (FMath::Pow(localx, 2) + FMath::Pow(localy, 2) > SpreadAngle)
 			{
 				localx /= 2;
 				localy /= 2;
 			}
 
-			// The fire end offset  
-			offsetVector = GetActorForwardVector()*localx*SpreadValue + GetActorUpVector()*localy*SpreadValue;
+			// Rotate Vertically
+			offsetVector = Direction.RotateAngleAxis(localx, FVector::UpVector)*MainFire.FireDistance;
+			
+			// Rotate Horizontally
+			offsetVector = offsetVector.RotateAngleAxis(localy, FVector::RightVector);
 
 
 			// Set trace values and perform trace to retrieve hit info

@@ -1,4 +1,3 @@
-// Copyright 2015 Vagen Ayrapetyan
 
 #pragma once
 
@@ -6,20 +5,13 @@
 #include "RadeData.h"
 #include "RadeGameInstance.generated.h"
 
-/**
- * 
- */
+// Custom Game Instance
 UCLASS()
 class RADE_API URadeGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
-
-
 public:
 
-
-	// Constuctor
 
 	URadeGameInstance(const FObjectInitializer& ObjectInitializer);
 
@@ -28,24 +20,32 @@ public:
 	/////					Callable Events and Functions
 
 
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+	// Host Default  Online Map Session
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void StartOnlineGame();
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+
+	// Host Specific Online Map Session
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void StartOnlineGameMap(FString MapName=TEXT("BattleArena"),int32 MaxPlayerNumber=16);
 
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+	// Find all avaiable Online Sessions
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void FindOnlineGames();
 
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+	// Update Avaiable Online Sessions
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void UpdateSessionList();
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+
+	// Join Any Online Session
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void JoinOnlineGame();
 
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+	// Join Specific Online Session
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void JoinSelectedOnlineGame(FAvaiableSessionsData SessionData);
-	// TEST BP FUNCTION
 
-	UFUNCTION(BlueprintCallable, Category = "Network|Test")
+	// Stop Session and Quit Game
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void DestroySessionAndLeaveGame();
 
 
@@ -54,26 +54,32 @@ public:
 	/////					Data about the Sessions and Game Instance
 
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	// Current Online Sessions Search Result
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
 		TArray<FAvaiableSessionsData> CurrentSessionSearch;
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+	// Is Currently Searching Sessions?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
 		bool bIsSearchingSession = false;
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
+	// Local Player Name
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
 		FString PlayerName="Empty Name";
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
+	// Local Player Color
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
 		FLinearColor PlayerColor=FLinearColor::White;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
+	// Local Player Material Settings
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
 		FVector PlayerMaterialSettings = FVector(0);
 
+	//  Start Sessions Selected Map Name
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
+		FString TheMapName = "BattleArena";
 
-	UFUNCTION(BlueprintCallable, Category = "System")
+	// Set Local Player Stats
+	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void SetPlayerStats(FString newPlayerName, FLinearColor newPlayerColor, FVector newMaterialSettings);
 
 
@@ -83,7 +89,6 @@ public:
 
 
 	//	Variable Part for FINDING a Session
-
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 
 	// Session Setting

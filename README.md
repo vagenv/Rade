@@ -59,11 +59,11 @@ All the systems were designed to work in single player and mutiplayer mode with 
 
 
 Input:
-WASD 			- Movement
+WASD 				- Movement
 Left Mouse Button		- Fire			- Main Fire of Weapon
-Right Mouse Button 	- AltFire 		- Alternative Fire of weapon
+Right Mouse Button 		- AltFire 		- Alternative Fire of weapon
+Q				- Melee Action		- Melee Attack with Weapon
 E  				- Action 		- Pickup Item, Use Item, Equip Weapon.
-Q				- AltAction 		- Alternative Action With item
 R				- Reload 		- Reload Weapon
 F				- Faction 		- Drop Item
 Spacebar			- Jump/DoubleJump
@@ -73,7 +73,7 @@ Spacebar			- Jump/DoubleJump
 
 
 Unreal Engine Forum Page:
-https://forums.unrealengine.com/showthread.php?87938-Rade-Dynamic-Shooter-Template&p=399423
+https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
 
 
 

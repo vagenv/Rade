@@ -18,12 +18,12 @@ AConstructorWeapon::AConstructorWeapon(const FObjectInitializer& PCIP)
 {
 	bAltFireEnabled = true;
 	bUseAmmo = false;
+	bRestoreAmmo = false;
 }
 
 void AConstructorWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// Find Level Block Constructor
 	if (GetWorld() && GetWorld()->GetAuthGameMode() && GetWorld()->GetAuthGameMode<ARadeGameMode>())
 	{
@@ -31,11 +31,13 @@ void AConstructorWeapon::BeginPlay()
 	}
 }
 
-// Get Linebatcher pointer
-static ULineBatchComponent* GetDebugLineBatcher(const UWorld* InWorld, bool bPersistentLines, float LifeTime, bool bDepthIsForeground)
-{
-	return (InWorld ? (bDepthIsForeground ? InWorld->ForegroundLineBatcher : ((bPersistentLines || (LifeTime > 0.f)) ? InWorld->PersistentLineBatcher : InWorld->LineBatcher)) : NULL);
-}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///								 Fire  Events
+
 
 
 // Fire Event
@@ -61,13 +63,17 @@ void AConstructorWeapon::Fire()
 
 
 		// Calculate the the end point where player is looking at
-		FVector StartTrace = Mesh1P->GetSocketLocation(TEXT("FireSocket"));
+		FVector StartTrace = GetFireSocketTransform().GetLocation();
 		FVector Direction = CamRot.Vector();
 		FVector EndTrace = StartTrace + Direction *MainFire.FireDistance;
 
 		// Add New Block To Constructor
 		if (TheLevelBlockConstructor->AddNewBlock(BlockArchetype, EndTrace, this))
+		{
 			UseMainFireAmmo();
+			BP_BlockSpawned();
+		}
+			
 	}
 }
 
@@ -90,21 +96,91 @@ void AConstructorWeapon::AltFire()
 		ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot);
 
 		// Calculate the the end point where player is looking at
-		FVector StartTrace = Mesh1P->GetSocketLocation(TEXT("FireSocket"));
+		FVector StartTrace = GetFireSocketTransform().GetLocation();
 		FVector Direction = CamRot.Vector();
 		FVector EndTrace = StartTrace + Direction *MainFire.FireDistance;
 
 		// Destroy block that is being looked at
 		if (TheLevelBlockConstructor->DestroyBlock(EndTrace, this)) 
-			MainFire.AddAmmo(MainFire.FireCost,0);
+		{
+			MainFire.AddAmmo(MainFire.FireCost, 0);
+			BP_BlockDestroyed();
+		}
+		
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///								 Additional Events
+
+// Ammo restore
+void AConstructorWeapon::AmmoRestore(){
+	MainFire.AddAmmo(AmmoRestoreValue, 0);
+}
+
+// Equip End
+void AConstructorWeapon::EquipEnd()
+{
+	Super::EquipEnd();
+
+	// Get Constructor reference
+	if (!TheLevelBlockConstructor && GetWorld() && GetWorld()->GetAuthGameMode() && GetWorld()->GetAuthGameMode<ARadeGameMode>())
+		TheLevelBlockConstructor = GetWorld()->GetAuthGameMode<ARadeGameMode>()->TheLevelBlockConstructor;
+
+
+	if (bRestoreAmmo && AmmoRestoreTime>0)
+		GetWorldTimerManager().SetTimer(AmmoRestoreHandle, this, &AConstructorWeapon::AmmoRestore, AmmoRestoreTime, true);
+
+	// Start Drawing Box
+	if (ThePlayer)
+	{
+		// If you are server
+		if (ThePlayer->ThePC)GetWorldTimerManager().SetTimer(DrawCubeHandle, this, &AConstructorWeapon::DrawBox, BoxDrawUpdate, true);
+
+		// if you are client
+		else Client_EnableDrawBox();
+	}
+
+}
+
+// Unequip Start
+void AConstructorWeapon::UnEquipStart()
+{
+	// End Drawing Box
+	if (ThePlayer)
+	{	
+		// On Server
+		if (ThePlayer->ThePC)
+		{
+			GetWorldTimerManager().ClearTimer(DrawCubeHandle);
+			GetWorldTimerManager().ClearTimer(AmmoRestoreHandle);
+		}
+		// On Client
+		else Client_DisableDrawBox();
+	}
+
+	Super::UnEquipStart();
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///								Draw Box Events
+
+
+// Get Linebatcher pointer
+static ULineBatchComponent* GetDebugLineBatcher(const UWorld* InWorld, bool bPersistentLines, float LifeTime, bool bDepthIsForeground)
+{
+	return (InWorld ? (bDepthIsForeground ? InWorld->ForegroundLineBatcher : ((bPersistentLines || (LifeTime > 0.f)) ? InWorld->PersistentLineBatcher : InWorld->LineBatcher)) : NULL);
+}
+
 
 // Draw Box Update
 void AConstructorWeapon::DrawBox()
 {
 	// Get pointer to player
-	if (!ThePlayer && GetOwner()  && Cast<ARadePlayer>(GetOwner()))
+	if (!ThePlayer && GetOwner() && Cast<ARadePlayer>(GetOwner()))
 	{
 		ThePlayer = Cast<ARadePlayer>(GetOwner());
 	}
@@ -114,10 +190,10 @@ void AConstructorWeapon::DrawBox()
 		// Get Camera location and rotation
 		FVector CamLoc;
 		FRotator CamRot;
-		ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot); 
+		ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot);
 
 		// Calculate the the end point where player is looking at
-		FVector StartTrace = Mesh1P->GetSocketLocation(TEXT("FireSocket"));
+		FVector StartTrace = GetFireSocketTransform().GetLocation();
 		FVector Direction = CamRot.Vector();
 		FVector EndTrace = StartTrace + Direction *MainFire.FireDistance;
 
@@ -129,12 +205,12 @@ void AConstructorWeapon::DrawBox()
 
 
 		// Draw lines from 2 points in 3 axis
-		ULineBatchComponent* const LineBatcher = GetDebugLineBatcher(GetWorld(), false, BoxDrawUpdate,false);
+		ULineBatchComponent* const LineBatcher = GetDebugLineBatcher(GetWorld(), false, BoxDrawUpdate, false);
 		if (LineBatcher != NULL)
 		{
 			float LineLifeTime = (BoxDrawUpdate > 0.f) ? BoxDrawUpdate : LineBatcher->DefaultLifeTime;
 			uint8 DepthPriority = 0;
-	
+
 			LineBatcher->DrawLine(EndTrace + FVector(BoxDrawSize, BoxDrawSize, BoxDrawSize), EndTrace + FVector(BoxDrawSize, -BoxDrawSize, BoxDrawSize), DrawBoxColor, DepthPriority, DrawBoxThickness, LineLifeTime);
 			LineBatcher->DrawLine(EndTrace + FVector(BoxDrawSize, -BoxDrawSize, BoxDrawSize), EndTrace + FVector(-BoxDrawSize, -BoxDrawSize, BoxDrawSize), DrawBoxColor, DepthPriority, DrawBoxThickness, LineLifeTime);
 			LineBatcher->DrawLine(EndTrace + FVector(-BoxDrawSize, -BoxDrawSize, BoxDrawSize), EndTrace + FVector(-BoxDrawSize, BoxDrawSize, BoxDrawSize), DrawBoxColor, DepthPriority, DrawBoxThickness, LineLifeTime);
@@ -154,75 +230,13 @@ void AConstructorWeapon::DrawBox()
 	}
 }
 
-
-
-// Ammo restore
-void AConstructorWeapon::AmmoRestore(){
-	MainFire.AddAmmo(AmmoRestoreValue, 0);
-}
-
-// Equip End
-void AConstructorWeapon::EquipEnd()
-{
-	Super::EquipEnd();
-
-	// Get Constructor reference
-	if (!TheLevelBlockConstructor && GetWorld() && GetWorld()->GetAuthGameMode() && GetWorld()->GetAuthGameMode<ARadeGameMode>())
-	{
-		TheLevelBlockConstructor = GetWorld()->GetAuthGameMode<ARadeGameMode>()->TheLevelBlockConstructor;
-	}
-
-	// Start Drawing Box
-	if (ThePlayer)
-	{
-		if (ThePlayer->ThePC)
-		{
-			// If you are server
-			GetWorldTimerManager().SetTimer(DrawCubeHandle, this, &AConstructorWeapon::DrawBox, BoxDrawUpdate, true);
-			if (bRestoreAmmo && AmmoRestoreTime>0)GetWorldTimerManager().SetTimer(AmmoRestoreHandle, this, &AConstructorWeapon::AmmoRestore, AmmoRestoreTime, true);
-		}
-		else 
-		{
-			// if you are client
-			Client_EnableDrawBox();
-		}
-	}
-
-}
-
-// Unequip Start
-void AConstructorWeapon::UnEquipStart()
-{
-	if (ThePlayer)
-	{
-		// End Drawing Box
-		if (ThePlayer->ThePC)
-		{
-			// On Server
-			GetWorldTimerManager().ClearTimer(DrawCubeHandle);
-			GetWorldTimerManager().ClearTimer(AmmoRestoreHandle);
-		}
-		else 
-		{
-			// On Client
-			Client_DisableDrawBox();
-		}
-	}
-
-	Super::UnEquipStart();
-}
-
-
 // Enable Draw Box on client 
-void AConstructorWeapon::Client_EnableDrawBox_Implementation()
-{
+void AConstructorWeapon::Client_EnableDrawBox_Implementation(){
 	GetWorldTimerManager().SetTimer(DrawCubeHandle, this, &AConstructorWeapon::DrawBox, BoxDrawUpdate, true);
-	if (AmmoRestoreTime>0)GetWorldTimerManager().SetTimer(AmmoRestoreHandle, this, &AConstructorWeapon::AmmoRestore, AmmoRestoreTime, true);
 }
 
 // Disable Drwa box on client
-void AConstructorWeapon::Client_DisableDrawBox_Implementation()
-{
+void AConstructorWeapon::Client_DisableDrawBox_Implementation(){
 	GetWorldTimerManager().ClearTimer(DrawCubeHandle);
-	GetWorldTimerManager().ClearTimer(AmmoRestoreHandle);
 }
+

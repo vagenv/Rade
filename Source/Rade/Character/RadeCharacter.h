@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "RadeData.h"
 #include "RadeCharacter.generated.h"
 
 UCLASS()
@@ -12,7 +13,10 @@ class RADE_API ARadeCharacter : public ACharacter
 
 public:
 
-	//							Basic Events
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							Base  
 
 	ARadeCharacter(const class FObjectInitializer& PCIP);
 
@@ -21,49 +25,60 @@ public:
 
 
 
-	//							Basic Refs
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	//									Components and Important References  
+
+
+	// Third Person Anim Instance
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
+	class URadeAnimInstance * BodyAnimInstance;
+
+	// Movement Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
+		UCharacterMovementComponent* CharacterMovementComponent;
+
+	//  Inventory Component
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
 	class UInventory* TheInventory;
 
-
-	UPROPERTY(ReplicatedUsing = CurrentWeaponUpdated, EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	// Current Weapon
+	UPROPERTY(ReplicatedUsing = CurrentWeaponUpdated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
 	class AWeapon* TheWeapon;
 
-	//							Basic Props
 
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							Status and Basic Data  
+
+	// Character Maximum Health
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		float MaxHealth=100;
+
+	// Character Current Health
 	UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		float Health=50;
 
-	UPROPERTY(Replicated)
+	// Is The Character Dead?
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
 		bool bDead;
 
 
 	// Character Name 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		FString CharacterName;
 
 	// Character Color
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		FLinearColor CharacterColor = FLinearColor::White;
 
 
-	// Default inventory items
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+
+
+	// Default Inventory Items
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade Character")
 		TArray<TSubclassOf<class AItem> >  DefaultInventoryItems;
-
-
-	//  Fall damage
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Falling")
-		float FallAcceptableValue=1000;
-
-	UPROPERTY(EditAnywhere, Category = "Falling")
-		FRuntimeFloatCurve FallDamageCurve;
-
-	//							Internal events
 
 
 	// Called When Weapon Changed 
@@ -71,33 +86,101 @@ public:
 		virtual void CurrentWeaponUpdated(){};
 
 
+	// Called from inventory when player wants to equip new weapon
+	UFUNCTION(BlueprintCallable, Category = "Rade")
+		virtual void EquipWeapon(class AWeapon* NewWeaponClass);
+
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//								Take Damage, Death and Revive
+
+	//  Fall Velocity Acceptable Value, Damage will be applied if fall velocity is more than value
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
+		float FallAcceptableValue = 1000;
+
+	// Fall Velocity To Damage Curve
+	UPROPERTY(EditAnywhere, Category = "Rade Character")
+		FRuntimeFloatCurve FallDamageCurve;
+
 
 
 	// Take Damage override
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)override;
 
-
+	// Override Land Event
 	virtual void Landed(const FHitResult& Hit)override;
 
 
+	// Can Character Revive after death
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
+		bool bCanRevive = false;
 
+	// Delay Before Revived. (Count started after death event)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
+		float ReviveTime = 5;
 
-	// Death Events
+	// Death on Server
 	virtual void ServerDie();
 
+
+	// Called on all users when Character Died
 	UFUNCTION(NetMulticast, Reliable)
 		void GlobalDeath();
 	virtual void GlobalDeath_Implementation();
 
+	// Revive on Server
+	virtual void ServerRevive();
+
+	// Called on all users when Character revived
+	UFUNCTION(NetMulticast, Reliable)
+		void GlobalRevive();
+	virtual void GlobalRevive_Implementation();
+
+	// Start Ragdoll Mode 
 	virtual void ForceRagdoll();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Character State")
-		void BP_Death();
-	UFUNCTION(BlueprintImplementableEvent, Category = "Character State")
-		void BP_Revive();
+	// BP Server Event - Character Died 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_CharacterDeath();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_CharacterRevive();
+
+private:
+	// Default Mesh Offset before ragdoll
+	FVector Mesh_DefaultRelativeLoc;
+	// Default Mesh Rotation before ragdoll
+	FRotator Mesh_DefaultRelativeRot;
+
+public:
 
 
 
-	//			Blueprint Events 
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//								Animation
+
+	// Called on server to set current animation
+	UFUNCTION(Reliable, Server, WithValidation)
+		void ServerSetAnimID(EAnimState AnimID);
+	virtual bool ServerSetAnimID_Validate(EAnimState AnimID);
+	virtual void ServerSetAnimID_Implementation(EAnimState AnimID);
+
+	// Called on all users to set server current animation
+	UFUNCTION(NetMulticast, Reliable)
+		void Global_SetAnimID(EAnimState AnimID);
+	virtual void Global_SetAnimID_Implementation(EAnimState AnimID);
+
+	// Is the Character in Specific Anim State
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
+		virtual bool IsAnimState(EAnimState TheAnimState);
+
+	// Is Character in Air
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
+		bool IsAnimInAir();
 	
 };

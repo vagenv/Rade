@@ -3,11 +3,10 @@
 #pragma once
 
 #include "Character/RadeCharacter.h"
-#include "RadeData.h"
 #include "RadePlayer.generated.h"
 
 
-
+// Main Player Class, Includes First Person and 2 Cameras.
 UCLASS(config = Game)
 class RADE_API ARadePlayer : public ARadeCharacter
 {
@@ -15,41 +14,46 @@ class RADE_API ARadePlayer : public ARadeCharacter
 
 public:
 
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//				Base 
+
 	ARadePlayer(const class FObjectInitializer& PCIP);
 
-	// Main Events
+	
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime)override;
 
-	// Basic References
 
-	// Player Controller
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////						 Components and Important References
+
+	// Rade Player Controller
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
 	class ARadePC* ThePC;
 
-	// HUD
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
+	// Player HUD
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
 	class ABaseHUD* TheHUD;
 	
-	// First Person Anim Instance
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
+	// First Person Mesh Anim Instance
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade Player")
 	class URadeAnimInstance * ArmsAnimInstance;
 
-	// Third Person Anim Instance
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
-	class URadeAnimInstance * BodyAnimInstance;
-
-	// Movement Component
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
-	UCharacterMovementComponent* PlayerMovementComponent;
-
-	// Current Pickup
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
-	class AItemPickup * currentPickup;
 
 	//  First Person Mesh
 	UPROPERTY(Replicated,VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
+
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							Camera
 
 	// First Person Camera
 	UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -68,28 +72,97 @@ public:
 		ECameraState DefaultCameraState = ECameraState::FP_Camera;
 
 	// Current Camera State
-	UPROPERTY(ReplicatedUsing = UpdateComponentsVisibility)
+	UPROPERTY(ReplicatedUsing = UpdateComponentsVisibility, EditAnywhere, BlueprintReadWrite, Category = Camera)
 	ECameraState CurrentCameraState = ECameraState::FP_Camera;
 
-	// Save/Load Inventory Enabled
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+
+	// Camera Mouse Sensivity
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+		float CameraMouseSensivity = 1.0;
+
+	// Player pressed ChangeCamera
+	virtual void ChangeCamera();
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//								Inventory and Item Control
+
+
+	// Currently Selected Pickup Actor
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
+	class AItemPickup * currentPickup;
+
+	// Save/Load Inventory during game Start/End ?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
 		bool bSaveInventory;
 
-
-
-	// Updates Component Visibility on Camera State Change
+	// Updates Component Visibility when Camera State Changes
 	UFUNCTION()
 	void UpdateComponentsVisibility();
 
 
 
-	// Weapon Events
+	// Current Selected item index in Inventory . Replicated.
+	UPROPERTY(Replicated)
+		int32 CurrentItemSelectIndex = 0;
+
+	// Is Player inventory open? . Replicated.
+	UPROPERTY(Replicated)
+		bool bInventoryOpen = false;
+
+
+
+	// Called From Client to set Inventory Visibility on server
+	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
+		void SetInventoryVisible(bool bVisible);
+	bool SetInventoryVisible_Validate(bool bVisible);
+	void SetInventoryVisible_Implementation(bool bVisible);
+
+	// Called From Client to set Inventory Item Selected on server
+	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
+		void SetInventorySelectIndex(int32 index);
+	bool SetInventorySelectIndex_Validate(int32 index);
+	void SetInventorySelectIndex_Implementation(int32 index);
+
+
+
+	// Item was used
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_ItemUsed(class AItem* TheItem);
+
+	// Item Was Dropped
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_ItemDroped(class AItemPickup* ThePickup);
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							 Weapon Control and Events
 
 	// Called from inventory when player wants to equip new weapon
-	void EquipWeapon(class AWeapon* NewWeaponClass);
+	void EquipWeapon(class AWeapon* NewWeaponClass)override;
 
 	// Called when player unequips current weapon
 	void UnEquipCurrentWeapon();
+
+
+	// Time before new weapon is spawned if returning to empty weapon state
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
+		float DefaultWeaponEquipDelay = 0.4f;
+
+
+	// Current Weapon Stats Was updated.
+	UFUNCTION()
+		virtual void CurrentWeaponUpdated()override;
+
+
+	// Can Player Fire in Air
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
+		bool bCanFireInAir = false;
+
+
 
 private:
 	// Internal Events when weapon in changed
@@ -99,101 +172,24 @@ private:
 	void UnEquipEnd();
 
 
-	// The next weapon to equip from inventory
+	// The next weapon class to equip from inventory (During weapon change)
 	UPROPERTY()
 		class AWeapon* PendingEquipWeapon;
+
+
 
 public:
 
 
-	// Action Events
-
-	// When Item Is Used
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_ItemUsed(class AItem* TheItem);
-
-	// When Item is dropped
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_ItemDroped(class AItemPickup* thePickup);
-
-	// Player Pressed Action
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_Action();
-
-	// Player Pressed AltAction
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_AltAction();
-
-	// Player Pressed FAction
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_FAction();
-
-	// Player Pressed Reload
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_Reload();
-
-	// Player Pressed Toggle Inventory
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_ToggleInventory();
-
-	// Player Pressed Jump
-	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
-		void BP_Jump();
-
-
-
-	// Internal Value
-
-	// Current Selected item index replicated between server and client
-	UPROPERTY(Replicated)
-		int32 CurrentItemSelectIndex = 0;
-
-	// If The player Inventory is open
-	UPROPERTY(Replicated)
-		bool bInventoryOpen = false;
-
-
-	// Time before new weapon is spawned if no weapon is currently equiped
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-		float DefaultWeaponEquipDelay=0.4f;
-
-
-	// Called From Client to set Inventory Visibility on server
-	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Item")
-		void SetInventoryVisible(bool bVisible);
-	bool SetInventoryVisible_Validate(bool bVisible);
-	void SetInventoryVisible_Implementation(bool bVisible);
-
-	// Called From Client to set Inventory Item Selected on server
-	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Item")
-		void SetInventorySelectIndex(int32 index);
-	bool SetInventorySelectIndex_Validate(int32 index);
-	void SetInventorySelectIndex_Implementation(int32 index);
-
-
-	// If Current weapon Stats were updated.
-	UFUNCTION()
-	virtual void CurrentWeaponUpdated()override;
-
-
-	// Mouse  Sensivity
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
-		float CameraMouseSensivity = 1.0;
-
-	// Can Player Fire in Air
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
-		bool bCanFireInAir = false;
-
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//						Jetpack	Props
 
-	// Can Player 
-
-	// Is jetpack enabled
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	// Is jetpack enabled ?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
 		bool bJetPackEnabled=true;
 
 	// Jetpack Struct properties
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
 		FJetPackData JumpJetPack;
 
 	// Jetpack restore timer handle
@@ -206,34 +202,52 @@ public:
 	void JetPackFillUp();
 
 
-	// Reset the car function
-	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Network")
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//			Network Chat And Properties
+
+
+	// Add Chat Message
+	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
 		void AddChatMessage(const FString & TheMessage);
 	bool AddChatMessage_Validate(const FString & TheMessage);
-	void AddChatMessage_Implementation(const FString & TheMessage);
-	// Reset the car function
-	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Status")
+	void AddChatMessage_Implementation(const FString & TheMessage)	;
+
+	// Set Player Stats
+	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
 		void SetPlayerStats(const FString & newPlayerName, FLinearColor newPlayerColor);
 	bool SetPlayerStats_Validate(const FString & newPlayerName, FLinearColor newPlayerColor);
 	void SetPlayerStats_Implementation(const FString & newPlayerName, FLinearColor newPlayerColor);
 
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//					Animation State
 
 
+	// Set Animation ID
+	virtual void Global_SetAnimID_Implementation(EAnimState AnimID)override;
 
-	//			Death Revive
+	// Is Player in Anim State
+	virtual bool IsAnimState(EAnimState TheAnimState)override;
 
-	// Can Player Revive after death
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
-		bool bCanRevive = false;
 
-	// Revive delay
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
-		float ReviveTime = 5;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//			Death and Revive
+
+
+	// Called in BP when player died
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_PlayerDied();
+
+	// Called in BP when player revived
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_PlayerRevived();
+
 protected:
 
 	// Called When Player Revives
-	virtual void Revive();
+	virtual void ServerRevive()override;
 
 	// Called On Server when player Died
 	virtual void ServerDie()override;
@@ -241,65 +255,72 @@ protected:
 	// Called on all users when player died
 	virtual void GlobalDeath_Implementation()override;
 
-	// Default Mesh Offset before ragdoll
-	FVector Mesh_InGameRelativeLoc;
-	// Default Mesh Rotation before ragdoll
-	FRotator Mesh_InGameRelativeRot;
-
+	// Called on all users when player revived
+	virtual void GlobalRevive_Implementation();
 
 public:
 
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-	//			Anim Replication
-
-	// Called on server to set current animation
-	UFUNCTION(Reliable, Server, WithValidation)
-		void ServerSetAnimID(EAnimState AnimID);
-	virtual bool ServerSetAnimID_Validate(EAnimState AnimID);
-	virtual void ServerSetAnimID_Implementation(EAnimState AnimID);
-	
-	// Called on all users to set server current animation
-	UFUNCTION(NetMulticast, Reliable)
-		void Global_SetAnimID(EAnimState AnimID);
-		virtual void Global_SetAnimID_Implementation(EAnimState AnimID);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
-		bool IsAnimState(EAnimState TheAnimState);
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Anim State")
-		bool IsAnimInAir();
-
-	// Called in BP when player died
-	UFUNCTION(BlueprintImplementableEvent, Category = "Player State")
-		void BP_PlayerDied();
-
-	// Called in BP when player revived
-	UFUNCTION(BlueprintImplementableEvent, Category = "Player State")
-		void BP_PlayerRevived();
+	//			State Checking
 
 
 	// Called to reset current move speed when player fired (Fire after sprint)
-	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void ResetMoveSpeed();
-
-
 
 	// Check player state if he can fire
 	virtual bool CanShoot();
 
 	// Can player Sprint
-	UFUNCTION(BlueprintCallable, Category = "Movement")
+	UFUNCTION(BlueprintCallable, Category = "Rade")
 		bool  CanSprint();
 
 
 
+	// Player Landed
+	virtual void Landed(const FHitResult& Hit)override;
+
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//						Blueprint  Action Events
+
+	// Player Pressed Action
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_Action();
+
+	// Player Pressed MeleeAction
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_MeleeAction();
+
+	// Player Pressed FAction
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_FAction();
+
+	// Player Pressed Reload
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_Reload();
+
+	// Player Pressed Toggle Inventory
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_ToggleInventory();
+
+	// Player Pressed Jump
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_Jump();
+
 
 protected:
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//			Network  :  Client Action Input -> Server Action Input
 
 
 
@@ -328,15 +349,13 @@ protected:
 	virtual bool AltFireEnd_Validate();
 	virtual void AltFireEnd_Implementation();
 
-	// Player pressed ChangeCamera
-	virtual void ChangeCamera();
 
-	// Player Landed
-	virtual void Landed(const FHitResult& Hit)override;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+	//			Internal Client Input 
 
 protected:
+
 	// Binding Player Input to internal events
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
@@ -349,9 +368,9 @@ protected:
 
 	//  Player Pressed AltAction, Called on Server
 	UFUNCTION(Reliable, Server, WithValidation)
-	virtual void AltAction();
-	virtual bool AltAction_Validate();
-	virtual void AltAction_Implementation();
+		virtual void MeleeAction();
+	virtual bool MeleeAction_Validate();
+	virtual void MeleeAction_Implementation();
 
 	//  Player Pressed FAction, Called on Server
 	UFUNCTION(Reliable, Server, WithValidation)
@@ -370,6 +389,10 @@ protected:
 		virtual void DoubleJump();
 	virtual bool DoubleJump_Validate();
 	virtual void DoubleJump_Implementation();
+
+
+
+
 
 
 	// Player Pressed Jump, Called on client

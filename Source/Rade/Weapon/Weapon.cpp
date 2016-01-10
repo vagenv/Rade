@@ -47,6 +47,20 @@ void AWeapon::BeginPlay()
 	bShooting = false;
 }
 
+
+// Get Fire Socket 
+FTransform AWeapon::GetFireSocketTransform()
+{
+	if (ThePlayer->CurrentCameraState == ECameraState::FP_Camera) return Mesh1P->GetSocketTransform(FireSocketName);
+	else if (ThePlayer->CurrentCameraState == ECameraState::TP_Camera) return Mesh3P->GetSocketTransform(FireSocketName);
+	else return FTransform();
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Main Fire
+
 // Player Pressed Fire
 void AWeapon::FireStart()
 {
@@ -82,7 +96,7 @@ void AWeapon::PreFire()
 	BP_PreFire();
 
 	if (!ThePlayer)return;
-
+	
 	// If player stopped shooting stop event
 	if (!bShooting )
 	{
@@ -113,6 +127,7 @@ void AWeapon::PreFire()
 		return;
 	}
 
+
 	// The real fire event
 	Fire();
 
@@ -131,6 +146,11 @@ void AWeapon::PreFire()
 	ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::StopFireAnim, 0.1, false);
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Alternative Fire
 
 // Alt Fire Pressed
 void AWeapon::AltFireStart()
@@ -230,33 +250,27 @@ void AWeapon::PreAltFire()
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Equip/UnEquip Part
 
 // Equip Start
 void AWeapon::EquipStart()
 {
 	if (!ThePlayer)return;
 
-	// Bp Equip Start
+	// BP Equip Start
 	BP_Equip_Start();
 
 
 	// Attach First person Mesh
-	if (Mesh1P)	{
+	if (Mesh1P)
 		AttachRootComponentTo(ThePlayer->Mesh1P, FName("WeaponSocket"));
-		Mesh1P->RelativeLocation = (Mesh1P->RelativeLocation);
-		Mesh1P->RelativeRotation = (Mesh1P->RelativeRotation);
-	}
 
 	// Attach Third Person Mesh
-	if (Mesh3P)	{
-		
+	if (Mesh3P)	
 		Mesh3P->AttachTo(ThePlayer->GetMesh(), FName("WeaponSocket"));
-		Mesh3P->RelativeLocation = (Mesh3P->RelativeLocation);
-		Mesh3P->RelativeRotation = (Mesh3P->RelativeRotation);
-		Mesh3P->SetOwnerNoSee(true);
-		Mesh3P->bOwnerNoSee = true;
-	}
-
+	
 	// Load Weapon Data from inventory
 	if (ThePlayer && ThePlayer->TheInventory)
 	{
@@ -280,23 +294,6 @@ void AWeapon::EquipStart()
 	// Delay equip end
 	FTimerHandle myHandle;
 	ThePlayer->GetWorldTimerManager().SetTimer(myHandle, this, &AWeapon::EquipEnd, EquipTime, false);
-
-}
-
-
-
-// Stop Fire Anim after some time
-void AWeapon::StopFireAnim()
-{
-	if (!ThePlayer)return;
-
-	//IsMovingOnGround
-	if (ThePlayer->PlayerMovementComponent && ThePlayer->PlayerMovementComponent->IsMovingOnGround())ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
-	else
-	{
-		//print("End shoot in air");
-		ThePlayer->ServerSetAnimID(EAnimState::Jumploop);
-	}
 
 }
 
@@ -338,6 +335,13 @@ void AWeapon::UnEquipEnd()
 	Destroy();
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Reload Part
+
+
 // Reload Start
 void AWeapon::ReloadWeaponStart()
 {
@@ -372,6 +376,13 @@ void AWeapon::ReloadWeaponEnd()
 	ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											State Checking
+
+
 // Can Weapon Reload ?
 bool AWeapon::CanReload()
 {
@@ -389,6 +400,12 @@ bool AWeapon::CanShoot()
 
 	return true;
 }
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Additional Events
 
 
 // Save Weapon Data
@@ -409,6 +426,29 @@ void AWeapon::SaveCurrentWeaponStats()
 		}
 	}
 }
+
+
+// Stop Fire Anim after some time
+void AWeapon::StopFireAnim()
+{
+	if (!ThePlayer)return;
+
+	//IsMovingOnGround
+	if (ThePlayer->CharacterMovementComponent && ThePlayer->CharacterMovementComponent->IsMovingOnGround())ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
+	else
+	{
+		//print("End shoot in air");
+		ThePlayer->ServerSetAnimID(EAnimState::Jumploop);
+	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Ammo Part
+
+
 
 // Use Main Fire Ammo
 void AWeapon::UseMainFireAmmo()
@@ -446,9 +486,127 @@ void AWeapon::AddAmmo(float newAmmo, int32 newClip)
 	MainFire.AddAmmo(newAmmo,newClip);
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Melee Attack 
+
+// Melee Attack Start
+void AWeapon::PreMeleeAttack()
+{
+	BP_PreMeleeAttack();
+	if (bShooting || bMeleeAttacking)return;
+
+
+	bMeleeAttacking = true;
+
+	// Reset After Delay
+	FTimerHandle MyHandle;
+	ThePlayer->GetWorldTimerManager().SetTimer(MyHandle, this, &AWeapon::ResetMeleeAttack, MeleeAttackSpeed, false);
+
+	// Set Anim State
+	if (ThePlayer)ThePlayer->ServerSetAnimID(EAnimState::Melee_Attack);
+
+	// Call Actual Event
+	MeleeAttack();
+}
+
+// Actual Melee Attack
+void AWeapon::MeleeAttack()
+{
+	BP_MeleeAttack();
+
+	if (Mesh1P && ThePlayer && ThePlayer->Controller)
+	{
+		FVector CamLoc;
+		FRotator CamRot;
+		ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot);
+
+		/// Get Camera Location and Rotation
+		FVector Camoffset = ThePlayer->FirstPersonCameraComponent->RelativeLocation;
+		FVector TraceStart = Camoffset + ThePlayer->GetActorLocation() - CamRot.Vector() * 20;
+		FVector TraceEnd = Camoffset + ThePlayer->GetActorLocation() + CamRot.Vector()  * MeleeAttackDistance;
+		
+
+		// Set trace values and perform trace to retrieve hit info
+		FCollisionQueryParams TraceParams(FName(TEXT("Melee Weapon Trace")), true, this);
+		TraceParams.bTraceAsyncScene = true;
+		TraceParams.bReturnPhysicalMaterial = true;
+		TraceParams.AddIgnoredActor(ThePlayer);
+		TraceParams.AddIgnoredActor(this);
+
+
+		FHitResult FHit(ForceInit);
+
+		GetWorld()->LineTraceSingleByChannel(FHit, TraceStart, TraceEnd, ECC_WorldStatic, TraceParams);
+
+		ARadeCharacter* EnemyPlayer = Cast<ARadeCharacter>(FHit.GetActor());
+
+
+		// Forward Hit Checking
+		if (EnemyPlayer)
+		{
+			if (EnemyPlayer)
+			{
+				// Hit Enemy
+				BP_HitEnemy(FHit);
+
+				// Apply Damage
+				UGameplayStatics::ApplyDamage(EnemyPlayer, MeleeAttackDamage, ThePlayer->Controller, Cast<AActor>(this), UDamageType::StaticClass());
+			}
+		}
+		else
+		{
+			// Right Hit Checking
+			FHitResult RHit(ForceInit);
+
+			FVector rightAngle = CamRot.Vector().RotateAngleAxis(MeleeAttackAngles, FVector::UpVector);
+			rightAngle = Camoffset + ThePlayer->GetActorLocation() + rightAngle * MeleeAttackDistance;
+
+			GetWorld()->LineTraceSingleByChannel(RHit, TraceStart, rightAngle, ECC_WorldStatic, TraceParams);
+
+			EnemyPlayer = Cast<ARadeCharacter>(RHit.GetActor());
+			if (EnemyPlayer)
+			{
+
+				BP_HitEnemy(RHit);
+				// Apply Damage
+				UGameplayStatics::ApplyDamage(EnemyPlayer, MeleeAttackDamage, ThePlayer->Controller, Cast<AActor>(this), UDamageType::StaticClass());
+			}
+			else 
+			{
+				// Left Hit Checking
+				FHitResult LHit(ForceInit);
+
+				FVector leftAngle = CamRot.Vector().RotateAngleAxis(-MeleeAttackAngles, FVector::UpVector);
+				leftAngle = Camoffset + ThePlayer->GetActorLocation() + leftAngle * MeleeAttackDistance;
+
+				GetWorld()->LineTraceSingleByChannel(LHit, TraceStart, leftAngle, ECC_WorldStatic, TraceParams);
+
+				EnemyPlayer = Cast<ARadeCharacter>(LHit.GetActor());
+				if (EnemyPlayer)
+				{
+					BP_HitEnemy(LHit);
+
+					// Apply Damage
+					UGameplayStatics::ApplyDamage(EnemyPlayer, MeleeAttackDamage, ThePlayer->Controller, Cast<AActor>(this), UDamageType::StaticClass());
+				}
+			}
+		}
+	}
+}
+
+void AWeapon::ResetMeleeAttack()
+{
+	bMeleeAttacking = false;
+	if (ThePlayer)ThePlayer->ServerSetAnimID(EAnimState::Idle_Run);
+}
+
+
 void AWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(AWeapon, MainFire);
 	DOREPLIFETIME(AWeapon, AlternativeFire);
 	DOREPLIFETIME(AWeapon, Mesh1P);

@@ -7,8 +7,7 @@
 #include "Character/RadePlayer.h"
 
 
-
-
+//  Online Message Data Constructor
 FRadeOnineMessageData::FRadeOnineMessageData(FString NewMessage, ARadePlayer* ThePlayer)
 {
 
@@ -20,26 +19,9 @@ FRadeOnineMessageData::FRadeOnineMessageData(FString NewMessage, ARadePlayer* Th
 		MessageColor = ThePlayer->CharacterColor;
 	}
 
-
 }
 
-
-FAvaiableSessionsData::FAvaiableSessionsData(FOnlineSessionSearchResult newSessionData)
-{
-	SessionData = newSessionData;
-
-	OwnerName = newSessionData.Session.OwningUserName;
-	Ping = newSessionData.PingInMs;
-	NumberOfConnections = newSessionData.Session.SessionSettings.NumPublicConnections;
-	NumberOfAvaiableConnections = NumberOfConnections - newSessionData.Session.NumOpenPublicConnections;
-}
-
-
-
-
-
-
-
+// Item Data Constructor
 FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* newItemIcon, float newWeight , int32 newItemCount)
 {
 
@@ -50,6 +32,8 @@ FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* n
 	ItemCount = newItemCount;
 	Weight = newWeight;
 
+	if (ItemCount <= 0)ItemCount = 1;
+
 	// if Weapon Set Main and Alt Fire
 	if (Item && Item->GetDefaultObject<AWeapon>())
 	{
@@ -58,62 +42,52 @@ FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* n
 	}
 }
 
-// Set Item Data from other data
-void FItemData::SetItemData(FItemData newData)
+// Create Item Data From item Object
+FItemData URadeData::MakeItemDataFromItem(AItem* TheItem)
 {
-	ItemName=newData.ItemName;
-
-	ItemIcon=newData.ItemIcon;
-
-	ItemCount=newData.ItemCount;
-
-	Weight=newData.Weight;
-
-	Archetype=newData.Archetype;
-
-	MainFireStats=newData.MainFireStats;
-	AltFireStats=newData.AltFireStats;
-}
-
-FBlockData::FBlockData(ALevelBlock* newLevelItem, TSubclassOf <ALevelBlock> newArchetype, FVector newGlobalPosition, FVector newConstructorPosition)
-{
-	LevelItem = newLevelItem;
-	Archetype = newArchetype;
-	GlobalPosition = newGlobalPosition;
-	ConstructorPosition = newConstructorPosition;
-}
-
-
-// Add Ammo To Fire Stats
-void FFireStats::AddAmmo(float newAmmo, int32 newClip)
-{
-	if (newAmmo>0)
+	FItemData TheData;
+	if (TheItem)
 	{
-		if (CurrentAmmo + newAmmo <= ClipSize) CurrentAmmo += newAmmo;
-		else newClip++;
+		TheData.ItemName = TheItem->ItemName;
+
+		TheData.ItemIcon = TheItem->ItemIcon;
+
+		TheData.ItemCount = TheItem->ItemCount;
+
+		TheData.Weight = TheItem->Weight;
+
+		TheData.Archetype = TheItem->GetClass();
+		if (Cast<AWeapon>(TheItem))
+		{
+			TheData.MainFireStats = Cast<AWeapon>(TheItem)->MainFire;
+			TheData.AltFireStats = Cast<AWeapon>(TheItem)->AlternativeFire;
+		}
+
 	}
-	if (newClip>0)
-	{
-		if (newClip + ClipNumber <= MaxClipNumber) ClipNumber += newClip;
-		else ClipNumber = MaxClipNumber;
-	}
+	return TheData;
 }
 
-// Can Reload 
-bool FFireStats::CanReload()
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//						Create and Acces object from Class 
+
+
+UObject* URadeData::NewObjectFromBlueprint(UObject* WorldContextObject, UClass* UC)
 {
-	if (ClipNumber > 0 && CurrentAmmo < ClipSize)
-	{
-		return true;
-	}
-	return false;
+	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
+	UObject* tempObject = NewObject<UObject>(UC);
+
+	return tempObject;
 }
 
-// Can Fire
-bool FFireStats::CanFire()
+UObject* URadeData::ObjectFromBlueprint(UObject* WorldContextObject, UClass* UC)
 {
-	if (FireCost > 0 && FireCost > CurrentAmmo)return false;
-	return true;
+	if (UC && UC->GetDefaultObject())
+	{
+		return UC->GetDefaultObject();
+	}
+	else return NULL;
 }
-
-

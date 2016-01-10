@@ -7,21 +7,22 @@
 #include "LevelBlockConstructor.generated.h"
 
 
-
+// Block COnstructor. Actor that holds, Constructs and Deconstructs Blocks
 UCLASS()
 class RADE_API ALevelBlockConstructor : public AActor
 {
 	GENERATED_BODY()
 public:
+
 	ALevelBlockConstructor(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay()override;
 
-	// Save Block ?
+	// Save Block on End of Game ?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor")
 		bool bSaveBlocks = false;
 
-	// Load Blocks ?
+	// Load Blocks on Start of Game?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor")
 		bool bLoadBlocks=false;
 
@@ -37,7 +38,7 @@ public:
 	void Server_UpdateBlocksStatus();
 
 
-	// The Game Mode Ref
+	// The Game Mode Reference
 	UPROPERTY()
 		class ARadeGameMode* TheGM;
 

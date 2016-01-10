@@ -7,9 +7,17 @@
 #include "Online.h"
 #include "OnlineSubsystem.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);
 
 #define COLLISION_PROJECTILE    ECC_GameTraceChannel1
+
+/// Custom Log Type
+
+DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//								Custom Print Methods
 
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Black,text)
 #define printw(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::White,text)
@@ -21,6 +29,11 @@ DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//								Custom Load Object from Path
+
+// Get Path To Object
 static FORCEINLINE FName GetObjPath(const UObject* Obj)
 {
 	if (!Obj) return NAME_None;
@@ -46,7 +59,6 @@ template <typename ObjClass>
 static FORCEINLINE ObjClass* LoadObjFromPath(const FName& Path)
 {
 	if (Path == NAME_None) return NULL;
-	//~
 
 	return Cast<ObjClass>(StaticLoadObject(ObjClass::StaticClass(), NULL, *Path.ToString()));
 }

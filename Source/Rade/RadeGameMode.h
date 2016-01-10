@@ -5,6 +5,7 @@
 #include "GameFramework/GameMode.h"
 #include "RadeGameMode.generated.h"
 
+// Base Rade Game Mode
 UCLASS()
 class RADE_API ARadeGameMode : public AGameMode
 {
@@ -14,11 +15,21 @@ public:
 
 	ARadeGameMode(const class FObjectInitializer& PCIP);
 
+	// Override Start of Game
 	virtual void BeginPlay()override;
+
+	// Delayed BeginPlay
 	virtual void PostBeginPlay();
+
+	// Override End of Game
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	// The Level block Constructor
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							Impotant Game Components
+
+	// The Level Block Constructor
 	UPROPERTY()
 	class ALevelBlockConstructor* TheLevelBlockConstructor;
 

@@ -4,4 +4,4 @@
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Rade, "Rade" );
 
-DEFINE_LOG_CATEGORY(YourLog);
+DEFINE_LOG_CATEGORY(RadeLog);

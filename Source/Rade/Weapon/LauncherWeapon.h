@@ -5,11 +5,12 @@
 #include "Weapon/Weapon.h"
 #include "LauncherWeapon.generated.h"
 
+
+// Base for Projecitle Launcher Weapon
 UCLASS()
 class RADE_API ALauncherWeapon : public AWeapon
 {
 	GENERATED_BODY()
-	
 public:
 
 	// Fire Event 
@@ -18,5 +19,4 @@ public:
 	// Projectile Class
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire Projectile")
 		TSubclassOf <class AProjectile> GrenadeArchetype;
-	
 };

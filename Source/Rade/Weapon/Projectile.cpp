@@ -8,6 +8,7 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 
+	// Set Collision Component
 	CollisionComp = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->MoveIgnoreActors.Add(this);
 	CollisionComp->InitSphereRadius(5.0f);
@@ -16,7 +17,7 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	RootComponent = CollisionComp;
 
 
-
+	// Set Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh"));
 	Mesh->bReceivesDecals = false;
 	Mesh->CastShadow = false;
@@ -30,6 +31,7 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 
+	// Replicate
 	bReplicates = true;
 
 
@@ -83,10 +85,7 @@ void AProjectile::EnableProjectile(){
 // Hit Something
 void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
-	if (!bCanExplode)return;
-
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp!=Mesh)
+	if (bCanExplode && (OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp != Mesh)
 	{
 		// Hit Something
 		BP_Hit(OtherComp,Hit);
@@ -94,14 +93,13 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 		// Boooooooom
 		Explode();	
 	}
-
 }
 
+// Actual Projectile Explosion
 void AProjectile::Explode()
 {
 	BP_Explode();
 	
-
 	const FVector Loc = GetActorLocation();
 	for (TActorIterator<AActor> aItr(GetWorld()); aItr; ++aItr)
 	{
@@ -113,7 +111,7 @@ void AProjectile::Explode()
 			dir.Normalize();
 			ARadeCharacter* TheChar = Cast<ARadeCharacter>(*aItr);
 
-			//If Player apply damage
+			//If Rade Character, apply damage
 			if (TheChar)
 			{
 				// BP Explosion Hit Enemy
@@ -138,9 +136,7 @@ void AProjectile::Explode()
 // Apply Velocity to Projectile
 void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
-	if (ProjectileMovement)
-	{
-		// Set Movement velocity
+	// Set Movement velocity
+	if (ProjectileMovement)		
 		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
-	}
 }

@@ -65,7 +65,7 @@ bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArch
 	UWorld* const World = GetWorld();
 	if (NewBlockArchtype && World)
 	{
-
+		// Calculate Rounded 3D location in Array
 		FVector tempV;
 		tempV.X = round(Loc.X / 100);
 		tempV.Y = round(Loc.Y / 100);
@@ -80,53 +80,59 @@ bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArch
 			}
 		}
 
-		FBlockData temp = FBlockData();
+		// Create new Block Data
+		FBlockData newBlockData = FBlockData();
 
-		temp.Archetype = NewBlockArchtype;
-		temp.ConstructorPosition = tempV;
+		// Set Block Data
+		newBlockData.Archetype = NewBlockArchtype;
+		newBlockData.ConstructorPosition = tempV;
 
 		tempV.X *= 100;
 		tempV.Y *= 100;
 		tempV.Z *= 100;
 
-		temp.GlobalPosition = tempV;
-		// Spawn new block actor
-		temp.LevelItem = World->SpawnActor<ALevelBlock>(NewBlockArchtype, tempV, FRotator(0));
+		newBlockData.GlobalPosition = tempV;
 
-		if (!temp.LevelItem)
+
+		// Spawn new block actor
+		newBlockData.LevelItem = World->SpawnActor<ALevelBlock>(NewBlockArchtype, tempV, FRotator(0));
+
+		if (!newBlockData.LevelItem)
 		{
 			return false;
 		}
 
 		// Set block values
-		temp.LevelItem->ParentWeapon = TheConstructorWeapon;
-		temp.LevelItem->AttachRootComponentToActor(this);
-		temp.LevelItem->TheBlockConstructor = this;
+		newBlockData.LevelItem->ParentWeapon = TheConstructorWeapon;
+		newBlockData.LevelItem->AttachRootComponentToActor(this);
+		newBlockData.LevelItem->TheBlockConstructor = this;
 
 		// Auto Destroy Block After some time
 		if (TheConstructorWeapon && TheConstructorWeapon->bAutoDestroyBlocks)
 		{
 			// Restore Ammo After Destory
-			if (TheConstructorWeapon->bRestoreAmmoAfterBlockDestroy) temp.LevelItem->bRestoreWeaponAmmo = true;
+			if (TheConstructorWeapon->bRestoreAmmoAfterBlockDestroy) newBlockData.LevelItem->bRestoreWeaponAmmo = true;
 
 			// Start Block Destroy Event
-			temp.LevelItem->StartTimedRestore(TheConstructorWeapon, TheConstructorWeapon->BlockRestoreTime);
+			newBlockData.LevelItem->StartTimedRestore(TheConstructorWeapon, TheConstructorWeapon->BlockRestoreTime);
 
 		}
 
 		//  Add Block To List
-		CurrentBlocks.Add(temp);
+		CurrentBlocks.Add(newBlockData);
 
 		return true;
 	}
 	return false;
 }
 
+// Destroy Block 
 bool ALevelBlockConstructor::DestroyBlock(FVector Loc, AActor* TheInstigator)
 {
 	UWorld* const World = GetWorld();
 	if (World)
 	{
+		// Calculate Rounded 3D location in Array
 		FVector tempV;
 		tempV.X = round(Loc.X / 100);
 		tempV.Y = round(Loc.Y / 100);
@@ -150,6 +156,7 @@ bool ALevelBlockConstructor::DestroyBlock(FVector Loc, AActor* TheInstigator)
 	return false;
 }
 
+// Replicate Data
 void ALevelBlockConstructor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

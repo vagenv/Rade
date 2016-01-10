@@ -22,6 +22,10 @@
 #include "System/RadePlayerState.h"
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//										 Base 
+
 ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP) 
 	: Super(PCIP)
 {
@@ -69,6 +73,7 @@ ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 
 
 	CharacterName = "Rade Player";
+	bCanRevive = true;
 }
 
 
@@ -76,13 +81,6 @@ void ARadePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Get Default Third Person Mesh Relative Location and Rotation
-	if (GetMesh())
-	{
-		Mesh_InGameRelativeLoc = GetMesh()->RelativeLocation;
-		Mesh_InGameRelativeRot = GetMesh()->RelativeRotation;
-	}
-	
 	// Get Player Controller
 	if (GetController() && Cast<ARadePC>(GetController()))
 	{
@@ -95,8 +93,6 @@ void ARadePlayer::BeginPlay()
 	// Manage Inventory
 	if (TheInventory)
 	{
-		// Set player Ref in Inventory
-		TheInventory->ThePlayer = this;
 
 		// Load Inventory 
 		if (bSaveInventory && Role >= ROLE_Authority)
@@ -105,27 +101,17 @@ void ARadePlayer::BeginPlay()
 		}
 	}
 
-	// Get Player Movement Component
-	if (Cast<UCharacterMovementComponent>(GetMovementComponent()))
-	{
-		PlayerMovementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	}
 
 	// Get First Person Anim Instance
 	if (Mesh1P && Mesh1P->GetAnimInstance() && Cast<URadeAnimInstance>(Mesh1P->GetAnimInstance()))
 		ArmsAnimInstance = Cast<URadeAnimInstance>(Mesh1P->GetAnimInstance());
 
-	// Get Third Person Anim Instance
-	if (GetMesh() && GetMesh()->GetAnimInstance() && Cast<URadeAnimInstance>(GetMesh()->GetAnimInstance()))
-		BodyAnimInstance = Cast<URadeAnimInstance>(GetMesh()->GetAnimInstance());
-
 	// Set Player Ref in Anim Instance
-	if (ArmsAnimInstance)ArmsAnimInstance->ThePlayer = this;
-	if (BodyAnimInstance)BodyAnimInstance->ThePlayer = this;
+	if (ArmsAnimInstance)ArmsAnimInstance->TheCharacter = this;
 
 
 	// Set Default Anim State
-	ServerSetAnimID(EAnimState::Idle_Run);
+	Global_SetAnimID_Implementation(EAnimState::Idle_Run);
 
 	// Set Current Camera to Default State
 	CurrentCameraState = DefaultCameraState;
@@ -136,10 +122,23 @@ void ARadePlayer::BeginPlay()
 	GetWorldTimerManager().SetTimer(JetPackHandle, this, &ARadePlayer::JetPackFillUp, JumpJetPack.RestoreSpeed, true);
 
 
+	// Seed out Spawn Location a bit
 	FVector RandomLoc = FVector(FMath::RandRange(-100, 100), FMath::RandRange(-100, 100), 0);
 	SetActorLocation(GetActorLocation() + RandomLoc);
 
 }
+
+void ARadePlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//							Action Input
 
 
 bool ARadePlayer::Action_Validate()
@@ -153,7 +152,7 @@ void ARadePlayer::Action_Implementation()
 	
 	// Check if player can use items
 	if (bInventoryOpen && IsAnimState(EAnimState::Idle_Run)
-		&& PlayerMovementComponent&& PlayerMovementComponent->IsMovingOnGround())
+		&& CharacterMovementComponent && CharacterMovementComponent->IsMovingOnGround())
 	{
 		if (TheInventory)
 			TheInventory->ActionIndex(CurrentItemSelectIndex);
@@ -166,43 +165,27 @@ void ARadePlayer::Action_Implementation()
 		currentPickup = NULL;
 	}
 
-
 }
 
 // Player Pressed Alt Action
-bool ARadePlayer::AltAction_Validate()
-{
+bool ARadePlayer::MeleeAction_Validate(){
 	return true;
 }
-void ARadePlayer::AltAction_Implementation()
+void ARadePlayer::MeleeAction_Implementation()
 {
 	// Call Alt action from Blueprint
-	BP_AltAction();
+	BP_MeleeAction();
+
+	if (TheWeapon && IsAnimState(EAnimState::Idle_Run)
+		&& CharacterMovementComponent && CharacterMovementComponent->IsMovingOnGround())
+	{
+		TheWeapon->PreMeleeAttack();
+	}
 	
 }
 
-// Player Pressed CameraChange
-void ARadePlayer::ChangeCamera()
-{
-	// Change Camera
-	if (DefaultCameraState == ECameraState::FP_Camera)
-	{
-		DefaultCameraState = ECameraState::TP_Camera;
-		CurrentCameraState = DefaultCameraState;
-		UpdateComponentsVisibility();
-	}
-	else if (DefaultCameraState == ECameraState::TP_Camera)
-	{
-		DefaultCameraState = ECameraState::FP_Camera;
-		CurrentCameraState = DefaultCameraState;
-		UpdateComponentsVisibility();
-	}
-
-}
-
 // Player Pressed FAction
-bool ARadePlayer::FAction_Validate()
-{
+bool ARadePlayer::FAction_Validate(){
 	return true;
 }
 void ARadePlayer::FAction_Implementation()
@@ -218,8 +201,7 @@ void ARadePlayer::FAction_Implementation()
 }
 
 // Player Pressed Reload
-bool ARadePlayer::Reload_Validate()
-{
+bool ARadePlayer::Reload_Validate(){
 	return true;
 }
 void ARadePlayer::Reload_Implementation()
@@ -229,7 +211,7 @@ void ARadePlayer::Reload_Implementation()
 
 	// Check if Player and Weapon are in state to reload
 	if (IsAnimState(EAnimState::Idle_Run)
-		&& PlayerMovementComponent && PlayerMovementComponent->IsMovingOnGround() 
+		&& CharacterMovementComponent && CharacterMovementComponent->IsMovingOnGround()
 		&& TheWeapon &&  TheWeapon->CanReload())
 	{
 		TheWeapon->ReloadWeaponStart();
@@ -251,8 +233,123 @@ void ARadePlayer::ToggleInventory()
 
 		// Tell serer that inventory was toggled
 		SetInventoryVisible(TheHUD->bInventoryOpen);
+
 	}	
 }
+
+
+
+// Player Pressed Fire Button
+bool ARadePlayer::FireStart_Validate()
+{
+	return true;
+}
+
+void ARadePlayer::FireStart_Implementation()
+{
+	// Check if player has weapn and is in state to fire weapon
+	if (TheWeapon && CanShoot())
+		TheWeapon->FireStart();
+}
+
+bool ARadePlayer::FireEnd_Validate(){
+	return true;
+}
+
+// Player Released Fire button
+void ARadePlayer::FireEnd_Implementation()
+{
+	if (TheWeapon)
+		TheWeapon->FireEnd();
+}
+
+// Player Pressed Alt Fire
+bool ARadePlayer::AltFireStart_Validate(){
+	return true;
+}
+void ARadePlayer::AltFireStart_Implementation()
+{
+	if (TheWeapon)
+		TheWeapon->AltFireStart();
+}
+
+// Player Released AltFire
+bool ARadePlayer::AltFireEnd_Validate(){
+	return true;
+}
+void ARadePlayer::AltFireEnd_Implementation()
+{
+	if (TheWeapon)
+		TheWeapon->AltFireEnd();
+}
+
+
+
+
+// Player Pressed Jump
+void ARadePlayer::Jump()
+{
+	if (!CharacterMovementComponent) return;
+
+	// If Player on ground -> Simple Jump
+	if (!IsAnimInAir() && CharacterMovementComponent->IsMovingOnGround())
+	{
+		ACharacter::Jump();
+		ServerSetAnimID(EAnimState::JumpStart);
+	}
+	// else If Player is in air Double Jump
+	else if (bJetPackEnabled && bCanFillJetPack && JumpJetPack.CurrentChargePercent>JumpJetPack.MinUseablePercent)
+	{
+		DoubleJump();
+		JumpJetPack.CurrentChargePercent = 0;
+		bCanFillJetPack = false;
+	}
+}
+
+bool ARadePlayer::DoubleJump_Validate(){
+	return true;
+}
+void ARadePlayer::DoubleJump_Implementation()
+{
+	// Set player Velocity on server
+	GetCharacterMovement()->Velocity.Z += JumpJetPack.CurrentChargePercent*JumpJetPack.PushPower;
+	JumpJetPack.CurrentChargePercent = 0;
+	bCanFillJetPack = false;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//								Camera		 
+
+
+// Player Pressed CameraChange
+void ARadePlayer::ChangeCamera()
+{
+	// Change Camera
+	if (DefaultCameraState == ECameraState::FP_Camera)
+	{
+		DefaultCameraState = ECameraState::TP_Camera;
+		CurrentCameraState = DefaultCameraState;
+		UpdateComponentsVisibility();
+	}
+	else if (DefaultCameraState == ECameraState::TP_Camera)
+	{
+		DefaultCameraState = ECameraState::FP_Camera;
+		CurrentCameraState = DefaultCameraState;
+		UpdateComponentsVisibility();
+	}
+
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//								Inventory and Item		 
+
+
 
 // Server set Inventory visibility 
 bool ARadePlayer::SetInventoryVisible_Validate(bool bVisible)
@@ -295,6 +392,13 @@ void ARadePlayer::SetInventorySelectIndex_Implementation(int32 index)
 {
 	CurrentItemSelectIndex = index;
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//									Weapon		 
+
 
 // Called to equip new Weapon
 void ARadePlayer::EquipWeapon(AWeapon* NewWeaponClass)
@@ -448,49 +552,11 @@ void ARadePlayer::CurrentWeaponUpdated()
 }
 
 
-// Player Pressed Fire Button
-bool ARadePlayer::FireStart_Validate()
-{
-	return true;
-}
 
-void ARadePlayer::FireStart_Implementation()
-{
-	// Check if player has weapn and is in state to fire weapon
-	if (TheWeapon && CanShoot())
-		TheWeapon->FireStart();
-}
 
-bool ARadePlayer::FireEnd_Validate(){
-	return true;
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Player Released Fire button
-void ARadePlayer::FireEnd_Implementation()
-{
-	if (TheWeapon)
-		TheWeapon->FireEnd();
-}
-
-// Player Pressed Alt Fire
-bool ARadePlayer::AltFireStart_Validate(){
-	return true;
-}
-void ARadePlayer::AltFireStart_Implementation()
-{
-	if (TheWeapon)
-		TheWeapon->AltFireStart();
-}
-
-// Player Released AltFire
-bool ARadePlayer::AltFireEnd_Validate(){
-	return true;
-}
-void ARadePlayer::AltFireEnd_Implementation()
-{
-	if (TheWeapon)
-		TheWeapon->AltFireEnd();
-}
+//									State Checking		 
 
 
 
@@ -510,7 +576,7 @@ bool ARadePlayer::CanSprint()
 	bool bReturnCanShoot = true;
 	if (TheWeapon && TheWeapon->bShooting)bReturnCanShoot = false;
 	if (!IsAnimState(EAnimState::Idle_Run)) bReturnCanShoot = false;
-	if (PlayerMovementComponent && !PlayerMovementComponent->IsMovingOnGround())bReturnCanShoot = false;
+	if (CharacterMovementComponent && !CharacterMovementComponent->IsMovingOnGround())bReturnCanShoot = false;
 
 	return bReturnCanShoot;
 }
@@ -529,84 +595,6 @@ void ARadePlayer::Landed(const FHitResult& Hit)
 }
 
 
-
-//////////////// Network Anim
-
-// Set Server Anim State
-bool ARadePlayer::ServerSetAnimID_Validate(EAnimState AnimID){
-	return true;
-}
-void ARadePlayer::ServerSetAnimID_Implementation(EAnimState AnimID)
-{
-	// Set new State on all users
-	Global_SetAnimID(AnimID);
-}
-
-void ARadePlayer::Global_SetAnimID_Implementation(EAnimState AnimID)
-{
-	// Set The Value in anim instances
-	if (ArmsAnimInstance)
-		ArmsAnimInstance->RecieveGlobalAnimID(AnimID);
-	if (BodyAnimInstance)
-		BodyAnimInstance->RecieveGlobalAnimID(AnimID);
-
-}
-
-// Check Anim State on body or arms
-bool ARadePlayer::IsAnimState(EAnimState TheAnimState)
-{
-	if (ArmsAnimInstance)
-	{
-		if (ArmsAnimInstance->IsAnimState(TheAnimState))return true;
-		else return false;
-
-	}
-	else if (BodyAnimInstance)
-	{
-		if (BodyAnimInstance->IsAnimState(TheAnimState))return true;
-		else return false;
-	}
-
-	return true;
-}
-// Is Player In Air
-bool ARadePlayer::IsAnimInAir()
-{
-	// Check each air state separetly.
-	if (IsAnimState(EAnimState::JumpEnd) || IsAnimState(EAnimState::Jumploop) || IsAnimState(EAnimState::JumpStart))return true;
-	else return false;
-}
-
-// Player Pressed Jump
-void ARadePlayer::Jump()
-{
-	if (!PlayerMovementComponent) return;
-
-	// If Player on ground -> Simple Jump
-	if (!IsAnimInAir() && PlayerMovementComponent->IsMovingOnGround())
-	{
-		ACharacter::Jump();
-		ServerSetAnimID(EAnimState::JumpStart);
-	}
-	// else If Player is in air Double Jump
-	else if (bJetPackEnabled && bCanFillJetPack && JumpJetPack.CurrentChargePercent>JumpJetPack.MinUseablePercent)
-	{
-		DoubleJump();
-		JumpJetPack.CurrentChargePercent = 0;
-		bCanFillJetPack = false;
-	}
-}
-
-bool ARadePlayer::DoubleJump_Validate(){
-	return true;
-}
-void ARadePlayer::DoubleJump_Implementation()
-{	
-	// Set player Velocity on server
-	GetCharacterMovement()->Velocity.Z += JumpJetPack.CurrentChargePercent*JumpJetPack.PushPower;
-	JumpJetPack.CurrentChargePercent = 0;
-	bCanFillJetPack = false;
-}
 
 // Jetpack Fill Up
 void ARadePlayer::JetPackFillUp()
@@ -672,6 +660,11 @@ void ARadePlayer::UpdateComponentsVisibility()
 	}
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//							Death / Revive
+
 // Player Died , called on Server
 void ARadePlayer::ServerDie()
 {
@@ -686,22 +679,8 @@ void ARadePlayer::ServerDie()
 // Player Died, Called on all users
 void ARadePlayer::GlobalDeath_Implementation()
 {
-	// save third person mesh Relative Location and rotation before ragdoll
-	if (GetMesh())
-	{
-		Mesh_InGameRelativeLoc = GetMesh()->RelativeLocation;
-		Mesh_InGameRelativeRot = GetMesh()->RelativeRotation;
-	}
-
 	// Disable player input
 	DisableInput(Cast<APlayerController>(Controller));
-
-	// If Player can revive, revive hit after a delay
-	if (bCanRevive)
-	{
-		FTimerHandle MyHandle;
-		GetWorldTimerManager().SetTimer(MyHandle, this, &ARadePlayer::Revive, ReviveTime, false);
-	}
 
 	// Event and Ragdoll
 	Super::GlobalDeath_Implementation();
@@ -715,30 +694,12 @@ void ARadePlayer::GlobalDeath_Implementation()
 
 
 // Revive Player
-void ARadePlayer::Revive()
+void ARadePlayer::ServerRevive()
 {
+	Super::ServerRevive();
+
 	// Enable Input
 	EnableInput(Cast<APlayerController>(Controller));
-
-	// Set Camer to Default Camera state
-	CurrentCameraState = DefaultCameraState;
-
-	// Resoter Half of player health
-	Health = MaxHealth/2;
-	bDead = false;
-
-	
-	// Restore Third Person Mesh to default State
-	if (GetMesh())
-	{
-		GetMesh()->SetSimulatePhysics(false);
-		GetMesh()->AttachTo(RootComponent);
-		GetMesh()->RelativeLocation = Mesh_InGameRelativeLoc;
-		GetMesh()->RelativeRotation = Mesh_InGameRelativeRot;
-		GetMesh()->BodyInstance.SetCollisionProfileName("Pawn");
-	}
-
-
 
 	// Find The Closest Revive Point
 	TActorIterator<APlayerStart> p(GetWorld());
@@ -751,19 +712,57 @@ void ARadePlayer::Revive()
 			revivePoint = *ActorItr;
 		}
 	}
-
-	UpdateComponentsVisibility();
-
 	// Create a small offset from the spawn point
 	if (revivePoint)
 		GetRootComponent()->SetWorldLocation(revivePoint->GetActorLocation() + FVector(FMath::RandRange(-400, 400), FMath::RandRange(-400, 400), 60));
 
-	//GetMovementComponent()->Activate();
+}
 
-	// Call Revive on Blueprint
+void ARadePlayer::GlobalRevive_Implementation()
+{
+	Super::GlobalRevive_Implementation();
+
+	// Set Camer to Default Camera state
+	CurrentCameraState = DefaultCameraState;
+	UpdateComponentsVisibility();
+
+
 	BP_PlayerRevived();
 }
 
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//									Animation 		 
+
+
+void ARadePlayer::Global_SetAnimID_Implementation(EAnimState AnimID)
+{
+	Super::Global_SetAnimID_Implementation(AnimID);
+
+	// Set The Value in anim instances
+	if (ArmsAnimInstance)
+		ArmsAnimInstance->RecieveGlobalAnimID(AnimID);
+
+}
+// Check Anim State on body or arms
+bool ARadePlayer::IsAnimState(EAnimState TheAnimState)
+{
+	if (ArmsAnimInstance)
+	{
+		if (ArmsAnimInstance->IsAnimState(TheAnimState))return true;
+		else return false;
+
+	}
+	else return Super::IsAnimState(TheAnimState);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//									Local Input Handling
 
 
 // Bind input to events
@@ -777,7 +776,7 @@ void ARadePlayer::SetupPlayerInputComponent(class UInputComponent* InputComponen
 	InputComponent->BindAction("Reload", IE_Pressed, this, &ARadePlayer::Reload);
 
 	InputComponent->BindAction("Action", IE_Pressed, this, &ARadePlayer::Action);
-	InputComponent->BindAction("AltAction", IE_Pressed, this, &ARadePlayer::AltAction);
+	InputComponent->BindAction("MeleeAction", IE_Pressed, this, &ARadePlayer::MeleeAction);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &ARadePlayer::ToggleInventory);
 	InputComponent->BindAction("FAction", IE_Pressed, this, &ARadePlayer::FAction);
 	InputComponent->BindAction("ChangeCamera", IE_Pressed, this, &ARadePlayer::ChangeCamera);
@@ -797,8 +796,7 @@ void ARadePlayer::SetupPlayerInputComponent(class UInputComponent* InputComponen
 	InputComponent->BindAxis("LookUp", this, &ARadePlayer::AddControllerPitchInput);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input Handling
+
 
 
 // Player Mesh Rotation after after the input
@@ -837,6 +835,14 @@ void ARadePlayer::MoveRight(float Value){
 
 
 
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//									Network Chat, Props and Replication
 
 
 
@@ -884,5 +890,6 @@ void ARadePlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
 	DOREPLIFETIME(ARadePlayer, CurrentItemSelectIndex);
 	DOREPLIFETIME(ARadePlayer, CurrentCameraState);
 
-
+	//DOREPLIFETIME(ARadePlayer, currentPickup);
+	
 }

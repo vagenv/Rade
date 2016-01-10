@@ -6,30 +6,36 @@
 #include "RadeData.h"
 #include "Item.generated.h"
 
+// Base for Any Item or Weapon
 UCLASS()
 class RADE_API AItem : public AActor
 {
 	GENERATED_BODY()
 public:	
 
-	//			Basic Events
 	AItem(const class FObjectInitializer& PCIP);
 
 	virtual void BeginPlay() override;
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//				Main Components and Refernces
 
 	// Pickup Mesh
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Pickup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 		UStaticMesh* PickupMesh;
 
 	// Pickup Skeletal mesg
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Pickup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 		USkeletalMesh* PickupSkelMesh;
 
 	// Player Pointer
 	UPROPERTY(Replicated)
 		class ARadePlayer* ThePlayer;
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//				Main Properties
 
 	// Item Name
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
@@ -52,26 +58,29 @@ public:
 		TSubclassOf<AItemPickup> ItemPickupArchetype;
 
 
-	//			 Item Events
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//				Item Events
+
 
 	// BP Event- Item Was Used
-	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_ItemUsed();
 
 	// BP Event- Item Was Dropped
-	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_ItemDroped(class AItemPickup* thePickup);
 
 	// BP Event- Item Was Updated
-	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_ItemUpdated();
 
 	// Get Player Ref
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
 		class ARadePlayer* GetPlayer()const;
 
 	// Get World Ref
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
 		class UWorld* GetPlayerWorld()const;
 
 

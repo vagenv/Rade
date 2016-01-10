@@ -3,9 +3,7 @@
 #include "Rade.h"
 #include "RadePlayerState.h"
 
-
-
-
+// Reset Values at the start of Game
 void ARadePlayerState::BeginPlay()
 {
 	Super::BeginPlay();

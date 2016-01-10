@@ -17,7 +17,7 @@ void ARifleWeapon::Fire()
 		ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot); 
 
 		// Get Mesh Fire Socket Location and calculatre Fire end point
-		const FVector StartTrace = Mesh1P->GetSocketLocation(TEXT("MuzzleFlashSocket"));
+		const FVector StartTrace = GetFireSocketTransform().GetLocation();;
 		const FVector Direction = CamRot.Vector();
 		const FVector EndTrace = StartTrace + Direction *MainFire.FireDistance;
 
@@ -28,7 +28,7 @@ void ARifleWeapon::Fire()
 		TraceParams.bReturnPhysicalMaterial = true;
 		TraceParams.AddIgnoredActor(ThePlayer);
 
-		//print("Fire Event");
+		// Trace Hit
 		FHitResult Hit(ForceInit);
 		if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
 		{

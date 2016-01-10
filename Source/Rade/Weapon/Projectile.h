@@ -6,6 +6,7 @@
 #include "Projectile.generated.h"
 
 
+// Custom Projectile Type
 UCLASS(config = Game)
 class RADE_API AProjectile : public AActor
 {
@@ -18,11 +19,11 @@ public:
 
 	void BeginPlay()override;
 
-	bool bCanExplode = false;
-	void EnableProjectile();
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	//							Base Components
 
-	// The Mesh
+	// Projectile Mesh
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		UStaticMeshComponent* Mesh;
 
@@ -32,7 +33,14 @@ public:
 
 	// Movement Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-		class UProjectileMovementComponent* ProjectileMovement;
+	class UProjectileMovementComponent* ProjectileMovement;
+
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							Base Properties
+
 
 	// Life time of projectile
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
@@ -58,7 +66,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 		FRuntimeFloatCurve RadialImpulseCurve;
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	//							Additional  Properties and Events
+
+
+	// Can The projectile Explode?
+	bool bCanExplode = false;
+
+	// Enable Projectile Explosion
+	void EnableProjectile();
 
 	// Called when hit something
 	UFUNCTION()
@@ -69,6 +86,13 @@ public:
 
 	// Explode 
 	virtual void Explode();
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//							Blueprint Events
+
+
 
 	// BP explode 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")

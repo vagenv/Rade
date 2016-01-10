@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "LevelBlock.generated.h"
 
+
+// Base for Level Block
 UCLASS()
 class RADE_API ALevelBlock : public AActor
 {
@@ -21,14 +23,16 @@ public:
 
 	// The weapon That Spawned The Bllock
 	UPROPERTY()
-		class AWeapon* ParentWeapon;
+		class AConstructorWeapon* ParentWeapon;
 
 	// Level Block Constructor
 	UPROPERTY()
 		class ALevelBlockConstructor* TheBlockConstructor;
 
 	// If Block Must Restore After Some Item
-	void StartTimedRestore(class AWeapon* newParentWeapon, float Time);
+		void StartTimedRestore(class AConstructorWeapon* newParentWeapon, float Time);
+
+	// Restore The block back into weapon
 	void ReturnBlock();
 	
 	// Event in Blueprint that Block retured to weapon

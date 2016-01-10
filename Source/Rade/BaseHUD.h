@@ -22,23 +22,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
 		float PostDelay = 0.3;
 
-	// Item index currently selected
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-		int32 CurrentItemSelectIndex = 0;
 
-	// Inventory Open
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-		bool bInventoryOpen = false;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//								Local Player Properties Properties and Events
 
 	// The Player pointer
 	UPROPERTY()
 		class ARadePlayer* ThePlayer;
 
-	// Get Player Function
+	// Get Player pointer
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
 		class ARadePlayer* GetPlayer()const;
 
-	// get Player health percent
+	// Get Player Health percent
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
 		float GetPlayerHealthPercent();
 
@@ -46,8 +43,25 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "The HUD")
 		float GetPlayerEnergyPercent();
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//								Inventory Properties and Events
+
 	// Toggle Inventory Visibility
 	void ToggleInventory();
+
+	// Item index currently selected
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		int32 CurrentItemSelectIndex = 0;
+
+	// Is Inventory Open ?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+		bool bInventoryOpen = false;
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//								Blueprint Events
 
 
 	// BP Inventory Toggled

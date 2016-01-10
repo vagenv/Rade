@@ -5,7 +5,7 @@
 #include "Weapon/Weapon.h"
 #include "ConstructorWeapon.generated.h"
 
-
+// Base for Constructor Weapon (Minecraft Weapon)
 UCLASS()
 class RADE_API AConstructorWeapon : public AWeapon
 {
@@ -17,18 +17,9 @@ public:
 
 	virtual void BeginPlay()override;
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-	// Level Block Archetype
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
-		TSubclassOf <class ALevelBlock> BlockArchetype;
-
-	// The Level Block Constructor
-	UPROPERTY()
-		class ALevelBlockConstructor* TheLevelBlockConstructor;
-
-	// Cube Draw Timer Handle
-	FTimerHandle DrawCubeHandle;
+	///			Draw Box Properties and Events
 
 	// Box Draw Size
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrawBox")
@@ -46,6 +37,37 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DrawBox")
 		float DrawBoxThickness = 4;
 
+	// Cube Draw Timer Handle
+	FTimerHandle DrawCubeHandle;
+
+	// Enable Draw box on client 
+	UFUNCTION(Client, Reliable)
+		void Client_EnableDrawBox();
+	virtual void Client_EnableDrawBox_Implementation();
+
+	// Disable Draw box on client
+	UFUNCTION(Client, Reliable)
+		void Client_DisableDrawBox();
+	virtual void Client_DisableDrawBox_Implementation();
+
+private:
+	// Draw Box Event
+	virtual void DrawBox();
+public:
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	///			Level Block Properties
+
+
+
+	// Level Block Archetype
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
+		TSubclassOf <class ALevelBlock> BlockArchetype;
+
+	// The Level Block Constructor
+	UPROPERTY()
+		class ALevelBlockConstructor* TheLevelBlockConstructor;
 
 
 	// Auto Destroy Block?
@@ -73,7 +95,9 @@ public:
 		float AmmoRestoreValue = 1;
 
 
-protected:
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	///						Fire Events
 
 	// The Fire Event
 	virtual void Fire()override;
@@ -81,34 +105,31 @@ protected:
 	// The Alt Fire Event
 	virtual void AltFire()override;
 
-	// Ammo restore Event
-	void AmmoRestore();
-
-	// Ammo Restore Timerhandle
-	FTimerHandle AmmoRestoreHandle;
-
-	// Draw Box Event
-	virtual void DrawBox();
-
-public:
-
-	// Enable Draw box on client 
-	UFUNCTION(Client, Reliable)
-	void Client_EnableDrawBox();
-	virtual void Client_EnableDrawBox_Implementation();
-
-	// Disable Draw box on client
-	UFUNCTION(Client, Reliable)
-	void Client_DisableDrawBox();
-	virtual void Client_DisableDrawBox_Implementation();
-
-
 	// Eqquip End
 	virtual void EquipEnd()override;
 
 	// Equip Start
 	virtual void UnEquipStart()override;
 
+private:
+	// Ammo restore Event
+	void AmmoRestore();
 
+	// Ammo Restore Timerhandle
+	FTimerHandle AmmoRestoreHandle;
+
+public:
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	///						Bluerpint Events
+
+
+	// Blueprint Event:  Fire
+	UFUNCTION(BlueprintImplementableEvent, Category = "Constructor Weapon")
+		void BP_BlockSpawned();
+	// Blueprint Event:  Fire
+	UFUNCTION(BlueprintImplementableEvent, Category = "Constructor Weapon")
+		void BP_BlockDestroyed();
 
 };
