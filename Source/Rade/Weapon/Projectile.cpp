@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 #include "Weapon/Projectile.h"
@@ -21,7 +21,8 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh"));
 	Mesh->bReceivesDecals = false;
 	Mesh->CastShadow = false;
-	Mesh->AttachParent = CollisionComp;
+	Mesh->AttachParent = RootComponent;
+
 
 	//		Projectile Movement
 	ProjectileMovement = PCIP.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
@@ -31,9 +32,10 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 
+
 	// Replicate
 	bReplicates = true;
-
+	bReplicateMovement = true;
 
 	// Set default radial Damage Curve
 	FRichCurve* RadialDamageCurveData = RadialDamageCurve.GetRichCurve();
@@ -85,6 +87,7 @@ void AProjectile::EnableProjectile(){
 // Hit Something
 void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+
 	if (bCanExplode && (OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp != Mesh)
 	{
 		// Hit Something
@@ -136,7 +139,11 @@ void AProjectile::Explode()
 // Apply Velocity to Projectile
 void AProjectile::InitVelocity(const FVector& ShootDirection)
 {
+
 	// Set Movement velocity
-	if (ProjectileMovement)		
-		ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->InitialSpeed;
+	if (ProjectileMovement) 
+	{
+		ProjectileMovement->SetVelocityInLocalSpace(ShootDirection);
+	}
+
 }

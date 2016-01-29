@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -11,6 +11,7 @@ class RADE_API AShotGunWeapon : public AWeapon
 {
 	GENERATED_BODY()
 public:
+	AShotGunWeapon(const class FObjectInitializer& PCIP);
 
 	// Override The Fire Event
 	virtual void Fire()override;

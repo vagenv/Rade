@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 #include "Weapon/SwordWeapon.h"
@@ -19,6 +19,7 @@ ASwordWeapon::ASwordWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
 	Mesh3P_MeleeAttackCollisionBox->BodyInstance.SetCollisionProfileName("OverlapAll");
 	Mesh3P_MeleeAttackCollisionBox->SetBoxExtent(FVector(5, 25, 70));
 
+	ItemName = "Sword Weapon";
 }
 
 void ASwordWeapon::BeginPlay()

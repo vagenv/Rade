@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 
@@ -6,6 +6,13 @@
 
 #include "Weapon/LauncherWeapon.h"
 #include "Weapon/Projectile.h"
+
+
+ALauncherWeapon::ALauncherWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
+{
+	ItemName = "Launcher";
+}
+
 
 void ALauncherWeapon::Fire()
 {
@@ -30,12 +37,17 @@ void ALauncherWeapon::Fire()
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = Instigator;
 
+
 			// Spawn at Fire socket location
 			AProjectile* TheProjectile = World->SpawnActor<AProjectile>(GrenadeArchetype, StartTrace, CamRot);
 
 			// Set Projectile Velocity
-			if (TheProjectile)
-				TheProjectile->InitVelocity(Direction);
+			if (TheProjectile) 
+			{
+				
+				TheProjectile->InitVelocity(Direction*ProjectileVelocity);
+			}
+				
 		}
 	}
 }

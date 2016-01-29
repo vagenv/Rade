@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 #include "BaseHUD.h"
@@ -10,28 +10,27 @@ void ABaseHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Create Delayed Post Begin Play
-	FTimerHandle MyHandle;
-	GetWorldTimerManager().SetTimer(MyHandle, this, &ABaseHUD::PostBeginPlay, PostDelay, false);
-
 	// Start With Inventory CLosed
 	bInventoryOpen = false;
 
-	// Get Player Ref and Set HUD Ref in Player
-	if (GetOwningPawn() && Cast<ARadePlayer>(GetOwningPawn()))
-	{
-		ThePlayer = Cast<ARadePlayer>(GetOwningPawn());
-		Cast<ARadePlayer>(GetOwningPawn())->TheHUD = this;
-	}
-
+	ResetReferences();
 }
 
-void ABaseHUD::PostBeginPlay()
+void ABaseHUD::ResetReferences()
 {
-	if (!ThePlayer && GetOwningPawn() && Cast<ARadePlayer>(GetOwningPawn()))
+	if (!ThePlayer)
 	{
-		ThePlayer = Cast<ARadePlayer>(GetOwningPawn());
-		Cast<ARadePlayer>(GetOwningPawn())->TheHUD = this;
+		if (GetOwningPawn() && Cast<ARadePlayer>(GetOwningPawn()))
+		{
+			ThePlayer = Cast<ARadePlayer>(GetOwningPawn());
+			ThePlayer->TheHUD = this;
+		}
+		else 
+		{
+			FTimerHandle MyHandle;
+			GetWorldTimerManager().SetTimer(MyHandle, this, &ABaseHUD::ResetReferences, 0.5f, false);
+		}
+
 	}
 }
 

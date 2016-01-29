@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 
@@ -44,6 +44,9 @@ void ARadeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Jump();
+
+	bDead = false;
 	// Get Third Person Anim Instance
 	if (GetMesh() && GetMesh()->GetAnimInstance() && Cast<URadeAnimInstance>(GetMesh()->GetAnimInstance()))
 		BodyAnimInstance = Cast<URadeAnimInstance>(GetMesh()->GetAnimInstance());
@@ -113,8 +116,7 @@ void ARadeCharacter::EquipWeapon(AWeapon* NewWeaponClass)
 		TheWeapon->Destroy();
 
 
-	if (BodyAnimInstance)
-		BodyAnimInstance->AnimArchetype = NewWeaponClass->AnimArchetype;
+	Global_SetAnimArchtype(NewWeaponClass->AnimArchetype);
 
 	// Set Animation state
 	ServerSetAnimID(EAnimState::Equip);
@@ -130,6 +132,9 @@ void ARadeCharacter::EquipWeapon(AWeapon* NewWeaponClass)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											Take Damage , Death/Reveive
 
 
 //				Take Damage
@@ -168,18 +173,12 @@ float ARadeCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 //			Server Death
 void ARadeCharacter::ServerDie()
 {
-	if (Health>0 && !bDead)return;
+	if (Health>0 || bDead)return;
 
 	// Throw out Inventory Items on Death
 	if (TheInventory && TheInventory->bDropItemsOnDeath)
 		TheInventory->ThrowOutAllItems();
 
-	// save third person mesh Relative Location and rotation before ragdoll
-	if (GetMesh())
-	{
-		Mesh_DefaultRelativeLoc = GetMesh()->RelativeLocation;
-		Mesh_DefaultRelativeRot = GetMesh()->RelativeRotation;
-	}
 
 	// If Player can revive, revive hit after a delay
 	if (bCanRevive)
@@ -196,8 +195,20 @@ void ARadeCharacter::ServerDie()
 // Implementation on all Clients
 void ARadeCharacter::GlobalDeath_Implementation()
 {
+
+	// save third person mesh Relative Location and rotation before ragdoll
+	if (GetMesh())
+	{
+		Mesh_DefaultRelativeLoc = GetMesh()->RelativeLocation;
+		Mesh_DefaultRelativeRot = GetMesh()->RelativeRotation;
+	}
+
+
+
 	GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("NoCollision");
 	Cast<USkeletalMeshComponent>(GetMesh())->SetSimulatePhysics(true);
+
+	
 
 	ForceRagdoll();
 	BP_CharacterDeath();
@@ -208,12 +219,31 @@ void ARadeCharacter::GlobalDeath_Implementation()
 // Revive Player
 void ARadeCharacter::ServerRevive()
 {
-	GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("Pawn");
+
 
 	// Resoter Half of player health
 	Health = MaxHealth / 2;
 	bDead = false;
+	if (TheWeapon)
+	{
+		TheWeapon->Destroy();
+		TheWeapon = nullptr;
+	}
 
+	
+
+	GetRootComponent()->SetWorldLocation(GetActorLocation() + FVector(0,0,60));
+
+	GlobalRevive();
+
+}
+
+
+
+// Implementation on all Clients
+void ARadeCharacter::GlobalRevive_Implementation(){
+	BP_CharacterRevive();
+	GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("Pawn");
 	// Restore Third Person Mesh to default State
 	if (GetMesh())
 	{
@@ -223,17 +253,7 @@ void ARadeCharacter::ServerRevive()
 		GetMesh()->RelativeRotation = Mesh_DefaultRelativeRot;
 		GetMesh()->BodyInstance.SetCollisionProfileName("Pawn");
 	}
-
-	GetRootComponent()->SetWorldLocation(GetActorLocation() + FVector(0,0,60));
-
-	GlobalRevive();
-}
-
-
-
-// Implementation on all Clients
-void ARadeCharacter::GlobalRevive_Implementation(){
-	BP_CharacterRevive();
+	Global_SetAnimArchtype_Implementation(EAnimArchetype::EmptyHand);
 }
 
 // Enable Ragdoll
@@ -267,8 +287,9 @@ void ARadeCharacter::Landed(const FHitResult& Hit)
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////// Network Anim
+//											 Network Anim
 
 // Set Server Animation ID
 bool ARadeCharacter::ServerSetAnimID_Validate(EAnimState AnimID){
@@ -307,6 +328,35 @@ bool ARadeCharacter::IsAnimInAir()
 	if (IsAnimState(EAnimState::JumpEnd) || IsAnimState(EAnimState::Jumploop) || IsAnimState(EAnimState::JumpStart))return true;
 	else return false;
 }
+
+void ARadeCharacter::Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype)
+{
+	if (BodyAnimInstance)BodyAnimInstance->AnimArchetype = newAnimArchetype;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//											 Character Stats
+
+
+void ARadeCharacter::OnRep_CharacterStatsUpdated() {
+	BP_CharacterStatsUpdated();
+}
+
+bool ARadeCharacter::SetCharacterStats_Validate(const FString & newName, FLinearColor newColor)
+{
+	return true;
+}
+
+void ARadeCharacter::SetCharacterStats_Implementation(const FString & newName, FLinearColor newColor)
+{
+
+	CharacterName = newName;
+	CharacterColor = newColor;
+
+	if (Role >= ROLE_Authority)OnRep_CharacterStatsUpdated();
+}
+
 
 
 

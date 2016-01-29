@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -16,11 +16,7 @@ public:
 	virtual void BeginPlay() override;
 
 	// Post Begin Delay
-	void PostBeginPlay();
-
-	// Post begin Delay Time
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
-		float PostDelay = 0.3;
+	void ResetReferences();
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

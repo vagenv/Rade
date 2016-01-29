@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 #include "RadeGameMode.h"
@@ -19,6 +19,7 @@ AConstructorWeapon::AConstructorWeapon(const FObjectInitializer& PCIP)
 	bAltFireEnabled = true;
 	bUseAmmo = false;
 	bRestoreAmmo = false;
+	ItemName = "Constructor Weapon";
 }
 
 void AConstructorWeapon::BeginPlay()

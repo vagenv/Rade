@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -103,18 +103,18 @@ public:
 	//			Melee Attack Properties
 
 	// Melee Attack Speed
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Melee Attack")
 		float MeleeAttackSpeed = 1;
 	// Melee Attack Speed
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Melee Attack")
 		float MeleeAttackDamage = 20;
 
 	// Melee Attack Distance
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Melee Attack")
 		float MeleeAttackDistance = 200;
 
 	// Melee Attack Distance
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Melee Attack")
 		float MeleeAttackAngles = 25;
 
 

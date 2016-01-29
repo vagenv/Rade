@@ -1,10 +1,15 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 
 #include "Weapon/ShotGunWeapon.h"
 #include "Character/RadePlayer.h"
 
+
+AShotGunWeapon::AShotGunWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
+{
+	ItemName = "Shotgun";
+}
 
 // The Fire Event
 void AShotGunWeapon::Fire()

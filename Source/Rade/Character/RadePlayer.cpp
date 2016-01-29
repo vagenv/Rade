@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 #include "Engine.h"
@@ -516,7 +516,8 @@ void ARadePlayer::UnEquipEnd()
 	// Else return to empty hand state
 	else
 	{
-		ArmsAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
+		if(ArmsAnimInstance)ArmsAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
+		if(BodyAnimInstance)BodyAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
 		ServerSetAnimID(EAnimState::Idle_Run);
 	}
 }
@@ -670,7 +671,7 @@ void ARadePlayer::ServerDie()
 {
 	// Stop any Fire
 	FireEnd();
-	bDead = true;
+
 	// Switch to third Person View on death, to look at body
 	CurrentCameraState = ECameraState::TP_Camera;
 
@@ -698,8 +699,7 @@ void ARadePlayer::ServerRevive()
 {
 	Super::ServerRevive();
 
-	// Enable Input
-	EnableInput(Cast<APlayerController>(Controller));
+
 
 	// Find The Closest Revive Point
 	TActorIterator<APlayerStart> p(GetWorld());
@@ -722,10 +722,12 @@ void ARadePlayer::GlobalRevive_Implementation()
 {
 	Super::GlobalRevive_Implementation();
 
+	// Enable Input
+	EnableInput(Cast<APlayerController>(Controller));
 	// Set Camer to Default Camera state
 	CurrentCameraState = DefaultCameraState;
 	UpdateComponentsVisibility();
-
+	Global_SetAnimArchtype_Implementation(EAnimArchetype::EmptyHand);
 
 	BP_PlayerRevived();
 }
@@ -757,6 +759,13 @@ bool ARadePlayer::IsAnimState(EAnimState TheAnimState)
 
 	}
 	else return Super::IsAnimState(TheAnimState);
+}
+
+void ARadePlayer::Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype)
+{
+	Super::Global_SetAnimArchtype_Implementation(newAnimArchetype);
+
+	if (ArmsAnimInstance)ArmsAnimInstance->AnimArchetype = newAnimArchetype;
 }
 
 
@@ -860,24 +869,15 @@ void ARadePlayer::AddChatMessage_Implementation(const FString & TheMessage)
 	}
 }
 
-bool ARadePlayer::SetPlayerStats_Validate(const FString & newPlayerName, FLinearColor newPlayerColor)
+void ARadePlayer::SetCharacterStats_Implementation(const FString & newName, FLinearColor newColor)
 {
-	return true;
-}
-
-void ARadePlayer::SetPlayerStats_Implementation(const FString & newPlayerName, FLinearColor newPlayerColor)
-{
+	Super::SetCharacterStats_Implementation(newName,newColor);
 	if (PlayerState)
 	{
-		PlayerState->PlayerName = newPlayerName;
-		if (Cast<ARadePlayerState>(PlayerState))Cast<ARadePlayerState>(PlayerState)->PlayerColor = newPlayerColor;
+		PlayerState->PlayerName = newName;
+		if (Cast<ARadePlayerState>(PlayerState))Cast<ARadePlayerState>(PlayerState)->PlayerColor = newColor;
 	}
-	CharacterName = newPlayerName;
-	CharacterColor = newPlayerColor;
 }
-
-
-
 
 
 // Replication of data

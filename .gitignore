@@ -14,3 +14,4 @@ Releases
 *-DebugGame.dll
 *.log
 *.target.xml
+/Rade.VC.opendb

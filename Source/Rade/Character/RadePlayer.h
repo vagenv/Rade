@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -213,11 +213,7 @@ public:
 	bool AddChatMessage_Validate(const FString & TheMessage);
 	void AddChatMessage_Implementation(const FString & TheMessage)	;
 
-	// Set Player Stats
-	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
-		void SetPlayerStats(const FString & newPlayerName, FLinearColor newPlayerColor);
-	bool SetPlayerStats_Validate(const FString & newPlayerName, FLinearColor newPlayerColor);
-	void SetPlayerStats_Implementation(const FString & newPlayerName, FLinearColor newPlayerColor);
+	virtual void SetCharacterStats_Implementation(const FString & newName, FLinearColor newColor);
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -227,6 +223,9 @@ public:
 
 	// Set Animation ID
 	virtual void Global_SetAnimID_Implementation(EAnimState AnimID)override;
+
+	// Set Animation Archtype
+	virtual void Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype)override;
 
 	// Is Player in Anim State
 	virtual bool IsAnimState(EAnimState TheAnimState)override;

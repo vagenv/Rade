@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #include "Rade.h"
 
@@ -22,20 +22,20 @@ AWeapon::AWeapon(const class FObjectInitializer& PCIP)
 	Mesh1P->AttachParent = RootComponent;
 	Mesh1P->bOnlyOwnerSee = true;
 	Mesh1P->bVisible = true;
+	Mesh1P->SetIsReplicated(true);
 
 	Mesh3P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh3P"));
 	Mesh3P->CastShadow = true;
 	Mesh3P->AttachParent = RootComponent;
 	Mesh3P->bOwnerNoSee = true;
 	Mesh3P->bVisible = true;
-
+	Mesh3P->SetIsReplicated(true);
 
 	bReplicates = true;
 
-	Mesh1P->SetIsReplicated(true);
-	Mesh3P->SetIsReplicated(true);	
 
-	PrimaryActorTick.bCanEverTick = false;
+	ItemName = "Weapon";
+
 }
 
 void AWeapon::BeginPlay()

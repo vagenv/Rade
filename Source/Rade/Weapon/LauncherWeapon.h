@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -12,11 +12,14 @@ class RADE_API ALauncherWeapon : public AWeapon
 {
 	GENERATED_BODY()
 public:
-
+	ALauncherWeapon(const class FObjectInitializer& PCIP);
 	// Fire Event 
 	virtual void Fire()override;
 
 	// Projectile Class
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire Projectile")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launcher Weapon")
 		TSubclassOf <class AProjectile> GrenadeArchetype;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launcher Weapon")
+		float ProjectileVelocity=500;
 };

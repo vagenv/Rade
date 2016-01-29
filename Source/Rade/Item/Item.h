@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -39,7 +39,7 @@ public:
 
 	// Item Name
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
-		FString ItemName = FString("Name of Item");
+		FString ItemName = FString("Item");
 
 	// Item Icon
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")

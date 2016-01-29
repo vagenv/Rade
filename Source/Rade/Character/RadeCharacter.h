@@ -1,4 +1,4 @@
-// Copyright 2015 Vagen Ayrapetyan
+// Copyright 2015-2016 Vagen Ayrapetyan
 
 #pragma once
 
@@ -66,14 +66,25 @@ public:
 
 
 	// Character Name 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
+	UPROPERTY(ReplicatedUsing = OnRep_CharacterStatsUpdated, EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		FString CharacterName;
 
 	// Character Color
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
+	UPROPERTY(ReplicatedUsing = OnRep_CharacterStatsUpdated , EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		FLinearColor CharacterColor = FLinearColor::White;
 
+	// Character Stats Updated
+	UFUNCTION()
+		virtual void OnRep_CharacterStatsUpdated();
+	// BP Server Event - Character Died 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+		void BP_CharacterStatsUpdated();
 
+	// Set Character Stats
+	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
+		void SetCharacterStats(const FString & newName, FLinearColor newColor);
+	bool SetCharacterStats_Validate(const FString & newName, FLinearColor newColor);
+	void SetCharacterStats_Implementation(const FString & newName, FLinearColor newColor);
 
 
 	// Default Inventory Items
@@ -89,7 +100,6 @@ public:
 	// Called from inventory when player wants to equip new weapon
 	UFUNCTION(BlueprintCallable, Category = "Rade")
 		virtual void EquipWeapon(class AWeapon* NewWeaponClass);
-
 
 
 
@@ -164,13 +174,13 @@ public:
 
 	//								Animation
 
-	// Called on server to set current animation
+	// Called on server to set animation
 	UFUNCTION(Reliable, Server, WithValidation)
 		void ServerSetAnimID(EAnimState AnimID);
 	virtual bool ServerSetAnimID_Validate(EAnimState AnimID);
 	virtual void ServerSetAnimID_Implementation(EAnimState AnimID);
 
-	// Called on all users to set server current animation
+	// Called on all users to set animation
 	UFUNCTION(NetMulticast, Reliable)
 		void Global_SetAnimID(EAnimState AnimID);
 	virtual void Global_SetAnimID_Implementation(EAnimState AnimID);
@@ -182,5 +192,12 @@ public:
 	// Is Character in Air
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
 		bool IsAnimInAir();
-	
+
+
+	// Called on all users to set Animation Archetype
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "Rade")
+		void Global_SetAnimArchtype(EAnimArchetype newAnimArchetype);
+	virtual void Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype);
+
+
 };
