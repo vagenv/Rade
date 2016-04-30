@@ -2,12 +2,12 @@
 	"TargetName" : "RadeEditor",
 	"Platform" : "Win64",
 	"Configuration" : "Development",
-	"BuildId" : "34f6e191-c989-44aa-9256-27bca492f610",
+	"BuildId" : "bcb9fdc1-815b-4cb3-8f14-d1f58d381977",
 	"Version" : 
 	{
 		"MajorVersion" : 4,
 		"MinorVersion" : 11,
-		"PatchVersion" : 0,
+		"PatchVersion" : 2,
 		"Changelist" : 0,
 		"IsLicenseeVersion" : 0,
 		"BranchName" : ""
@@ -256,18 +256,6 @@
 		},
 		{
 			"Path" : "$(EngineDir)\\Plugins\\Runtime\\ExampleDeviceProfileSelector\\Intermediate\\Build\\Win64\\UE4Editor\\Development\\UE4Editor-ExampleDeviceProfileSelector.lib",
-			"Type" : "ImportLibrary"
-		},
-		{
-			"Path" : "$(EngineDir)\\Plugins\\Runtime\\LeapMotionController\\Binaries\\Win64\\UE4Editor-LeapMotionController.dll",
-			"Type" : "DynamicLibrary"
-		},
-		{
-			"Path" : "$(EngineDir)\\Plugins\\Runtime\\LeapMotionController\\Binaries\\Win64\\UE4Editor-LeapMotionController.pdb",
-			"Type" : "SymbolFile"
-		},
-		{
-			"Path" : "$(EngineDir)\\Plugins\\Runtime\\LeapMotionController\\Intermediate\\Build\\Win64\\UE4Editor\\Development\\UE4Editor-LeapMotionController.lib",
 			"Type" : "ImportLibrary"
 		},
 		{
@@ -4480,10 +4468,7 @@
 			"Path" : "$(EngineDir)\\Binaries\\ThirdParty\\svn\\Win64\\license\\Subversion.license"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/Leap/Win64/Leap.dll"
-		},
-		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/OpenVR/OpenVRv000/Win64/openvr_api.dll"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/OpenVR/OpenVRv0_9_12/Win64/openvr_api.dll"
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/ICU/icu4c-53_1/Win64/VS2015/icudt53.dll"
@@ -4502,6 +4487,9 @@
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/ICU/icu4c-53_1/Win64/VS2015/icuio53.dll"
+		},
+		{
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/IntelISPCTexComp/Win64-Release/ispc_texcomp.dll"
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/nvTextureTools/Win64/nvtt_64.dll"
@@ -4525,19 +4513,22 @@
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3PROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3PROFILE_x64.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3PROFILE_x64.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3CommonPROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3CommonPROFILE_x64.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3CommonPROFILE_x64.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3CookingPROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3CookingPROFILE_x64.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/PhysX3CookingPROFILE_x64.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/PhysX-3.3/Win64/VS2015/nvToolsExt64_1.dll"
@@ -4546,25 +4537,29 @@
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_ClothingPROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_ClothingPROFILE_x64.dll.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_ClothingPROFILE_x64.dll.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_DestructiblePROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_DestructiblePROFILE_x64.dll.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_DestructiblePROFILE_x64.dll.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_LegacyPROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_LegacyPROFILE_x64.dll.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/APEX_LegacyPROFILE_x64.dll.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/ApexFrameworkPROFILE_x64.dll"
 		},
 		{
-			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/ApexFrameworkPROFILE_x64.dll.pdb"
+			"Path" : "$(EngineDir)/Binaries/ThirdParty/PhysX/APEX-1.3/Win64/VS2015/ApexFrameworkPROFILE_x64.dll.pdb",
+			"IgnoreIfMissing" : true
 		},
 		{
 			"Path" : "$(EngineDir)/Binaries/ThirdParty/Qualcomm/Win64/TextureConverter.dll"

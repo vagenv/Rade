@@ -10,7 +10,7 @@ public class Rade : ModuleRules
         MinFilesUsingPrecompiledHeaderOverride = 1;
         bFasterWithoutUnity = true;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "OnlineSubsystem", "OnlineSubsystemUtils", "UMG" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "OnlineSubsystem", "OnlineSubsystemUtils", "UMG", "RHI" });
 
         PrivateDependencyModuleNames.Add("OnlineSubsystem");
         DynamicallyLoadedModuleNames.Add("OnlineSubsystemNull");
