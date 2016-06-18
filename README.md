@@ -6,15 +6,21 @@ UE Dynamic Shooter Template.
 
 ![alt tag](https://raw.github.com/vagenv/rade/master/Content/Rade/Splash/Splash.png)
        
+
+
+Unreal Engine Forum Page:
+--------------------
+
+
          
 
     
-[Donate to support me as developer
---------------------](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
+[Donate to support me as developer]
+--------------------(https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
             
 
 
-
+https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
 
 
 Youtube Link :
@@ -82,11 +88,6 @@ Spacebar			- Jump/DoubleJump
 
 
 
-Unreal Engine Forum Page:
-https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
-
-
-
-Copyright  2015 Vagen Ayrapetyan.
+Copyright  2015-2016 Vagen Ayrapetyan.
 
 ________________________________________________________________
