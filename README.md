@@ -12,15 +12,16 @@ Unreal Engine Forum Page:
 --------------------
 
 
+https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
          
 
     
-[Donate to support me as developer]
---------------------(https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
+Donate to support me :
+--------------------
+(https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
             
 
 
-https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
 
 
 Youtube Link :
