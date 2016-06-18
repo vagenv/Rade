@@ -32,7 +32,7 @@ public:
 
 	// Box Overlap Event
 	UFUNCTION()
-	virtual void OnSwordWeaponBoxBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	virtual void OnSwordWeaponBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	// Is Slashing/Tracing/Cutting
 	bool bTracingMeleeAttack;

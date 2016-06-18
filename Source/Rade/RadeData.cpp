@@ -11,6 +11,7 @@
 FRadeOnineMessageData::FRadeOnineMessageData(FString NewMessage, ARadePlayer* ThePlayer)
 {
 
+       
 	MessageTime = FDateTime::Now();
 	TheMessage = NewMessage;
 	if (ThePlayer)

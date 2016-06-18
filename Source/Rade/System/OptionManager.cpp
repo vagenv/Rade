@@ -17,7 +17,6 @@ void UOptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>
 	if (TheInputSettings == nullptr) return;
 	InputActions.Empty();
 	InputKeys.Empty();
-
 	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->ActionMappings;
 	for (int32 i = 0; i < InputActionMapping.Num(); ++i){
 		if (InputActionMapping.IsValidIndex(i)){

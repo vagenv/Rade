@@ -13,6 +13,8 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	CollisionComp->MoveIgnoreActors.Add(this);
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");	
+	
+	
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);	
 	RootComponent = CollisionComp;
 
@@ -85,7 +87,7 @@ void AProjectile::EnableProjectile(){
 }
 
 // Hit Something
-void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AProjectile::OnHit(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 
 	if (bCanExplode && (OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp != Mesh)

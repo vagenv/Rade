@@ -21,8 +21,9 @@ ARadeGameMode::ARadeGameMode(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 void ARadeGameMode::BeginPlay()
 {
-	Super::BeginPlay();
-
+ 
+ 	Super::BeginPlay();
+	
 	// Start Post begin delay
 	FTimerHandle MyHandle;
 	GetWorldTimerManager().SetTimer(MyHandle, this, &ARadeGameMode::PostBeginPlay, 0.1f, false);

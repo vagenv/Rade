@@ -77,9 +77,11 @@ public:
 	// Enable Projectile Explosion
 	void EnableProjectile();
 
+	
+	
 	// Called when hit something
 	UFUNCTION()
-		void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+		void OnHit(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	// Apply Velocity 
 	void InitVelocity(const FVector& ShootDirection);

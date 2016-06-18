@@ -419,10 +419,14 @@ void UInventory::LoadInventory()
 		}
 	}
 	// Error With Game Mode or Save file ref, retry after 0.5 sec
-	if (!TheGM || !TheGM->SaveFile && TheCharacter)
+	if (!TheGM || !TheGM->SaveFile )
 	{
-		FTimerHandle MyHandle;
-		TheCharacter->GetWorldTimerManager().SetTimer(MyHandle, this, &UInventory::LoadInventory, 0.5, false);
+		if( TheCharacter)
+		{
+			FTimerHandle MyHandle;
+			TheCharacter->GetWorldTimerManager().SetTimer(MyHandle, this, &UInventory::LoadInventory, 0.5, false);
+
+		}
 	}
 
 	// Set Inventory Items data to items data from save file

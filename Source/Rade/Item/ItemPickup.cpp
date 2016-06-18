@@ -133,7 +133,7 @@ void AItemPickup::ActivatePickupOverlap()
 		{
 			if (RadeActorItr && TriggerSphere && FVector::Dist(RadeActorItr->GetActorLocation(), GetActorLocation()) < TriggerSphere->GetUnscaledSphereRadius())
 			{
-				OnBeginOverlap(*RadeActorItr, nullptr, 0, false, FHitResult());
+				OnBeginOverlap(nullptr,*RadeActorItr, nullptr, 0, false, FHitResult());
 				return;
 			}
 		}
@@ -161,7 +161,7 @@ void AItemPickup::ActivatePickupPhysics()
 }
 
 // Player Entered The Pickup Area
-void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AItemPickup::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && Cast<ARadePlayer>(OtherActor) != nullptr && Cast<ARadePlayer>(OtherActor)->TheInventory != nullptr)
 	{
@@ -193,7 +193,7 @@ void AItemPickup::OnBeginOverlap(AActor* OtherActor, UPrimitiveComponent* OtherC
 }
 
 // Player Exited The Pickup Area
-void AItemPickup::OnEndOverlap(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AItemPickup::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && Cast<ARadePlayer>(OtherActor) != nullptr)
 	{
