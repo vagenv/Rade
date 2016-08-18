@@ -65,8 +65,8 @@ void ARadeGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		// No Save File, Creating new
 		if (!SaveFile)
 		{
-			USystemSaveGame* SaveFile = Cast<USystemSaveGame>(UGameplayStatics::CreateSaveGameObject(USystemSaveGame::StaticClass()));
-			UGameplayStatics::SaveGameToSlot(SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
+			USystemSaveGame* saveFile = Cast<USystemSaveGame>(UGameplayStatics::CreateSaveGameObject(USystemSaveGame::StaticClass()));
+			UGameplayStatics::SaveGameToSlot(saveFile, saveFile->SaveSlotName, saveFile->UserIndex);
 		}
 
 		if (SaveFile)
