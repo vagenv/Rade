@@ -1,10 +1,9 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
-
-#include "Rade.h"
-
-#include "Character/RadePlayer.h"
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Item/Item.h"
+#include "Character/RadePlayer.h"
+#include "Rade.h"
+
 #include "UnrealNetwork.h"
 
 AItem::AItem(const class FObjectInitializer& PCIP)

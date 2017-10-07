@@ -7,7 +7,6 @@
 #include "Online.h"
 #include "OnlineSubsystem.h"
 
-
 #define COLLISION_PROJECTILE    ECC_GameTraceChannel1
 
 /// Custom Log Type
@@ -27,6 +26,8 @@ DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
 
 #define printlong(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 25, FColor::Red,text)
 
+
+void rlog (FString txt);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

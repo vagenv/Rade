@@ -1,9 +1,8 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
-
-#include "Rade.h"
-#include "RadeGameMode.h"
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Weapon/ConstructorWeapon.h"
+#include "RadeGameMode.h"
+#include "Rade.h"
 
 #include "Character/RadePlayer.h"
 
@@ -12,6 +11,7 @@
 
 #include "Components/LineBatchComponent.h"
 #include "DrawDebugHelpers.h"
+
 
 AConstructorWeapon::AConstructorWeapon(const FObjectInitializer& PCIP)
 	: Super(PCIP)

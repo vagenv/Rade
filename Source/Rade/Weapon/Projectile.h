@@ -1,8 +1,9 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Components/SphereComponent.h"
 #include "Projectile.generated.h"
 
 

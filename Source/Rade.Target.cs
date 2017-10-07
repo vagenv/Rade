@@ -1,25 +1,14 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 using UnrealBuildTool;
 using System.Collections.Generic;
 
 public class RadeTarget : TargetRules
 {
-	public RadeTarget(TargetInfo Target)
+	public RadeTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-	}
 
-	//
-	// TargetRules interface.
-	//
-
-	public override void SetupBinaries(
-		TargetInfo Target,
-		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-		ref List<string> OutExtraModuleNames
-		)
-	{
-		OutExtraModuleNames.AddRange( new string[] { "Rade" } );
+		ExtraModuleNames.AddRange( new string[] { "Rade" } );
 	}
 }

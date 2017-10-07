@@ -1,9 +1,8 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
 #include "RadeDamageVolume.h"
+#include "Rade.h"
 #include "Character/RadeCharacter.h"
-
 
 
 // Actual Damage Event

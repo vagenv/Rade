@@ -1,7 +1,7 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Rade.h"
 #include "Weapon/RifleWeapon.h"
+#include "Rade.h"
 #include "Character/RadePlayer.h"
 
 
@@ -9,7 +9,6 @@ ARifleWeapon::ARifleWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 	ItemName = "Rifle";
 }
-
 
 void ARifleWeapon::Fire()
 {

@@ -1,8 +1,7 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
-
-#include "Rade.h"
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Weapon/ShotGunWeapon.h"
+#include "Rade.h"
 #include "Character/RadePlayer.h"
 
 

@@ -1,14 +1,14 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
-#include "RadeGameMode.h"
-
-#include "System/SystemSaveGame.h"
-
 #include "Custom/LevelBlockConstructor.h"
 #include "Custom/LevelBlock.h"
 
 #include "Weapon/ConstructorWeapon.h"
+
+#include "RadeGameMode.h"
+#include "Rade.h"
+#include "System/SystemSaveGame.h"
+
 
 #include "UnrealNetwork.h"
 
@@ -53,7 +53,7 @@ void ALevelBlockConstructor::Server_UpdateBlocksStatus()
 			if (TheBlock)
 			{
 				CurrentBlocks[i].LevelItem = TheBlock;
-				TheBlock->AttachRootComponentToActor(this);
+				TheBlock->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 			}
 		}
 	}
@@ -104,7 +104,7 @@ bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArch
 
 		// Set block values
 		newBlockData.LevelItem->ParentWeapon = TheConstructorWeapon;
-		newBlockData.LevelItem->AttachRootComponentToActor(this);
+		newBlockData.LevelItem->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 		newBlockData.LevelItem->TheBlockConstructor = this;
 
 		// Auto Destroy Block After some time

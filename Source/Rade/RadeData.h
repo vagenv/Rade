@@ -1,8 +1,9 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #pragma once
 
 #include "Object.h"
+#include "Online.h"
 #include "RadeData.generated.h"
 
 
@@ -122,7 +123,7 @@ enum class EAnimState : uint8
 
 
 // Fire Data Struct
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FFireStats
 {
 	GENERATED_USTRUCT_BODY()

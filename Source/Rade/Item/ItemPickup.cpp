@@ -1,12 +1,13 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
-#include "Character/RadePlayer.h"
-
 #include "Item/ItemPickup.h"
 #include "Item/Inventory.h"
 #include "Item/Item.h"
+#include "Character/RadePlayer.h"
+#include "Rade.h"
+
 #include "UnrealNetwork.h"
+
 
 // Sets default values
 AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
@@ -21,7 +22,7 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	SkeletalMesh->SetIsReplicated(true);
 	SkeletalMesh->BodyInstance.SetCollisionProfileName("BlockAll");
 	SkeletalMesh->SetSimulatePhysics(true);
-	SkeletalMesh->AttachParent = RootComponent;
+   SkeletalMesh->SetupAttachment (GetRootComponent ());
 	
 	// Set Static Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
@@ -29,7 +30,7 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	Mesh->BodyInstance.SetCollisionProfileName("BlockAll");
 	Mesh->SetSimulatePhysics(true);
 	Mesh->bAutoActivate = true;
-	Mesh->AttachParent = RootComponent;;
+   Mesh->SetupAttachment (GetRootComponent ());
 
 	// Set Trigger Component
 	TriggerSphere = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("TriggerSphere"));
@@ -63,7 +64,7 @@ void AItemPickup::BeginPlay()
 
 
 	// If Mesh is Set , Activate Pickup
-	if ((Mesh && Mesh->StaticMesh) || (SkeletalMesh && SkeletalMesh->SkeletalMesh))
+	if ((Mesh && Mesh->GetStaticMesh ()) || (SkeletalMesh && SkeletalMesh->SkeletalMesh))
 		ActivatePickupPhysics();
 
 	// Else Activate it after a delay
@@ -85,7 +86,7 @@ void AItemPickup::SetAsSkeletalMeshPickup_Implementation()
 	if (Mesh)Mesh->DestroyComponent();
 
 	// Attach Trigger to Skeletal Mesh Component
-	TriggerSphere->AttachTo(SkeletalMesh, NAME_None, EAttachLocation::SnapToTarget);
+	TriggerSphere->AttachToComponent(SkeletalMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 
 	// Set Its Properties
 	SkeletalMesh->SetMobility(EComponentMobility::Movable);
@@ -109,7 +110,7 @@ void AItemPickup::SetAsMeshPickup_Implementation()
 	if (SkeletalMesh)SkeletalMesh->DestroyComponent();
 
 	// Attach Trigger to Static Mesh Component
-	TriggerSphere->AttachTo(Mesh, NAME_None, EAttachLocation::SnapToTarget);
+	TriggerSphere->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 
 	// Set Its Properties
 	Mesh->SetMobility(EComponentMobility::Movable);
@@ -151,7 +152,7 @@ void AItemPickup::ActivatePickupPhysics()
 	if (!Mesh || !SkeletalMesh)return;
 	
 	// Enable As Static Mesh Pickup
-	if (Mesh->StaticMesh)
+	if (Mesh->GetStaticMesh ())
 		SetAsMeshPickup();
 
 	// Enable As Skeletal Mesh Pickup

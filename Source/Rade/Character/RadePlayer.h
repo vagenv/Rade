@@ -45,7 +45,7 @@ public:
 
 
 	//  First Person Mesh
-	UPROPERTY(Replicated,VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(Replicated, VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 
 

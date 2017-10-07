@@ -28,4 +28,5 @@ Releases
 /.kdev4/Defines.txt
 /.kdev4/Includes.txt
 /.kdev4/Rade.kdev4
+/.vs
 /CMakeLists.txt

@@ -1,8 +1,9 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
+
 
 #include "Character/RadeCharacter.h"
+#include "Rade.h"
 #include "Character/RadeAnimInstance.h"
 
 #include "Item/Inventory.h"
@@ -21,7 +22,8 @@
 //						Base 
 
 
-ARadeCharacter::ARadeCharacter(const class FObjectInitializer& PCIP):Super(PCIP)
+ARadeCharacter::ARadeCharacter(const class FObjectInitializer& PCIP) 
+   : Super(PCIP), TheInventory(NULL), TheWeapon(NULL)
 {
 
 	bDead = false;
@@ -35,6 +37,8 @@ ARadeCharacter::ARadeCharacter(const class FObjectInitializer& PCIP):Super(PCIP)
 
 	TheInventory = CreateDefaultSubobject<UInventory>(TEXT("The Inventory"));
 	TheInventory->SetIsReplicated(true);
+
+
 
 	CharacterName = "Rade Character";
 }
@@ -127,7 +131,7 @@ void ARadeCharacter::EquipWeapon(AWeapon* NewWeaponClass)
 	if (TheWeapon)
 	{
 		TheWeapon->SetOwner(this);
-		TheWeapon->Mesh3P->AttachTo(GetMesh(), FName("WeaponSocket"));
+		TheWeapon->Mesh3P->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket"));
 	}
 
 }
@@ -204,12 +208,10 @@ void ARadeCharacter::GlobalDeath_Implementation()
 	}
 
 
-
 	GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("NoCollision");
 	Cast<USkeletalMeshComponent>(GetMesh())->SetSimulatePhysics(true);
 
 	
-
 	ForceRagdoll();
 	BP_CharacterDeath();
 }
@@ -219,8 +221,6 @@ void ARadeCharacter::GlobalDeath_Implementation()
 // Revive Player
 void ARadeCharacter::ServerRevive()
 {
-
-
 	// Resoter Half of player health
 	Health = MaxHealth / 2;
 	bDead = false;
@@ -230,25 +230,23 @@ void ARadeCharacter::ServerRevive()
 		TheWeapon = nullptr;
 	}
 
-	
-
 	GetRootComponent()->SetWorldLocation(GetActorLocation() + FVector(0,0,60));
 
 	GlobalRevive();
-
 }
 
 
 
 // Implementation on all Clients
-void ARadeCharacter::GlobalRevive_Implementation(){
+void ARadeCharacter::GlobalRevive_Implementation()
+{
 	BP_CharacterRevive();
 	GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("Pawn");
 	// Restore Third Person Mesh to default State
 	if (GetMesh())
 	{
 		GetMesh()->SetSimulatePhysics(false);
-		GetMesh()->AttachTo(RootComponent);
+		GetMesh()->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		GetMesh()->RelativeLocation = Mesh_DefaultRelativeLoc;
 		GetMesh()->RelativeRotation = Mesh_DefaultRelativeRot;
 		GetMesh()->BodyInstance.SetCollisionProfileName("Pawn");

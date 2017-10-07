@@ -1,12 +1,12 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
-
+#include "Weapon/Weapon.h"
+#include "Item/Inventory.h"
 #include "Character/RadePlayer.h"
+#include "Rade.h"
 #include "Character/RadeAnimInstance.h"
 
-#include "Item/Inventory.h"
-#include "Weapon/Weapon.h"
+
 #include "UnrealNetwork.h"
 
 #include "RadePC.h"
@@ -19,14 +19,14 @@ AWeapon::AWeapon(const class FObjectInitializer& PCIP)
 
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh1P"));
 	Mesh1P->CastShadow = false;
-	Mesh1P->AttachParent = RootComponent;
-	Mesh1P->bOnlyOwnerSee = true;
+	Mesh1P->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+   Mesh1P->bOnlyOwnerSee = true;
 	Mesh1P->bVisible = true;
 	Mesh1P->SetIsReplicated(true);
 
 	Mesh3P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh3P"));
 	Mesh3P->CastShadow = true;
-	Mesh3P->AttachParent = RootComponent;
+	Mesh3P->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
 	Mesh3P->bOwnerNoSee = true;
 	Mesh3P->bVisible = true;
 	Mesh3P->SetIsReplicated(true);
@@ -265,11 +265,11 @@ void AWeapon::EquipStart()
 
 	// Attach First person Mesh
 	if (Mesh1P)
-		AttachRootComponentTo(ThePlayer->Mesh1P, FName("WeaponSocket"));
+		AttachToComponent(ThePlayer->Mesh1P, FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket"));
 
 	// Attach Third Person Mesh
 	if (Mesh3P)	
-		Mesh3P->AttachTo(ThePlayer->GetMesh(), FName("WeaponSocket"));
+		Mesh3P->AttachToComponent(ThePlayer->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket"));
 	
 	// Load Weapon Data from inventory
 	if (ThePlayer && ThePlayer->TheInventory)

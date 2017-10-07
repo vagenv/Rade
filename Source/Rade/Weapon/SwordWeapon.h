@@ -1,8 +1,9 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #pragma once
 
 #include "Weapon/Weapon.h"
+#include "Components/BoxComponent.h"
 #include "SwordWeapon.generated.h"
 
 // Any Kind of Melee/ Sword Weapon with which yoy Slash

@@ -1,8 +1,7 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Rade.h"
 #include "System/SystemSaveGame.h"
-
+#include "Rade.h"
 
 USystemSaveGame::USystemSaveGame(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
@@ -10,4 +9,3 @@ USystemSaveGame::USystemSaveGame(const class FObjectInitializer& PCIP)
 	SaveSlotName = TEXT("RadeSaveSlot");
 	UserIndex = 0;
 }
-

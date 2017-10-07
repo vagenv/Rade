@@ -1,8 +1,8 @@
-
-#include "Rade.h"
-#include "Engine.h"
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "System/RadeGameInstance.h"
+#include "Rade.h"
+//#include "Engine.h"
 #include "Character/RadePlayer.h"
 
 

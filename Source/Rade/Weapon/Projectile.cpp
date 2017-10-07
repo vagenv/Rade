@@ -1,34 +1,33 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
 #include "Weapon/Projectile.h"
+#include "Rade.h"
 #include "Character/RadeCharacter.h"
+
 
 AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 
-	// Set Collision Component
-	CollisionComp = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
-	CollisionComp->MoveIgnoreActors.Add(this);
-	CollisionComp->InitSphereRadius(5.0f);
-	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");	
-	
-	
-	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);	
-	RootComponent = CollisionComp;
-
-
 	// Set Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh"));
 	Mesh->bReceivesDecals = false;
 	Mesh->CastShadow = false;
-	Mesh->AttachParent = RootComponent;
+   SetRootComponent (Mesh);
 
+
+	// Set Collision Component
+	CollisionComp = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
+	CollisionComp->MoveIgnoreActors.Add(this);
+	CollisionComp->InitSphereRadius(60.0f);
+	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");	
+	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);	  
+   CollisionComp->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+   //CollisionComp->SetRelativeLocation (FVector(0,0,0));
 
 	//		Projectile Movement
 	ProjectileMovement = PCIP.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
-	ProjectileMovement->UpdatedComponent = CollisionComp;
+	ProjectileMovement->UpdatedComponent = Mesh;
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
@@ -89,7 +88,7 @@ void AProjectile::EnableProjectile(){
 // Hit Something
 void AProjectile::OnHit(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
+   print ("Hit something");
 	if (bCanExplode && (OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp != Mesh)
 	{
 		// Hit Something

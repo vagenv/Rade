@@ -1,18 +1,15 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
-
-#include "Character/RadePlayer.h"
-
 #include "Weapon/LauncherWeapon.h"
 #include "Weapon/Projectile.h"
+#include "Character/RadePlayer.h"
+#include "Rade.h"
 
 
 ALauncherWeapon::ALauncherWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 	ItemName = "Launcher";
 }
-
 
 void ALauncherWeapon::Fire()
 {
@@ -44,10 +41,9 @@ void ALauncherWeapon::Fire()
 			// Set Projectile Velocity
 			if (TheProjectile) 
 			{
-				
+            TheProjectile->Mesh->SetSimulatePhysics(true);
 				TheProjectile->InitVelocity(Direction*ProjectileVelocity);
-			}
-				
+			}		
 		}
 	}
 }

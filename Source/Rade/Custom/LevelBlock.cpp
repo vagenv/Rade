@@ -1,13 +1,12 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
-
-#include "Character/RadePlayer.h"
-#include "Item/Inventory.h"
-
 #include "Custom/LevelBlock.h"
 #include "Custom/LevelBlockConstructor.h"
 #include "Weapon/ConstructorWeapon.h"
+
+#include "Character/RadePlayer.h"
+#include "Rade.h"
+#include "Item/Inventory.h"
 
 
 ALevelBlock::ALevelBlock(const class FObjectInitializer& PCIP)
@@ -15,10 +14,10 @@ ALevelBlock::ALevelBlock(const class FObjectInitializer& PCIP)
 {
 
 	MyRoot = PCIP.CreateOptionalDefaultSubobject <USceneComponent>(this, TEXT("MyRoot"));
-	RootComponent = MyRoot;
+   SetRootComponent (MyRoot);
 
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-	Mesh->AttachParent = MyRoot;
+   Mesh->AttachToComponent(MyRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 
 	bReplicates = true;
 }

@@ -4,8 +4,10 @@ using UnrealBuildTool;
 
 public class Rade : ModuleRules
 {
-	public Rade(TargetInfo Target)
+	public Rade(ReadOnlyTargetRules Target) : base(Target)
 	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
         // Faster Build Speed
         MinFilesUsingPrecompiledHeaderOverride = 1;
         bFasterWithoutUnity = true;

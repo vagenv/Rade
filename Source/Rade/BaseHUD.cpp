@@ -1,7 +1,7 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Rade.h"
 #include "BaseHUD.h"
+#include "Rade.h"
 #include "Character/RadePlayer.h"
 
 

@@ -1,7 +1,8 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
+
 #include "RadeData.h"
+#include "Rade.h"
 #include "Weapon/Weapon.h"
 #include "Custom/LevelBlock.h"
 #include "Character/RadePlayer.h"
@@ -78,7 +79,7 @@ FItemData URadeData::MakeItemDataFromItem(AItem* TheItem)
 
 UObject* URadeData::NewObjectFromBlueprint(UObject* WorldContextObject, UClass* UC)
 {
-	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
+	UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
 	UObject* tempObject = NewObject<UObject>(UC);
 
 	return tempObject;

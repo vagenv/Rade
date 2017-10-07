@@ -1,16 +1,15 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
-#include "Rade.h"
+#include "Item/Inventory.h"
+#include "Item/ItemPickup.h"
+#include "Weapon/Weapon.h"
 
 #include "RadeGameMode.h"
+#include "Rade.h"
 #include "BaseHUD.h"
 
 #include "Character/RadePlayer.h"
 #include "Character/RadeAnimInstance.h"
-
-#include "Item/Inventory.h"
-#include "Item/ItemPickup.h"
-#include "Weapon/Weapon.h"
 
 #include "System/SystemSaveGame.h"
 #include "UnrealNetwork.h"
@@ -18,7 +17,6 @@
 
 UInventory::UInventory(const class FObjectInitializer& PCIP)
 {
-	bWantsBeginPlay = true;
 	bReplicates = true;
 }
 
@@ -31,7 +29,9 @@ void UInventory::BeginPlay()
 // Use Item With Index
 void UInventory::ActionIndex(int32 ItemIndex)
 {
-	if (Items.IsValidIndex(ItemIndex) && Items[ItemIndex].Archetype && Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
+	if (Items.IsValidIndex(ItemIndex) && 
+       Items[ItemIndex].Archetype && 
+       Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
 	{
 		Action(Items[ItemIndex].Archetype->GetDefaultObject<AItem>());
 	}
@@ -253,8 +253,7 @@ void UInventory::ItemPickedUp(AItemPickup* ThePickup)
 			NewData->SetItemData(ThePickup->OverideItemData);
 	}
 	// Add Default Item Data
-	else 
-		AddItem(ThePickup->Item);
+	else AddItem(ThePickup->Item);
 }
 
 
@@ -270,7 +269,9 @@ FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 	{
 
 		// If new Item is weapon and same type as current weapon
-		if (newItem->GetDefaultObject<AWeapon>() && TheCharacter && TheCharacter->TheWeapon && TheCharacter->TheWeapon->GetClass() == newItem->GetDefaultObject<AWeapon>()->GetClass())
+		if (newItem->GetDefaultObject<AWeapon>() && 
+          TheCharacter && TheCharacter->TheWeapon && 
+          TheCharacter->TheWeapon->GetClass() == newItem->GetDefaultObject<AWeapon>()->GetClass())
 		{
 			// Add Ammo to the current weapon equiped
 			TheCharacter->TheWeapon->AddAmmo(newItem->GetDefaultObject<AWeapon>());
@@ -314,9 +315,14 @@ FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 	// New Item 
 	AItem* newItemBase = newItem->GetDefaultObject<AItem>();
 
-	if (!newItemBase)return nullptr;
 
-	FItemData newData = FItemData(newItem, newItemBase->ItemName, newItemBase->ItemIcon, newItemBase->Weight, newItemBase->ItemCount);
+	if (!newItemBase) return nullptr;
+	FItemData newData = FItemData(newItem, newItemBase->ItemName, 
+                                 newItemBase->ItemIcon, 
+                                 newItemBase->Weight, 
+                                 newItemBase->ItemCount);
+
+                                 
 
 	// Add New item to item list and update inventory
 	Items.Add(newData);

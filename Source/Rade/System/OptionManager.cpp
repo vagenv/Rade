@@ -1,18 +1,17 @@
 // Copyright 2015 Vagen Ayrapetyan
 
-#include "Rade.h"
 #include "OptionManager.h"
+#include "Rade.h"
 #include "AudioDevice.h"
 #include "InputCore.h"
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //					Input Settings 
 
 
-void UOptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys){
+void UOptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys)
+{
 	const UInputSettings* TheInputSettings = GetDefault<UInputSettings>();
 	if (TheInputSettings == nullptr) return;
 	InputActions.Empty();
@@ -27,7 +26,8 @@ void UOptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>
 }
 
 
-void UOptionManager::GetActionInput(const FName& ActionName, FText& ActionKey){
+void UOptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
+{
 	const UInputSettings* TheInputSettings = GetDefault<UInputSettings>();
 	if (TheInputSettings==nullptr) return;
 
@@ -40,7 +40,6 @@ void UOptionManager::GetActionInput(const FName& ActionName, FText& ActionKey){
 		}
 	}
 }
-
 
 
 void UOptionManager::SetActionInput(const FName& ActionName, const FText& ActionKey)
@@ -147,7 +146,7 @@ void UOptionManager::GetGlobalSoundVolume(UObject* WorldContextObject, float & V
 	if (WorldContextObject != nullptr){
 		FAudioDevice* TheAudioDevice = WorldContextObject->GetWorld()->GetAudioDevice();
 		if (TheAudioDevice != nullptr)
-			Volume = TheAudioDevice->TransientMasterVolume;
+			Volume = TheAudioDevice->GetTransientMasterVolume ();
 	}
 
 }
@@ -156,7 +155,7 @@ void UOptionManager::SetGlobalSoundVolume(UObject* WorldContextObject, const flo
 	if (WorldContextObject != nullptr) {
 		FAudioDevice* TheAudioDevice = WorldContextObject->GetWorld()->GetAudioDevice();
 		if (TheAudioDevice != nullptr)
-			TheAudioDevice->TransientMasterVolume = NewVolume;
+			TheAudioDevice->SetTransientMasterVolume(NewVolume);
 	}
 	
 }

@@ -1,8 +1,8 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
+#include "RadeGameState.h"
 #include "Rade.h"
 #include "Engine.h"
-#include "RadeGameState.h"
 #include "UnrealNetwork.h"
 
 ARadeGameState::ARadeGameState(){
@@ -28,7 +28,6 @@ void ARadeGameState::AddNewChatMessage(FString  TheMessage, class ARadePlayer* T
 	// Update HUD on server
 	ChatUpdateDelegate.Broadcast();
 }
-
 
 // Replication of data
 void ARadeGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

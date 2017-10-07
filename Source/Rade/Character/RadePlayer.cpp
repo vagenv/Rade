@@ -1,14 +1,15 @@
 // Copyright 2015-2016 Vagen Ayrapetyan
 
+#include "RadePlayer.h"
+//#include "Engine.h"
 #include "Rade.h"
-#include "Engine.h"
 #include "UnrealNetwork.h"
 
 #include "RadeGameMode.h"
 #include "BaseHUD.h"
 #include "RadePC.h"
 
-#include "RadePlayer.h"
+
 #include "Character/RadeAnimInstance.h"
 
 #include "Weapon/Projectile.h"
@@ -27,36 +28,34 @@
 //										 Base 
 
 ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP) 
-	: Super(PCIP)
+	: Super(PCIP), ThePC(NULL), TheHUD(NULL)
 {
-
-	
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->AttachParent = GetCapsuleComponent();
+   FirstPersonCameraComponent->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 	FirstPersonCameraComponent->RelativeLocation = FVector(0, 0, 64.f); // Position the camera
 
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	ThirdPersonCameraBoom = PCIP.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraBoom"));
-	ThirdPersonCameraBoom->AttachTo(RootComponent);
+	ThirdPersonCameraBoom->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 	ThirdPersonCameraBoom->TargetArmLength = 150;	
 	ThirdPersonCameraBoom->RelativeLocation = FVector(0,50,100);
 	ThirdPersonCameraBoom->bUsePawnControlRotation = true; 
 
 	// Create a follow camera
 	ThirdPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("PlayerCamera"));
-	ThirdPersonCameraComponent->AttachTo(ThirdPersonCameraBoom, USpringArmComponent::SocketName);
+	ThirdPersonCameraComponent->AttachToComponent(ThirdPersonCameraBoom,FAttachmentTransformRules::KeepWorldTransform, USpringArmComponent::SocketName);
 
 
 	// Set First Person Mesh
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);		
-	Mesh1P->AttachParent = FirstPersonCameraComponent;
+   Mesh1P->AttachToComponent(FirstPersonCameraComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
@@ -65,12 +64,11 @@ ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 
 	// Set Third Person Mesh
 	GetMesh()->SetOwnerNoSee(true);
-	GetMesh()->AttachParent = RootComponent;
+   GetMesh()->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 	GetMesh()->bCastDynamicShadow = true;
 	GetMesh()->CastShadow = true;
 	GetMesh()->bOwnerNoSee = true;
 	GetMesh()->SetIsReplicated(true);
-
 
 	CharacterName = "Rade Player";
 	bCanRevive = true;
@@ -158,7 +156,7 @@ void ARadePlayer::Action_Implementation()
 			TheInventory->ActionIndex(CurrentItemSelectIndex);
 	}
 
-	// Checki if player is near any Pickup
+	// Check if player is near any Pickup
 	else if (currentPickup)
 	{
 		currentPickup->PickedUp(this);
@@ -775,36 +773,35 @@ void ARadePlayer::Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimAr
 
 
 // Bind input to events
-void ARadePlayer::SetupPlayerInputComponent(class UInputComponent* InputComponent)
+void ARadePlayer::SetupPlayerInputComponent(UInputComponent* inputComponent)
 {
 	// set up gameplay key bindings
-	check(InputComponent);
+	check(inputComponent);
 
-	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	inputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 
-	InputComponent->BindAction("Reload", IE_Pressed, this, &ARadePlayer::Reload);
+	inputComponent->BindAction("Reload", IE_Pressed, this, &ARadePlayer::Reload);
 
-	InputComponent->BindAction("Action", IE_Pressed, this, &ARadePlayer::Action);
-	InputComponent->BindAction("MeleeAction", IE_Pressed, this, &ARadePlayer::MeleeAction);
-	InputComponent->BindAction("Inventory", IE_Pressed, this, &ARadePlayer::ToggleInventory);
-	InputComponent->BindAction("FAction", IE_Pressed, this, &ARadePlayer::FAction);
-	InputComponent->BindAction("ChangeCamera", IE_Pressed, this, &ARadePlayer::ChangeCamera);
+	inputComponent->BindAction("Action", IE_Pressed, this, &ARadePlayer::Action);
+	inputComponent->BindAction("MeleeAction", IE_Pressed, this, &ARadePlayer::MeleeAction);
+	inputComponent->BindAction("Inventory", IE_Pressed, this, &ARadePlayer::ToggleInventory);
+	inputComponent->BindAction("FAction", IE_Pressed, this, &ARadePlayer::FAction);
+	inputComponent->BindAction("ChangeCamera", IE_Pressed, this, &ARadePlayer::ChangeCamera);
 
-	InputComponent->BindAction("Fire", IE_Pressed, this, &ARadePlayer::FireStart);
-	InputComponent->BindAction("Fire", IE_Released, this, &ARadePlayer::FireEnd);
+	inputComponent->BindAction("Fire", IE_Pressed, this, &ARadePlayer::FireStart);
+	inputComponent->BindAction("Fire", IE_Released, this, &ARadePlayer::FireEnd);
 
-	InputComponent->BindAction("AltFire", IE_Pressed, this, &ARadePlayer::AltFireStart);
-	InputComponent->BindAction("AltFire", IE_Released, this, &ARadePlayer::AltFireEnd);
+	inputComponent->BindAction("AltFire", IE_Pressed, this, &ARadePlayer::AltFireStart);
+	inputComponent->BindAction("AltFire", IE_Released, this, &ARadePlayer::AltFireEnd);
 
 
-	InputComponent->BindAxis("MouseScroll", this, &ARadePlayer::MouseScroll);
+	inputComponent->BindAxis("MouseScroll", this, &ARadePlayer::MouseScroll);
 
-	InputComponent->BindAxis("MoveForward", this, &ARadePlayer::MoveForward);
-	InputComponent->BindAxis("MoveRight", this, &ARadePlayer::MoveRight);
-	InputComponent->BindAxis("Turn", this, &ARadePlayer::AddControllerYawInput);
-	InputComponent->BindAxis("LookUp", this, &ARadePlayer::AddControllerPitchInput);
+	inputComponent->BindAxis("MoveForward", this, &ARadePlayer::MoveForward);
+	inputComponent->BindAxis("MoveRight", this, &ARadePlayer::MoveRight);
+	inputComponent->BindAxis("Turn", this, &ARadePlayer::AddControllerYawInput);
+	inputComponent->BindAxis("LookUp", this, &ARadePlayer::AddControllerPitchInput);
 }
-
 
 
 
