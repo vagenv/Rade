@@ -9,13 +9,13 @@ ASwordWeapon::ASwordWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 	// Set First Person Overlap BOX
 	Mesh1P_MeleeAttackCollisionBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("FirstPerson_MeleeBoxComponent"));
-	Mesh1P_MeleeAttackCollisionBox->AttachToComponent(Mesh1P, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+	Mesh1P_MeleeAttackCollisionBox->SetupAttachment(Mesh1P);
 	Mesh1P_MeleeAttackCollisionBox->BodyInstance.SetCollisionProfileName("OverlapAll");
 	Mesh1P_MeleeAttackCollisionBox->SetBoxExtent(FVector(5, 25, 70));
 
 	// Set Third Person Overlap BOX
 	Mesh3P_MeleeAttackCollisionBox = PCIP.CreateDefaultSubobject<UBoxComponent>(this, TEXT("ThirdPerson_MeleeBoxComponent"));
-	Mesh3P_MeleeAttackCollisionBox->AttachToComponent(Mesh3P, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+	Mesh3P_MeleeAttackCollisionBox->SetupAttachment(Mesh3P);
 	Mesh3P_MeleeAttackCollisionBox->BodyInstance.SetCollisionProfileName("OverlapAll");
 	Mesh3P_MeleeAttackCollisionBox->SetBoxExtent(FVector(5, 25, 70));
 

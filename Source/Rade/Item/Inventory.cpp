@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Item/Inventory.h"
 #include "Item/ItemPickup.h"
@@ -260,29 +260,37 @@ void UInventory::ItemPickedUp(AItemPickup* ThePickup)
 // Add subclass of item to inventory 
 FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 {
-	if (newItem == NULL)
-		return NULL;
-
+	if (newItem == nullptr)
+		return nullptr;
+    
+	// New Item 
+	AItem* newItemBase = newItem->GetDefaultObject<AItem>();
+   if (newItemBase == nullptr)
+		return nullptr;
 
 	// Check if same item in inventory 
 	if (Items.Num()>0)
 	{
+      
+      AWeapon *newWeapon = Cast<AWeapon>(newItemBase);
 
+    
 		// If new Item is weapon and same type as current weapon
-		if (newItem->GetDefaultObject<AWeapon>() && 
+		if (newWeapon && 
           TheCharacter && TheCharacter->TheWeapon && 
-          TheCharacter->TheWeapon->GetClass() == newItem->GetDefaultObject<AWeapon>()->GetClass())
+          TheCharacter->TheWeapon->GetClass() == newWeapon->GetClass())
 		{
 			// Add Ammo to the current weapon equiped
-			TheCharacter->TheWeapon->AddAmmo(newItem->GetDefaultObject<AWeapon>());
+			TheCharacter->TheWeapon->AddAmmo(newWeapon);
 
 			// Find the weapon data and return it.
 			for (int32 i = 0; i < Items.Num(); i++)
 			{
-				if (Items.IsValidIndex(i) && Items[i].Archetype.GetDefaultObject()->GetClass() == TheCharacter->TheWeapon->GetClass())
+				if (Items.IsValidIndex(i) && Items[i].Archetype.GetDefaultObject() &&
+                Items[i].Archetype.GetDefaultObject()->GetClass() == TheCharacter->TheWeapon->GetClass())
 					return &Items[i];
 			}
-			return NULL;
+			return nullptr;
 		}
 
 
@@ -290,39 +298,43 @@ FItemData* UInventory::AddItem(TSubclassOf<AItem> newItem)
 		// Check current item list if same item exists
 		for (int32 i = 0; i < Items.Num(); i++)
 		{
-
+         //if (Items[i].Archetype && Items[i].Archetype->GetDefaultObject() && Items[i].Archetype->GetDefaultObject<AItem>()) 
+         //{
+         //   if (Items[i].Archetype->GetDefaultObject<AItem>()->GetClass() == newItemBase->GetClass())
+         //      int a =0;
+         //}
+         //
+         
 			// If same object archetype
-			if (Items[i].Archetype->GetDefaultObject()->GetClass() == newItem->GetDefaultObject()->GetClass())
-			{
-
-				if (newItem->GetDefaultObject<AItem>())newItem->GetDefaultObject<AItem>()->BP_ItemUpdated();
+			if (Items[i].Archetype && Items[i].Archetype->GetDefaultObject<AItem>()) 
+         {
+            AItem *ItrItem = Items[i].Archetype->GetDefaultObject<AItem>();
+           
+            if (ItrItem->GetClass() == newItemBase->GetClass())
+            {
+				   if (newItemBase) newItemBase->BP_ItemUpdated();
 	
-				// IF Weapon add ammo, else add count
-				if (Cast<AWeapon>(newItem->GetDefaultObject<AItem>()))
-				{
-					Items[i].MainFireStats.AddAmmo(newItem->GetDefaultObject<AWeapon>()->MainFire.CurrentAmmo, newItem->GetDefaultObject<AWeapon>()->MainFire.ClipNumber);
-				}
-				else Items[i].ItemCount++;
+				   // IF Weapon add ammo, else add count
+				   if (newWeapon)
+				   {
+					   Items[i].MainFireStats.AddAmmo(newWeapon->MainFire.CurrentAmmo, 
+                                                 newWeapon->MainFire.ClipNumber);
+				   }
+				   else Items[i].ItemCount++;
 
-				// Save and Update Item Data
-				SaveInventory(); 
-				UpdateInfo();
-				return &Items[i];
+				   // Save and Update Item Data
+				   SaveInventory(); 
+				   UpdateInfo();
+				   return &Items[i];
+            }
 			}
 		}
 	}
-
-	// New Item 
-	AItem* newItemBase = newItem->GetDefaultObject<AItem>();
-
-
-	if (!newItemBase) return nullptr;
+   
 	FItemData newData = FItemData(newItem, newItemBase->ItemName, 
                                  newItemBase->ItemIcon, 
                                  newItemBase->Weight, 
-                                 newItemBase->ItemCount);
-
-                                 
+                                 newItemBase->ItemCount);                                 
 
 	// Add New item to item list and update inventory
 	Items.Add(newData);

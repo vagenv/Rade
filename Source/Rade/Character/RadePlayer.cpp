@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "RadePlayer.h"
 //#include "Engine.h"
@@ -36,26 +36,26 @@ ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
-   FirstPersonCameraComponent->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
+   FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent(), NAME_None);
 	FirstPersonCameraComponent->RelativeLocation = FVector(0, 0, 64.f); // Position the camera
 
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	ThirdPersonCameraBoom = PCIP.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraBoom"));
-	ThirdPersonCameraBoom->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
+	ThirdPersonCameraBoom->SetupAttachment(RootComponent, NAME_None);
 	ThirdPersonCameraBoom->TargetArmLength = 150;	
 	ThirdPersonCameraBoom->RelativeLocation = FVector(0,50,100);
 	ThirdPersonCameraBoom->bUsePawnControlRotation = true; 
 
 	// Create a follow camera
 	ThirdPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("PlayerCamera"));
-	ThirdPersonCameraComponent->AttachToComponent(ThirdPersonCameraBoom,FAttachmentTransformRules::KeepWorldTransform, USpringArmComponent::SocketName);
+	ThirdPersonCameraComponent->SetupAttachment(ThirdPersonCameraBoom, USpringArmComponent::SocketName);
 
 
 	// Set First Person Mesh
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);		
-   Mesh1P->AttachToComponent(FirstPersonCameraComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
+   Mesh1P->SetupAttachment(FirstPersonCameraComponent, NAME_None);
 	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
@@ -64,7 +64,7 @@ ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 
 	// Set Third Person Mesh
 	GetMesh()->SetOwnerNoSee(true);
-   GetMesh()->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
+   GetMesh()->SetupAttachment(RootComponent, NAME_None);
 	GetMesh()->bCastDynamicShadow = true;
 	GetMesh()->CastShadow = true;
 	GetMesh()->bOwnerNoSee = true;

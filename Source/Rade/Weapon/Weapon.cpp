@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Weapon/Weapon.h"
 #include "Item/Inventory.h"
@@ -19,14 +19,14 @@ AWeapon::AWeapon(const class FObjectInitializer& PCIP)
 
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh1P"));
 	Mesh1P->CastShadow = false;
-	Mesh1P->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+	Mesh1P->SetupAttachment(RootComponent, NAME_None);
    Mesh1P->bOnlyOwnerSee = true;
 	Mesh1P->bVisible = true;
 	Mesh1P->SetIsReplicated(true);
 
 	Mesh3P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh3P"));
 	Mesh3P->CastShadow = true;
-	Mesh3P->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+	Mesh3P->SetupAttachment (RootComponent, NAME_None);
 	Mesh3P->bOwnerNoSee = true;
 	Mesh3P->bVisible = true;
 	Mesh3P->SetIsReplicated(true);
@@ -74,9 +74,6 @@ void AWeapon::FireStart()
 	if (ThePlayer && !ThePlayer->GetWorldTimerManager().IsTimerActive(PreFireTimeHandle) &&
 		!ThePlayer->GetWorldTimerManager().IsTimerActive(PreAltFireTimeHandle))
 		ThePlayer->GetWorldTimerManager().SetTimer(PreFireTimeHandle, this, &AWeapon::PreFire, MainFire.FireSpeed, true, 0);
-
-	
-
 }
 
 // Player Released Fire
@@ -261,7 +258,6 @@ void AWeapon::EquipStart()
 
 	// BP Equip Start
 	BP_Equip_Start();
-
 
 	// Attach First person Mesh
 	if (Mesh1P)

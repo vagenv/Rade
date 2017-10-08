@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Custom/LevelBlockConstructor.h"
 #include "Custom/LevelBlock.h"
@@ -8,7 +8,6 @@
 #include "RadeGameMode.h"
 #include "Rade.h"
 #include "System/SystemSaveGame.h"
-
 
 #include "UnrealNetwork.h"
 

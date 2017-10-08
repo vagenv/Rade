@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Weapon/Projectile.h"
 #include "Rade.h"
@@ -11,6 +11,7 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 
 	// Set Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("ProjectileMesh"));
+   Mesh->BodyInstance.SetCollisionProfileName("Projectile");	
 	Mesh->bReceivesDecals = false;
 	Mesh->CastShadow = false;
    SetRootComponent (Mesh);
@@ -20,10 +21,10 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	CollisionComp = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->MoveIgnoreActors.Add(this);
 	CollisionComp->InitSphereRadius(60.0f);
-	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");	
-	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);	  
-   CollisionComp->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-   //CollisionComp->SetRelativeLocation (FVector(0,0,0));
+	CollisionComp->BodyInstance.SetCollisionProfileName("Trigger");	
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnBeginOverlap);
+   CollisionComp->SetupAttachment(Mesh);
+
 
 	//		Projectile Movement
 	ProjectileMovement = PCIP.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
@@ -86,17 +87,28 @@ void AProjectile::EnableProjectile(){
 }
 
 // Hit Something
-void AProjectile::OnHit(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
+                                 AActor* OtherActor, 
+                                 UPrimitiveComponent* OtherComp, 
+                                 int32 OtherBodyIndex, 
+                                 bool bFromSweep, 
+                                 const FHitResult & SweepResult)
 {
-   print ("Hit something");
-	if (bCanExplode && (OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp != Mesh)
+	if (bCanExplode && 
+       OtherActor != NULL && 
+       OtherActor != this && 
+       OtherComp != Mesh)
 	{
-		// Hit Something
-		BP_Hit(OtherComp,Hit);
+      print ("Hit something");
+	   if (bCanExplode && (OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp != Mesh)
+	   {
+		   // Hit Something
+		   BP_Hit(OtherComp, SweepResult);
 
-		// Boooooooom
-		Explode();	
-	}
+		   // Boooooooom
+		   Explode();	
+	   }
+   }
 }
 
 // Actual Projectile Explosion

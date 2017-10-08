@@ -79,10 +79,14 @@ public:
 	void EnableProjectile();
 
 	
-	
-	// Called when hit something
+   // Player Entered
 	UFUNCTION()
-		void OnHit(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
+                       class AActor* OtherActor, 
+                       class UPrimitiveComponent* OtherComp, 
+                       int32 OtherBodyIndex, 
+                       bool bFromSweep, 
+                       const FHitResult & SweepResult);
 
 	// Apply Velocity 
 	void InitVelocity(const FVector& ShootDirection);
@@ -94,7 +98,6 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//							Blueprint Events
-
 
 
 	// BP explode 

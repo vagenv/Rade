@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 
 #include "RadeData.h"
@@ -36,11 +36,12 @@ FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* n
 
 	if (ItemCount <= 0)ItemCount = 1;
 
+   AItem *newItem = Item->GetDefaultObject<AItem>();
 	// if Weapon Set Main and Alt Fire
-	if (Item && Item->GetDefaultObject<AWeapon>())
+	if (Item && newItem && Cast<AWeapon>(newItem))
 	{
-		MainFireStats = Item->GetDefaultObject<AWeapon>()->MainFire;
-		AltFireStats = Item->GetDefaultObject<AWeapon>()->AlternativeFire;
+		MainFireStats = Cast<AWeapon>(newItem)->MainFire;
+		AltFireStats = Cast<AWeapon>(newItem)->AlternativeFire;
 	}
 }
 

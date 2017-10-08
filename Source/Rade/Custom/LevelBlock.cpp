@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Custom/LevelBlock.h"
 #include "Custom/LevelBlockConstructor.h"
@@ -17,7 +17,7 @@ ALevelBlock::ALevelBlock(const class FObjectInitializer& PCIP)
    SetRootComponent (MyRoot);
 
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-   Mesh->AttachToComponent(MyRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
+   Mesh->SetupAttachment(MyRoot, NAME_None);
 
 	bReplicates = true;
 }

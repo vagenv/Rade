@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Vagen Ayrapetyan
+// Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "Item/ItemPickup.h"
 #include "Item/Inventory.h"
@@ -162,9 +162,17 @@ void AItemPickup::ActivatePickupPhysics()
 }
 
 // Player Entered The Pickup Area
-void AItemPickup::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AItemPickup::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
+                                 AActor* OtherActor, 
+                                 UPrimitiveComponent* OtherComp, 
+                                 int32 OtherBodyIndex, 
+                                 bool bFromSweep, 
+                                 const FHitResult & SweepResult)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && Cast<ARadePlayer>(OtherActor) != nullptr && Cast<ARadePlayer>(OtherActor)->TheInventory != nullptr)
+	if (OtherActor != nullptr && 
+       OtherActor != this && 
+       Cast<ARadePlayer>(OtherActor) != nullptr && 
+       Cast<ARadePlayer>(OtherActor)->TheInventory != nullptr)
 	{
 		// BP Event that player entered
 		BP_PlayerEntered(Cast<ARadePlayer>(OtherActor));
