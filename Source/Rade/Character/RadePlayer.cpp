@@ -871,7 +871,7 @@ void ARadePlayer::SetCharacterStats_Implementation(const FString & newName, FLin
 	Super::SetCharacterStats_Implementation(newName,newColor);
 	if (PlayerState)
 	{
-		PlayerState->PlayerName = newName;
+		PlayerState->SetPlayerName (newName);
 		if (Cast<ARadePlayerState>(PlayerState))Cast<ARadePlayerState>(PlayerState)->PlayerColor = newColor;
 	}
 }

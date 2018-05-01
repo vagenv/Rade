@@ -15,15 +15,6 @@ Unreal Engine Forum Page:
 https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
          
 
-    
-Donate to support me :
---------------------
-(https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RHRNT38ESZPZL)
-            
-
-
-
-
 Youtube Link :
 --------------------
 
@@ -89,6 +80,6 @@ Spacebar			- Jump/DoubleJump
 
 
 
-Copyright  2015-2016 Vagen Ayrapetyan.
+Copyright  2015-2018 Vagen Ayrapetyan.
 
 ________________________________________________________________

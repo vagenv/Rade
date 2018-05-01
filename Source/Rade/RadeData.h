@@ -46,8 +46,6 @@ public:
 
 	FRadeOnineMessageData(){};
 	FRadeOnineMessageData(FString NewMessage, class ARadePlayer* ThePlayer);
-
-
 };
 
 
@@ -184,9 +182,12 @@ public:
 
 	// Can Fire
 	bool CanFire(){
-		if (FireCost > 0 && FireCost > CurrentAmmo)return false;
+		if (FireCost > 0 && FireCost > CurrentAmmo) return false;
 		return true;
 	}
+
+	FFireStats(){};
+	virtual ~FFireStats(){};
 
 };
 
