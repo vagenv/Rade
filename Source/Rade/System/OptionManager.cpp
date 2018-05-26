@@ -131,8 +131,8 @@ void UOptionManager::ReloadConfig() {
 }
 
 FORCEINLINE FString UOptionManager::GetConfigFullAddress(const FString &FileName) {
-	return ((FileName.Len() < 1 || FileName.Equals(" ")) ? (FPaths::GameConfigDir() + TEXT("DefaultGameUserSettings.ini")) :
-		(FPaths::GameConfigDir() + FileName + TEXT(".ini")));
+	return ((FileName.Len() < 1 || FileName.Equals(" ")) ? (FPaths::ProjectConfigDir() + TEXT("DefaultGameUserSettings.ini")) :
+		(FPaths::ProjectConfigDir () + FileName + TEXT(".ini")));
 }
 
 
