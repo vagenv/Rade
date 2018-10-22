@@ -40,12 +40,12 @@ public:
 	class ABaseHUD* TheHUD;
 
 	// First Person Mesh Anim Instance
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade Player")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade Player")
 	class URadeAnimInstance * ArmsAnimInstance;
 
 
 	//  First Person Mesh
-	UPROPERTY(Replicated, VisibleDefaultsOnly, Category = Mesh)
+    UPROPERTY(Replicated, VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
 	class USkeletalMeshComponent* Mesh1P;
 
 

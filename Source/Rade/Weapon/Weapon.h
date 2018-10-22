@@ -30,11 +30,11 @@ public:
 
 
 	// First Person Mesh
-	UPROPERTY(Replicated, VisibleDefaultsOnly, Category = Mesh)
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 		USkeletalMeshComponent* Mesh1P;
 
 	//  Third Person Mesh
-	UPROPERTY(Replicated,VisibleDefaultsOnly, Category = Mesh)
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 		USkeletalMeshComponent* Mesh3P;
 
 	// Weapon Animation Archtype
