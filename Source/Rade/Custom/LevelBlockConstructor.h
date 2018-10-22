@@ -18,6 +18,11 @@ public:
 
 	virtual void BeginPlay()override;
 
+
+    // Root component
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor")
+        USceneComponent *Scene;
+
 	// Save Block on End of Game ?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor")
 		bool bSaveBlocks = false;

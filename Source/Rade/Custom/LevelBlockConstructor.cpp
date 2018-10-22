@@ -17,6 +17,12 @@ ALevelBlockConstructor::ALevelBlockConstructor(const FObjectInitializer& PCIP)
 {
 
 	bReplicates = true;
+    bAlwaysRelevant = false;
+    PrimaryActorTick.bCanEverTick = false;
+
+    Scene = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
+    Scene->SetMobility(EComponentMobility::Movable);
+    SetRootComponent(Scene);
 }
 
 void ALevelBlockConstructor::BeginPlay()

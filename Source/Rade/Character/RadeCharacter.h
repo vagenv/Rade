@@ -49,7 +49,7 @@ public:
    UFUNCTION()
 		virtual void CurrentWeaponUpdated();
 	// Current Weapon
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
 	class AWeapon* TheWeapon;
 
 
@@ -96,8 +96,6 @@ public:
 	// Default Inventory Items
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade Character")
 		TArray<TSubclassOf<class AItem> >  DefaultInventoryItems;
-
-
 
 
 	// Called from inventory when player wants to equip new weapon
