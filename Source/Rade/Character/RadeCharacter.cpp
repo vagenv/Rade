@@ -19,10 +19,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//						Base 
+//						Base
 
 
-ARadeCharacter::ARadeCharacter(const class FObjectInitializer& PCIP) 
+ARadeCharacter::ARadeCharacter(const class FObjectInitializer& PCIP)
    : Super(PCIP), TheInventory(NULL), TheWeapon(NULL)
 {
 
@@ -91,9 +91,9 @@ void ARadeCharacter::BeginPlay()
 
 				}
 			}
-		
+
 		}
-	}	
+	}
 
 	// Get Player Movement Component
 	if (Cast<UCharacterMovementComponent>(GetMovementComponent()))
@@ -127,13 +127,18 @@ void ARadeCharacter::EquipWeapon(AWeapon* NewWeaponClass)
 
 	// Spawn new weapon
 	TheWeapon = GetWorld()->SpawnActor<AWeapon>(NewWeaponClass->GetClass());
-	
+
 	if (TheWeapon)
 	{
 		TheWeapon->SetOwner(this);
 		TheWeapon->Mesh3P->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket"));
 	}
 
+}
+
+void ARadeCharacter::CurrentWeaponUpdated ()
+{
+   
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +149,7 @@ void ARadeCharacter::EquipWeapon(AWeapon* NewWeaponClass)
 //				Take Damage
 float ARadeCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
-	// 
+	//
 	if (bDead)
 	{
 		return 0;
@@ -211,7 +216,7 @@ void ARadeCharacter::GlobalDeath_Implementation()
 	GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("NoCollision");
 	Cast<USkeletalMeshComponent>(GetMesh())->SetSimulatePhysics(true);
 
-	
+
 	ForceRagdoll();
 	BP_CharacterDeath();
 }
@@ -308,7 +313,7 @@ void ARadeCharacter::Global_SetAnimID_Implementation(EAnimState AnimID)
 
 }
 
-//			Check Current Animation State 
+//			Check Current Animation State
 bool ARadeCharacter::IsAnimState(EAnimState TheAnimState)
 {
 	if (BodyAnimInstance)
@@ -358,7 +363,7 @@ void ARadeCharacter::SetCharacterStats_Implementation(const FString & newName, F
 
 
 
-// Replication 
+// Replication
 void ARadeCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

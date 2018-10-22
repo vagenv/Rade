@@ -1,19 +1,14 @@
-________________________________________________________________
 
 UE Dynamic Shooter Template.
 ======================================
 
-
 ![alt tag](https://raw.github.com/vagenv/rade/master/Content/Rade/Splash/Splash.png)
-       
 
 
 Unreal Engine Forum Page:
 --------------------
 
-
 https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
-         
 
 Youtube Link :
 --------------------
@@ -67,14 +62,14 @@ All the systems were designed to work in single player and mutiplayer mode with 
 
 
 Input:
-WASD 				- Movement
-Left Mouse Button		- Fire			- Main Fire of Weapon
-Right Mouse Button 		- AltFire 		- Alternative Fire of weapon
-Q				- Melee Action		- Melee Attack with Weapon
-E  				- Action 		- Pickup Item, Use Item, Equip Weapon.
-R				- Reload 		- Reload Weapon
-F				- Faction 		- Drop Item
-Spacebar			- Jump/DoubleJump
+WASD                            - Movement
+Left Mouse Button               - Fire              - Main Fire of Weapon
+Right Mouse Button              - AltFire           - Alternative Fire of weapon
+Q                               - Melee Action      - Melee Attack with Weapon
+E                               - Action            - Pickup Item, Use Item, Equip Weapon.
+R                               - Reload            - Reload Weapon
+F                               - Faction           - Drop Item
+Spacebar                        - Jump/DoubleJump
 
 
 
@@ -82,4 +77,4 @@ Spacebar			- Jump/DoubleJump
 
 Copyright  2015-2018 Vagen Ayrapetyan.
 
-________________________________________________________________
+

@@ -41,9 +41,7 @@ void URadeGameInstance::StartOnlineGame()
 	TheMapName = "BattleArena";
 
 	// Call our custom HostSession function. GameSessionName is a GameInstance variable
-	HostSession(Player->GetPreferredUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
-
-
+    HostSession(Player->GetPreferredUniqueNetId ().GetUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
 }
 
 // Host Speicific Map
@@ -55,7 +53,7 @@ void URadeGameInstance::StartOnlineGameMap(FString MapName, int32 MaxPlayerNumbe
 	//Player->GetPreferredUniqueNetId()
 	TheMapName = MapName;
 	// Call our custom HostSession function. GameSessionName is a GameInstance variable
-	HostSession(Player->GetPreferredUniqueNetId(), GameSessionName, TheMapName, true, true, MaxPlayerNumber);
+    HostSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, TheMapName, true, true, MaxPlayerNumber);
 }
 
 // Find All Online Sessions
@@ -63,7 +61,7 @@ void URadeGameInstance::FindOnlineGames()
 {
 	ULocalPlayer* const Player = GetFirstGamePlayer();
 
-	FindSessions(Player->GetPreferredUniqueNetId(), GameSessionName, true, true);
+    FindSessions(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, true, true);
 
 }
 
@@ -100,7 +98,7 @@ void URadeGameInstance::JoinOnlineGame()
 			{
 				SearchResult = SessionSearch->SearchResults[i];
 
-				JoinSession(Player->GetPreferredUniqueNetId(), GameSessionName, SearchResult);
+                JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, SearchResult);
 				break;
 			}
 		}
@@ -112,7 +110,7 @@ void URadeGameInstance::JoinSelectedOnlineGame(FAvaiableSessionsData SessionData
 {
 	ULocalPlayer* const Player = GetFirstGamePlayer();
 
-	JoinSession(Player->GetPreferredUniqueNetId(), GameSessionName, SessionData.SessionData);
+    JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, SessionData.SessionData);
 }
 
 // Destroy Session 

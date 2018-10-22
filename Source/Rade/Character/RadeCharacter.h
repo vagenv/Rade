@@ -16,7 +16,7 @@ public:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//							Base  
+	//							Base
 
 	ARadeCharacter(const class FObjectInitializer& PCIP);
 
@@ -27,7 +27,7 @@ public:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//									Components and Important References  
+	//									Components and Important References
 
 
 	// Third Person Anim Instance
@@ -42,15 +42,21 @@ public:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
 	class UInventory* TheInventory;
 
+
+
+
+	// Called When Weapon Changed
+   UFUNCTION()
+		virtual void CurrentWeaponUpdated();
 	// Current Weapon
-	UPROPERTY(ReplicatedUsing = CurrentWeaponUpdated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
 	class AWeapon* TheWeapon;
 
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//							Status and Basic Data  
+	//							Status and Basic Data
 
 	// Character Maximum Health
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
@@ -65,7 +71,7 @@ public:
 		bool bDead;
 
 
-	// Character Name 
+	// Character Name
 	UPROPERTY(ReplicatedUsing = OnRep_CharacterStatsUpdated, EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
 		FString CharacterName;
 
@@ -76,7 +82,7 @@ public:
 	// Character Stats Updated
 	UFUNCTION()
 		virtual void OnRep_CharacterStatsUpdated();
-	// BP Server Event - Character Died 
+	// BP Server Event - Character Died
 	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_CharacterStatsUpdated();
 
@@ -92,9 +98,6 @@ public:
 		TArray<TSubclassOf<class AItem> >  DefaultInventoryItems;
 
 
-	// Called When Weapon Changed 
-	UFUNCTION()
-		virtual void CurrentWeaponUpdated(){};
 
 
 	// Called from inventory when player wants to equip new weapon
@@ -149,10 +152,10 @@ public:
 		void GlobalRevive();
 	virtual void GlobalRevive_Implementation();
 
-	// Start Ragdoll Mode 
+	// Start Ragdoll Mode
 	virtual void ForceRagdoll();
 
-	// BP Server Event - Character Died 
+	// BP Server Event - Character Died
 	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_CharacterDeath();
 

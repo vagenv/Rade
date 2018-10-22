@@ -18,11 +18,11 @@ public:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//				Base 
+	//				Base
 
 	ARadePlayer(const class FObjectInitializer& PCIP);
 
-	
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime)override;
@@ -38,7 +38,7 @@ public:
 	// Player HUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
 	class ABaseHUD* TheHUD;
-	
+
 	// First Person Mesh Anim Instance
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade Player")
 	class URadeAnimInstance * ArmsAnimInstance;
@@ -154,8 +154,8 @@ public:
 
 
 	// Current Weapon Stats Was updated.
-	UFUNCTION()
-		virtual void CurrentWeaponUpdated()override;
+	//UFUNCTION()
+		virtual void CurrentWeaponUpdated() override;
 
 
 	// Can Player Fire in Air
@@ -351,7 +351,7 @@ protected:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//			Internal Client Input 
+	//			Internal Client Input
 
 protected:
 

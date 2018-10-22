@@ -25,16 +25,16 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//										 Base 
+//										 Base
 
-ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP) 
+ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 	: Super(PCIP), ThePC(NULL), TheHUD(NULL)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 
-	// Create a CameraComponent	
+	// Create a CameraComponent
 	FirstPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
    FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent(), NAME_None);
 	FirstPersonCameraComponent->RelativeLocation = FVector(0, 0, 64.f); // Position the camera
@@ -43,9 +43,9 @@ ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	ThirdPersonCameraBoom = PCIP.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraBoom"));
 	ThirdPersonCameraBoom->SetupAttachment(RootComponent, NAME_None);
-	ThirdPersonCameraBoom->TargetArmLength = 150;	
+	ThirdPersonCameraBoom->TargetArmLength = 150;
 	ThirdPersonCameraBoom->RelativeLocation = FVector(0,50,100);
-	ThirdPersonCameraBoom->bUsePawnControlRotation = true; 
+	ThirdPersonCameraBoom->bUsePawnControlRotation = true;
 
 	// Create a follow camera
 	ThirdPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("PlayerCamera"));
@@ -54,7 +54,7 @@ ARadePlayer::ARadePlayer(const class FObjectInitializer& PCIP)
 
 	// Set First Person Mesh
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);		
+	Mesh1P->SetOnlyOwnerSee(true);
    Mesh1P->SetupAttachment(FirstPersonCameraComponent, NAME_None);
 	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 	Mesh1P->bCastDynamicShadow = false;
@@ -92,7 +92,7 @@ void ARadePlayer::BeginPlay()
 	if (TheInventory)
 	{
 
-		// Load Inventory 
+		// Load Inventory
 		if (bSaveInventory && Role >= ROLE_Authority)
 		{
 			TheInventory->LoadInventory();
@@ -147,7 +147,7 @@ void ARadePlayer::Action_Implementation()
 {
 	// Action Called in Blueprint
 	BP_Action();
-	
+
 	// Check if player can use items
 	if (bInventoryOpen && IsAnimState(EAnimState::Idle_Run)
 		&& CharacterMovementComponent && CharacterMovementComponent->IsMovingOnGround())
@@ -179,7 +179,7 @@ void ARadePlayer::MeleeAction_Implementation()
 	{
 		TheWeapon->PreMeleeAttack();
 	}
-	
+
 }
 
 // Player Pressed FAction
@@ -226,13 +226,13 @@ void ARadePlayer::ToggleInventory()
 	{
 		// Call Toggle event on HUD
 		TheHUD->ToggleInventory();
-		if (CurrentItemSelectIndex != TheHUD->CurrentItemSelectIndex) 
+		if (CurrentItemSelectIndex != TheHUD->CurrentItemSelectIndex)
 			SetInventorySelectIndex(TheHUD->CurrentItemSelectIndex);
 
 		// Tell serer that inventory was toggled
 		SetInventoryVisible(TheHUD->bInventoryOpen);
 
-	}	
+	}
 }
 
 
@@ -318,7 +318,7 @@ void ARadePlayer::DoubleJump_Implementation()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//								Camera		 
+//								Camera
 
 
 // Player Pressed CameraChange
@@ -345,11 +345,11 @@ void ARadePlayer::ChangeCamera()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//								Inventory and Item		 
+//								Inventory and Item
 
 
 
-// Server set Inventory visibility 
+// Server set Inventory visibility
 bool ARadePlayer::SetInventoryVisible_Validate(bool bVisible)
 {
 	return true;
@@ -371,7 +371,7 @@ void ARadePlayer::MouseScroll(float Value)
 			TheHUD->BP_InventoryScrollUp();
 		}
 		else if (Value<0)
-		{	
+		{
 			TheHUD->BP_InventoryScrollDown();
 		}
 
@@ -395,7 +395,7 @@ void ARadePlayer::SetInventorySelectIndex_Implementation(int32 index)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//									Weapon		 
+//									Weapon
 
 
 // Called to equip new Weapon
@@ -479,7 +479,7 @@ void ARadePlayer::UnEquipStart()
 		FTimerHandle myHandle;
 		GetWorldTimerManager().SetTimer(myHandle, this, &ARadePlayer::UnEquipEnd, TheWeapon->EquipTime, false);
 	}
-	else 
+	else
 	{
 		// Set Default Delay
 		FTimerHandle myHandle;
@@ -528,7 +528,7 @@ void ARadePlayer::CurrentWeaponUpdated()
 	{
 		if (TheWeapon)
 			ArmsAnimInstance->AnimArchetype = TheWeapon->AnimArchetype;
-		else 
+		else
 			ArmsAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
 	}
 
@@ -539,8 +539,6 @@ void ARadePlayer::CurrentWeaponUpdated()
 		else
 			BodyAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
 	}
-
-
 
 	if (TheHUD)
 	{
@@ -555,7 +553,7 @@ void ARadePlayer::CurrentWeaponUpdated()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//									State Checking		 
+//									State Checking
 
 
 
@@ -565,11 +563,11 @@ bool ARadePlayer::CanShoot()
 	// Player and mesh is in the state where he can shoot
 	if (IsAnimState(EAnimState::Idle_Run) || (IsAnimState(EAnimState::Jumploop) && bCanFireInAir))
 		return true;
-	
+
 	return false;
 }
 
-// Check if player can sprint 
+// Check if player can sprint
 bool ARadePlayer::CanSprint()
 {
 	bool bReturnCanShoot = true;
@@ -621,15 +619,15 @@ void ARadePlayer::UpdateComponentsVisibility()
 
 		if (GetMesh())
 			GetMesh()->SetOwnerNoSee(true);
-	
+
 		if (Mesh1P)
 			Mesh1P->SetVisibility(true);
-	
+
 		if (TheWeapon)
 		{
 			if (TheWeapon->Mesh1P)
 				TheWeapon->Mesh1P->SetVisibility(true);
-				
+
 			if (TheWeapon->Mesh3P)
 				TheWeapon->Mesh3P->SetOwnerNoSee(true);
 		}
@@ -735,7 +733,7 @@ void ARadePlayer::GlobalRevive_Implementation()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//									Animation 		 
+//									Animation
 
 
 void ARadePlayer::Global_SetAnimID_Implementation(EAnimState AnimID)
@@ -888,5 +886,5 @@ void ARadePlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
 	DOREPLIFETIME(ARadePlayer, CurrentCameraState);
 
 	//DOREPLIFETIME(ARadePlayer, currentPickup);
-	
+
 }
