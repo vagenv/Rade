@@ -16,13 +16,14 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	// Set Root Component
 	RootComponent = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("RootComponent"));
 	RootComponent->SetIsReplicated(true);
+    SetRootComponent(RootComponent);
 
 	// Set Skeletal Mesh Component
 	SkeletalMesh = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("SkeletalMesh"));
 	SkeletalMesh->SetIsReplicated(true);
 	SkeletalMesh->BodyInstance.SetCollisionProfileName("BlockAll");
 	SkeletalMesh->SetSimulatePhysics(true);
-   SkeletalMesh->SetupAttachment (GetRootComponent ());
+    SkeletalMesh->SetupAttachment (GetRootComponent ());
 	
 	// Set Static Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
@@ -30,7 +31,7 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	Mesh->BodyInstance.SetCollisionProfileName("BlockAll");
 	Mesh->SetSimulatePhysics(true);
 	Mesh->bAutoActivate = true;
-   Mesh->SetupAttachment (GetRootComponent ());
+    Mesh->SetupAttachment (GetRootComponent ());
 
 	// Set Trigger Component
 	TriggerSphere = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("TriggerSphere"));

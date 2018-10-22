@@ -22,15 +22,15 @@ public:
 
 
 	// Static Mesh
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
 	class UStaticMeshComponent* Mesh;
 
 	// Skeletal Mesh
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
 	class USkeletalMeshComponent* SkeletalMesh;
 
 	// Trigger Sphere 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
 	class USphereComponent* TriggerSphere;
 
 

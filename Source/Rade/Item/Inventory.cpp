@@ -87,7 +87,9 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 		{
 			// Get Player Rotation
 			FRotator rot = TheCharacter->GetActorRotation();
-			FVector spawnLoc = TheCharacter->GetActorLocation() + rot.Vector() * 200 + FVector(0, 0, 50);
+            FVector forwardVector = rot.Vector() * 300;
+            forwardVector.Z = 0;
+            FVector spawnLoc = TheCharacter->GetActorLocation() + forwardVector + FVector(0, 0, 50);
 
 
 			AItemPickup* newPickup;
@@ -103,6 +105,7 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 			if (newPickup)
 			{
 				newPickup->SetReplicates(true);
+                newPickup->SetActorHiddenInGame(true);
 				if (newItem)
 				{
 					newItem->BP_ItemDroped(newPickup);
@@ -110,7 +113,7 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 					newPickup->Item = newItem->GetClass();
 					if (newItem->PickupMesh)
 					{
-						newPickup->Mesh->SetStaticMesh(newItem->PickupMesh);
+						newPickup->Mesh->SetStaticMesh(newItem->PickupMesh);                    
 					}
 					else if (newItem->PickupSkelMesh)
 					{
@@ -124,7 +127,6 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 				{
 					newPickup->bOverideItemData = true;
 					newPickup->OverideItemData = Items[ItemIndex];
-
 				}
 
 
@@ -138,12 +140,13 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 				newPickup->ActivatePickupPhysics();
 				if (newPickup->Mesh && newPickup->Mesh->IsSimulatingPhysics())
 				{
-					newPickup->Mesh->AddImpulse(rot.Vector() * 120, NAME_None, true);
+                    newPickup->Mesh->AddImpulse(rot.Vector() * 120, NAME_None, true);
 				}
 				if (newPickup->SkeletalMesh && newPickup->SkeletalMesh->IsSimulatingPhysics())
 				{
-					newPickup->SkeletalMesh->AddForce(rot.Vector() * 12000, NAME_None, true);
+                    newPickup->SkeletalMesh->AddForce(rot.Vector() * 12000, NAME_None, true);
 				}
+                newPickup->SetActorHiddenInGame(false);
 		
 				UpdateInfo();
 			}		
