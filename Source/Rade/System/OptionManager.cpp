@@ -157,25 +157,40 @@ void UOptionManager::SetGlobalSoundVolume(UObject* WorldContextObject, const flo
 //					 Video Quality Settings
 
 // Get current video quality
-bool UOptionManager::GetVideoQualitySettings(int32& ResolutionQuality, int32& ViewDistance, int32& AntiAliasing,
-											 int32& TextureQuality,   int32& ShadowQuality, int32& EffectQuality, int32& PostProcessQuality){
+bool UOptionManager::GetVideoQualitySettings(int32& ResolutionQuality,
+														   int32& ViewDistance,
+															int32& AntiAliasing,
+															int32& TextureQuality,
+															int32& ShadowQuality,
+															int32& EffectQuality,
+															int32& PostProcessQuality)
+{
 	UGameUserSettings* Settings = GetGameUserSettings();
-	if (!Settings)return false;
-	ResolutionQuality  = Settings->ScalabilityQuality.ResolutionQuality;
-	ViewDistance       = Settings->ScalabilityQuality.ViewDistanceQuality;
-	AntiAliasing       = Settings->ScalabilityQuality.AntiAliasingQuality;
-	TextureQuality     = Settings->ScalabilityQuality.TextureQuality;
-	ShadowQuality      = Settings->ScalabilityQuality.ShadowQuality;
-	EffectQuality      = Settings->ScalabilityQuality.EffectsQuality;
-	PostProcessQuality = Settings->ScalabilityQuality.PostProcessQuality;
+	if (!Settings) return false;
+
+	const Scalability::FQualityLevels &quality = Settings->ScalabilityQuality;
+	ResolutionQuality  = quality.ResolutionQuality;
+	ViewDistance       = quality.ViewDistanceQuality;
+	AntiAliasing       = quality.AntiAliasingQuality;
+	TextureQuality     = quality.TextureQuality;
+	ShadowQuality      = quality.ShadowQuality;
+	EffectQuality      = quality.EffectsQuality;
+	PostProcessQuality = quality.PostProcessQuality;
 	return true;
 }
 
 // Set Video Quality
-bool UOptionManager::SetVideoQualitySettings(const int32 ResolutionQuality, const int32 ViewDistance, const int32 AntiAliasing,
-											 const int32 TextureQuality,	const int32 ShadowQuality,const int32 EffectQuality, const int32 PostProcessQuality){
+bool UOptionManager::SetVideoQualitySettings(const int32 ResolutionQuality,
+															const int32 ViewDistance,
+															const int32 AntiAliasing,
+															const int32 TextureQuality,
+															const int32 ShadowQuality,
+															const int32 EffectQuality,
+															const int32 PostProcessQuality)
+{
 	UGameUserSettings* Settings = GetGameUserSettings();
-	if (!Settings)return false;
+	if (!Settings) return false;
+
 	Settings->ScalabilityQuality.ResolutionQuality   = ResolutionQuality;
 	Settings->ScalabilityQuality.ViewDistanceQuality = ViewDistance;
 	Settings->ScalabilityQuality.AntiAliasingQuality = AntiAliasing;
@@ -187,9 +202,10 @@ bool UOptionManager::SetVideoQualitySettings(const int32 ResolutionQuality, cons
 }
 
 // Confirm and save current video mode (resolution and fullscreen/windowed)
-bool UOptionManager::SaveVideoModeAndQuality(){
+bool UOptionManager::SaveVideoModeAndQuality()
+{
 	UGameUserSettings* Settings = GetGameUserSettings();
-	if (!Settings)return false;
+	if (!Settings) return false;
 	Settings->ConfirmVideoMode();
 	Settings->ApplyNonResolutionSettings();
 	Settings->SaveSettings();
@@ -197,7 +213,8 @@ bool UOptionManager::SaveVideoModeAndQuality(){
 }
 
 // Set the desired screen resolution(does not change it yet)
-bool UOptionManager::SetScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen){
+bool UOptionManager::SetScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen)
+{
 	UGameUserSettings* Settings = GetGameUserSettings();
 	if (!Settings) return false;
 
@@ -207,7 +224,8 @@ bool UOptionManager::SetScreenResolution(const int32 Width, const int32 Height, 
 }
 
 // Change the current screen resolution
-bool UOptionManager::ChangeScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen){
+bool UOptionManager::ChangeScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen)
+{
 	UGameUserSettings* Settings = GetGameUserSettings();
 	if (!Settings) return false;
 	
@@ -218,7 +236,8 @@ bool UOptionManager::ChangeScreenResolution(const int32 Width, const int32 Heigh
 
 
 // Get List of Supported Resolutions
-bool UOptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions){
+bool UOptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions)
+{
 	FScreenResolutionArray ResolutionsArray;
 	if (RHIGetAvailableResolutions(ResolutionsArray, true)){
 		for (const FScreenResolutionRHI& Resolution : ResolutionsArray){
@@ -232,7 +251,8 @@ bool UOptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions)
 }
 
 // Get Screen Resolution
-bool UOptionManager::GetScreenResolutions(int32 & Width, int32 & Height){
+bool UOptionManager::GetScreenResolutions(int32 & Width, int32 & Height)
+{
 	UGameUserSettings* Settings = GetGameUserSettings();
 	if (Settings) {
 		FIntPoint TheResolution=Settings->GetScreenResolution();

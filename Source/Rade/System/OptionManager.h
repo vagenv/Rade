@@ -122,13 +122,22 @@ public:
 
 	// Get Video Quality Settings
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-		static bool GetVideoQualitySettings(int32& ResolutionQuality, int32& ViewDistance , int32& AntiAliasing,
-											int32& TextureQuality	, int32& ShadowQuality, int32& EffectQuality, int32& PostProcessQuality);
+		static bool GetVideoQualitySettings(int32& ResolutionQuality,
+														int32& ViewDistance ,
+														int32& AntiAliasing,
+														int32& TextureQuality,
+														int32& ShadowQuality,
+														int32& EffectQuality,
+														int32& PostProcessQuality);
 	// Set Video Quality Settings
 	UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-		static bool SetVideoQualitySettings( const int32 ResolutionQuality, const int32 ViewDistance, const int32 AntiAliasing,
-											 const int32 TextureQuality,	const int32 ShadowQuality,const int32 EffectQuality,const int32 PostProcessQuality);
-
+		static bool SetVideoQualitySettings(const int32 ResolutionQuality,
+														const int32 ViewDistance,
+														const int32 AntiAliasing,
+														const int32 TextureQuality,
+														const int32 ShadowQuality,
+														const int32 EffectQuality,
+														const int32 PostProcessQuality);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
