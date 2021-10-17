@@ -14,8 +14,8 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 	// Set Root Component
-	RootComponent = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("RootComponent"));
-	RootComponent->SetIsReplicated(true);
+   RootComponent = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("RootComponent"));
+   RootComponent->SetIsReplicated(true);
    SetRootComponent(RootComponent);
 
 	// Set Skeletal Mesh Component
@@ -27,17 +27,18 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	
 	// Set Static Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-	Mesh->SetIsReplicated(true);
-	Mesh->BodyInstance.SetCollisionProfileName("BlockAll");
-	Mesh->SetSimulatePhysics(true);
-	Mesh->bAutoActivate = true;
+   Mesh->SetIsReplicated(true);
+   Mesh->BodyInstance.SetCollisionProfileName("BlockAll");
+   Mesh->SetSimulatePhysics(true);
+   Mesh->bAutoActivate = true;
    Mesh->SetupAttachment (GetRootComponent ());
 
 	// Set Trigger Component
 	TriggerSphere = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("TriggerSphere"));
-	TriggerSphere->InitSphereRadius(300);
+	TriggerSphere->InitSphereRadius(400);
 	TriggerSphere->SetIsReplicated(true);
 	TriggerSphere->BodyInstance.SetCollisionProfileName("Pickup");
+	TriggerSphere->SetupAttachment (GetRootComponent ());
 
 	bReplicates = true;
 	SetReplicatingMovement (true);
@@ -79,6 +80,10 @@ bool AItemPickup::SetAsSkeletalMeshPickup_Validate(){
 }
 void AItemPickup::SetAsSkeletalMeshPickup_Implementation()
 {
+	// TODO: Causes a crash. Still looking into it.
+	// Set It as Root
+	//SetRootComponent(SkeletalMesh);
+
 	// Destroy Extra Component
 	if (Mesh) Mesh->DestroyComponent();
 
@@ -90,9 +95,6 @@ void AItemPickup::SetAsSkeletalMeshPickup_Implementation()
 	SkeletalMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
-	// Set It as Root
-	SetRootComponent(SkeletalMesh);
-
 	// Enable Replication of Its Movement
 	SetReplicateMovement(true);
 }
@@ -103,8 +105,11 @@ bool AItemPickup::SetAsMeshPickup_Validate(){
 }
 void AItemPickup::SetAsMeshPickup_Implementation()
 {
+   // Set It as Root
+   SetRootComponent(Mesh);
+
 	// Destroy Extra Component
-	if (SkeletalMesh)SkeletalMesh->DestroyComponent();
+	if (SkeletalMesh) SkeletalMesh->DestroyComponent();
 
 	// Attach Trigger to Static Mesh Component
 	TriggerSphere->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
@@ -113,9 +118,6 @@ void AItemPickup::SetAsMeshPickup_Implementation()
 	Mesh->SetMobility(EComponentMobility::Movable);
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-
-	// Set It as Root
-	SetRootComponent(Mesh);
 
 	// Enable Replication of Its Movement
 	SetReplicateMovement(true);
@@ -139,20 +141,20 @@ void AItemPickup::ActivatePickupOverlap()
 
 	// Enable Overlap Component
 	TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &AItemPickup::OnBeginOverlap);
-	TriggerSphere->OnComponentEndOverlap.AddDynamic(this, &AItemPickup::OnEndOverlap);
+	TriggerSphere->OnComponentEndOverlap.AddDynamic  (this, &AItemPickup::OnEndOverlap);
 }
 
 // Activate Pickup Physics
 void AItemPickup::ActivatePickupPhysics()
 {
 	// If Already activated (One of components Destroyed) Stop
-	if (!Mesh || !SkeletalMesh)return;
-	
-	// Enable As Static Mesh Pickup
-	if (Mesh->GetStaticMesh ()) SetAsMeshPickup();
+	if (!Mesh || !SkeletalMesh) return;
+
+   // Enable As Static Mesh Pickup
+   if (Mesh && Mesh->GetStaticMesh()) SetAsMeshPickup();
 
 	// Enable As Skeletal Mesh Pickup
-	else if (SkeletalMesh->SkeletalMesh) SetAsSkeletalMeshPickup();
+	else if (SkeletalMesh && SkeletalMesh->SkeletalMesh) SetAsSkeletalMeshPickup();
 }
 
 // Player Entered The Pickup Area

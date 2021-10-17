@@ -25,7 +25,7 @@ AWeapon::AWeapon(const class FObjectInitializer& PCIP)
 
 	Mesh3P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh3P"));
 	Mesh3P->CastShadow = true;
-	Mesh3P->SetupAttachment (RootComponent, NAME_None);
+	Mesh3P->SetupAttachment(RootComponent, NAME_None);
 	Mesh3P->bOwnerNoSee = true;
 	Mesh3P->SetVisibility(true);
 	Mesh3P->SetIsReplicated(true);
@@ -40,7 +40,7 @@ void AWeapon::BeginPlay()
 
 	// Double check at the beginning
 	bReloading = false;
-	bShooting = false;
+	bShooting  = false;
 }
 
 // Get Fire Socket 
