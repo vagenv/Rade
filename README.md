@@ -59,16 +59,16 @@ Features:
 
 Input:
 -
-|INPUT               | NAME              | DETAIL                                 |
-|--------------------|-------------------|----------------------------------------|
-|WASD                | Movement          |                                        |
-|Left Mouse Button   | Fire              | Main Fire of Weapon                    |
-|Right Mouse Button  | AltFire           | Alternative Fire of weapon             |
-|Q                   | Melee Action      | Melee Attack with Weapon               |
-|E                   | Action            | Pickup Item / Use Item / Equip Weapon. |
-|R                   | Reload            | Reload Weapon                          |
-|F                   | Action            | Drop Item                              |
-|Spacebar            | Jump / DoubleJump |                                        |
+|INPUT               | NAME               | DETAIL                                 |
+|--------------------|--------------------|----------------------------------------|
+|WASD                | Movement           |                                        |
+|Left Mouse Button   | Fire               | Main Fire of Weapon                    |
+|Right Mouse Button  | AltFire            | Alternative Fire of Weapon             |
+|Q                   | Melee Action       | Melee Attack with Weapon               |
+|E                   | Action             | Pickup Item / Use Item / Equip Weapon. |
+|R                   | Reload             | Reload Weapon                          |
+|F                   | FAction            | Drop Item                              |
+|Spacebar            | Jump               | Jump / Double Jump                     |
 
 ---
 
