@@ -57,11 +57,9 @@ void AItemPickup::BeginPlay()
 	// Disable Static Mesh Outline
 	if (Mesh) Mesh->SetRenderCustomDepth(false);
 
-
 	// Enable overlap After A Delay
 	FTimerHandle MyHandle;
 	GetWorldTimerManager().SetTimer(MyHandle, this, &AItemPickup::ActivatePickupOverlap, PickupActivationDelay, false);
-
 
 	// If Mesh is Set , Activate Pickup
 	if (  (Mesh         && Mesh->GetStaticMesh ())
@@ -73,7 +71,6 @@ void AItemPickup::BeginPlay()
 		FTimerHandle MyActivatePhysicsHandle;
 		GetWorldTimerManager().SetTimer(MyActivatePhysicsHandle, this, &AItemPickup::ActivatePickupPhysics, 0.1f, false);
 	}
-
 }
 
 // Enable It as a Skeletal Mesh Pickup

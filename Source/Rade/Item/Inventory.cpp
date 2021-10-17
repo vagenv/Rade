@@ -14,12 +14,10 @@
 #include "../System/SystemSaveGame.h"
 #include "Net/UnrealNetwork.h"
 
-
 UInventory::UInventory(const class FObjectInitializer& PCIP)
 {
-	SetIsReplicated (true);
+	SetIsReplicatedByDefault (true);
 }
-
 
 void UInventory::BeginPlay()
 {
@@ -79,7 +77,6 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 		{
 			return;
 		}
-		
 
 		UWorld* const World = TheCharacter->GetWorld();
 		if (  World
@@ -89,11 +86,11 @@ void UInventory::ThrowOutIndex(int32 ItemIndex)
 			// Get Player Rotation
 			FRotator rot = TheCharacter->GetActorRotation();
          FVector forwardVector = rot.Vector() * 300;
-         forwardVector.Z = 0;
+					  forwardVector.Z = 0;
          FVector spawnLoc = TheCharacter->GetActorLocation() + forwardVector + FVector(0, 0, 50);
 
 			AItemPickup* newPickup;
-			AItem* newItem=Items[ItemIndex].Archetype->GetDefaultObject<AItem>();
+			AItem* newItem = Items[ItemIndex].Archetype->GetDefaultObject<AItem>();
 
 			// Spawn Item Pickup archetype
 			if (newItem && newItem->ItemPickupArchetype)
@@ -324,20 +321,20 @@ void UInventory::RemoveItem(AItem* DeleteItem)
 void UInventory::RemoveItemIndex_Count(int32 ItemID, int32 ItemRemoveCount)
 {
 	if (!Items.IsValidIndex(ItemID)) return;
-	if (Items[ItemID].ItemCount>ItemRemoveCount) Items[ItemID].ItemCount -= ItemRemoveCount;
+	if (Items[ItemID].ItemCount > ItemRemoveCount) Items[ItemID].ItemCount -= ItemRemoveCount;
 	else														Items.RemoveAt(ItemID);
 	UpdateInfo();
 }
 
 // Remove Item with ref
-void UInventory::RemoveItem_Count(AItem* DeleteItem,int32 ItemRemoveCount)
+void UInventory::RemoveItem_Count(AItem* DeleteItem, int32 ItemRemoveCount)
 {
-	if (!DeleteItem)return;
+	if (!DeleteItem) return;
 
 	// Find Item in item list
 	for (int32 i = 0; i < Items.Num(); i++) {
 		if (Items.IsValidIndex(i) && Items[i].Archetype->GetDefaultObject()->GetClass() == DeleteItem->GetClass())
-			RemoveItemIndex_Count(i,ItemRemoveCount);
+			RemoveItemIndex_Count(i, ItemRemoveCount);
 	}
 }
 
@@ -350,7 +347,7 @@ void UInventory::UpdateInfo()
 		&& Cast<ARadePlayer>(TheCharacter)->TheHUD) 
 		Cast<ARadePlayer>(TheCharacter)->TheHUD->BP_InventoryUpdated();
 
-	if (Items.Num()<1)return;
+	if (Items.Num() < 1) return;
 
 	TotalWeight = 0;
 
@@ -399,7 +396,7 @@ void UInventory::SaveInventory()
 	// Save current weapon stats
 	if (TheCharacter && TheCharacter->TheWeapon) TheCharacter->TheWeapon->SaveCurrentWeaponStats();
 
-	// Set Savefile items
+	// Set Save file items
 	if (TheGM && TheGM->SaveFile) TheGM->SaveFile->Items = Items;
 }
 

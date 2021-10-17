@@ -13,7 +13,6 @@ class RADE_API USystemSaveGame : public USaveGame
 {
 	GENERATED_BODY()
 
-
 public:
 	USystemSaveGame(const class FObjectInitializer& PCIP);
 
