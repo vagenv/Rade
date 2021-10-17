@@ -7,31 +7,34 @@ UE Dynamic Shooter Template.
 Details
 =
 
-Unreal  Engine Project with mature and rich feature list.
+Unreal Engine Project template.
 
 --------------------
 
-This template was made for three types of users:
-
-- Artist. Who want to import and use their assets without the need to configure or code at all.
-
-- Blueprint developers. Who don't want to structure everything. They can configure and extend the already existing framework and implement the unique features of their projects.
-
-- C++ developers. Who want to prototype or create projects without the need to start from zero.
-
 Features:
 =
-- First and Third Person Camera System
+- Camera
+	- First Person
+	- Third Person
+- Meshes
+	- UE Mannequin
+	- Arms
+	- Sword
+	- Hand-Gun
+	- Machine Gun
+	- Assault Rifle
+- Animation System
+	- 4 Animation Archetypes :
+		- Bare Hand
+		- Sword
+		- Hand-Gun
+		- Semi-Auto
+		- Rifle.
+	- 41 custom animation
+
 - Character System
 	-  Pickup
 	-  Death / Revive
--  Animation System
-	- 4 Animation Archetypes :
-		- Bare Hand
-		- Hand-Gun,
-		- Semi-Auto
-		- Rifle.
-	- 41 custom arms animation 
 - Inventory
 - Pickups
 - Weapons
