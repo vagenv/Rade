@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Vagen Ayrapetyan
+// Copyright 2015-2021 Vagen Ayrapetyan
 
 #include "LauncherWeapon.h"
 #include "Projectile.h"
