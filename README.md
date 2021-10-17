@@ -1,21 +1,15 @@
 
-UE Dynamic Shooter Template.
-======================================
 
+UE Dynamic Shooter Template.
+=
 ![alt tag](https://raw.github.com/vagenv/rade/master/Content/Rade/Splash/Splash.png)
 
+Details
+=
 
-Unreal Engine Forum Page:
+Unreal  Engine Project with mature and rich feature list.
+
 --------------------
-
-https://forums.unrealengine.com/showthread.php?96804-Rade-Dynamic-Shooter-Template
-
-Youtube Link :
---------------------
-
-
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/_7bOnaS1KZ8/0.jpg)](http://www.youtube.com/watch?v=_7bOnaS1KZ8&list=PLYvsozguspc1jDHUz4h6xtF3Kwaq0i10m)
-
 
 This template was made for three types of users:
 
@@ -26,55 +20,55 @@ This template was made for three types of users:
 - C++ developers. Who want to prototype or create projects without the need to start from zero.
 
 Features:
+=
+- First and Third Person Camera System
+- Character System
+	-  Pickup
+	-  Death / Revive
+-  Animation System
+	- 4 Animation Archetypes :
+		- Bare Hand
+		- Hand-Gun,
+		- Semi-Auto
+		- Rifle.
+	- 41 custom arms animation 
+- Inventory
+- Pickups
+- Weapons
+	- Rifle
+	- Shotgun
+	- Launcher
+	- Block Constructor
+- Save / Load
+	- Inventory
+- HUD
+	- Core Internal Events
+	- Info
+		-  Player
+		-  Inventory
+		-  Weapon
+		-  Closest pickup
+- Full multiplayer support
+	- Sessions
+	- Chat.
 
-First and Third Person Camera System
---------------------
-
-Character System
---------------------
-Internally managed events system of: Pickup, Death, Revive and many more
-
-Animation System
---------------------
-4 Animation Archetypes – Bare Hand, Hand-Gun, Semi-Auto, Rifle.
-41 custom arms animation 
-
-Item, Inventory System
---------------------
-
-Pickup System
---------------------
-
-Weapon System
---------------------
-- Rifle Weapon
-- Shotgun Weapon
-- Launcher Weapon
-- Constructor Weapon
-
-HUD System
---------------------
-Internal Events that includes fast access, control or modification to data about player, inventory, weapon and many more
-
-Dynamic Replication of Systems.
---------------------
-All the systems were designed to work in single player and mutiplayer mode with dynamic replication.
 
 
 Input:
-WASD                            - Movement
-Left Mouse Button               - Fire              - Main Fire of Weapon
-Right Mouse Button              - AltFire           - Alternative Fire of weapon
-Q                               - Melee Action      - Melee Attack with Weapon
-E                               - Action            - Pickup Item, Use Item, Equip Weapon.
-R                               - Reload            - Reload Weapon
-F                               - Faction           - Drop Item
-Spacebar                        - Jump/DoubleJump
+-
+|INPUT               | NAME              | DETAIL                                 |
+|--------------------|-------------------|----------------------------------------|
+|WASD                | Movement          |                                        |
+|Left Mouse Button   | Fire              | Main Fire of Weapon                    |
+|Right Mouse Button  | AltFire           | Alternative Fire of weapon             |
+|Q                   | Melee Action      | Melee Attack with Weapon               |
+|E                   | Action            | Pickup Item / Use Item / Equip Weapon. |
+|R                   | Reload            | Reload Weapon                          |
+|F                   | Action            | Drop Item                              |
+|Spacebar            | Jump / DoubleJump |                                        |
 
+---
 
-
-
-
-Copyright  2015-2018 Vagen Ayrapetyan.
+Copyright 2015-2021 Vagen Ayrapetyan.
 
 
