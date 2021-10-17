@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Engine.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "Online.h"
 #include "OnlineSubsystem.h"
 
@@ -14,15 +14,15 @@
 DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 //								Custom Print Methods
 
-#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Black,text)
+#define print (text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Black,text)
 #define printw(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::White,text)
-#define printr(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red,text)
+#define printr(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red,  text)
 #define printg(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green,text)
-#define printb(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Blue,text)
+#define printb(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Blue, text)
 
 #define printlong(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 25, FColor::Red,text)
 
@@ -30,7 +30,7 @@ DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
 void rlog (FString txt);
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 //								Custom Load Object from Path
 
@@ -41,17 +41,13 @@ static FORCEINLINE FName GetObjPath(const UObject* Obj)
 	if (!Obj->IsValidLowLevel()) return NAME_None;
 	//~
 
-	FStringAssetReference ThePath = FStringAssetReference(Obj);
+	FSoftObjectPath ThePath (Obj);
 
 	if (!ThePath.IsValid()) return NAME_None;
 
 	//The Class FString Name For This Object
-	FString Str = Obj->GetClass()->GetDescription();
-
-	Str += "'";
-	Str += ThePath.ToString();
-	Str += "'";
-
+	FString Str = Obj->GetClass()->GetDescription()
+					+ "'" + ThePath.ToString() + "'";
 	return FName(*Str);
 }
 

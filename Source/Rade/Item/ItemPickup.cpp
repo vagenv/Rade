@@ -1,12 +1,12 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Item/ItemPickup.h"
-#include "Item/Inventory.h"
-#include "Item/Item.h"
-#include "Character/RadePlayer.h"
-#include "Rade.h"
+#include "ItemPickup.h"
+#include "Inventory.h"
+#include "Item.h"
+#include "../Character/RadePlayer.h"
+#include "../Rade.h"
 
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -16,14 +16,14 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	// Set Root Component
 	RootComponent = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("RootComponent"));
 	RootComponent->SetIsReplicated(true);
-    SetRootComponent(RootComponent);
+   SetRootComponent(RootComponent);
 
 	// Set Skeletal Mesh Component
 	SkeletalMesh = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("SkeletalMesh"));
 	SkeletalMesh->SetIsReplicated(true);
 	SkeletalMesh->BodyInstance.SetCollisionProfileName("BlockAll");
 	SkeletalMesh->SetSimulatePhysics(true);
-    SkeletalMesh->SetupAttachment (GetRootComponent ());
+   SkeletalMesh->SetupAttachment (GetRootComponent ());
 	
 	// Set Static Mesh Component
 	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
@@ -31,7 +31,7 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	Mesh->BodyInstance.SetCollisionProfileName("BlockAll");
 	Mesh->SetSimulatePhysics(true);
 	Mesh->bAutoActivate = true;
-    Mesh->SetupAttachment (GetRootComponent ());
+   Mesh->SetupAttachment (GetRootComponent ());
 
 	// Set Trigger Component
 	TriggerSphere = PCIP.CreateDefaultSubobject<USphereComponent>(this, TEXT("TriggerSphere"));
@@ -40,7 +40,7 @@ AItemPickup::AItemPickup(const class FObjectInitializer& PCIP)
 	TriggerSphere->BodyInstance.SetCollisionProfileName("Pickup");
 
 	bReplicates = true;
-	bReplicateMovement = true;	
+	SetReplicatingMovement (true);
 }
 
 
@@ -49,14 +49,13 @@ void AItemPickup::BeginPlay()
 	Super::BeginPlay();
 
 	// Disable Skeletal Mesh Outline
-	if (SkeletalMesh)
-	{
+	if (SkeletalMesh) {
 		SkeletalMesh->SetRenderCustomDepth(false);
 		SkeletalMesh->SetIsReplicated(true);
 	}
 
 	// Disable Static Mesh Outline
-	if (Mesh)Mesh->SetRenderCustomDepth(false);
+	if (Mesh) Mesh->SetRenderCustomDepth(false);
 
 
 	// Enable overlap After A Delay
@@ -65,12 +64,12 @@ void AItemPickup::BeginPlay()
 
 
 	// If Mesh is Set , Activate Pickup
-	if ((Mesh && Mesh->GetStaticMesh ()) || (SkeletalMesh && SkeletalMesh->SkeletalMesh))
+	if (  (Mesh         && Mesh->GetStaticMesh ())
+		|| (SkeletalMesh && SkeletalMesh->SkeletalMesh)) {
 		ActivatePickupPhysics();
 
 	// Else Activate it after a delay
-	else 
-	{
+	} else  {
 		FTimerHandle MyActivatePhysicsHandle;
 		GetWorldTimerManager().SetTimer(MyActivatePhysicsHandle, this, &AItemPickup::ActivatePickupPhysics, 0.1f, false);
 	}
@@ -84,7 +83,7 @@ bool AItemPickup::SetAsSkeletalMeshPickup_Validate(){
 void AItemPickup::SetAsSkeletalMeshPickup_Implementation()
 {
 	// Destroy Extra Component
-	if (Mesh)Mesh->DestroyComponent();
+	if (Mesh) Mesh->DestroyComponent();
 
 	// Attach Trigger to Skeletal Mesh Component
 	TriggerSphere->AttachToComponent(SkeletalMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
@@ -97,7 +96,7 @@ void AItemPickup::SetAsSkeletalMeshPickup_Implementation()
 	// Set It as Root
 	SetRootComponent(SkeletalMesh);
 
-	// Enable Replicattion of Its Movement
+	// Enable Replication of Its Movement
 	SetReplicateMovement(true);
 }
 
@@ -121,7 +120,7 @@ void AItemPickup::SetAsMeshPickup_Implementation()
 	// Set It as Root
 	SetRootComponent(Mesh);
 
-	// Enable Replicattion of Its Movement
+	// Enable Replication of Its Movement
 	SetReplicateMovement(true);
 }
 
@@ -129,11 +128,11 @@ void AItemPickup::SetAsMeshPickup_Implementation()
 void AItemPickup::ActivatePickupOverlap()
 {
 	// Check if Any Player is Within the range to pickup this actor
-	if (Role >= ROLE_Authority)
-	{
-		for (TActorIterator<ARadePlayer> RadeActorItr(GetWorld()); RadeActorItr; ++RadeActorItr)
-		{
-			if (RadeActorItr && TriggerSphere && FVector::Dist(RadeActorItr->GetActorLocation(), GetActorLocation()) < TriggerSphere->GetUnscaledSphereRadius())
+	if (GetLocalRole() >= ROLE_Authority) {
+		for (TActorIterator<ARadePlayer> RadeActorItr(GetWorld()); RadeActorItr; ++RadeActorItr) {
+			if (  RadeActorItr
+				&& TriggerSphere
+				&& FVector::Dist(RadeActorItr->GetActorLocation(), GetActorLocation()) < TriggerSphere->GetUnscaledSphereRadius())
 			{
 				OnBeginOverlap(nullptr,*RadeActorItr, nullptr, 0, false, FHitResult());
 				return;
@@ -153,13 +152,10 @@ void AItemPickup::ActivatePickupPhysics()
 	if (!Mesh || !SkeletalMesh)return;
 	
 	// Enable As Static Mesh Pickup
-	if (Mesh->GetStaticMesh ())
-		SetAsMeshPickup();
+	if (Mesh->GetStaticMesh ()) SetAsMeshPickup();
 
 	// Enable As Skeletal Mesh Pickup
-	else if (SkeletalMesh->SkeletalMesh)
-		SetAsSkeletalMeshPickup();		
-
+	else if (SkeletalMesh->SkeletalMesh) SetAsSkeletalMeshPickup();
 }
 
 // Player Entered The Pickup Area
@@ -170,34 +166,28 @@ void AItemPickup::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                  bool bFromSweep, 
                                  const FHitResult & SweepResult)
 {
-	if (OtherActor != nullptr && 
+	ARadePlayer *radePlayer = Cast<ARadePlayer>(OtherActor);
+	if (radePlayer != nullptr && 
        OtherActor != this && 
-       Cast<ARadePlayer>(OtherActor) != nullptr && 
-       Cast<ARadePlayer>(OtherActor)->TheInventory != nullptr)
+       radePlayer->TheInventory != nullptr)
 	{
 		// BP Event that player entered
-		BP_PlayerEntered(Cast<ARadePlayer>(OtherActor));
+		BP_PlayerEntered(radePlayer);
 
 		// Auto give player the item
-		if (bAutoPickup)
-		{
-			if (Role >= ROLE_Authority)
-				PickedUp(Cast<ARadePlayer>(OtherActor));
-		}
+		if (bAutoPickup) {
+			if (GetLocalRole() >= ROLE_Authority) PickedUp(radePlayer);
 
 		// Wait player Input
-		else
-		{
+		} else {
 			// Set player ref of item pickup
 			//Cast<ARadePlayer>(OtherActor)->currentPickup = this;
-			if (Cast<ARadePlayer>(OtherActor)->IsLocallyControlled())
-			{
-				if (SkeletalMesh != nullptr)SkeletalMesh->SetRenderCustomDepth(true);
-				if (Mesh != nullptr)Mesh->SetRenderCustomDepth(true);
+			if (radePlayer->IsLocallyControlled()) {
+				if (SkeletalMesh != nullptr) SkeletalMesh->SetRenderCustomDepth(true);
+				if (Mesh != nullptr)         Mesh->SetRenderCustomDepth(true);
 			}
-			if (Role >= ROLE_Authority)
-				Cast<ARadePlayer>(OtherActor)->currentPickup = this;
-
+			if (GetLocalRole() >= ROLE_Authority)
+				radePlayer->currentPickup = this;
 		}
 	}
 }
@@ -205,21 +195,20 @@ void AItemPickup::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 // Player Exited The Pickup Area
 void AItemPickup::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && Cast<ARadePlayer>(OtherActor) != nullptr)
-	{
+	ARadePlayer *radePlayer = Cast<ARadePlayer>(OtherActor);
+	if (OtherActor != this && radePlayer != nullptr) {
 		// BP Event that player Exited
-		BP_PlayerLeft(Cast<ARadePlayer>(OtherActor));
+		BP_PlayerLeft(radePlayer);
 
 		
 		// Clean Pickup reference in player class
-		if (Role>=ROLE_Authority && Cast<ARadePlayer>(OtherActor)->currentPickup == this)
-		Cast<ARadePlayer>(OtherActor)->currentPickup = nullptr;
+		if (GetLocalRole() >= ROLE_Authority && radePlayer->currentPickup == this)
+		radePlayer->currentPickup = nullptr;
 
 		// Enable Highlighting on Local Users
-		if (Cast<ARadePlayer>(OtherActor)->IsLocallyControlled())
-		{
-			if (SkeletalMesh != nullptr)SkeletalMesh->SetRenderCustomDepth(false);
-			if (Mesh != nullptr)Mesh->SetRenderCustomDepth(false);
+		if (radePlayer->IsLocallyControlled()) {
+			if (SkeletalMesh != nullptr) SkeletalMesh->SetRenderCustomDepth(false);
+			if (Mesh			  != nullptr) Mesh->SetRenderCustomDepth(false);
 		}
 	}
 }
@@ -228,8 +217,9 @@ void AItemPickup::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* 
 void AItemPickup::PickedUp(ARadePlayer * Player)
 {
 	// check the distance between pickup and player 
-	if (Player != nullptr && Item != nullptr && Player->TheInventory != nullptr)
-	{
+	if (  Player != nullptr
+		&& Item != nullptr
+		&& Player->TheInventory != nullptr) {
 		//  Add item to inventory
 		Player->TheInventory->ItemPickedUp(this);
 
@@ -238,12 +228,3 @@ void AItemPickup::PickedUp(ARadePlayer * Player)
 	}
 	Destroy();
 }
-
-/*
-void AItemPickup::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-}
-
-*/

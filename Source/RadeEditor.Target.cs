@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 public class RadeEditorTarget : TargetRules
 {
-	public RadeEditorTarget(TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Editor;
-
-		ExtraModuleNames.AddRange( new string[] { "Rade" } );
-	}
+   public RadeEditorTarget(TargetInfo Target) : base(Target)
+   {
+      Type = TargetType.Editor;
+      DefaultBuildSettings = BuildSettingsVersion.V2;
+      ExtraModuleNames.Add("Rade");
+   }
 }

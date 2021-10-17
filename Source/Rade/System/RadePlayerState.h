@@ -25,5 +25,4 @@ public:
 	// Player Color
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "")
 		FLinearColor PlayerColor = FLinearColor::White;
-
 };

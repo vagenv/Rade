@@ -1,17 +1,18 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "System/RadeGameInstance.h"
-#include "Rade.h"
-//#include "Engine.h"
-#include "Character/RadePlayer.h"
+#include "RadeGameInstance.h"
+#include "../Rade.h"
+#include "../Character/RadePlayer.h"
 
+
+const FName theSessionName ("RadeSessionName");
 
 URadeGameInstance::URadeGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	/** Bind function for CREATING a Session */
 	OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &URadeGameInstance::OnCreateSessionComplete);
-	OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &URadeGameInstance::OnStartOnlineGameComplete);
+	OnStartSessionCompleteDelegate  = FOnStartSessionCompleteDelegate::CreateUObject(this, &URadeGameInstance::OnStartOnlineGameComplete);
 
 	/** Bind function for FINDING a Session */
 	OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &URadeGameInstance::OnFindSessionsComplete);
@@ -27,8 +28,8 @@ URadeGameInstance::URadeGameInstance(const FObjectInitializer& ObjectInitializer
 // Set Local Player Stats
 void URadeGameInstance::SetPlayerStats(FString newPlayerName, FLinearColor newPlayerColor, FVector newMaterialSettings)
 {
-	PlayerName = newPlayerName;
-	PlayerColor = newPlayerColor;
+	PlayerName             = newPlayerName;
+	PlayerColor            = newPlayerColor;
 	PlayerMaterialSettings = newMaterialSettings;
 }
 
@@ -41,10 +42,10 @@ void URadeGameInstance::StartOnlineGame()
 	TheMapName = "BattleArena";
 
 	// Call our custom HostSession function. GameSessionName is a GameInstance variable
-    HostSession(Player->GetPreferredUniqueNetId ().GetUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
+   HostSession(Player->GetPreferredUniqueNetId ().GetUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
 }
 
-// Host Speicific Map
+// Host Specific Map
 void URadeGameInstance::StartOnlineGameMap(FString MapName, int32 MaxPlayerNumber)
 {
 	// Creating a local player where we can get the UserID from
@@ -52,35 +53,31 @@ void URadeGameInstance::StartOnlineGameMap(FString MapName, int32 MaxPlayerNumbe
 
 	//Player->GetPreferredUniqueNetId()
 	TheMapName = MapName;
+
 	// Call our custom HostSession function. GameSessionName is a GameInstance variable
-    HostSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, TheMapName, true, true, MaxPlayerNumber);
+   HostSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, TheMapName, true, true, MaxPlayerNumber);
 }
 
 // Find All Online Sessions
 void URadeGameInstance::FindOnlineGames()
 {
 	ULocalPlayer* const Player = GetFirstGamePlayer();
-
-    FindSessions(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, true, true);
-
+   FindSessions(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, true, true);
 }
 
-// Update Aviable Sessions List
+// Update Available Sessions List
 void URadeGameInstance::UpdateSessionList()
 {
-	if (!SessionSearch.IsValid())return;
+	if (!SessionSearch.IsValid()) return;
 
 	CurrentSessionSearch.Empty();
-
-
-	for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++)
-	{
+	for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++) {
 		FAvaiableSessionsData NewData(SessionSearch->SearchResults[i]);
 		CurrentSessionSearch.Add(NewData);
 	}
 }
 
-// Join Any Avaiable Online Game
+// Join Any Available Online Game
 void URadeGameInstance::JoinOnlineGame()
 {
 	ULocalPlayer* const Player = GetFirstGamePlayer();
@@ -89,16 +86,12 @@ void URadeGameInstance::JoinOnlineGame()
 	FOnlineSessionSearchResult SearchResult;
 
 	// If the Array is not empty, we can go through it
-	if (SessionSearch->SearchResults.Num() > 0)
-	{
-		for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++)
-		{
+	if (SessionSearch->SearchResults.Num() > 0) {
+		for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++) {
 			// To avoid something crazy, we filter sessions from ourself
-			if (SessionSearch->SearchResults[i].Session.OwningUserId != Player->GetPreferredUniqueNetId())
-			{
+			if (SessionSearch->SearchResults[i].Session.OwningUserId != Player->GetPreferredUniqueNetId()) {
 				SearchResult = SessionSearch->SearchResults[i];
-
-                JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, SearchResult);
+            JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, SearchResult);
 				break;
 			}
 		}
@@ -108,29 +101,23 @@ void URadeGameInstance::JoinOnlineGame()
 // Join Selected Online Session
 void URadeGameInstance::JoinSelectedOnlineGame(FAvaiableSessionsData SessionData)
 {
-	ULocalPlayer* const Player = GetFirstGamePlayer();
-
-    JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), GameSessionName, SessionData.SessionData);
+   ULocalPlayer* const Player = GetFirstGamePlayer();
+   JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, SessionData.SessionData);
 }
 
 // Destroy Session 
 void URadeGameInstance::DestroySessionAndLeaveGame()
 {
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid())
-		{
+		if (Sessions.IsValid()) {
 			Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
-
-			Sessions->DestroySession(GameSessionName);
+			Sessions->DestroySession(theSessionName);
 		}
 	}
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -155,13 +142,11 @@ bool URadeGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName
 	// Get the Online Subsystem to work with
 	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get();
 
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get the Session Interface, so we can call the "CreateSession" function on it
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid() && UserId.IsValid())
-		{
+		if (Sessions.IsValid() && UserId.IsValid()) {
 			/*
 			Fill in all the Session Settings that we want to use.
 
@@ -170,7 +155,6 @@ bool URadeGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName
 			*/
 
 			SessionSettings = MakeShareable(new FOnlineSessionSettings());
-
 		
 			SessionSettings->bIsLANMatch = bIsLAN;
 			SessionSettings->bUsesPresence = bIsPresence;
@@ -193,9 +177,7 @@ bool URadeGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName
 			return Sessions->CreateSession(*UserId, SessionName, *SessionSettings);
 			
 		}
-	}
-	else
-	{
+	} else {
 		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("No OnlineSubsytem found!"));
 	}
 
@@ -214,27 +196,22 @@ void URadeGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucc
 
 	// Get the OnlineSubsystem so we can get the Session Interface
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get the Session Interface to call the StartSession function
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid())
-		{
+		if (Sessions.IsValid()) {
 			// Clear the SessionComplete delegate handle, since we finished this call
 			Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
-			if (bWasSuccessful)
-			{
+			if (bWasSuccessful) {
 				// Set the StartSession delegate handle
 				OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
 
 				//printr(SessionName.ToString());
 				// Our StartSessionComplete delegate should get called after this
 				Sessions->StartSession(SessionName);
-				
 			}
 		}
-
 	}
 }
 
@@ -250,21 +227,17 @@ void URadeGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSu
 
 	// Get the Online Subsystem so we can get the Session Interface
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get the Session Interface to clear the Delegate
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-		if (Sessions.IsValid())
-		{
+		if (Sessions.IsValid()) {
 			// Clear the delegate, since we are done with this call
 			Sessions->ClearOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegateHandle);
 		}
 	}
 
-
 	// If the start was successful, we can open a NewMap if we want. Make sure to use "listen" as a parameter!
-	if (bWasSuccessful)
-	{
+	if (bWasSuccessful) {
 		
 		//BattleArena
 		UGameplayStatics::OpenLevel(GetWorld(), *TheMapName, true, "listen");
@@ -285,14 +258,12 @@ void URadeGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FNam
 	// Get the OnlineSubsystem we want to work with
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		bIsSearchingSession = true;
 		// Get the SessionInterface from our OnlineSubsystem
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid() && UserId.IsValid())
-		{
+		if (Sessions.IsValid() && UserId.IsValid()) {
 			/*
 			Fill in all the SearchSettings, like if we are searching for a LAN game and how many results we want to have!
 			*/
@@ -303,8 +274,7 @@ void URadeGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FNam
 			SessionSearch->PingBucketSize = 50;
 
 			// We only want to set this Query Setting if "bIsPresence" is true
-			if (bIsPresence)
-			{
+			if (bIsPresence) {
 				SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
 			}
 
@@ -316,9 +286,7 @@ void URadeGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FNam
 			// Finally call the SessionInterface function. The Delegate gets called once this is finished
 			Sessions->FindSessions(*UserId, SearchSettingsRef);
 		}
-	}
-	else
-	{
+	} else {
 		// If something goes wrong, just call the Delegate Function directly with "false".
 		OnFindSessionsComplete(false);
 	}
@@ -336,12 +304,10 @@ void URadeGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 
 	// Get OnlineSubsystem we want to work with
 	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get SessionInterface of the OnlineSubsystem
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-		if (Sessions.IsValid())
-		{
+		if (Sessions.IsValid()) {
 			// Clear the Delegate handle, since we finished this call
 			Sessions->ClearOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegateHandle);
 		}
@@ -360,13 +326,11 @@ bool URadeGameInstance::JoinSession(TSharedPtr<const FUniqueNetId> UserId, FName
 	// Get OnlineSubsystem we want to work with
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get SessionInterface from the OnlineSubsystem
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid() && UserId.IsValid())
-		{
+		if (Sessions.IsValid() && UserId.IsValid()) {
 			// Set the Handle again
 			OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
 
@@ -383,13 +347,11 @@ void URadeGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionC
 {
 	// Get the OnlineSubsystem we want to work with
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get SessionInterface from the OnlineSubsystem
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid())
-		{
+		if (Sessions.IsValid()) {
 			// Clear the Delegate again
 			Sessions->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegateHandle);
 
@@ -397,13 +359,12 @@ void URadeGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionC
 			// This is something the Blueprint Node "Join Session" does automatically!
 			APlayerController * const PlayerController = GetFirstLocalPlayerController();
 
-			// We need a FString to use ClientTravel and we can let the SessionInterface contruct such a
+			// We need a FString to use ClientTravel and we can let the SessionInterface construct such a
 			// String for us by giving him the SessionName and an empty String. We want to do this, because
 			// Every OnlineSubsystem uses different TravelURLs
 			FString TravelURL;
 
-			if (PlayerController && Sessions->GetResolvedConnectString(SessionName, TravelURL))
-			{
+			if (PlayerController && Sessions->GetResolvedConnectString(SessionName, TravelURL)) {
 				// Finally call the ClienTravel. If you want, you could print the TravelURL to see
 				// how it really looks like
 				PlayerController->ClientTravel(TravelURL, ETravelType::TRAVEL_Absolute);
@@ -417,19 +378,16 @@ void URadeGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuc
 {
 	// Get the OnlineSubsystem we want to work with
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-	if (OnlineSub)
-	{
+	if (OnlineSub) {
 		// Get the SessionInterface from the OnlineSubsystem
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-		if (Sessions.IsValid())
-		{
+		if (Sessions.IsValid()) {
 			// Clear the Delegate
 			Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
 
 			// If it was successful, we just load another level (could be a MainMenu!)
-			if (bWasSuccessful)
-			{
+			if (bWasSuccessful) {
 				UGameplayStatics::OpenLevel(GetWorld(), "SelectMap", true);
 			}
 		}

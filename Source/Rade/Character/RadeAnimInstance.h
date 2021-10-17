@@ -3,10 +3,8 @@
 #pragma once
 
 #include "Animation/AnimInstance.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "RadeAnimInstance.generated.h"
-
-
 
 UCLASS()
 class RADE_API URadeAnimInstance : public UAnimInstance
@@ -19,7 +17,6 @@ public:
 
 	void BeginPlay();
 
-
 	// Find/Reset Reference to The Character Class
 	void ResetRadeCharacterRef();
 
@@ -27,8 +24,7 @@ public:
 
 	//										Main References and Properties
 
-
-	// Current Weapon Archtype
+	// Current Weapon Archetype
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade")
 		EAnimArchetype AnimArchetype;
 
@@ -41,23 +37,19 @@ public:
 		class ARadeCharacter* TheCharacter;
 
 
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//										Animation Control and Events
 
-
 	// Notification in blueprint that animation started
-		UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_AnimStarted(EAnimState currentAnimCheck);
 
-
 	// Set Animation Archetype
-		UFUNCTION(BlueprintCallable, Category = "Rade")
+	UFUNCTION(BlueprintCallable, Category = "Rade")
 		void SetAnimArchetype(EAnimArchetype newAnimArchtype);
 
-
-	// Recieve the anim from player Class
+	// Receive the animation from player Class
 	void RecieveGlobalAnimID(EAnimState currentAnimCheck);
 
 private:
@@ -65,7 +57,6 @@ private:
 	void PlayLocalAnim(EAnimState currentAnimCheck);
 
 public:
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,13 +77,12 @@ public:
 		void InAirIdleStateEntered();
 
 
-	// In air check from current anim state
+	// In air check from current animation state
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
 		bool IsInAir();
 
 
 protected:
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -105,8 +95,4 @@ protected:
 	// End Trace of Sword Weapon
 	UFUNCTION(BlueprintCallable, Category = "Rade")
 		void EndSwordWeaponTrace();
-
-
-
-
 };

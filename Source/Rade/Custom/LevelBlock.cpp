@@ -1,12 +1,12 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Custom/LevelBlock.h"
-#include "Custom/LevelBlockConstructor.h"
-#include "Weapon/ConstructorWeapon.h"
+#include "LevelBlock.h"
+#include "LevelBlockConstructor.h"
+#include "../Weapon/ConstructorWeapon.h"
 
-#include "Character/RadePlayer.h"
-#include "Rade.h"
-#include "Item/Inventory.h"
+#include "../Character/RadePlayer.h"
+#include "../Rade.h"
+#include "../Item/Inventory.h"
 
 
 ALevelBlock::ALevelBlock(const class FObjectInitializer& PCIP)
@@ -30,14 +30,12 @@ void ALevelBlock::BeginPlay()
 // Start the block restore event (Called by weapon)
 void ALevelBlock::StartTimedRestore(AConstructorWeapon* newParentWeapon, float Time)
 {
-	if (newParentWeapon)
-	{
+	if (newParentWeapon) {
 		// Assign Weapon that spawned block
 		ParentWeapon = newParentWeapon;
 
 		// If the 
-		if (Time>0)
-		{
+		if (Time > 0) {
 			FTimerHandle MyHandle;
 			GetWorldTimerManager().SetTimer(MyHandle, this, &ALevelBlock::ReturnBlock, Time, false);
 		}
@@ -47,8 +45,7 @@ void ALevelBlock::StartTimedRestore(AConstructorWeapon* newParentWeapon, float T
 // Restore The block back into weapon
 void ALevelBlock::ReturnBlock()
 {
-	if (ParentWeapon && TheBlockConstructor)
-	{
+	if (ParentWeapon && TheBlockConstructor) {
 		// Add the ammo back
 		if (bRestoreWeaponAmmo)ParentWeapon->MainFire.AddAmmo(ParentWeapon->MainFire.FireCost, 0);
 

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Weapon/Weapon.h"
+#include "Weapon.h"
 #include "RifleWeapon.generated.h"
 
 // Base for any Rifle weapon

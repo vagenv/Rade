@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Weapon/Weapon.h"
+#include "Weapon.h"
 #include "ShotGunWeapon.generated.h"
 
 // Base for any Shotgun Weapon
@@ -23,5 +23,4 @@ public:
 	// Number of Fires per Shot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 		int32 BallsPerShot;
-	
 };

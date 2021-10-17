@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Object.h"
+//#include "Object.h"
 #include "Online.h"
 #include "RadeData.generated.h"
 
@@ -15,11 +15,9 @@ enum class ECameraState : uint8
 	TP_Camera UMETA(DisplayName = "Third Person Camera"),
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////////////
 
-//							Custom Oline Data Type
-
+//							Custom Online Data Type
 
 //  Online Message Data
 USTRUCT(BlueprintType)
@@ -43,11 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		FLinearColor MessageColor;
 
-
 	FRadeOnineMessageData(){};
 	FRadeOnineMessageData(FString NewMessage, class ARadePlayer* ThePlayer);
 };
-
 
 // Online Session Data Struct
 USTRUCT(BlueprintType)
@@ -69,11 +65,10 @@ public:
 	FAvaiableSessionsData(){};
 	FAvaiableSessionsData(FOnlineSessionSearchResult newSessionData)
 	{
-		SessionData = newSessionData;
-
-		OwnerName = newSessionData.Session.OwningUserName;
-		Ping = newSessionData.PingInMs;
-		NumberOfConnections = newSessionData.Session.SessionSettings.NumPublicConnections;
+		SessionData						 = newSessionData;
+		OwnerName						 = newSessionData.Session.OwningUserName;
+		Ping								 = newSessionData.PingInMs;
+		NumberOfConnections			 = newSessionData.Session.SessionSettings.NumPublicConnections;
 		NumberOfAvaiableConnections = NumberOfConnections - newSessionData.Session.NumOpenPublicConnections;
 	}
 
@@ -87,38 +82,36 @@ public:
 UENUM(BlueprintType)	
 enum class EAnimArchetype : uint8
 {
-	EmptyHand							UMETA(DisplayName = "Empty Hands"),
-	Melee_Weapon						UMETA(DisplayName = "Melee Weapon"),
-	Handgun_Weapon						UMETA(DisplayName = "Hand Gun"),
-	Hip_Weapon							UMETA(DisplayName = "Hip Fired Weapon"),
-	Shoulder_Weapon						UMETA(DisplayName = "Shoulder Fired Weapon")
-
+	EmptyHand			UMETA(DisplayName = "Empty Hands"),
+	Melee_Weapon		UMETA(DisplayName = "Melee Weapon"),
+	Handgun_Weapon		UMETA(DisplayName = "Hand Gun"),
+	Hip_Weapon			UMETA(DisplayName = "Hip Fired Weapon"),
+	Shoulder_Weapon	UMETA(DisplayName = "Shoulder Fired Weapon")
 };
 
 // Anim State Type
 UENUM(BlueprintType)
 enum class EAnimState : uint8
 {
-	Empty							UMETA(DisplayName = "Empty"),
+   Empty				UMETA(DisplayName = "Empty"),
 
-	JumpStart						UMETA(DisplayName = "Jump Start"),
-	JumpEnd							UMETA(DisplayName = "Jump End"),
-	Jumploop 						UMETA(DisplayName = "Jump Loop"),
+   JumpStart		UMETA(DisplayName = "Jump Start"),
+   JumpEnd			UMETA(DisplayName = "Jump End"),
+   Jumploop 		UMETA(DisplayName = "Jump Loop"),
 
-	Idle_Run						UMETA(DisplayName = "Idle/Run"),
-	Melee_Attack					UMETA(DisplayName = "Melee Attack"),
+   Idle_Run			UMETA(DisplayName = "Idle/Run"),
+   Melee_Attack	UMETA(DisplayName = "Melee Attack"),
 
-	Fire							UMETA(DisplayName = "Fire"),
-	Equip							UMETA(DisplayName = "Equip"),
-	UnEquip							UMETA(DisplayName = "Unequip"),
-	Reload							UMETA(DisplayName = "Reload"),
+   Fire				UMETA(DisplayName = "Fire"),
+   Equip				UMETA(DisplayName = "Equip"),
+   UnEquip			UMETA(DisplayName = "Unequip"),
+   Reload			UMETA(DisplayName = "Reload"),
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 //							Item and Weapon Data Struct 
-
 
 // Fire Data Struct
 USTRUCT(BlueprintType)
@@ -134,7 +127,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
 		int32 MaxClipNumber = 1;
 
-	// Numer of bullets in clip
+	// Number of bullets in clip
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
 		float ClipSize = 10;
 
@@ -158,16 +151,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "")
 		float FireDistance = 2500;
 
-	// Add amoo 
+	// Add ammo 
 	virtual void AddAmmo(float newAmmo, int32 newClip)
 	{
-		if (newAmmo>0)
-		{
+		if (newAmmo > 0) {
 			if (CurrentAmmo + newAmmo <= ClipSize) CurrentAmmo += newAmmo;
 			else newClip++;
-		}
-		if (newClip>0)
-		{
+		} 
+		if (newClip > 0) {
 			if (newClip + ClipNumber <= MaxClipNumber) ClipNumber += newClip;
 			else ClipNumber = MaxClipNumber;
 		}
@@ -175,8 +166,7 @@ public:
 
 	// Can Reload
 	bool CanReload(){
-		if (ClipNumber > 0 && CurrentAmmo < ClipSize)
-			return true;
+		if (ClipNumber > 0 && CurrentAmmo < ClipSize) return true;
 		return false;
 	}
 
@@ -188,7 +178,6 @@ public:
 
 	FFireStats(){};
 	virtual ~FFireStats(){};
-
 };
 
 
@@ -203,7 +192,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		FString ItemName;
 
-	//Item Icon
+	// Item Icon
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		UTexture2D* ItemIcon;
 
@@ -211,11 +200,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		int32 ItemCount;
 
-	// Ite Weight
+	// Item Weight
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		float Weight;
 
-	// Item Archtype/Blueprint
+	// Item Archetype/Blueprint
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		TSubclassOf<class AItem> Archetype;
 
@@ -233,18 +222,13 @@ public:
 	// Set Item Data
 	void SetItemData(FItemData newData)
 	{
-		ItemName = newData.ItemName;
-
-		ItemIcon = newData.ItemIcon;
-
-		ItemCount = newData.ItemCount;
-
-		Weight = newData.Weight;
-
-		Archetype = newData.Archetype;
-
+		ItemName      = newData.ItemName;
+		ItemIcon      = newData.ItemIcon;
+		ItemCount     = newData.ItemCount;
+		Weight        = newData.Weight;
+		Archetype     = newData.Archetype;
 		MainFireStats = newData.MainFireStats;
-		AltFireStats = newData.AltFireStats;
+		AltFireStats  = newData.AltFireStats;
 	}
 };
 
@@ -257,11 +241,11 @@ struct FJetPackData
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	// Curret Charage Percent
+	// Current Charge Percent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		float CurrentChargePercent=50;
 
-	// Minimal Useable Charge
+	// Minimal Usable Charge
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		float MinUseablePercent=40;
 
@@ -273,7 +257,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		float RestorePower=0.5f;
 
-	// Push Mutiplier
+	// Push Multiplier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		float PushPower=1;
 
@@ -291,11 +275,11 @@ struct FBlockData
 
 public:
 
-	// Levet block pointer 
+	// Level block pointer 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Block")
 		class ALevelBlock* LevelItem;
 
-	// Level block archtype/blueprint
+	// Level block archetype/blueprint
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Block")
 		TSubclassOf <class ALevelBlock> Archetype;
 
@@ -326,17 +310,15 @@ class RADE_API URadeData: public UObject
 
 public:
 
-
 	// Create Item Data From Item Object
 	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "ItemData From Item", CompactNodeTitle = "ItemData", Keywords = "itemdata from item"), Category = "Rade")
 		static FItemData MakeItemDataFromItem(AItem* TheItem);
 
 	// Create New Object from Class
 	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Create Object From Blueprint", CompactNodeTitle = "Create", Keywords = "new create blueprint"), Category = "Rade")
-	static UObject* NewObjectFromBlueprint(UObject* WorldContextObject, UClass* UC);
+		static UObject* NewObjectFromBlueprint(UObject* WorldContextObject, UClass* UC);
 
 	// Access Object from Class
 	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Acces Object From Blueprint", CompactNodeTitle = "Access", Keywords = "access create blueprint"), Category = "Rade")
-	static UObject* ObjectFromBlueprint(UObject* WorldContextObject, UClass* UC);
-
+		static UObject* ObjectFromBlueprint(UObject* WorldContextObject, UClass* UC);
 };

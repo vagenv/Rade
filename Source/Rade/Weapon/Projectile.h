@@ -17,7 +17,6 @@ public:
 
 	AProjectile(const class FObjectInitializer& PCIP);
 
-
 	void BeginPlay()override;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,14 +33,12 @@ public:
 
 	// Movement Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-	class UProjectileMovementComponent* ProjectileMovement;
-
+		class UProjectileMovementComponent* ProjectileMovement;
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//							Base Properties
-
 
 	// Life time of projectile
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
@@ -71,29 +68,26 @@ public:
 
 	//							Additional  Properties and Events
 
-
 	// Can The projectile Explode?
 	bool bCanExplode = false;
 
 	// Enable Projectile Explosion
 	void EnableProjectile();
-
 	
    // Player Entered
 	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
-                       class AActor* OtherActor, 
-                       class UPrimitiveComponent* OtherComp, 
-                       int32 OtherBodyIndex, 
-                       bool bFromSweep, 
-                       const FHitResult & SweepResult);
+      void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+                          class AActor* OtherActor,
+							     class UPrimitiveComponent* OtherComp,
+                          int32 OtherBodyIndex,
+								  bool bFromSweep,
+								  const FHitResult& SweepResult);
 
 	// Apply Velocity 
 	void InitVelocity(const FVector& ShootDirection);
 
 	// Explode 
 	virtual void Explode();
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -111,6 +105,4 @@ public:
 	// Explosion hit Enemy
 	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
 		void BP_Explode_HitEnemy(class ARadeCharacter* TheCharacter,float HitDamage);
-
-	
 };

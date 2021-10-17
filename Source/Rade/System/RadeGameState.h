@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/GameState.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "RadeGameState.generated.h"
 
 
@@ -15,7 +15,6 @@ class RADE_API ARadeGameState : public AGameState
 {
 	GENERATED_BODY()
 	
-
 public:
 
 	ARadeGameState();

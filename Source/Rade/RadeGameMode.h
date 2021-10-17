@@ -31,11 +31,9 @@ public:
 
 	// The Level Block Constructor
 	UPROPERTY()
-	class ALevelBlockConstructor* TheLevelBlockConstructor;
+		class ALevelBlockConstructor* TheLevelBlockConstructor;
 
 	// The Save Game file
 	UPROPERTY()
-	class USystemSaveGame* SaveFile;
-	
-	
+		class USystemSaveGame* SaveFile;
 };

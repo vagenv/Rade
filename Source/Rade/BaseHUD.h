@@ -18,7 +18,6 @@ public:
 	// Post Begin Delay
 	void ResetReferences();
 
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//								Local Player Properties Properties and Events
@@ -54,11 +53,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		bool bInventoryOpen = false;
 
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//								Blueprint Events
-
 
 	// BP Inventory Toggled
 	UFUNCTION(BlueprintImplementableEvent, Category = "The HUD")
@@ -79,5 +76,4 @@ public:
 	// BP Weapon Updated
 	UFUNCTION(BlueprintImplementableEvent, Category = "The HUD")
 		void BP_WeaponUpdated();
-	
 };

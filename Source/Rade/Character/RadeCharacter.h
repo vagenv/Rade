@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "RadeCharacter.generated.h"
 
 UCLASS()
@@ -12,7 +12,6 @@ class RADE_API ARadeCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +23,6 @@ public:
 	virtual void PostBeginPlay();
 
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//									Components and Important References
@@ -32,7 +30,7 @@ public:
 
 	// Third Person Anim Instance
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
-	class URadeAnimInstance * BodyAnimInstance;
+		class URadeAnimInstance * BodyAnimInstance;
 
 	// Movement Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
@@ -40,7 +38,7 @@ public:
 
 	//  Inventory Component
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade Character")
-	class UInventory* TheInventory;
+		class UInventory* TheInventory;
 
 
 
@@ -49,9 +47,8 @@ public:
    UFUNCTION()
 		virtual void CurrentWeaponUpdated();
 	// Current Weapon
-    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
-	class AWeapon* TheWeapon;
-
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade Character ")
+		class AWeapon* TheWeapon;
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +100,6 @@ public:
 		virtual void EquipWeapon(class AWeapon* NewWeaponClass);
 
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//								Take Damage, Death and Revive
@@ -117,13 +113,11 @@ public:
 		FRuntimeFloatCurve FallDamageCurve;
 
 
-
 	// Take Damage override
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)override;
 
 	// Override Land Event
 	virtual void Landed(const FHitResult& Hit)override;
-
 
 	// Can Character Revive after death
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Character")
@@ -162,14 +156,11 @@ public:
 
 private:
 	// Default Mesh Offset before ragdoll
-	FVector Mesh_DefaultRelativeLoc;
+	FVector  Mesh_DefaultRelativeLoc;
 	// Default Mesh Rotation before ragdoll
 	FRotator Mesh_DefaultRelativeRot;
 
 public:
-
-
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -199,6 +190,4 @@ public:
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "Rade")
 		void Global_SetAnimArchtype(EAnimArchetype newAnimArchetype);
 	virtual void Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype);
-
-
 };

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "ItemPickup.generated.h"
 
 // General pickup Class for Any Child of class "Item"
@@ -14,24 +14,22 @@ class RADE_API AItemPickup : public AActor
 
 public:
 
-
 	AItemPickup(const class FObjectInitializer& PCIP);
-
 
 	virtual void BeginPlay() override;
 
 
 	// Static Mesh
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
-	class UStaticMeshComponent* Mesh;
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+		class UStaticMeshComponent* Mesh;
 
 	// Skeletal Mesh
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
-	class USkeletalMeshComponent* SkeletalMesh;
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+		class USkeletalMeshComponent* SkeletalMesh;
 
 	// Trigger Sphere 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
-	class USphereComponent* TriggerSphere;
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+		class USphereComponent* TriggerSphere;
 
 
 	// Activation delay
@@ -57,7 +55,6 @@ public:
 	void SetAsSkeletalMeshPickup_Implementation();
 
 
-
 	// Auto Pickup
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
 		bool bAutoPickup;
@@ -76,11 +73,11 @@ public:
 
 	// Player Entered
 	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+		void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	// Player Exited
 	UFUNCTION()
-	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+		void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	// Item was picked up by player
 	void PickedUp(class ARadePlayer* Player);

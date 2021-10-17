@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "Item.generated.h"
 
 // Base for Any Item or Weapon
@@ -57,11 +57,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		TSubclassOf<AItemPickup> ItemPickupArchetype;
 
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//				Item Events
-
 
 	// BP Event- Item Was Used
 	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
@@ -83,17 +81,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
 		class UWorld* GetPlayerWorld()const;
 
-
 	// Item Was Used
-	virtual void InventoryUse(class ARadePlayer* Player)
-	{
-		// Set Player Ref if player ref in empty or wrong
-		if (ThePlayer == Player || ThePlayer != Player)
-		{
-			ThePlayer = Player;
-		}
-
-		// BP event called
-		BP_ItemUsed();
-	};
+	virtual void InventoryUse(class ARadePlayer* Player);
 };

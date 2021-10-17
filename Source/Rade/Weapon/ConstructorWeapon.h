@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Weapon/Weapon.h"
+#include "Weapon.h"
 #include "ConstructorWeapon.generated.h"
 
 // Base for Constructor Weapon (Minecraft Weapon)
@@ -59,8 +59,6 @@ public:
 
 	///			Level Block Properties
 
-
-
 	// Level Block Archetype
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
 		TSubclassOf <class ALevelBlock> BlockArchetype;
@@ -68,7 +66,6 @@ public:
 	// The Level Block Constructor
 	UPROPERTY()
 		class ALevelBlockConstructor* TheLevelBlockConstructor;
-
 
 	// Auto Destroy Block?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
@@ -86,14 +83,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
 		bool bRestoreAmmo = false;
 
-	// Restore Amoo Speed
+	// Restore Ammo Speed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
 		float AmmoRestoreTime = 0.4f;
 
 	// Restore Ammo value
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constructor Weapon")
 		float AmmoRestoreValue = 1;
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -105,7 +101,7 @@ public:
 	// The Alt Fire Event
 	virtual void AltFire()override;
 
-	// Eqquip End
+	// Equip End
 	virtual void EquipEnd()override;
 
 	// Equip Start
@@ -115,15 +111,14 @@ private:
 	// Ammo restore Event
 	void AmmoRestore();
 
-	// Ammo Restore Timerhandle
+	// Ammo Restore handle
 	FTimerHandle AmmoRestoreHandle;
 
 public:
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	///						Bluerpint Events
-
+	///						Blueprint Events
 
 	// Blueprint Event:  Fire
 	UFUNCTION(BlueprintImplementableEvent, Category = "Constructor Weapon")

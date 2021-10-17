@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Weapon/Weapon.h"
+#include "Weapon.h"
 #include "LauncherWeapon.generated.h"
 
 

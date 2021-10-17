@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 public class RadeTarget : TargetRules
 {
-	public RadeTarget(TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Game;
-
-		ExtraModuleNames.AddRange( new string[] { "Rade" } );
-	}
+   public RadeTarget(TargetInfo Target) : base(Target)
+   {
+      Type = TargetType.Game;
+      DefaultBuildSettings = BuildSettingsVersion.V2;
+      ExtraModuleNames.Add("Rade");
+   }
 }

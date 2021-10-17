@@ -20,7 +20,6 @@ ARadeGameMode::ARadeGameMode(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 void ARadeGameMode::BeginPlay()
 {
- 
  	Super::BeginPlay();
 	
 	// Start Post begin delay
@@ -31,25 +30,21 @@ void ARadeGameMode::BeginPlay()
 // Post begin Play
 void ARadeGameMode::PostBeginPlay()
 {
-	if (Role < ROLE_Authority)return;
+	if (GetLocalRole() < ROLE_Authority)return;
 
 	// Loading Save file
 	USystemSaveGame* LoadGameInstance = Cast<USystemSaveGame>(UGameplayStatics::CreateSaveGameObject(USystemSaveGame::StaticClass()));
-	if (LoadGameInstance)
-	{
+	if (LoadGameInstance) {
 		LoadGameInstance = Cast<USystemSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
-		if (LoadGameInstance)
-		{
+		if (LoadGameInstance) {
 			// The Save File Found
 			SaveFile = LoadGameInstance;
 		}
 	}
 
-	if (SaveFile)
-	{
+	if (SaveFile) {
 		// Load level block data that was saved
-		if (TheLevelBlockConstructor && TheLevelBlockConstructor->bLoadBlocks)
-		{
+		if (TheLevelBlockConstructor && TheLevelBlockConstructor->bLoadBlocks) {
 			TheLevelBlockConstructor->CurrentBlocks = SaveFile->LevelBlocks;
 			TheLevelBlockConstructor->Server_UpdateBlocksStatus();
 		}
@@ -59,20 +54,16 @@ void ARadeGameMode::PostBeginPlay()
 // End Game
 void ARadeGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason) 
 {
-	if (Role>=ROLE_Authority)
-	{
+	if (GetLocalRole() >= ROLE_Authority) {
 		// No Save File, Creating new
-		if (!SaveFile)
-		{
+		if (!SaveFile) {
 			USystemSaveGame* saveFile = Cast<USystemSaveGame>(UGameplayStatics::CreateSaveGameObject(USystemSaveGame::StaticClass()));
 			UGameplayStatics::SaveGameToSlot(saveFile, saveFile->SaveSlotName, saveFile->UserIndex);
 		}
 
-		if (SaveFile)
-		{
+		if (SaveFile) {
 			// Saving level block data
-			if (TheLevelBlockConstructor && TheLevelBlockConstructor->bSaveBlocks)
-			{
+			if (TheLevelBlockConstructor && TheLevelBlockConstructor->bSaveBlocks) {
 				SaveFile->LevelBlocks = TheLevelBlockConstructor->CurrentBlocks;
 			}
 

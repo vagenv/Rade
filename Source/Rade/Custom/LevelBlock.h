@@ -17,7 +17,6 @@ public:
 	ALevelBlock(const class FObjectInitializer& PCIP);
 	virtual void BeginPlay()override;
 
-
 	// Restore Amoo after block Destroy
 	bool bRestoreWeaponAmmo = false;
 
@@ -30,7 +29,7 @@ public:
 		class ALevelBlockConstructor* TheBlockConstructor;
 
 	// If Block Must Restore After Some Item
-		void StartTimedRestore(class AConstructorWeapon* newParentWeapon, float Time);
+	void StartTimedRestore(class AConstructorWeapon* newParentWeapon, float Time);
 
 	// Restore The block back into weapon
 	void ReturnBlock();
@@ -47,7 +46,4 @@ public:
 	// Block Mesh
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Block")
 		class UStaticMeshComponent* Mesh;
-
-	
-	
 };

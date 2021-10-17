@@ -1,8 +1,8 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Weapon/SwordWeapon.h"
-#include "Rade.h"
-#include "Character/RadePlayer.h"
+#include "SwordWeapon.h"
+#include "../Rade.h"
+#include "../Character/RadePlayer.h"
 
 
 ASwordWeapon::ASwordWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
@@ -30,8 +30,7 @@ void ASwordWeapon::BeginPlay()
 	bTracingMeleeAttack = false;
 
 	// Bind Overlap Box on server
-	if (Role >= ROLE_Authority)
-	{
+	if (GetLocalRole() >= ROLE_Authority) {
 		Mesh1P_MeleeAttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ASwordWeapon::OnSwordWeaponBoxBeginOverlap);
 		Mesh3P_MeleeAttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ASwordWeapon::OnSwordWeaponBoxBeginOverlap);
 	}
@@ -51,24 +50,27 @@ void ASwordWeapon::EndMeleeAttackTrace(){
 // Box Overlap Event
 void ASwordWeapon::OnSwordWeaponBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherActor != ThePlayer) && (OtherComp != nullptr) && GetOwner()!=OtherActor
-		&& Cast<ARadeCharacter>(OtherActor) != nullptr && bTracingMeleeAttack)
+	ARadeCharacter *radeOther = Cast<ARadeCharacter>(OtherActor);
+	if (	OtherActor != this
+		&& OtherActor != ThePlayer
+		&& OtherComp  != nullptr
+		&& GetOwner() != OtherActor
+		&& radeOther != nullptr
+		&& bTracingMeleeAttack)
 	{
 		// Check if character was already slashed
-		if (!HitActors.Contains(OtherActor))
-		{
+		if (!HitActors.Contains(OtherActor)) {
 			// Add Character to Slashed List
-			HitActors.Add(Cast<ARadeCharacter>(OtherActor));
-
+			HitActors.Add(radeOther);
 
 			// BP Event
 			BP_HitEnemy(SweepResult);
 
-			// Apply Damage
-			UGameplayStatics::ApplyDamage(Cast<ARadeCharacter>(OtherActor), MainFire.FireDamage,
-				(ThePlayer && ThePlayer->Controller) ? ThePlayer->Controller:NULL
-				, Cast<AActor>(this), UDamageType::StaticClass());
+         AController* instigator = NULL;
+         if (ThePlayer && ThePlayer->Controller) instigator = ThePlayer->Controller;
+
+         // Apply Damage
+         UGameplayStatics::ApplyDamage(radeOther, MainFire.FireDamage, instigator, Cast<AActor>(this), UDamageType::StaticClass());
 		}
 	}
 }

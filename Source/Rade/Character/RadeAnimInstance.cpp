@@ -1,26 +1,23 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Character/RadeAnimInstance.h"
-#include "Rade.h"
-#include "Character/RadePlayer.h"
-#include "Weapon/SwordWeapon.h"
-
+#include "RadeAnimInstance.h"
+#include "../Rade.h"
+#include "../Character/RadePlayer.h"
+#include "../Weapon/SwordWeapon.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//													Base
-
+//				Base
 
 URadeAnimInstance::URadeAnimInstance(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 }
 
-
 void URadeAnimInstance::BeginPlay()
 {
-	if (!TheCharacter)ResetRadeCharacterRef();
+	if (!TheCharacter) ResetRadeCharacterRef();
 	// Set default state
 	PlayerCurrentAnimState = EAnimState::Idle_Run;
 	AnimArchetype = EAnimArchetype::EmptyHand;
@@ -32,12 +29,9 @@ void URadeAnimInstance::ResetRadeCharacterRef()
 		TheCharacter = Cast<ARadeCharacter>(TryGetPawnOwner());
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 //										Animation Control and Events
-
-
 
 // Set Anim State Value
 void URadeAnimInstance::PlayLocalAnim(EAnimState AnimID)
@@ -46,7 +40,7 @@ void URadeAnimInstance::PlayLocalAnim(EAnimState AnimID)
 	PlayerCurrentAnimState = AnimID;
 }
 
-// Recieve anim state value
+// Receive animation state value
 void URadeAnimInstance::RecieveGlobalAnimID(EAnimState currentAnimCheck)
 {
 	if (!TheCharacter)ResetRadeCharacterRef();
@@ -62,11 +56,9 @@ void URadeAnimInstance::SetAnimArchetype(EAnimArchetype newAnimArchtype)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //											State Checking
-
 
 // Get Value from player class
 bool URadeAnimInstance::CanFireInAir()
@@ -76,36 +68,40 @@ bool URadeAnimInstance::CanFireInAir()
 	return false;
 }
 
-
 // Called in blueprint when Jump_Start -> Jump_Idle 
 void URadeAnimInstance::InAirIdleStateEntered()
 {
-	if (Cast<ARadePlayer>(TheCharacter) && PlayerCurrentAnimState == EAnimState::JumpStart &&
-		Cast<ARadePlayer>(TheCharacter)->CharacterMovementComponent && !Cast<ARadePlayer>(TheCharacter)->CharacterMovementComponent->IsMovingOnGround())
-		Cast<ARadePlayer>(TheCharacter)->ServerSetAnimID(EAnimState::Jumploop);
+	ARadePlayer *thePlayer = Cast<ARadePlayer>(TheCharacter);
+	if (  thePlayer
+		&& PlayerCurrentAnimState == EAnimState::JumpStart
+		&& thePlayer->CharacterMovementComponent
+		&& !thePlayer->CharacterMovementComponent->IsMovingOnGround())
+		thePlayer->ServerSetAnimID(EAnimState::Jumploop);
 }
 
 
 // In Air State Check
 bool URadeAnimInstance::IsInAir()
 {
-	if (PlayerCurrentAnimState == EAnimState::JumpEnd || PlayerCurrentAnimState == EAnimState::Jumploop || PlayerCurrentAnimState == EAnimState::JumpStart)return true;
-	else return false;
+	if (	PlayerCurrentAnimState == EAnimState::JumpEnd
+		|| PlayerCurrentAnimState == EAnimState::Jumploop
+		|| PlayerCurrentAnimState == EAnimState::JumpStart)
+		return true;
+	
+	return false;
 }
 
-// States checking
-
+// --- States checking
 bool URadeAnimInstance::IsAnimState(EAnimState checkState)
 {
-	if (checkState == PlayerCurrentAnimState)return true;
-	else return false;
+	if (checkState == PlayerCurrentAnimState) return true;
+	else													return false;
 }
 bool URadeAnimInstance::IsAnimArchetype(EAnimArchetype AnimArchtypeCheck)
 {
-	if (AnimArchtypeCheck == AnimArchetype)return true;
-	else return false;
+	if (AnimArchtypeCheck == AnimArchetype) return true;
+	else												 return false;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,13 +114,16 @@ void URadeAnimInstance::StartSwordWeaponTrace()
 {
 	if (!TheCharacter)ResetRadeCharacterRef();
 
-	if (TheCharacter && TheCharacter->TheWeapon && Cast<ASwordWeapon>(TheCharacter->TheWeapon))
+	if (	TheCharacter
+		&& TheCharacter->TheWeapon
+		&& Cast<ASwordWeapon>(TheCharacter->TheWeapon))
 		Cast<ASwordWeapon>(TheCharacter->TheWeapon)->StartMeleeAttackTrace();
-
 }
 // End Trace of Sword Weapon
 void URadeAnimInstance::EndSwordWeaponTrace()
 {
-	if (TheCharacter && TheCharacter->TheWeapon && Cast<ASwordWeapon>(TheCharacter->TheWeapon))
+	if (	TheCharacter
+		&& TheCharacter->TheWeapon
+		&& Cast<ASwordWeapon>(TheCharacter->TheWeapon))
 		Cast<ASwordWeapon>(TheCharacter->TheWeapon)->EndMeleeAttackTrace();
 }

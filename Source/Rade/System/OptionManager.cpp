@@ -1,7 +1,7 @@
 // Copyright 2015 Vagen Ayrapetyan
 
 #include "OptionManager.h"
-#include "Rade.h"
+#include "../Rade.h"
 #include "AudioDevice.h"
 #include "InputCore.h"
 
@@ -16,22 +16,21 @@ void UOptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>
 	if (TheInputSettings == nullptr) return;
 	InputActions.Empty();
 	InputKeys.Empty();
-	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->ActionMappings;
-	for (int32 i = 0; i < InputActionMapping.Num(); ++i){
-		if (InputActionMapping.IsValidIndex(i)){
+	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->GetActionMappings();
+	for (int32 i = 0; i < InputActionMapping.Num(); ++i) {
+		if (InputActionMapping.IsValidIndex(i)) {
 			InputActions.Add(FText::FromName(InputActionMapping[i].ActionName));
 			InputKeys.Add(InputActionMapping[i].Key.GetDisplayName());
 		}
 	}
 }
 
-
 void UOptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
 {
 	const UInputSettings* TheInputSettings = GetDefault<UInputSettings>();
-	if (TheInputSettings==nullptr) return;
+	if (TheInputSettings == nullptr) return;
 
-	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->ActionMappings;
+	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->GetActionMappings();
 
 	for ( int32 i = 0; i < InputActionMapping.Num();++i)	{
 		if (InputActionMapping.IsValidIndex(i) && InputActionMapping[i].ActionName == ActionName){
@@ -47,13 +46,13 @@ void UOptionManager::SetActionInput(const FName& ActionName, const FText& Action
 	UInputSettings* TheInputSettings = const_cast<UInputSettings*>(GetDefault<UInputSettings>());
 	if (TheInputSettings == nullptr) return;
 
-	TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->ActionMappings;
-
+	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->GetActionMappings();
 	for (int32 i = 0; i < InputActionMapping.Num(); ++i)
 	{
 		if (InputActionMapping.IsValidIndex(i) && InputActionMapping[i].ActionName == ActionName)
 		{
-			InputActionMapping[i].Key = FKey(*ActionKey.ToString());
+			// Manually update?
+			//InputActionMapping[i].Key = FKey(*ActionKey.ToString());
 		}
 	}
 
@@ -70,64 +69,62 @@ void UOptionManager::SetActionInput(const FName& ActionName, const FText& Action
 
 //					 Config Settings
 
-
 //				 String
 void UOptionManager::SaveConfig_String(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const FString& SettingValue) {
-	if (GConfig)	GConfig->SetString(*SettingGroup, *SettingName, *SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->SetString(*SettingGroup, *SettingName, *SettingValue, GetConfigFullAddress(FileName));
 }
 
 void UOptionManager::LoadConfig_String(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FString& SettingValue) {
-	if (GConfig)	GConfig->GetString(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->GetString(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 //				 Int
 void UOptionManager::SaveConfig_Int(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const int32& SettingValue) {
-	if (GConfig)	GConfig->SetInt(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->SetInt(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 void UOptionManager::LoadConfig_Int(const FString& FileName, const FString& SettingGroup, const FString& SettingName, int32& SettingValue) {
-	if (GConfig)	GConfig->GetInt(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->GetInt(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 //				 Float
 void UOptionManager::SaveConfig_Float(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const float& SettingValue) {
-	if (GConfig)	GConfig->SetFloat(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->SetFloat(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 void UOptionManager::LoadConfig_Float(const FString& FileName, const FString& SettingGroup, const FString& SettingName, float& SettingValue) {
-	if (GConfig)	GConfig->GetFloat(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->GetFloat(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 //				 Vector
 void UOptionManager::SaveConfig_Vector(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const FVector& SettingValue) {
-	if (GConfig)	GConfig->SetVector(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->SetVector(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 void UOptionManager::LoadConfig_Vector(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FVector& SettingValue) {
-	if (GConfig)	GConfig->GetVector(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->GetVector(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 //				 Rotator
 void UOptionManager::SaveConfig_Rotator(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const FRotator& SettingValue) {
-	if (GConfig)	GConfig->SetRotator(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->SetRotator(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 void UOptionManager::LoadConfig_Rotator(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FRotator& SettingValue) {
-	if (GConfig)	GConfig->GetRotator(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->GetRotator(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 //				 Color
 void UOptionManager::SaveConfig_Color(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const FColor& SettingValue) {
-	if (GConfig)	GConfig->SetColor(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->SetColor(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
 void UOptionManager::LoadConfig_Color(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FColor& SettingValue) {
-	if (GConfig)	GConfig->GetColor(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
+	if (GConfig) GConfig->GetColor(*SettingGroup, *SettingName, SettingValue, GetConfigFullAddress(FileName));
 }
 
-
 void UOptionManager::ReloadConfig() {
-	for (auto const& TheFiles : *GConfig)
-		GConfig->LoadFile(TheFiles.Key);
+	for (auto const& file : GConfig->GetFilenames())
+		GConfig->LoadFile(file);
 }
 
 FORCEINLINE FString UOptionManager::GetConfigFullAddress(const FString &FileName) {
@@ -136,31 +133,24 @@ FORCEINLINE FString UOptionManager::GetConfigFullAddress(const FString &FileName
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //					 Audio Volume Settings
 
 
-void UOptionManager::GetGlobalSoundVolume(UObject* WorldContextObject, float & Volume) {
+void UOptionManager::GetGlobalSoundVolume(UObject* WorldContextObject, float &Volume) {
 	if (WorldContextObject != nullptr){
-		FAudioDevice* TheAudioDevice = WorldContextObject->GetWorld()->GetAudioDevice();
-		if (TheAudioDevice != nullptr)
-			Volume = TheAudioDevice->GetTransientMasterVolume ();
+		FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld()->GetAudioDevice();
+		Volume = audioDeviceHandler->GetTransientMasterVolume ();
 	}
-
 }
 
 void UOptionManager::SetGlobalSoundVolume(UObject* WorldContextObject, const float NewVolume){
 	if (WorldContextObject != nullptr) {
-		FAudioDevice* TheAudioDevice = WorldContextObject->GetWorld()->GetAudioDevice();
-		if (TheAudioDevice != nullptr)
-			TheAudioDevice->SetTransientMasterVolume(NewVolume);
+		FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld()->GetAudioDevice();
+		audioDeviceHandler->SetTransientMasterVolume(NewVolume);
 	}
-	
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -171,12 +161,12 @@ bool UOptionManager::GetVideoQualitySettings(int32& ResolutionQuality, int32& Vi
 											 int32& TextureQuality,   int32& ShadowQuality, int32& EffectQuality, int32& PostProcessQuality){
 	UGameUserSettings* Settings = GetGameUserSettings();
 	if (!Settings)return false;
-	ResolutionQuality = Settings->ScalabilityQuality.ResolutionQuality;
-	ViewDistance = Settings->ScalabilityQuality.ViewDistanceQuality;
-	AntiAliasing = Settings->ScalabilityQuality.AntiAliasingQuality;
-	TextureQuality = Settings->ScalabilityQuality.TextureQuality;
-	ShadowQuality = Settings->ScalabilityQuality.ShadowQuality;
-	EffectQuality = Settings->ScalabilityQuality.EffectsQuality;
+	ResolutionQuality  = Settings->ScalabilityQuality.ResolutionQuality;
+	ViewDistance       = Settings->ScalabilityQuality.ViewDistanceQuality;
+	AntiAliasing       = Settings->ScalabilityQuality.AntiAliasingQuality;
+	TextureQuality     = Settings->ScalabilityQuality.TextureQuality;
+	ShadowQuality      = Settings->ScalabilityQuality.ShadowQuality;
+	EffectQuality      = Settings->ScalabilityQuality.EffectsQuality;
 	PostProcessQuality = Settings->ScalabilityQuality.PostProcessQuality;
 	return true;
 }
@@ -186,13 +176,13 @@ bool UOptionManager::SetVideoQualitySettings(const int32 ResolutionQuality, cons
 											 const int32 TextureQuality,	const int32 ShadowQuality,const int32 EffectQuality, const int32 PostProcessQuality){
 	UGameUserSettings* Settings = GetGameUserSettings();
 	if (!Settings)return false;
-	Settings->ScalabilityQuality.ResolutionQuality = ResolutionQuality;
+	Settings->ScalabilityQuality.ResolutionQuality   = ResolutionQuality;
 	Settings->ScalabilityQuality.ViewDistanceQuality = ViewDistance;
 	Settings->ScalabilityQuality.AntiAliasingQuality = AntiAliasing;
-	Settings->ScalabilityQuality.TextureQuality = TextureQuality;
-	Settings->ScalabilityQuality.ShadowQuality = ShadowQuality;
-	Settings->ScalabilityQuality.EffectsQuality = EffectQuality;
-	Settings->ScalabilityQuality.PostProcessQuality = PostProcessQuality;
+	Settings->ScalabilityQuality.TextureQuality      = TextureQuality;
+	Settings->ScalabilityQuality.ShadowQuality       = ShadowQuality;
+	Settings->ScalabilityQuality.EffectsQuality      = EffectQuality;
+	Settings->ScalabilityQuality.PostProcessQuality  = PostProcessQuality;
 	return true;
 }
 
@@ -209,7 +199,7 @@ bool UOptionManager::SaveVideoModeAndQuality(){
 // Set the desired screen resolution(does not change it yet)
 bool UOptionManager::SetScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen){
 	UGameUserSettings* Settings = GetGameUserSettings();
-	if (!Settings)return false;
+	if (!Settings) return false;
 
 	Settings->SetScreenResolution(FIntPoint(Width, Height));
 	Settings->SetFullscreenMode(Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed);
@@ -219,7 +209,7 @@ bool UOptionManager::SetScreenResolution(const int32 Width, const int32 Height, 
 // Change the current screen resolution
 bool UOptionManager::ChangeScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen){
 	UGameUserSettings* Settings = GetGameUserSettings();
-	if (!Settings)return false;
+	if (!Settings) return false;
 	
 	EWindowMode::Type WindowMode = Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed;
 	Settings->RequestResolutionChange(Width, Height, WindowMode, false);
@@ -241,13 +231,12 @@ bool UOptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions)
 	return false; 
 }
 
-
 // Get Screen Resolution
 bool UOptionManager::GetScreenResolutions(int32 & Width, int32 & Height){
 	UGameUserSettings* Settings = GetGameUserSettings();
-	if (Settings){
+	if (Settings) {
 		FIntPoint TheResolution=Settings->GetScreenResolution();
-		Width = TheResolution.X;
+		Width  = TheResolution.X;
 		Height = TheResolution.Y;
 		return true;
 	}

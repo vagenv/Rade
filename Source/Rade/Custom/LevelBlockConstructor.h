@@ -3,11 +3,11 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "LevelBlockConstructor.generated.h"
 
 
-// Block COnstructor. Actor that holds, Constructs and Deconstructs Blocks
+// Block Constructor. Actor that holds, Constructs and Deconstructs Blocks
 UCLASS()
 class RADE_API ALevelBlockConstructor : public AActor
 {
@@ -47,12 +47,9 @@ public:
 	UPROPERTY()
 		class ARadeGameMode* TheGM;
 
-
 	// Add Block Into World
 	virtual bool AddNewBlock(TSubclassOf <class ALevelBlock>  NewBlockArchtype, FVector& Loc, class AConstructorWeapon* TheConstructorWeapon);
 
 	// Destroy Block
 	virtual bool DestroyBlock(FVector Loc, AActor* TheInstigator);
-	
-
 };

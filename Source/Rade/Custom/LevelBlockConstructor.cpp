@@ -1,28 +1,28 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
-#include "Custom/LevelBlockConstructor.h"
-#include "Custom/LevelBlock.h"
+#include "LevelBlockConstructor.h"
+#include "LevelBlock.h"
 
-#include "Weapon/ConstructorWeapon.h"
+#include "../Weapon/ConstructorWeapon.h"
 
-#include "RadeGameMode.h"
-#include "Rade.h"
-#include "System/SystemSaveGame.h"
+#include "../RadeGameMode.h"
+#include "../Rade.h"
+#include "../System/SystemSaveGame.h"
 
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 
 ALevelBlockConstructor::ALevelBlockConstructor(const FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 
-	bReplicates = true;
-    bAlwaysRelevant = false;
-    PrimaryActorTick.bCanEverTick = false;
+   bReplicates = true;
+   bAlwaysRelevant = false;
+   PrimaryActorTick.bCanEverTick = false;
 
-    Scene = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
-    Scene->SetMobility(EComponentMobility::Movable);
-    SetRootComponent(Scene);
+   Scene = PCIP.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
+   Scene->SetMobility(EComponentMobility::Movable);
+   SetRootComponent(Scene);
 }
 
 void ALevelBlockConstructor::BeginPlay()
@@ -30,8 +30,9 @@ void ALevelBlockConstructor::BeginPlay()
 	Super::BeginPlay();
 
 	// Get pointer to The Game Mode
-	if (GetWorld() && GetWorld()->GetAuthGameMode() && GetWorld()->GetAuthGameMode<ARadeGameMode>())
-	{
+	if ( GetWorld()
+		&& GetWorld()->GetAuthGameMode()
+		&& GetWorld()->GetAuthGameMode<ARadeGameMode>()) {
 		GetWorld()->GetAuthGameMode<ARadeGameMode>()->TheLevelBlockConstructor = this;
 	}
 
@@ -47,18 +48,21 @@ void ALevelBlockConstructor::ClientBlocksUpdated(){
 // Blocks Updated , Called on server
 void ALevelBlockConstructor::Server_UpdateBlocksStatus()
 {
+	UWorld* const World = GetWorld();
 	// Check Validity of each block, Restore them if they don't exist
-	for (int32 i = 0;i<CurrentBlocks.Num();i++)
-	{
-		if (GetWorld() && CurrentBlocks.IsValidIndex(i) && !CurrentBlocks[i].LevelItem && CurrentBlocks[i].Archetype 
-			&& CurrentBlocks[i].Archetype.GetDefaultObject()&& Cast<ALevelBlock>(CurrentBlocks[i].Archetype.GetDefaultObject()))
+	for (int32 i = 0;i<CurrentBlocks.Num();i++) {
+		if (  World
+			&& CurrentBlocks.IsValidIndex(i)
+			&& !CurrentBlocks[i].LevelItem
+			&& CurrentBlocks[i].Archetype 
+			&& CurrentBlocks[i].Archetype.GetDefaultObject()
+			&& Cast<ALevelBlock>(CurrentBlocks[i].Archetype.GetDefaultObject()))
 		{	
-			ALevelBlock* TheBlock=GetWorld()->SpawnActor<ALevelBlock>(CurrentBlocks[i].Archetype, CurrentBlocks[i].GlobalPosition, FRotator(0));
+			ALevelBlock* TheBlock = World->SpawnActor<ALevelBlock>(CurrentBlocks[i].Archetype, CurrentBlocks[i].GlobalPosition, FRotator(0));
 			
-			if (TheBlock)
-			{
+			if (TheBlock) {
 				CurrentBlocks[i].LevelItem = TheBlock;
-				TheBlock->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+				TheBlock->AttachToActor (this, FAttachmentTransformRules::KeepWorldTransform);
 			}
 		}
 	}
@@ -68,21 +72,16 @@ void ALevelBlockConstructor::Server_UpdateBlocksStatus()
 bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArchtype, FVector& Loc, AConstructorWeapon* TheConstructorWeapon)
 {
 	UWorld* const World = GetWorld();
-	if (NewBlockArchtype && World)
-	{
+	if (NewBlockArchtype && World) {
 		// Calculate Rounded 3D location in Array
 		FVector tempV;
 		tempV.X = round(Loc.X / 100);
 		tempV.Y = round(Loc.Y / 100);
 		tempV.Z = round(Loc.Z / 100);
 
-		// Check if position in the world is avaiable.
-		for (int32 i = 0; i < CurrentBlocks.Num(); i++)
-		{
-			if (CurrentBlocks[i].ConstructorPosition == tempV)
-			{
-				return false;
-			}
+		// Check if position in the world is available.
+		for (int32 i = 0; i < CurrentBlocks.Num(); i++) {
+			if (CurrentBlocks[i].ConstructorPosition == tempV) return false;
 		}
 
 		// Create new Block Data
@@ -98,14 +97,10 @@ bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArch
 
 		newBlockData.GlobalPosition = tempV;
 
-
 		// Spawn new block actor
 		newBlockData.LevelItem = World->SpawnActor<ALevelBlock>(NewBlockArchtype, tempV, FRotator(0));
 
-		if (!newBlockData.LevelItem)
-		{
-			return false;
-		}
+		if (!newBlockData.LevelItem) return false;
 
 		// Set block values
 		newBlockData.LevelItem->ParentWeapon = TheConstructorWeapon;
@@ -113,14 +108,13 @@ bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArch
 		newBlockData.LevelItem->TheBlockConstructor = this;
 
 		// Auto Destroy Block After some time
-		if (TheConstructorWeapon && TheConstructorWeapon->bAutoDestroyBlocks)
-		{
-			// Restore Ammo After Destory
+		if (  TheConstructorWeapon
+			&& TheConstructorWeapon->bAutoDestroyBlocks) {
+			// Restore Ammo After Destroy
 			if (TheConstructorWeapon->bRestoreAmmoAfterBlockDestroy) newBlockData.LevelItem->bRestoreWeaponAmmo = true;
 
 			// Start Block Destroy Event
 			newBlockData.LevelItem->StartTimedRestore(TheConstructorWeapon, TheConstructorWeapon->BlockRestoreTime);
-
 		}
 
 		//  Add Block To List
@@ -135,8 +129,7 @@ bool ALevelBlockConstructor::AddNewBlock(TSubclassOf <ALevelBlock>  NewBlockArch
 bool ALevelBlockConstructor::DestroyBlock(FVector Loc, AActor* TheInstigator)
 {
 	UWorld* const World = GetWorld();
-	if (World)
-	{
+	if (World) {
 		// Calculate Rounded 3D location in Array
 		FVector tempV;
 		tempV.X = round(Loc.X / 100);
@@ -144,11 +137,9 @@ bool ALevelBlockConstructor::DestroyBlock(FVector Loc, AActor* TheInstigator)
 		tempV.Z = round(Loc.Z / 100);
 
 		// Find the block location in world
-		for (int32 i = 0; i < CurrentBlocks.Num(); i++)
-		{
+		for (int32 i = 0; i < CurrentBlocks.Num(); i++) {
 			// Block position match found
-			if ( CurrentBlocks[i].ConstructorPosition == tempV)
-			{
+			if (CurrentBlocks[i].ConstructorPosition == tempV) {
 				// Destroy Block
 				if (CurrentBlocks[i].LevelItem)CurrentBlocks[i].LevelItem->Destroy();
 

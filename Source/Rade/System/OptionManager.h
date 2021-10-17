@@ -116,7 +116,6 @@ public:
 		static void SetGlobalSoundVolume(UObject* WorldContextObject, const float NewVolume);
 
 
-
 	 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	 //					 Graphics Quality 
@@ -154,14 +153,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Rade|Settings")
 		static bool GetScreenResolutions(int32 & Width, int32 & Height);
 
-	// Save Video Queality
+	// Save Video Quality
 	UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
 		static bool SaveVideoModeAndQuality();
-
-
 
 private:
 	// Try to get the Game User Settings
 	static UGameUserSettings* GetGameUserSettings();
-	
 };

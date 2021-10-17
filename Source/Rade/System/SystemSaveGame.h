@@ -3,8 +3,8 @@
 #pragma once
 
 #include "GameFramework/SaveGame.h"
-#include "Item/Inventory.h"
-#include "Custom/LevelBlockConstructor.h"
+#include "../Item/Inventory.h"
+#include "../Custom/LevelBlockConstructor.h"
 #include "SystemSaveGame.generated.h"
 
 // Save Game File
@@ -35,5 +35,4 @@ public:
 	// User Index
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 		uint32 UserIndex;
-	
 };

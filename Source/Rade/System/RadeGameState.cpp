@@ -1,9 +1,9 @@
 // Copyright 2015-2017 Vagen Ayrapetyan
 
 #include "RadeGameState.h"
-#include "Rade.h"
+#include "../Rade.h"
 #include "Engine.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 ARadeGameState::ARadeGameState(){
 	bReplicates = true;

@@ -2,14 +2,11 @@
 
 #pragma once
 
-#include "Item/Item.h"
+#include "../Item/Item.h"
 #include "Weapon.generated.h"
-
 
 // You can hide some categories from the blueprint view if you want
 //UCLASS(config = Game, BlueprintType, hidecategories = ("Animation", "Physics", "Clothing", "Collision", "Rendering", "Lighting", "Base", "Replication", "Input", "Actor"))
-
-
 
 // Base for any Weapon 
 UCLASS(config = Game, BlueprintType, hidecategories = ("Clothing", "Input"))
@@ -19,7 +16,6 @@ class RADE_API AWeapon : public AItem
 
 public:
 
-
 	AWeapon(const class FObjectInitializer& PCIP);
 
 	virtual void BeginPlay()override;
@@ -27,7 +23,6 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//				Main Components And Important Properties
-
 
 	// First Person Mesh
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
@@ -37,11 +32,11 @@ public:
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 		USkeletalMeshComponent* Mesh3P;
 
-	// Weapon Animation Archtype
+	// Weapon Animation archetype
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 		EAnimArchetype AnimArchetype = EAnimArchetype::Handgun_Weapon;
 
-	// Weapon Animation Archtype
+	// Weapon Animation archetype
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 		FName FireSocketName="MuzzleFlashSocket";
 
@@ -53,7 +48,6 @@ public:
 	//					Fire Properties
 
 public:
-
 
 	// Use Ammo on Fire
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
@@ -85,7 +79,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 		float ReloadTime = 0.6;
 
-
 	// Is Weapon Shooting
 	bool bShooting = false;
 
@@ -94,9 +87,6 @@ public:
 
 	// Is Weapon Equiped
 	bool bEquiped = false;
-
-
-
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -117,8 +107,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Melee Attack")
 		float MeleeAttackAngles = 25;
 
-
-
 private:
 
 	// Main Fire Timer Handle
@@ -127,13 +115,11 @@ private:
 	// Alternative Fire Timer Handle
 	FTimerHandle PreAltFireTimeHandle;
 
-
 public:
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//						Functions and Events
-
 
 	// The Actual Fire Event
 	virtual void Fire(){ BP_Fire(); }
@@ -159,7 +145,6 @@ public:
 	// Alt Fire Released
 	virtual void AltFireEnd();
 
-
 	// Save the current/equiped weapon stats to inventory
 	void SaveCurrentWeaponStats();
 
@@ -184,7 +169,6 @@ public:
 	// Reload Ended
 	virtual void ReloadWeaponEnd();
 
-
 	// Can player Reload
 	virtual bool CanReload();
 
@@ -203,7 +187,6 @@ public:
 	// Add Ammo from weapon
 	virtual void AddAmmo(AWeapon* weapAmmo);
 
-
 	// Melee Attack Start
 	virtual void PreMeleeAttack();
 
@@ -215,8 +198,6 @@ public:
 
 	// Reset Melee Attack
 	virtual void ResetMeleeAttack();
-
-
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,12 +278,10 @@ public:
 		void BP_AltAmmo_Used();
 
 
-
 	// Blueprint Event:  Fire
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 		void BP_PreMeleeAttack();
 	// Blueprint Event:  Fire
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 		void BP_MeleeAttack();
-
 };

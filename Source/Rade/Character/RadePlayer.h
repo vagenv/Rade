@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Character/RadeCharacter.h"
+#include "RadeCharacter.h"
 #include "RadePlayer.generated.h"
 
 
@@ -14,42 +14,34 @@ class RADE_API ARadePlayer : public ARadeCharacter
 
 public:
 
-
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//				Base
 
 	ARadePlayer(const class FObjectInitializer& PCIP);
 
-
 	virtual void BeginPlay() override;
-
 	virtual void Tick(float DeltaTime)override;
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////						 Components and Important References
+	//						 Components and Important References
 
 	// Rade Player Controller
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
-	class ARadePC* ThePC;
+		class ARadePC* ThePC;
 
 	// Player HUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
-	class ABaseHUD* TheHUD;
+		class ABaseHUD* TheHUD;
 
 	// First Person Mesh Anim Instance
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade Player")
-	class URadeAnimInstance * ArmsAnimInstance;
+		class URadeAnimInstance * ArmsAnimInstance;
 
 
 	//  First Person Mesh
-    UPROPERTY(Replicated, VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-	class USkeletalMeshComponent* Mesh1P;
-
-
-
+   UPROPERTY(Replicated, VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
+		class USkeletalMeshComponent* Mesh1P;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,15 +49,15 @@ public:
 
 	// First Person Camera
 	UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class UCameraComponent* FirstPersonCameraComponent;
+		class UCameraComponent* FirstPersonCameraComponent;
 
 	// Third Person Camera Boom
 	UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class USpringArmComponent* ThirdPersonCameraBoom;
+		class USpringArmComponent* ThirdPersonCameraBoom;
 
 	// Third Person Camera
 	UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class UCameraComponent* ThirdPersonCameraComponent;
+		class UCameraComponent* ThirdPersonCameraComponent;
 
 	// Default Camera State
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
@@ -73,10 +65,10 @@ public:
 
 	// Current Camera State
 	UPROPERTY(ReplicatedUsing = UpdateComponentsVisibility, EditAnywhere, BlueprintReadWrite, Category = Camera)
-	ECameraState CurrentCameraState = ECameraState::FP_Camera;
+		ECameraState CurrentCameraState = ECameraState::FP_Camera;
 
 
-	// Camera Mouse Sensivity
+	// Camera Mouse sensitivity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		float CameraMouseSensivity = 1.0;
 
@@ -91,7 +83,7 @@ public:
 
 	// Currently Selected Pickup Actor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
-	class AItemPickup * currentPickup;
+		class AItemPickup * currentPickup;
 
 	// Save/Load Inventory during game Start/End ?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
@@ -99,8 +91,7 @@ public:
 
 	// Updates Component Visibility when Camera State Changes
 	UFUNCTION()
-	void UpdateComponentsVisibility();
-
+		void UpdateComponentsVisibility();
 
 
 	// Current Selected item index in Inventory . Replicated.
@@ -136,7 +127,6 @@ public:
 		void BP_ItemDroped(class AItemPickup* ThePickup);
 
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//							 Weapon Control and Events
@@ -147,11 +137,9 @@ public:
 	// Called when player unequips current weapon
 	void UnEquipCurrentWeapon();
 
-
 	// Time before new weapon is spawned if returning to empty weapon state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
 		float DefaultWeaponEquipDelay = 0.4f;
-
 
 	// Current Weapon Stats Was updated.
 	//UFUNCTION()
@@ -161,7 +149,6 @@ public:
 	// Can Player Fire in Air
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
 		bool bCanFireInAir = false;
-
 
 
 private:
@@ -175,8 +162,6 @@ private:
 	// The next weapon class to equip from inventory (During weapon change)
 	UPROPERTY()
 		class AWeapon* PendingEquipWeapon;
-
-
 
 public:
 
@@ -224,7 +209,7 @@ public:
 	// Set Animation ID
 	virtual void Global_SetAnimID_Implementation(EAnimState AnimID)override;
 
-	// Set Animation Archtype
+	// Set Animation Archetype
 	virtual void Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype)override;
 
 	// Is Player in Anim State
@@ -259,11 +244,9 @@ protected:
 
 public:
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//			State Checking
-
 
 	// Called to reset current move speed when player fired (Fire after sprint)
 	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
@@ -276,13 +259,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Rade")
 		bool  CanSprint();
 
-
-
 	// Player Landed
 	virtual void Landed(const FHitResult& Hit)override;
-
-
-
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -312,16 +290,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
 		void BP_Jump();
 
-
 protected:
-
-
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//			Network  :  Client Action Input -> Server Action Input
-
-
 
 	// Player Pressed Fire, Called on Server
 	UFUNCTION(Reliable, Server, WithValidation)
@@ -334,7 +307,6 @@ protected:
 		void FireEnd();
 	virtual bool FireEnd_Validate();
 	virtual void FireEnd_Implementation();
-
 
 	// Player Pressed AltFire, Called on Server
 	UFUNCTION(Reliable, Server, WithValidation)
@@ -389,11 +361,6 @@ protected:
 	virtual bool DoubleJump_Validate();
 	virtual void DoubleJump_Implementation();
 
-
-
-
-
-
 	// Player Pressed Jump, Called on client
 	virtual void Jump()override;
 
@@ -404,7 +371,7 @@ protected:
 	virtual void MouseScroll(float Value);
 
 
-	// Forward/Bacward movement Input, Called on client
+	// Forward/Backward movement Input, Called on client
 	virtual void MoveForward(float Val);
 
 	// Right/Left movement Input, Called on client
@@ -418,5 +385,4 @@ protected:
 
 	// Mesh Rotation on player rotation input
 	void FaceRotation(FRotator NewControlRotation, float DeltaTime)override;
-
 };

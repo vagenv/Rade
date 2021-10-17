@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
-#include "RadeData.h"
+#include "../RadeData.h"
 #include "RadeGameInstance.generated.h"
 
 // Custom Game Instance
@@ -11,7 +11,6 @@ class RADE_API URadeGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 public:
-
 
 	URadeGameInstance(const FObjectInitializer& ObjectInitializer);
 
@@ -28,11 +27,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void StartOnlineGameMap(FString MapName=TEXT("BattleArena"),int32 MaxPlayerNumber=16);
 
-	// Find all avaiable Online Sessions
+	// Find all available Online Sessions
 	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void FindOnlineGames();
 
-	// Update Avaiable Online Sessions
+	// Update available Online Sessions
 	UFUNCTION(BlueprintCallable, Category = "Rade|Network")
 		void UpdateSessionList();
 
@@ -52,7 +51,6 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/////					Data about the Sessions and Game Instance
-
 
 	// Current Online Sessions Search Result
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
@@ -87,19 +85,15 @@ public:
 
 	/////					Settings
 
-
 	//	Variable Part for FINDING a Session
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 
 	// Session Setting
 	TSharedPtr<class FOnlineSessionSettings> SessionSettings;
 
-
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/////					Delegate
-
 
 	// Delegate called when session created 
 	FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
@@ -118,7 +112,6 @@ public:
 	FDelegateHandle OnFindSessionsCompleteDelegateHandle;
 
 	//	Variable Part for JOINING a Session
-	
 
 	// Delegate after joining a session 
 	FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
@@ -128,19 +121,15 @@ public:
 
 	//Variable Part for DESTROYING a Session
 
-
 	// Delegate for destroying a session
 	FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
 
 	// Handle to registered delegate for destroying a session 
 	FDelegateHandle OnDestroySessionCompleteDelegateHandle;
 
-
-
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/////								Ingternal Events
+	/////								Internal Events
 
 
 	//			Host A Game
@@ -236,8 +225,4 @@ public:
 	*	@param bWasSuccessful true if the async action completed without error, false if there was an error
 	*/
 	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
-
-
-	
-	
 };

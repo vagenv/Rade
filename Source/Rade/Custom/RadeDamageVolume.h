@@ -46,5 +46,4 @@ public:
 	// Current Rade Characters Inside Volume
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Volume")
 		TArray<class ARadeCharacter*> DamageCharacterList;
-
 };
