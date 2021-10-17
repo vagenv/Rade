@@ -12,29 +12,28 @@
 
 void UOptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys)
 {
-	const UInputSettings* TheInputSettings = GetDefault<UInputSettings>();
-	if (TheInputSettings == nullptr) return;
-	InputActions.Empty();
-	InputKeys.Empty();
-	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->GetActionMappings();
-	for (int32 i = 0; i < InputActionMapping.Num(); ++i) {
-		if (InputActionMapping.IsValidIndex(i)) {
-			InputActions.Add(FText::FromName(InputActionMapping[i].ActionName));
-			InputKeys.Add(InputActionMapping[i].Key.GetDisplayName());
-		}
+   UInputSettings* settings = UInputSettings::GetInputSettings();
+   if (settings == NULL) return;
+
+   InputActions.Empty();
+   InputKeys.Empty();
+
+	const TArray <FInputActionKeyMapping> &mapping = settings->GetActionMappings();
+	for (auto map : mapping) {
+		rlog (map.ActionName.ToString() + ":" + map.Key.ToString());
+      InputActions.Add(FText::FromName(map.ActionName));
+      InputKeys.Add(map.Key.GetDisplayName());
 	}
 }
 
 void UOptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
 {
-	const UInputSettings* TheInputSettings = GetDefault<UInputSettings>();
-	if (TheInputSettings == nullptr) return;
-
-	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->GetActionMappings();
-
-	for ( int32 i = 0; i < InputActionMapping.Num();++i)	{
-		if (InputActionMapping.IsValidIndex(i) && InputActionMapping[i].ActionName == ActionName){
-			ActionKey= InputActionMapping[i].Key.GetDisplayName();
+   UInputSettings* settings = UInputSettings::GetInputSettings();
+   if (settings == NULL) return;
+   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
+   for (auto map : mapping) {
+		if (map.ActionName == ActionName) {
+			ActionKey = map.Key.GetDisplayName ();
 			return;
 		}
 	}
@@ -43,25 +42,24 @@ void UOptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
 
 void UOptionManager::SetActionInput(const FName& ActionName, const FText& ActionKey)
 {
-	UInputSettings* TheInputSettings = const_cast<UInputSettings*>(GetDefault<UInputSettings>());
-	if (TheInputSettings == nullptr) return;
+   UInputSettings* settings = UInputSettings::GetInputSettings();
+   if (settings == NULL) return;
+   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
 
-	const TArray<FInputActionKeyMapping>& InputActionMapping = TheInputSettings->GetActionMappings();
-	for (int32 i = 0; i < InputActionMapping.Num(); ++i)
-	{
-		if (InputActionMapping.IsValidIndex(i) && InputActionMapping[i].ActionName == ActionName)
-		{
-			// Manually update?
-			//InputActionMapping[i].Key = FKey(*ActionKey.ToString());
-		}
-	}
-
-	TheInputSettings->SaveKeyMappings();
-
-	for (TObjectIterator<UPlayerInput> It; It; ++It){
-		It->ForceRebuildingKeyMaps(true);
-		It->UpdateDefaultConfigFile();
-	}
+   for (auto map : mapping) {
+      if (map.ActionName == ActionName) {
+			FInputActionKeyMapping newAction = map;
+			newAction.Key = FKey (*ActionKey.ToString());
+			settings->RemoveActionMapping(map);
+			settings->AddActionMapping(newAction);
+      }
+   }
+	
+   settings->SaveKeyMappings();
+   for (TObjectIterator<UPlayerInput> It; It; ++It) {
+      It->ForceRebuildingKeyMaps(true);
+      It->UpdateDefaultConfigFile();
+   }
 }
 
 

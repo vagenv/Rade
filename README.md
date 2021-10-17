@@ -69,6 +69,8 @@ Input:
 |R                   | Reload             | Reload Weapon                          |
 |F                   | FAction            | Drop Item                              |
 |Spacebar            | Jump               | Jump / Double Jump                     |
+|U                   | Chat               | Focus on Chat                          |
+|F10                 | Options            | Option Menu                            |
 
 ---
 
