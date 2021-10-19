@@ -13,26 +13,26 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSimpleEventDelegate);
 UCLASS()
 class RADE_API ARadeGameState : public AGameState
 {
-	GENERATED_BODY()
-	
+   GENERATED_BODY()
+   
 public:
 
-	ARadeGameState();
-	virtual void BeginPlay();
+   ARadeGameState();
+   virtual void BeginPlay();
 
 
-	// Array of All Online Messages
-	UPROPERTY(ReplicatedUsing = OnRep_MessagesList, EditAnywhere, BlueprintReadOnly, Category = " ")
-		TArray<FRadeOnineMessageData> TheMessages;
+   // Array of All Online Messages
+   UPROPERTY(ReplicatedUsing = OnRep_MessagesList, EditAnywhere, BlueprintReadOnly, Category = " ")
+      TArray<FRadeOnineMessageData> TheMessages;
 
-	// Events when Message List Replicated
-	UFUNCTION()
-		void OnRep_MessagesList();
+   // Events when Message List Replicated
+   UFUNCTION()
+      void OnRep_MessagesList();
 
-	// Chat Update Delegate
-	UPROPERTY(BlueprintAssignable, Category = "")
-		FSimpleEventDelegate ChatUpdateDelegate;
+   // Chat Update Delegate
+   UPROPERTY(BlueprintAssignable, Category = "")
+      FSimpleEventDelegate ChatUpdateDelegate;
 
-	//Add Chat Message, Should Be called on Server
-	void AddNewChatMessage(FString TheMessage, class ARadePlayer* ThePlayer);
+   //Add Chat Message, Should Be called on Server
+   void AddNewChatMessage(FString TheMessage, class ARadePlayer* ThePlayer);
 };

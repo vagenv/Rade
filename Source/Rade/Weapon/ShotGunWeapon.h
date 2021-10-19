@@ -9,18 +9,18 @@
 UCLASS()
 class RADE_API AShotGunWeapon : public AWeapon
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
-	AShotGunWeapon(const class FObjectInitializer& PCIP);
+   AShotGunWeapon(const class FObjectInitializer& PCIP);
 
-	// Override The Fire Event
-	virtual void Fire()override;
+   // Override The Fire Event
+   virtual void Fire()override;
 
-	// Cone fire Spead Angle (In Degres)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-		float SpreadAngle=45;
+   // Cone fire Spead Angle (In Degres)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+      float SpreadAngle=45;
 
-	// Number of Fires per Shot
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-		int32 BallsPerShot;
+   // Number of Fires per Shot
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+      int32 BallsPerShot;
 };

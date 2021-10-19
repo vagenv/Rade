@@ -10,41 +10,41 @@
 UCLASS()
 class RADE_API ASwordWeapon : public AWeapon
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
-	ASwordWeapon(const class FObjectInitializer& PCIP);
+   ASwordWeapon(const class FObjectInitializer& PCIP);
 
-	virtual void BeginPlay()override;
+   virtual void BeginPlay()override;
 
-	// Hit Actors
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sword")
-		TArray<class ARadeCharacter*>HitActors;
+   // Hit Actors
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sword")
+      TArray<class ARadeCharacter*>HitActors;
 
-	//  First Person Collision BOX
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-		UBoxComponent* Mesh1P_MeleeAttackCollisionBox;
+   //  First Person Collision BOX
+   UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+      UBoxComponent* Mesh1P_MeleeAttackCollisionBox;
 
-	//  Third Person Collision BOX
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-		UBoxComponent* Mesh3P_MeleeAttackCollisionBox;
+   //  Third Person Collision BOX
+   UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+      UBoxComponent* Mesh3P_MeleeAttackCollisionBox;
 
 
-	// Box Overlap Event
-	UFUNCTION()
-		virtual void OnSwordWeaponBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-																class AActor* OtherActor,
-																class UPrimitiveComponent* OtherComp,
-																int32 OtherBodyIndex, 
-																bool bFromSweep,
-																const FHitResult &SweepResult);
+   // Box Overlap Event
+   UFUNCTION()
+      virtual void OnSwordWeaponBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                class AActor* OtherActor,
+                                                class UPrimitiveComponent* OtherComp,
+                                                int32 OtherBodyIndex, 
+                                                bool bFromSweep,
+                                                const FHitResult &SweepResult);
 
-	// Is Slashing/Tracing/Cutting
-	bool bTracingMeleeAttack;
+   // Is Slashing/Tracing/Cutting
+   bool bTracingMeleeAttack;
 
-	//  Start Attack Tracing
-	virtual void StartMeleeAttackTrace();
+   //  Start Attack Tracing
+   virtual void StartMeleeAttackTrace();
 
-	// Stop Attack Tracing
-	virtual void EndMeleeAttackTrace();
+   // Stop Attack Tracing
+   virtual void EndMeleeAttackTrace();
 };

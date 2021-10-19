@@ -10,16 +10,16 @@
 UCLASS()
 class RADE_API ALauncherWeapon : public AWeapon
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
-	ALauncherWeapon(const class FObjectInitializer& PCIP);
-	// Fire Event 
-	virtual void Fire()override;
+   ALauncherWeapon(const class FObjectInitializer& PCIP);
+   // Fire Event 
+   virtual void Fire()override;
 
-	// Projectile Class
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launcher Weapon")
-		TSubclassOf <class AProjectile> GrenadeArchetype;
+   // Projectile Class
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launcher Weapon")
+      TSubclassOf <class AProjectile> GrenadeArchetype;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launcher Weapon")
-		float ProjectileVelocity=500;
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Launcher Weapon")
+      float ProjectileVelocity=500;
 };

@@ -46,8 +46,8 @@ BEGIN
             VALUE "CompanyName", EPIC_COMPANY_NAME
             VALUE "LegalCopyright", EPIC_COPYRIGHT_STRING
             VALUE "ProductName", EPIC_PRODUCT_NAME
-			VALUE "ProductVersion", ENGINE_VERSION_STRING
-			VALUE "FileDescription", "Rade"
+         VALUE "ProductVersion", ENGINE_VERSION_STRING
+         VALUE "FileDescription", "Rade"
             VALUE "InternalName", "Rade"
             VALUE "OriginalFilename", "Rade.exe"
         END

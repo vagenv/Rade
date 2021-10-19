@@ -10,88 +10,88 @@
 UCLASS()
 class RADE_API AItemPickup : public AActor
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 
 public:
 
-	AItemPickup(const class FObjectInitializer& PCIP);
+   AItemPickup(const class FObjectInitializer& PCIP);
 
-	virtual void BeginPlay() override;
+   virtual void BeginPlay() override;
 
 
-	// Static Mesh
+   // Static Mesh
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
-		class UStaticMeshComponent* Mesh;
+      class UStaticMeshComponent* Mesh;
 
-	// Skeletal Mesh
+   // Skeletal Mesh
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
-		class USkeletalMeshComponent* SkeletalMesh;
+      class USkeletalMeshComponent* SkeletalMesh;
 
-	// Trigger Sphere 
+   // Trigger Sphere 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
-		class USphereComponent* TriggerSphere;
+      class USphereComponent* TriggerSphere;
 
 
-	// Activation delay
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
-		float PickupActivationDelay = 1;
+   // Activation delay
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+      float PickupActivationDelay = 1;
 
-	// Activate Pickup Overlap Tracking
-	void ActivatePickupOverlap();
+   // Activate Pickup Overlap Tracking
+   void ActivatePickupOverlap();
 
-	// Activate Pickup Physics
-	void ActivatePickupPhysics();
-
-
-	// Activate As 
-	UFUNCTION(NetMulticast, Reliable, WithValidation, Category = "Rade")
-		void SetAsMeshPickup();
-	bool SetAsMeshPickup_Validate();
-	void SetAsMeshPickup_Implementation();
-
-	UFUNCTION(NetMulticast, Reliable, WithValidation, Category = "Rade")
-		void SetAsSkeletalMeshPickup();
-	bool SetAsSkeletalMeshPickup_Validate();
-	void SetAsSkeletalMeshPickup_Implementation();
+   // Activate Pickup Physics
+   void ActivatePickupPhysics();
 
 
-	// Auto Pickup
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
-		bool bAutoPickup;
+   // Activate As 
+   UFUNCTION(NetMulticast, Reliable, WithValidation, Category = "Rade")
+      void SetAsMeshPickup();
+   bool SetAsMeshPickup_Validate();
+   void SetAsMeshPickup_Implementation();
 
-	// Pickup Item Class
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
-		TSubclassOf<class AItem> Item;
-
-	// Override Default Item values
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
-		bool bOverideItemData = false;
-
-	// The Override Data 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
-		FItemData OverideItemData;
-
-	// Player Entered
-	UFUNCTION()
-		void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-
-	// Player Exited
-	UFUNCTION()
-		void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	// Item was picked up by player
-	void PickedUp(class ARadePlayer* Player);
+   UFUNCTION(NetMulticast, Reliable, WithValidation, Category = "Rade")
+      void SetAsSkeletalMeshPickup();
+   bool SetAsSkeletalMeshPickup_Validate();
+   void SetAsSkeletalMeshPickup_Implementation();
 
 
-	// BP Event that item Was Picked Up
-	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
-		void BP_PickedUp(class ARadePlayer* Player);
+   // Auto Pickup
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+      bool bAutoPickup;
 
-	// BP Event that Player Entered Pickup Area
-	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
-		void BP_PlayerEntered(class ARadePlayer* Player);
+   // Pickup Item Class
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+      TSubclassOf<class AItem> Item;
 
-	// BP Event that Player Exited Pickup Area
-	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
-		void BP_PlayerLeft(class ARadePlayer* Player);
+   // Override Default Item values
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+      bool bOverideItemData = false;
+
+   // The Override Data 
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+      FItemData OverideItemData;
+
+   // Player Entered
+   UFUNCTION()
+      void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+   // Player Exited
+   UFUNCTION()
+      void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+   // Item was picked up by player
+   void PickedUp(class ARadePlayer* Player);
+
+
+   // BP Event that item Was Picked Up
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+      void BP_PickedUp(class ARadePlayer* Player);
+
+   // BP Event that Player Entered Pickup Area
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+      void BP_PlayerEntered(class ARadePlayer* Player);
+
+   // BP Event that Player Exited Pickup Area
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+      void BP_PlayerLeft(class ARadePlayer* Player);
 };

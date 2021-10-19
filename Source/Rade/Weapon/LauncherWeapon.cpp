@@ -8,42 +8,42 @@
 
 ALauncherWeapon::ALauncherWeapon(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
-	ItemName = "Launcher";
+   ItemName = "Launcher";
 }
 
 void ALauncherWeapon::Fire()
 {
-	Super::Fire();
+   Super::Fire();
 
-	if (GrenadeArchetype) {
-		UWorld* const World = GetWorld();
-		if (  World
-			&& Mesh1P
-			&& ThePlayer
-			&& ThePlayer->Controller) 	{
-			// Get Camera Rotation
-			FVector  CamLoc;
-			FRotator CamRot;
-			ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot);
+   if (GrenadeArchetype) {
+      UWorld* const World = GetWorld();
+      if (  World
+         && Mesh1P
+         && ThePlayer
+         && ThePlayer->Controller)    {
+         // Get Camera Rotation
+         FVector  CamLoc;
+         FRotator CamRot;
+         ThePlayer->Controller->GetPlayerViewPoint(CamLoc, CamRot);
 
-			// Calculate Origin and Direction of Fire
-			const FVector StartTrace = GetFireSocketTransform().GetLocation();
-			const FVector Direction = CamRot.Vector();
+         // Calculate Origin and Direction of Fire
+         const FVector StartTrace = GetFireSocketTransform().GetLocation();
+         const FVector Direction = CamRot.Vector();
 
-			// Set Spawn Parameters
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			//SpawnParams.Instigator = Instigator;
+         // Set Spawn Parameters
+         FActorSpawnParameters SpawnParams;
+         SpawnParams.Owner = this;
+         //SpawnParams.Instigator = Instigator;
 
 
-			// Spawn at Fire socket location
-			AProjectile* TheProjectile = World->SpawnActor<AProjectile>(GrenadeArchetype, StartTrace, CamRot);
+         // Spawn at Fire socket location
+         AProjectile* TheProjectile = World->SpawnActor<AProjectile>(GrenadeArchetype, StartTrace, CamRot);
 
-			// Set Projectile Velocity
-			if (TheProjectile) {
+         // Set Projectile Velocity
+         if (TheProjectile) {
             TheProjectile->Mesh->SetSimulatePhysics(true);
-				TheProjectile->InitVelocity(Direction*ProjectileVelocity);
-			}		
-		}
-	}
+            TheProjectile->InitVelocity(Direction*ProjectileVelocity);
+         }      
+      }
+   }
 }

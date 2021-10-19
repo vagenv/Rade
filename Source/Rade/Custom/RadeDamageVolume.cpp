@@ -8,49 +8,49 @@
 // Actual Damage Event
 void ARadeDamageVolume::ApplyDamageToCharacters()
 {
-	// Apply Damage to all Actor inside volume 
-	for (ARadeCharacter* DmgCharacter : DamageCharacterList) {
-		if (DmgCharacter) {
-			// If Actor is Dead Remove from damage list
-			if (DmgCharacter->bDead) DamageCharacterList.Remove(DmgCharacter);
-			// Apply Damage To Character
-			else UGameplayStatics::ApplyDamage(DmgCharacter, ContinuousDamage, NULL, this, VolumeDamageType);
-		}
-	}
+   // Apply Damage to all Actor inside volume 
+   for (ARadeCharacter* DmgCharacter : DamageCharacterList) {
+      if (DmgCharacter) {
+         // If Actor is Dead Remove from damage list
+         if (DmgCharacter->bDead) DamageCharacterList.Remove(DmgCharacter);
+         // Apply Damage To Character
+         else UGameplayStatics::ApplyDamage(DmgCharacter, ContinuousDamage, NULL, this, VolumeDamageType);
+      }
+   }
 }
 
 // Actor Entered Damage Volume
 void ARadeDamageVolume::ActorEnteredVolume(AActor* Other)
 {
-	
-	Super::ActorEnteredVolume(Other);
+   
+   Super::ActorEnteredVolume(Other);
 
-	// If the actor entered is Rade CHaracter , Add him to Damage List
-	ARadeCharacter *radeOther = Cast<ARadeCharacter>(Other);
-	if (   radeOther
-		&& !radeOther->bDead) {
-		DamageCharacterList.Add(radeOther);
+   // If the actor entered is Rade CHaracter , Add him to Damage List
+   ARadeCharacter *radeOther = Cast<ARadeCharacter>(Other);
+   if (   radeOther
+      && !radeOther->bDead) {
+      DamageCharacterList.Add(radeOther);
 
-		// Apply Initial Damage to actor
-		UGameplayStatics::ApplyDamage(Other, InitialDamage, NULL, this, VolumeDamageType);
-	}
+      // Apply Initial Damage to actor
+      UGameplayStatics::ApplyDamage(Other, InitialDamage, NULL, this, VolumeDamageType);
+   }
 
-	// If timer is not active and damage list is not empty, start timer
-	if (!GetWorldTimerManager().IsTimerActive(DamageRateHandle)
-		&& DamageCharacterList.Num() > 0)
-		GetWorldTimerManager().SetTimer(DamageRateHandle, this, &ARadeDamageVolume::ApplyDamageToCharacters, DamageRate, true);
+   // If timer is not active and damage list is not empty, start timer
+   if (!GetWorldTimerManager().IsTimerActive(DamageRateHandle)
+      && DamageCharacterList.Num() > 0)
+      GetWorldTimerManager().SetTimer(DamageRateHandle, this, &ARadeDamageVolume::ApplyDamageToCharacters, DamageRate, true);
 
 }
 
 // Someone Left the volume
 void ARadeDamageVolume::ActorLeavingVolume(AActor* Other)
 {
-	Super::ActorLeavingVolume(Other);
+   Super::ActorLeavingVolume(Other);
 
-	// If the actor is of Rade Character type remove from damage list
-	if (Cast<ARadeCharacter>(Other)) DamageCharacterList.Remove(Cast<ARadeCharacter>(Other));
+   // If the actor is of Rade Character type remove from damage list
+   if (Cast<ARadeCharacter>(Other)) DamageCharacterList.Remove(Cast<ARadeCharacter>(Other));
 
-	// If Timer is Active and Damage list is empty, stop timer
-	if (GetWorldTimerManager().IsTimerActive(DamageRateHandle) && DamageCharacterList.Num()<1)
-		GetWorldTimerManager().ClearTimer(DamageRateHandle);
+   // If Timer is Active and Damage list is empty, stop timer
+   if (GetWorldTimerManager().IsTimerActive(DamageRateHandle) && DamageCharacterList.Num()<1)
+      GetWorldTimerManager().ClearTimer(DamageRateHandle);
 }

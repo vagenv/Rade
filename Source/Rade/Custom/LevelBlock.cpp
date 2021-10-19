@@ -10,48 +10,48 @@
 
 
 ALevelBlock::ALevelBlock(const class FObjectInitializer& PCIP)
-	: Super(PCIP)
+   : Super(PCIP)
 {
 
-	MyRoot = PCIP.CreateOptionalDefaultSubobject <USceneComponent>(this, TEXT("MyRoot"));
+   MyRoot = PCIP.CreateOptionalDefaultSubobject <USceneComponent>(this, TEXT("MyRoot"));
    SetRootComponent (MyRoot);
 
-	Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
+   Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
    Mesh->SetupAttachment(MyRoot, NAME_None);
 
-	bReplicates = true;
+   bReplicates = true;
 }
 
 void ALevelBlock::BeginPlay()
 {
-	Super::BeginPlay();
+   Super::BeginPlay();
 }
 
 // Start the block restore event (Called by weapon)
 void ALevelBlock::StartTimedRestore(AConstructorWeapon* newParentWeapon, float Time)
 {
-	if (newParentWeapon) {
-		// Assign Weapon that spawned block
-		ParentWeapon = newParentWeapon;
+   if (newParentWeapon) {
+      // Assign Weapon that spawned block
+      ParentWeapon = newParentWeapon;
 
-		// If the 
-		if (Time > 0) {
-			FTimerHandle MyHandle;
-			GetWorldTimerManager().SetTimer(MyHandle, this, &ALevelBlock::ReturnBlock, Time, false);
-		}
-	}
+      // If the 
+      if (Time > 0) {
+         FTimerHandle MyHandle;
+         GetWorldTimerManager().SetTimer(MyHandle, this, &ALevelBlock::ReturnBlock, Time, false);
+      }
+   }
 }
 
 // Restore The block back into weapon
 void ALevelBlock::ReturnBlock()
 {
-	if (ParentWeapon && TheBlockConstructor) {
-		// Add the ammo back
-		if (bRestoreWeaponAmmo)ParentWeapon->MainFire.AddAmmo(ParentWeapon->MainFire.FireCost, 0);
+   if (ParentWeapon && TheBlockConstructor) {
+      // Add the ammo back
+      if (bRestoreWeaponAmmo)ParentWeapon->MainFire.AddAmmo(ParentWeapon->MainFire.FireCost, 0);
 
-		BP_BlockReturned();
+      BP_BlockReturned();
 
-		// Tell constructor to destroy block and clean data
-		TheBlockConstructor->DestroyBlock(GetActorLocation(), this);
-	}
+      // Tell constructor to destroy block and clean data
+      TheBlockConstructor->DestroyBlock(GetActorLocation(), this);
+   }
 }

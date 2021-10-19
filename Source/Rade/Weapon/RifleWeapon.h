@@ -9,9 +9,9 @@
 UCLASS()
 class RADE_API ARifleWeapon : public AWeapon
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
-	ARifleWeapon(const class FObjectInitializer& PCIP);
-	// Main Fire Event
-	virtual void Fire()override;
+   ARifleWeapon(const class FObjectInitializer& PCIP);
+   // Main Fire Event
+   virtual void Fire()override;
 };

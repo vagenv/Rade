@@ -9,5 +9,5 @@
 UCLASS()
 class RADE_API ARadePC : public APlayerController
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 };

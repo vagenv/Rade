@@ -11,98 +11,98 @@
 UCLASS(config = Game)
 class RADE_API AProjectile : public AActor
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 
 public:
 
-	AProjectile(const class FObjectInitializer& PCIP);
+   AProjectile(const class FObjectInitializer& PCIP);
 
-	void BeginPlay()override;
+   void BeginPlay()override;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//							Base Components
+   //                     Base Components
 
-	// Projectile Mesh
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-		UStaticMeshComponent* Mesh;
+   // Projectile Mesh
+   UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+      UStaticMeshComponent* Mesh;
 
-	// Collision Component
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-		USphereComponent* CollisionComp;
+   // Collision Component
+   UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+      USphereComponent* CollisionComp;
 
-	// Movement Component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-		class UProjectileMovementComponent* ProjectileMovement;
+   // Movement Component
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+      class UProjectileMovementComponent* ProjectileMovement;
 
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//							Base Properties
+   //                     Base Properties
 
-	// Life time of projectile
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-		float LifeTime=5;
+   // Life time of projectile
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+      float LifeTime=5;
 
-	// Projectile Enabled after delay - Not to explode near player
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-		float EnableDelay = 0.1f;
+   // Projectile Enabled after delay - Not to explode near player
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+      float EnableDelay = 0.1f;
 
-	// Projectile Affect Area
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-		float AffectArea = 800;
+   // Projectile Affect Area
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+      float AffectArea = 800;
 
-	// Projectile Explosion Damage Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-		TSubclassOf<class UDamageType> ExplosionDamageType;
+   // Projectile Explosion Damage Type
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+      TSubclassOf<class UDamageType> ExplosionDamageType;
 
-	// Radial Damage Curve
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-		FRuntimeFloatCurve RadialDamageCurve;
+   // Radial Damage Curve
+   UPROPERTY(EditAnywhere, Category = "Projectile")
+      FRuntimeFloatCurve RadialDamageCurve;
 
-	// Radial Impulse Curve
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-		FRuntimeFloatCurve RadialImpulseCurve;
+   // Radial Impulse Curve
+   UPROPERTY(EditAnywhere, Category = "Projectile")
+      FRuntimeFloatCurve RadialImpulseCurve;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//							Additional  Properties and Events
+   //                     Additional  Properties and Events
 
-	// Can The projectile Explode?
-	bool bCanExplode = false;
+   // Can The projectile Explode?
+   bool bCanExplode = false;
 
-	// Enable Projectile Explosion
-	void EnableProjectile();
-	
+   // Enable Projectile Explosion
+   void EnableProjectile();
+   
    // Player Entered
-	UFUNCTION()
+   UFUNCTION()
       void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                           class AActor* OtherActor,
-							     class UPrimitiveComponent* OtherComp,
+                          class UPrimitiveComponent* OtherComp,
                           int32 OtherBodyIndex,
-								  bool bFromSweep,
-								  const FHitResult& SweepResult);
+                          bool bFromSweep,
+                          const FHitResult& SweepResult);
 
-	// Apply Velocity 
-	void InitVelocity(const FVector& ShootDirection);
+   // Apply Velocity 
+   void InitVelocity(const FVector& ShootDirection);
 
-	// Explode 
-	virtual void Explode();
+   // Explode 
+   virtual void Explode();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//							Blueprint Events
+   //                     Blueprint Events
 
 
-	// BP explode 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
-		void BP_Explode();
+   // BP explode 
+   UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
+      void BP_Explode();
 
-	// BP Hit
-	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
-		void BP_Hit(UPrimitiveComponent* OtherComp, const FHitResult& Hit);
+   // BP Hit
+   UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
+      void BP_Hit(UPrimitiveComponent* OtherComp, const FHitResult& Hit);
 
-	// Explosion hit Enemy
-	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
-		void BP_Explode_HitEnemy(class ARadeCharacter* TheCharacter,float HitDamage);
+   // Explosion hit Enemy
+   UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
+      void BP_Explode_HitEnemy(class ARadeCharacter* TheCharacter,float HitDamage);
 };

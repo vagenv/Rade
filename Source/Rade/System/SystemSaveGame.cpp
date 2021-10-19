@@ -4,8 +4,8 @@
 #include "../Rade.h"
 
 USystemSaveGame::USystemSaveGame(const class FObjectInitializer& PCIP)
-	: Super(PCIP)
+   : Super(PCIP)
 {
-	SaveSlotName = TEXT("RadeSaveSlot");
-	UserIndex = 0;
+   SaveSlotName = TEXT("RadeSaveSlot");
+   UserIndex = 0;
 }

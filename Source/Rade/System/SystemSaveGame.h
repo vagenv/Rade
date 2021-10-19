@@ -11,27 +11,27 @@
 UCLASS()
 class RADE_API USystemSaveGame : public USaveGame
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 
 public:
-	USystemSaveGame(const class FObjectInitializer& PCIP);
+   USystemSaveGame(const class FObjectInitializer& PCIP);
 
-	// List of Player Inventory Items
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-		TArray<FItemData> Items;
+   // List of Player Inventory Items
+   UPROPERTY(VisibleAnywhere, Category = Basic)
+      TArray<FItemData> Items;
 
-	// List Data about Level Blocks
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-		TArray<FBlockData> LevelBlocks;
+   // List Data about Level Blocks
+   UPROPERTY(VisibleAnywhere, Category = Basic)
+      TArray<FBlockData> LevelBlocks;
 
-	// Player Name
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-		FString PlayerName;
+   // Player Name
+   UPROPERTY(VisibleAnywhere, Category = Basic)
+      FString PlayerName;
 
-	// Save Slot Name
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-		FString SaveSlotName;
-	// User Index
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-		uint32 UserIndex;
+   // Save Slot Name
+   UPROPERTY(VisibleAnywhere, Category = Basic)
+      FString SaveSlotName;
+   // User Index
+   UPROPERTY(VisibleAnywhere, Category = Basic)
+      uint32 UserIndex;
 };
