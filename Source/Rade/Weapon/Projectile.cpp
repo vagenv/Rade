@@ -33,7 +33,7 @@ AProjectile::AProjectile(const class FObjectInitializer& PCIP)
 	ProjectileMovement->bShouldBounce = true;
 
 	// Replicate
-	SetReplicates(true);
+	bReplicates = true;
 	SetReplicateMovement(true);
 
 	// Set default radial Damage Curve

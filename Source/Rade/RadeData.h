@@ -41,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
 		FLinearColor MessageColor;
 
-	FRadeOnineMessageData(){};
+	FRadeOnineMessageData();
 	FRadeOnineMessageData(FString NewMessage, class ARadePlayer* ThePlayer);
 };
 
@@ -62,7 +62,13 @@ public:
 
 	FOnlineSessionSearchResult SessionData;
 
-	FAvaiableSessionsData(){};
+	FAvaiableSessionsData()
+	{
+		OwnerName 						 = "Undefined";
+		Ping 					    		 = 0;
+		NumberOfConnections         = 0;
+		NumberOfAvaiableConnections = 0;
+	};
 	FAvaiableSessionsData(FOnlineSessionSearchResult newSessionData)
 	{
 		SessionData						 = newSessionData;
@@ -216,7 +222,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		FFireStats AltFireStats;
 
-	FItemData(){};
+	FItemData();
 	FItemData(TSubclassOf<class AItem> Item, FString newItemName = FString(""), UTexture2D* newItemIcon = NULL, float newWeight = 0.1, int32 newItemCount = 1);
 
 	// Set Item Data
@@ -291,13 +297,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Block")
 		FVector ConstructorPosition;
 
-	FBlockData(){};
+	FBlockData()
+	{
+		LevelItem           = NULL;
+		GlobalPosition      = FVector::ZeroVector;
+		ConstructorPosition = FVector::ZeroVector;
+	};
 
 	FBlockData(ALevelBlock* newLevelItem, TSubclassOf <ALevelBlock> newArchetype, FVector newGlobalPosition, FVector newConstructorPosition)
 	{
-		LevelItem = newLevelItem;
-		Archetype = newArchetype;
-		GlobalPosition = newGlobalPosition;
+		LevelItem 			  = newLevelItem;
+		Archetype 			  = newArchetype;
+		GlobalPosition 	  = newGlobalPosition;
 		ConstructorPosition = newConstructorPosition;
 	}
 };

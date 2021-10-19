@@ -18,7 +18,6 @@ DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
 
 //								Custom Print Methods
 
-#define print (text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Black,text)
 #define printw(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::White,text)
 #define printr(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red,  text)
 #define printg(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green,text)

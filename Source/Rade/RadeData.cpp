@@ -9,6 +9,15 @@
 
 
 //  Online Message Data Constructor
+FRadeOnineMessageData::FRadeOnineMessageData()
+{
+	MessageTime = FDateTime::Now();
+	TheMessage  = "Undefined";
+	MessageOwner = "Undefined";
+	MessageColor = FColor::Magenta;
+}
+
+
 FRadeOnineMessageData::FRadeOnineMessageData(FString NewMessage, ARadePlayer* ThePlayer)
 {
 	MessageTime = FDateTime::Now();
@@ -16,11 +25,21 @@ FRadeOnineMessageData::FRadeOnineMessageData(FString NewMessage, ARadePlayer* Th
 	if (ThePlayer) {
 		MessageOwner = ThePlayer->CharacterName;
 		MessageColor = ThePlayer->CharacterColor;
+	} else {
+		MessageOwner = "Undefined";
+		MessageColor = FColor::Magenta;
 	}
-
 }
 
 // Item Data Constructor
+FItemData::FItemData()
+{
+	ItemName  = "Undefined";
+	ItemIcon  = NULL;
+	ItemCount = 0;
+	Weight    = 0;
+}
+
 FItemData::FItemData(TSubclassOf<AItem> Item, FString newItemName, UTexture2D* newItemIcon, float newWeight , int32 newItemCount)
 {
 	// Set Item Data

@@ -24,6 +24,7 @@ public:
 	virtual void Tick(float DeltaTime)override;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	//						 Components and Important References
 
 	// Rade Player Controller
@@ -79,7 +80,6 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//								Inventory and Item Control
-
 
 	// Currently Selected Pickup Actor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade Player")
@@ -167,6 +167,7 @@ public:
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	//						Jetpack	Props
 
 	// Is jetpack enabled ?
@@ -191,7 +192,6 @@ public:
 
 	//			Network Chat And Properties
 
-
 	// Add Chat Message
 	UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable, Category = "Rade")
 		void AddChatMessage(const FString & TheMessage);
@@ -205,7 +205,6 @@ public:
 
 	//					Animation State
 
-
 	// Set Animation ID
 	virtual void Global_SetAnimID_Implementation(EAnimState AnimID)override;
 
@@ -217,8 +216,8 @@ public:
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//			Death and Revive
 
+	//			Death and Revive
 
 	// Called in BP when player died
 	UFUNCTION(BlueprintImplementableEvent, Category = "Rade")

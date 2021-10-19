@@ -41,8 +41,6 @@ public:
 		class UInventory* TheInventory;
 
 
-
-
 	// Called When Weapon Changed
    UFUNCTION()
 		virtual void CurrentWeaponUpdated();

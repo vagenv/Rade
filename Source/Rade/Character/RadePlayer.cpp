@@ -763,6 +763,10 @@ void ARadePlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DISABLE_REPLICATED_PROPERTY (ARadePlayer, FirstPersonCameraComponent);
+	DISABLE_REPLICATED_PROPERTY (ARadePlayer, ThirdPersonCameraBoom);
+	DISABLE_REPLICATED_PROPERTY (ARadePlayer, ThirdPersonCameraComponent);
+
 	DOREPLIFETIME(ARadePlayer, Mesh1P);
 	DOREPLIFETIME(ARadePlayer, bInventoryOpen);
 	DOREPLIFETIME(ARadePlayer, CurrentItemSelectIndex);
