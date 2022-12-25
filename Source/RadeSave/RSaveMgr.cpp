@@ -1,4 +1,4 @@
-// Copyright 2015-2022 Vagen Ayrapetyan
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RSaveMgr.h"
 #include "RSaveGame.h"

@@ -15,6 +15,5 @@ public class RadeOptions: ModuleRules
          "RHI",
          "RadeUtil"
       });
-
    }
 }
