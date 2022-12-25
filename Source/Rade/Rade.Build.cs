@@ -4,15 +4,17 @@ using UnrealBuildTool;
 
 public class Rade : ModuleRules
 {
-	public Rade(ReadOnlyTargetRules Target) : base(Target)
-	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		PublicDependencyModuleNames.AddRange (new string[] {
-			"Core",
-			"CoreUObject",
-			"Engine",
-			"InputCore",
-			"HeadMountedDisplay"
-		});
-	}
+   public Rade(ReadOnlyTargetRules Target) : base(Target)
+   {
+      PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+      PublicDependencyModuleNames.AddRange (new string[] {
+         "Core",
+         "CoreUObject",
+         "Engine",
+         "InputCore",
+         "RadeUtil",
+         "RadeSave",
+         "RadeCharacter"
+      });
+   }
 }
