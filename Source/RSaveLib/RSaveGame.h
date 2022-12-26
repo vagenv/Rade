@@ -6,7 +6,7 @@
 #include "RSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
-struct RADESAVE_API FRSaveData
+struct RSAVELIB_API FRSaveData
 {
    GENERATED_BODY()
 public:
@@ -17,12 +17,12 @@ public:
 
 // Save Game File
 UCLASS()
-class RADESAVE_API URSaveGame : public USaveGame
+class RSAVELIB_API URSaveGame : public USaveGame
 {
    GENERATED_BODY()
 public:
 
-   URSaveGame (const class FObjectInitializer& PCIP);
+   URSaveGame ();
 
    // --- Default Save Slot Info
 

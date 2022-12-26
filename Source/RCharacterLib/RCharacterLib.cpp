@@ -1,5 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RadeCharacter.h"
+#include "RCharacterLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RadeCharacter);
+IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RCharacterLib);

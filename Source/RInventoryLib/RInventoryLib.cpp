@@ -1,5 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RadeInventory.h"
+#include "RInventoryLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RadeInventory);
+IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RInventoryLib);

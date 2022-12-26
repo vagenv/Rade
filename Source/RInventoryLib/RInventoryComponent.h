@@ -13,10 +13,10 @@ class URInventoryComponent;
 
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable)
-class RADEINVENTORY_API URInventoryComponent : public UActorComponent
+class RINVENTORYLIB_API URInventoryComponent : public UActorComponent
 {
    GENERATED_BODY()
-public:   
+public:
 
    // Base events
    URInventoryComponent ();

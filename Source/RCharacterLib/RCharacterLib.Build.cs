@@ -2,18 +2,18 @@
 
 using UnrealBuildTool;
 
-public class RadeCharacter : ModuleRules
+public class RCharacterLib : ModuleRules
 {
-   public RadeCharacter(ReadOnlyTargetRules Target) : base(Target)
+   public RCharacterLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
          "Engine",
-         "RadeUtil",
-         "RadeSave",
-         "RadeInventory"
+         "RUtilLib",
+         "RSaveLib",
+         "RInventoryLib"
       });
    }
 }

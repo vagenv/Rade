@@ -4,7 +4,7 @@ using UnrealBuildTool;
 
 public class Rade : ModuleRules
 {
-   public Rade(ReadOnlyTargetRules Target) : base(Target)
+   public Rade (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
@@ -12,9 +12,9 @@ public class Rade : ModuleRules
          "CoreUObject",
          "Engine",
          "InputCore",
-         "RadeUtil",
-         "RadeSave",
-         "RadeCharacter"
+         "RUtilLib",
+         "RSaveLib",
+         "RCharacterLib"
       });
    }
 }

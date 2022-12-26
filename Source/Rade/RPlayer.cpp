@@ -1,23 +1,24 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RPlayer.h"
+
+#include "RUtilLib/RLog.h"
+#include "RInventoryLib/RInventoryComponent.h"
+#include "RSaveLib/RSaveMgr.h"
+#include "RCharacterLib/RAnimInstance.h"
+
 #include "Engine.h"
-//#include "Net/UnrealNetwork.h"
+
 #include "RJetpackComponent.h"
 
-#include "RadeUtil/RLog.h"
-#include "RadeInventory/RInventoryComponent.h"
-#include "RadeSave/RSaveMgr.h"
 
-#include "RadeCharacter/RAnimInstance.h"
-
+//#include "Net/UnrealNetwork.h"
 
 //-----------------------------------------------------------------------------
 //             Core
 //-----------------------------------------------------------------------------
 
-ARPlayer::ARPlayer(const class FObjectInitializer& PCIP)
-   : Super(PCIP)
+ARPlayer::ARPlayer()
 {
 
    // Set size for collision capsule
@@ -25,24 +26,24 @@ ARPlayer::ARPlayer(const class FObjectInitializer& PCIP)
 
    // --- Camera
    // Create a CameraComponent
-   FirstPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
+   FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
    FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent(), NAME_None);
    FirstPersonCameraComponent->SetRelativeLocation(FVector(0, 0, 64.f)); // Position the camera
 
    // Create a camera boom (pulls in towards the player if there is a collision)
-   ThirdPersonCameraBoom = PCIP.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraBoom"));
+   ThirdPersonCameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
    ThirdPersonCameraBoom->SetupAttachment(RootComponent, NAME_None);
    ThirdPersonCameraBoom->TargetArmLength = 150;
    ThirdPersonCameraBoom->SetRelativeLocation (FVector(0,50,100));
    ThirdPersonCameraBoom->bUsePawnControlRotation = true;
 
    // Create a follow camera
-   ThirdPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("PlayerCamera"));
+   ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
    ThirdPersonCameraComponent->SetupAttachment(ThirdPersonCameraBoom, USpringArmComponent::SocketName);
 
    // --- Mesh
    // Set First Person Mesh
-   Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("CharacterMesh1P"));
+   Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
    Mesh1P->SetOnlyOwnerSee(true);
    Mesh1P->SetupAttachment(FirstPersonCameraComponent, NAME_None);
    Mesh1P->SetRelativeLocation(FVector(0.f, 0.f, -150.f));
@@ -62,7 +63,7 @@ ARPlayer::ARPlayer(const class FObjectInitializer& PCIP)
    // --- Inventory
    if (Inventory) Inventory->bSaveLoadInventory = true;
 
-   Jetpack = PCIP.CreateDefaultSubobject<URJetpackComponent>(this, TEXT("Jetpack"));
+   Jetpack = CreateDefaultSubobject<URJetpackComponent>(TEXT("Jetpack"));
 
 
    MoveSpeed        = 1;
@@ -121,7 +122,7 @@ void ARPlayer::BeginPlay ()
 void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
-} 
+}
 
 void ARPlayer::Tick (float DeltaTime)
 {
@@ -162,7 +163,7 @@ void ARPlayer::OnSave ()
    if (!res) {
       rlog ("Set failed");
       return;
-   }  
+   }
 }
 
 void ARPlayer::OnLoad ()
@@ -204,15 +205,15 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* inputComponent)
    // Camera Input
    inputComponent->BindAxis   ("Turn",                     this, &ARPlayer::Input_AddControllerYawInput);
    inputComponent->BindAxis   ("LookUp",                   this, &ARPlayer::Input_AddControllerPitchInput);
-   inputComponent->BindAction ("ChangeCamera", IE_Pressed, this, &ARPlayer::Input_ChangeCamera);  
+   inputComponent->BindAction ("ChangeCamera", IE_Pressed, this, &ARPlayer::Input_ChangeCamera);
 
    // Action/Inventory Input
    inputComponent->BindAction ("Inventory", IE_Pressed, this, &ARPlayer::Input_ToggleInventory);
    inputComponent->BindAxis   ("MouseScroll",           this, &ARPlayer::Input_MouseScroll);
-   
+
    inputComponent->BindAction ("Action",    IE_Pressed, this, &ARPlayer::Input_Action);
    inputComponent->BindAction ("FAction",   IE_Pressed, this, &ARPlayer::Input_FAction);
-   
+
 
    // Weapon Input
    //inputComponent->BindAction("Fire",         IE_Pressed,  this, &ARPlayer::FireStart);
@@ -744,7 +745,7 @@ void ARPlayer::Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArche
 
 //-----------------------------------------------------------------------------
 //             Network Chat, Props and Replication
-//-----------------------------------------------------------------------------                         
+//-----------------------------------------------------------------------------
 
 /*
 bool ARPlayer::AddChatMessage_Validate(const FString & TheMessage)

@@ -3,17 +3,16 @@
 #include "RItemPickup.h"
 #include "RItem.h"
 #include "RInventoryComponent.h"
-#include "RadeUtil/RLog.h"
+#include "RUtilLib/RLog.h"
 
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
-ARItemPickup::ARItemPickup (const class FObjectInitializer& PCIP)
-   : Super(PCIP)
+ARItemPickup::ARItemPickup ()
 {
    // Set Root Component
-   RootComponent = PCIP.CreateDefaultSubobject<USceneComponent> (this, TEXT ("RootComponent"));
+   RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
    RootComponent->SetIsReplicated (true);
    SetRootComponent (RootComponent);
 
@@ -24,7 +23,7 @@ ARItemPickup::ARItemPickup (const class FObjectInitializer& PCIP)
    SkeletalMesh->BodyInstance.SetCollisionProfileName("BlockAll");
    SkeletalMesh->SetSimulatePhysics(true);
    SkeletalMesh->SetupAttachment (GetRootComponent ());
-   
+
    // Set Static Mesh Component
    Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
    Mesh->SetIsReplicated(true);
@@ -36,14 +35,14 @@ ARItemPickup::ARItemPickup (const class FObjectInitializer& PCIP)
    */
 
    // Set Trigger Component
-   TriggerSphere = PCIP.CreateDefaultSubobject<USphereComponent> (this, TEXT("TriggerSphere"));
+   TriggerSphere = CreateDefaultSubobject<USphereComponent> (TEXT("TriggerSphere"));
    TriggerSphere->InitSphereRadius (400);
    TriggerSphere->SetIsReplicated (true);
    TriggerSphere->BodyInstance.SetCollisionProfileName ("Pickup");
    TriggerSphere->SetupAttachment (GetRootComponent ());
 
 
-   Inventory = PCIP.CreateDefaultSubobject<URInventoryComponent>(this, TEXT("Inventory"));
+   Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
    Inventory->SetIsReplicated (true);
 
    bReplicates = true;
@@ -225,17 +224,17 @@ void ARItemPickup::ActivatePickupPhysics ()
 }
 
 // Player Entered The Pickup Area
-void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent, 
-                                   AActor* OtherActor, 
-                                   UPrimitiveComponent* OtherComp, 
-                                   int32 OtherBodyIndex, 
-                                   bool bFromSweep, 
+void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
+                                   AActor* OtherActor,
+                                   UPrimitiveComponent* OtherComp,
+                                   int32 OtherBodyIndex,
+                                   bool bFromSweep,
                                    const FHitResult & SweepResult)
 {
 
    // Null or itself
    if (OtherActor == nullptr || OtherActor == this) return;
-  
+
    // Does not have inventory
    URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
    if (PlayerInventory == nullptr) return;
@@ -266,7 +265,7 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
          if (GetLocalRole() >= ROLE_Authority)
             radePlayer->currentPickup = this;
       }
-      
+
    }
    */
 }
@@ -289,7 +288,7 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
 
    // BP Event that player Exited
    BP_PlayerLeft (OtherActor);
-      
+
    /*
 
    // Clean Pickup reference in player class

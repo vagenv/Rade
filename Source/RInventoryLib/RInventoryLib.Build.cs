@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class RadeInventory : ModuleRules
+public class RInventoryLib : ModuleRules
 {
-   public RadeInventory(ReadOnlyTargetRules Target) : base(Target)
+   public RInventoryLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
@@ -13,8 +13,8 @@ public class RadeInventory : ModuleRules
          "Engine",
          "Json",
          "JsonUtilities",
-         "RadeUtil",
-         "RadeSave"
+         "RUtilLib",
+         "RSaveLib"
       });
    }
 }

@@ -31,7 +31,7 @@ public:
 
 // Custom Game Instance
 UCLASS()
-class RADESESSIONMANAGER_API URGameInstance : public UGameInstance
+class RSESSIONMANAGERLIB_API URGameInstance : public UGameInstance
 {
    GENERATED_BODY()
 public:
@@ -119,28 +119,28 @@ public:
 
    /////               Delegate
 
-   // Delegate called when session created 
+   // Delegate called when session created
    FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
-   // Delegate called when session started 
+   // Delegate called when session started
    FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
 
    // Handles to registered delegates for creating a session
    FDelegateHandle OnCreateSessionCompleteDelegateHandle;
    FDelegateHandle OnStartSessionCompleteDelegateHandle;
 
-   
-   // Delegate for searching for sessions 
+
+   // Delegate for searching for sessions
    FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 
-   // Handle to registered delegate for searching a session 
+   // Handle to registered delegate for searching a session
    FDelegateHandle OnFindSessionsCompleteDelegateHandle;
 
    //   Variable Part for JOINING a Session
 
-   // Delegate after joining a session 
+   // Delegate after joining a session
    FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
 
-   // Handle to registered delegate for joining a session 
+   // Handle to registered delegate for joining a session
    FDelegateHandle OnJoinSessionCompleteDelegateHandle;
 
    //Variable Part for DESTROYING a Session
@@ -148,7 +148,7 @@ public:
    // Delegate for destroying a session
    FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
 
-   // Handle to registered delegate for destroying a session 
+   // Handle to registered delegate for destroying a session
    FDelegateHandle OnDestroySessionCompleteDelegateHandle;
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ public:
    */
    void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
 
-   
+
 
    //         Find Sessions
    /**
@@ -210,7 +210,7 @@ public:
    */
    void OnFindSessionsComplete(bool bWasSuccessful);
 
-   
+
 
 
    //            Join Session

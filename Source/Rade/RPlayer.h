@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "RadeCharacter/RCharacter.h"
+#include "RCharacterLib/RCharacter.h"
 #include "RPlayer.generated.h"
 
 // For general input event
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRadeInputEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInputEvent);
 
 // Directional input event
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRadeInputEventFloat, float, scrollValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInputEventFloat, float, scrollValue);
 
 
 class APlayerController;
@@ -44,7 +44,7 @@ public:
    //                         Core
    //--------------------------------------------------------------------------
 
-   ARPlayer(const class FObjectInitializer& PCIP);
+   ARPlayer();
 
    virtual void BeginPlay() override;
    virtual void EndPlay  (const EEndPlayReason::Type EndPlayReason) override;
@@ -74,11 +74,11 @@ public:
 
    // Rade Player Controller
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Player")
-      APlayerController* PlayerController;
+      TObjectPtr<APlayerController> PlayerController;
 
    // Rade Player Controller
    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Player")
-      URJetpackComponent* Jetpack;
+      TObjectPtr<URJetpackComponent> Jetpack;
 
    //--------------------------------------------------------------------------
    //            1st person Mesh and animation
@@ -86,24 +86,24 @@ public:
 
    // First Person Mesh Anim Instance
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade|Player")
-      URAnimInstance* ArmsAnimInstance;
+      TObjectPtr<URAnimInstance> ArmsAnimInstance;
 
    //  First Person Mesh
    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-      USkeletalMeshComponent* Mesh1P;
+      TObjectPtr<USkeletalMeshComponent> Mesh1P;
 
    //--------------------------------------------------------------------------
    //            1st person and 3rd person cameras
    //--------------------------------------------------------------------------
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      UCameraComponent* FirstPersonCameraComponent;
+      TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      USpringArmComponent* ThirdPersonCameraBoom;
+      TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      UCameraComponent* ThirdPersonCameraComponent;
+      TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;
 
    // Begin play Camera state
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
@@ -127,19 +127,19 @@ public:
    //--------------------------------------------------------------------------
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRadeInputEvent OnToggleInventory;
+      FRInputEvent OnToggleInventory;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRadeInputEvent OnUseInventory;
+      FRInputEvent OnUseInventory;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRadeInputEvent OnDropInventory;
+      FRInputEvent OnDropInventory;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRadeInputEventFloat OnScrollInventory;
+      FRInputEventFloat OnScrollInventory;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRadeInputEvent OnToggleOption;
+      FRInputEvent OnToggleOption;
 
    //--------------------------------------------------------------------------
    //                      Weapon Control and Events
@@ -190,7 +190,7 @@ public:
  // Character Name
    UPROPERTY(ReplicatedUsing = OnRep_CharacterStatsUpdated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       FString CharacterName;
-    
+
    // Character Color
    UPROPERTY(ReplicatedUsing = OnRep_CharacterStatsUpdated , EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       FLinearColor CharacterColor = FLinearColor::White;

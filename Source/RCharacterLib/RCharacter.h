@@ -9,7 +9,7 @@ class URAnimInstance;
 class URInventoryComponent;
 
 UCLASS(Blueprintable)
-class RADECHARACTER_API ARCharacter : public ACharacter
+class RCHARACTERLIB_API ARCharacter : public ACharacter
 {
    GENERATED_BODY()
 
@@ -19,7 +19,7 @@ public:
    //                     Core
    //--------------------------------------------------------------------------
 
-   ARCharacter (const class FObjectInitializer& PCIP);
+   ARCharacter ();
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
 
@@ -29,11 +29,11 @@ public:
 
    // Third Person Anim Instance
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      URAnimInstance * BodyAnimInstance;
+      TObjectPtr<URAnimInstance> BodyAnimInstance;
 
    //  Inventory Component
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      URInventoryComponent* Inventory;
+      TObjectPtr<URInventoryComponent> Inventory;
 
 
    /*

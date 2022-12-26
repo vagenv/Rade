@@ -7,8 +7,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
 
+class URSaveGame;
+
 UCLASS()
-class RADESAVE_API URSaveMgr : public UActorComponent
+class RSAVELIB_API URSaveMgr : public UActorComponent
 {
    GENERATED_BODY()
 public:
@@ -16,14 +18,14 @@ public:
    URSaveMgr();
 
    UPROPERTY();
-      class URSaveGame* SaveFile;
+      TObjectPtr<URSaveGame> SaveFile;
 
    // -- Sync calls
    static bool SaveSync (const UWorld *World);
           bool SaveSync ();
    static bool LoadSync (const UWorld *World);
           bool LoadSync ();
- 
+
    // -- Async calls
    static bool SaveASync (const UWorld *World);
           bool SaveASync ();
@@ -42,15 +44,15 @@ public:
 
 
    // -- Data management
-   static bool Get (const UWorld *World, const FString &key,       TArray<uint8> &data);     
+   static bool Get (const UWorld *World, const FString &key,       TArray<uint8> &data);
           bool Get (                     const FString &key,       TArray<uint8> &data);
-   static bool Set (const UWorld *World, const FString &key, const TArray<uint8> &data);   
+   static bool Set (const UWorld *World, const FString &key, const TArray<uint8> &data);
           bool Set (                     const FString &key, const TArray<uint8> &data);
 
    // Check if save file is valid, if not use default
    void CheckSaveFile ();
 
-   static URSaveMgr * GetInstance (const UWorld *World); 
+   static URSaveMgr* GetInstance (const UWorld *World);
 
 protected:
 

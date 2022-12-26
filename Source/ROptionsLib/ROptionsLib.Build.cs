@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class RadeOptions: ModuleRules
+public class ROptionsLib: ModuleRules
 {
-   public RadeOptions(ReadOnlyTargetRules Target) : base(Target)
+   public ROptionsLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
@@ -13,7 +13,7 @@ public class RadeOptions: ModuleRules
          "Engine",
          "InputCore",
          "RHI",
-         "RadeUtil"
+         "RUtilLib"
       });
    }
 }

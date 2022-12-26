@@ -12,7 +12,7 @@ class URItem;
 
 // Used for UI
 USTRUCT(BlueprintType)
-struct RADEINVENTORY_API FRItemDescription
+struct RINVENTORYLIB_API FRItemDescription
 {
 public:
    GENERATED_BODY()
@@ -49,7 +49,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct RADEINVENTORY_API FRItemProperty
+struct RINVENTORYLIB_API FRItemProperty
 {
 public:
    GENERATED_BODY()
@@ -66,7 +66,7 @@ public:
 
 // Contains raw data
 USTRUCT(BlueprintType)
-struct RADEINVENTORY_API FRItemData
+struct RINVENTORYLIB_API FRItemData
 {
 public:
    GENERATED_BODY()

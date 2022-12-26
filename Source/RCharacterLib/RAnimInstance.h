@@ -10,7 +10,7 @@
 //                     Custom Anim Type
 
 // Weapon Anim Archetype Enum
-UENUM(BlueprintType)   
+UENUM(BlueprintType)
 enum class ERAnimArchetype : uint8
 {
    EmptyHand        UMETA(DisplayName = "Empty Hands"),
@@ -41,13 +41,13 @@ enum class ERAnimState : uint8
 
 
 UCLASS()
-class RADECHARACTER_API URAnimInstance : public UAnimInstance
+class RCHARACTERLIB_API URAnimInstance : public UAnimInstance
 {
    GENERATED_BODY()
 
 public:
 
-   URAnimInstance(const class FObjectInitializer& PCIP);
+   URAnimInstance();
 
    void BeginPlay();
 
@@ -67,10 +67,10 @@ public:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade" )
       ERAnimState PlayerCurrentAnimState;
 
-   
-   // Reference to the player
-   UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      class ARCharacter* TheCharacter;
+
+   // // Reference to the player
+   // UPROPERTY(EditAnywhere, BlueprintReadOnly)
+   //    class ARCharacter* TheCharacter;
 
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

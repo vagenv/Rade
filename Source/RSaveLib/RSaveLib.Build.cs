@@ -2,15 +2,16 @@
 
 using UnrealBuildTool;
 
-public class RadeSave: ModuleRules
+public class RSaveLib: ModuleRules
 {
-   public RadeSave(ReadOnlyTargetRules Target) : base(Target)
+   public RSaveLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
-         "CoreUObject", "Engine",
-         "RadeUtil"
+         "CoreUObject",
+         "Engine",
+         "RUtilLib"
       });
    }
 }

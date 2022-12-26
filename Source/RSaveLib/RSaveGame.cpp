@@ -2,8 +2,7 @@
 
 #include "RSaveGame.h"
 
-URSaveGame::URSaveGame(const class FObjectInitializer& PCIP)
-   : Super(PCIP)
+URSaveGame::URSaveGame()
 {
    SaveSlotName = TEXT("RadeSaveSlot");
    UserIndex    = 0;

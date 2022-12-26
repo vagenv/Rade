@@ -15,13 +15,13 @@ class URInventoryComponent;
 
 // General pickup Class for Any Child of class "Item"
 UCLASS(Blueprintable)
-class RADEINVENTORY_API ARItemPickup : public AActor
+class RINVENTORYLIB_API ARItemPickup : public AActor
 {
    GENERATED_BODY()
 
 public:
 
-   ARItemPickup (const class FObjectInitializer& PCIP);
+   ARItemPickup ();
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
 
@@ -31,7 +31,7 @@ public:
 
    /////////////////////////////////////////////////////////////////////////////
 
-   // Trigger Sphere 
+   // Trigger Sphere
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       USphereComponent* TriggerSphere;
 
@@ -62,7 +62,7 @@ public:
 
    // Auto Pickup
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-      bool bAutoDestroy;  
+      bool bAutoDestroy;
 
 
    /////////////////////////////////////////////////////////////////////////////

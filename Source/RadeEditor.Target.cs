@@ -10,12 +10,12 @@ public class RadeEditorTarget : TargetRules
       Type = TargetType.Editor;
       DefaultBuildSettings = BuildSettingsVersion.V2;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
-      ExtraModuleNames.Add ("RadeUtil");
-      ExtraModuleNames.Add ("RadeSave");
-      ExtraModuleNames.Add ("RadeOptions");
-      ExtraModuleNames.Add ("RadeInventory");
-      ExtraModuleNames.Add ("RadeSessionManager");
-      ExtraModuleNames.Add ("RadeCharacter");
+      ExtraModuleNames.Add ("RUtilLib");
+      ExtraModuleNames.Add ("RSaveLib");
+      ExtraModuleNames.Add ("ROptionsLib");
+      ExtraModuleNames.Add ("RInventoryLib");
+      ExtraModuleNames.Add ("RSessionManagerLib");
+      ExtraModuleNames.Add ("RCharacterLib");
       ExtraModuleNames.Add ("Rade");
    }
 }

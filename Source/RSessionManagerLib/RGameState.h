@@ -39,10 +39,10 @@ public:
 
 // Custom Game State
 UCLASS()
-class RADESESSIONMANAGER_API ARGameState : public AGameState
+class RSESSIONMANAGERLIB_API ARGameState : public AGameState
 {
    GENERATED_BODY()
-   
+
 public:
 
    ARGameState();

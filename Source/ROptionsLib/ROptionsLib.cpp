@@ -1,5 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RadeOptions.h"
+#include "ROptionsLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RadeOptions);
+IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, ROptionsLib);

@@ -5,7 +5,7 @@
 #include "GameFramework/Character.h"
 #include "TimerManager.h"
 
-URJetpackComponent::URJetpackComponent (const class FObjectInitializer& PCIP)
+URJetpackComponent::URJetpackComponent ()
 {
    CurrentChargePercent = 50;
    MinUseablePercent    = 40;

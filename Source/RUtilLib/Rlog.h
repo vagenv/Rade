@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-RADEUTIL_API DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
+RUTILLIB_API DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -12,15 +12,14 @@
 
 //            Base
 
-URAnimInstance::URAnimInstance(const class FObjectInitializer& PCIP)
-   : Super(PCIP)
+URAnimInstance::URAnimInstance()
 {
 
 }
 
 void URAnimInstance::BeginPlay()
 {
- 
+
    //if (!TheCharacter) ResetRadeCharacterRef();
    // Set default state
    PlayerCurrentAnimState = ERAnimState::Idle_Run;
@@ -31,8 +30,8 @@ void URAnimInstance::BeginPlay()
 
 void URAnimInstance::ResetRadeCharacterRef()
 {
-   if (TryGetPawnOwner() && Cast<ARCharacter>(TryGetPawnOwner()) && TheCharacter != Cast<ARCharacter>(TryGetPawnOwner()))
-      TheCharacter = Cast<ARCharacter>(TryGetPawnOwner());
+   // if (TryGetPawnOwner() && Cast<ARCharacter>(TryGetPawnOwner()) && TheCharacter != Cast<ARCharacter>(TryGetPawnOwner()))
+   //    TheCharacter = Cast<ARCharacter>(TryGetPawnOwner());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,14 +41,14 @@ void URAnimInstance::ResetRadeCharacterRef()
 // Set Anim State Value
 void URAnimInstance::PlayLocalAnim(ERAnimState AnimID)
 {
-   if (!TheCharacter)ResetRadeCharacterRef();
+   // if (!TheCharacter)ResetRadeCharacterRef();
    PlayerCurrentAnimState = AnimID;
 }
 
 // Receive animation state value
 void URAnimInstance::RecieveGlobalAnimID(ERAnimState currentAnimCheck)
 {
-   if (!TheCharacter)ResetRadeCharacterRef();
+   // if (!TheCharacter)ResetRadeCharacterRef();
 
    BP_AnimStarted(currentAnimCheck);
    PlayLocalAnim(currentAnimCheck);
@@ -74,7 +73,7 @@ bool URAnimInstance::CanFireInAir()
    return false;
 }
 
-// Called in blueprint when Jump_Start -> Jump_Idle 
+// Called in blueprint when Jump_Start -> Jump_Idle
 void URAnimInstance::InAirIdleStateEntered()
 {
    /*
@@ -96,7 +95,7 @@ bool URAnimInstance::IsInAir()
       || PlayerCurrentAnimState == ERAnimState::Jumploop
       || PlayerCurrentAnimState == ERAnimState::JumpStart)
       return true;
-   
+
    return false;
 }
 
@@ -121,7 +120,7 @@ bool URAnimInstance::IsAnimArchetype(ERAnimArchetype AnimArchtypeCheck)
 void URAnimInstance::StartSwordWeaponTrace()
 {
 
-   if (!TheCharacter) ResetRadeCharacterRef();
+   // if (!TheCharacter) ResetRadeCharacterRef();
 
    /*
    if (   TheCharacter

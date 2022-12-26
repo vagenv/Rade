@@ -10,7 +10,7 @@ class URInventoryComponent;
 class ARItemPickup;
 
 UCLASS(Abstract, DefaultToInstanced, BlueprintType, Blueprintable, EditInlineNew, NotPlaceable)
-class RADEINVENTORY_API URItem : public UObject
+class RINVENTORYLIB_API URItem : public UObject
 {
 public:
    GENERATED_BODY()

@@ -6,14 +6,14 @@
 
 // Manager for Audio/Video/Input
 UCLASS()
-class RADEOPTIONS_API UROptionManager : public UBlueprintFunctionLibrary
+class ROPTIONSLIB_API UROptionManager : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
 public:
 
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   //               Input Settings 
+   //               Input Settings
 
    // Get All Action Inputs
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
@@ -29,7 +29,7 @@ public:
 
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   //               Audio Settings   
+   //               Audio Settings
 
    // Get Global Sound Volume
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
@@ -42,7 +42,7 @@ public:
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //                Graphics Quality 
+    //                Graphics Quality
 
    // Get Video Quality Settings
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
@@ -65,7 +65,7 @@ public:
 
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   //               Screen  Resolution 
+   //               Screen  Resolution
 
 
    // Update Screen Resolution

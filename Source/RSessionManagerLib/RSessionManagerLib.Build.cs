@@ -2,21 +2,21 @@
 
 using UnrealBuildTool;
 
-public class RadeSessionManager : ModuleRules
+public class RSessionManagerLib : ModuleRules
 {
-   public RadeSessionManager (ReadOnlyTargetRules Target) : base(Target)
+   public RSessionManagerLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-      PublicDependencyModuleNames.AddRange(new string[] {
+      PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
          "Engine",
          "HTTP",
          "OnlineSubsystem",
          "OnlineSubsystemUtils",
-         "RadeUtil"
+         "RUtilLib"
       });
-      PrivateDependencyModuleNames.Add("OnlineSubsystem");
-      DynamicallyLoadedModuleNames.Add("OnlineSubsystemNull");
+      PrivateDependencyModuleNames.Add ("OnlineSubsystem");
+      DynamicallyLoadedModuleNames.Add ("OnlineSubsystemNull");
    }
 }

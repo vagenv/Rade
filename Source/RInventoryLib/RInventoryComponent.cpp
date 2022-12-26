@@ -4,8 +4,8 @@
 #include "RItemTypes.h"
 #include "RItem.h"
 #include "RItemPickup.h"
-#include "RadeUtil/RLog.h"
-#include "RadeSave/RSaveMgr.h"
+#include "RUtilLib/RLog.h"
+#include "RSaveLib/RSaveMgr.h"
 #include "Net/UnrealNetwork.h"
 
 // ----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ bool URInventoryComponent::AddItem (FRItemData ItemData)
 
    //rlog ("Add item");
    if (Items.Num () >= Capacity || !ItemData.ItemArch) return nullptr;
-   
+
    // Check if item is stackable
    if (ItemData.Description.Count < ItemData.Description.MaxCount) {
       for (FRItemData &itData : Items) {
@@ -150,7 +150,7 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
    if (!Items.IsValidIndex (ItemIdx)) return false;
 
    if (Items[ItemIdx].Description.Count > Count) {
-      Items[ItemIdx].Description.Count -= Count;      
+      Items[ItemIdx].Description.Count -= Count;
    } else {
       Items.RemoveAt (ItemIdx);
    }
@@ -167,7 +167,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
 {
    if (!FromInventory) return false;
    if (!ToInventory)   return false;
- 
+
    //rlog ("Transfer item");
    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return false;
 
@@ -296,7 +296,7 @@ void URInventoryComponent::TransferItem_Server_Implementation (URInventoryCompon
    if (!FromInventory) return;
    if (!ToInventory)   return;
    if (!bIsServer)     return;
- 
+
    //rlog ("Transfer item");
    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return;
 
@@ -438,13 +438,13 @@ void URInventoryComponent::ThrowOutAllItems()
             else newPickup = World->SpawnActor<AItemPickup>(AItemPickup::StaticClass(), spawnLoc, rot);
 
             if (newPickup) {
-               newPickup->SetReplicates(true); 
+               newPickup->SetReplicates(true);
                if (newItem) {
                   //printr("Death Item "+newItem->ItemName);
                   newItem->BP_ItemDroped(newPickup);
                   newItem->ItemCount = Items[ItemIndex].ItemCount;
                   newPickup->Item = newItem->GetClass();
-               
+
                   if      (newItem->PickupMesh)     newPickup->Mesh->SetStaticMesh(newItem->PickupMesh);
                   else if (newItem->PickupSkelMesh) newPickup->SkeletalMesh->SetSkeletalMesh(newItem->PickupSkelMesh);
                }

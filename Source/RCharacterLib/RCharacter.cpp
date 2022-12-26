@@ -4,15 +4,14 @@
 //#include "RadeAnimInstance.h"
 //#include "../Weapon/RadeWeapon.h"
 #include "Net/UnrealNetwork.h"
-#include "RadeInventory/RInventoryComponent.h"
-#include "RadeUtil/RLog.h"
+#include "RInventoryLib/RInventoryComponent.h"
+#include "RUtilLib/RLog.h"
 
 //-----------------------------------------------------------------------------
 //                  Base Character
 //-----------------------------------------------------------------------------
 
-ARCharacter::ARCharacter(const class FObjectInitializer& PCIP)
-   : Super(PCIP)
+ARCharacter::ARCharacter()
 {
    // Default fall damage Curve
    FallDamageMinVelocity = 1000;
@@ -21,7 +20,7 @@ ARCharacter::ARCharacter(const class FObjectInitializer& PCIP)
    FallDamageCurveData->AddKey (1500 ,40);
    FallDamageCurveData->AddKey (2000, 100);
 
-   Inventory = PCIP.CreateDefaultSubobject<URInventoryComponent>(this, TEXT("Inventory"));
+   Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
    //Inventory->SetIsReplicated(true);
 
    HealthMax    = 100;

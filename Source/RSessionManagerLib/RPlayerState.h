@@ -7,7 +7,7 @@
 
 // Custom Player State Infor
 UCLASS()
-class RADESESSIONMANAGER_API ARPlayerState : public APlayerState
+class RSESSIONMANAGERLIB_API ARPlayerState : public APlayerState
 {
    GENERATED_BODY()
 
@@ -21,7 +21,7 @@ public:
    // Number of Timer Player Killed
    UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "")
       int32 nKills = 0;
-   
+
    // Player Color
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "")
       FLinearColor PlayerColor = FLinearColor::White;

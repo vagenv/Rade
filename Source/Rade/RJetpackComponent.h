@@ -15,7 +15,7 @@ public:
    //--------------------------------------------------------------------------
 
    // Base events
-   URJetpackComponent (const class FObjectInitializer& PCIP);
+   URJetpackComponent ();
    virtual void BeginPlay () override;
 
    // Owners Movement Component

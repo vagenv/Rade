@@ -1,5 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RadeSave.h"
+#include "RSaveLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RadeSave);
+IMPLEMENT_GAME_MODULE (FDefaultGameModuleImpl, RSaveLib);
