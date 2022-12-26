@@ -3,3 +3,4 @@
 #include "RInventoryLib.h"
 
 IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RInventoryLib);
+

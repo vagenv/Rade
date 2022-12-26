@@ -9,7 +9,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-//               Input Settings 
+//               Input Settings
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +55,7 @@ void UROptionManager::SetActionInput(const FName& ActionName, const FText& Actio
          settings->AddActionMapping(newAction);
       }
    }
-   
+
    settings->SaveKeyMappings();
    for (TObjectIterator<UPlayerInput> It; It; ++It) {
       It->ForceRebuildingKeyMaps(true);
@@ -162,7 +162,7 @@ bool UROptionManager::ChangeScreenResolution(const int32 Width, const int32 Heig
 {
    UGameUserSettings* Settings = GetGameUserSettings();
    if (!Settings) return false;
-   
+
    EWindowMode::Type WindowMode = Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed;
    Settings->RequestResolutionChange(Width, Height, WindowMode, false);
    return true;
@@ -182,7 +182,7 @@ bool UROptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions
       }
       return true;
    }
-   return false; 
+   return false;
 }
 
 
@@ -203,3 +203,4 @@ bool UROptionManager::GetScreenResolutions(int32 & Width, int32 & Height)
 UGameUserSettings* UROptionManager::GetGameUserSettings() {
    return (GEngine != nullptr ? GEngine->GameUserSettings : nullptr);
 }
+

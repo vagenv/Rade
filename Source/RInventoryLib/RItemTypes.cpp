@@ -4,12 +4,10 @@
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
-
 FRItemProperty::FRItemProperty (const FString &Key_, const FString &Value_)
    : Key(Key_), Value(Value_)
 {
 }
-
 
 FString FRItemData::ToJSON ()
 {
@@ -152,3 +150,4 @@ void FItemData::ToRAW ()
    Set ("Description.Tooltip",  Description.Tooltip);
 }
 */
+

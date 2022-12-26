@@ -1,10 +1,10 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 #pragma once
 
 #include "Engine/GameInstance.h"
 #include "Online.h"
 #include "RGameInstance.generated.h"
-
 
 class FOnlineSessionSearch;
 
@@ -250,3 +250,4 @@ public:
    */
    virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 };
+

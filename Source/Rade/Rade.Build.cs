@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 using UnrealBuildTool;
 
@@ -18,3 +18,4 @@ public class Rade : ModuleRules
       });
    }
 }
+

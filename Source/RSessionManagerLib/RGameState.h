@@ -63,3 +63,4 @@ public:
    //Add Chat Message, Should Be called on Server
    void AddChatMessage (FString Message_, FString owner_, FColor color_);
 };
+

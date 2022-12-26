@@ -4,10 +4,10 @@
 #include "RSaveGame.h"
 
 #include "RUtilLib/RLog.h"
+
 // ----------------------------------------------------------------------------
 //                   Static calls
 // ----------------------------------------------------------------------------
-
 
 URSaveMgr* URSaveMgr::GetInstance (const UWorld *World)
 {
@@ -221,8 +221,6 @@ bool URSaveMgr::Get (const FString &key, TArray<uint8> &data)
    return true;
 }
 
-
-
 /*
 // Read from file
 
@@ -249,3 +247,4 @@ bool URSaveMgr::Get (const FString &key, TArray<uint8> &data)
 
    BinaryArray.Empty();
 */
+

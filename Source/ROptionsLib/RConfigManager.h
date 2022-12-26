@@ -79,3 +79,4 @@ public:
       static void LoadConfig_Color(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FColor& SettingValue);
 
 };
+

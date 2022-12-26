@@ -1,4 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
+
 #pragma once
 
 #include "RItemTypes.h"
@@ -182,3 +183,4 @@ protected:
    UFUNCTION()
       void OnLoad ();
 };
+

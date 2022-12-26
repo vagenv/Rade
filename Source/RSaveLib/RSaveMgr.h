@@ -68,3 +68,4 @@ protected:
    // Called after read of save file finished
    void LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class USaveGame *SaveGame);
 };
+

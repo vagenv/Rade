@@ -810,3 +810,4 @@ void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifet
    //DOREPLIFETIME(ARPlayer, CurrentCameraState);
    //DOREPLIFETIME(ARPlayer, currentPickup);
 }
+

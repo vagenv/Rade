@@ -322,3 +322,4 @@ void ARItemPickup::OnInventoryUpdate ()
       Destroy ();
    }
 }
+

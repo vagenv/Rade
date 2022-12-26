@@ -1,3 +1,5 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #pragma once
 
 #include "Engine.h"
@@ -36,3 +38,4 @@ static ObjClass* LoadObjFromPath(const FName& Path)
    return Cast<ObjClass>(StaticLoadObject(ObjClass::StaticClass(), NULL, *Path.ToString()));
 }
 */
+

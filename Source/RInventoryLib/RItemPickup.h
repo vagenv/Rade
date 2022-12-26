@@ -115,3 +115,4 @@ protected:
       void OnInventoryUpdate ();
 
 };
+

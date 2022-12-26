@@ -19,3 +19,4 @@ void ARPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Out
    DOREPLIFETIME(ARPlayerState, nKills);
    DOREPLIFETIME(ARPlayerState, PlayerColor);
 }
+

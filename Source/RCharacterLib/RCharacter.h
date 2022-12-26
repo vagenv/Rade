@@ -134,10 +134,6 @@ public:
       void Revive_Client ();
    virtual void Revive_Client_Implementation ();
 
-
-
-
-
    /*
 
    // Can Character Revive after death
@@ -163,11 +159,6 @@ public:
    UFUNCTION(NetMulticast, Reliable)
       void GlobalRevive();
    virtual void GlobalRevive_Implementation();
-
-
-
-
-
 
 public:
 
@@ -205,3 +196,4 @@ public:
    virtual void Global_SetAnimArchtype_Implementation(ERAnimArchetype newAnimArchetype);
    */
 };
+

@@ -151,3 +151,4 @@ void URAnimInstance::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
    DOREPLIFETIME(URAnimInstance, PlayerCurrentAnimState);
    */
 }
+

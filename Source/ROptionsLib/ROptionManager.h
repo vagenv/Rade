@@ -92,3 +92,4 @@ private:
    // Try to get the Game User Settings
    static UGameUserSettings* GetGameUserSettings();
 };
+

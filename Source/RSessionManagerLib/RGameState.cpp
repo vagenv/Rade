@@ -49,3 +49,4 @@ void ARGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
    DOREPLIFETIME(ARGameState, Messages);
 }
+

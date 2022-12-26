@@ -7,3 +7,4 @@ URSaveGame::URSaveGame()
    SaveSlotName = TEXT("RadeSaveSlot");
    UserIndex    = 0;
 }
+

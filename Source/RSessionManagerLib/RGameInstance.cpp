@@ -120,7 +120,7 @@ void URGameInstance::JoinSelectedOnlineGame(FRAvaiableSessionsData SessionData)
    JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, SessionData.SessionData);
 }
 
-// Destroy Session 
+// Destroy Session
 void URGameInstance::DestroySessionAndLeaveGame()
 {
    IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
@@ -170,7 +170,7 @@ bool URGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName Se
          */
 
          SessionSettings = MakeShareable(new FOnlineSessionSettings());
-      
+
          SessionSettings->bIsLANMatch = bIsLAN;
          SessionSettings->bUsesPresence = bIsPresence;
          SessionSettings->NumPublicConnections = MaxNumPlayers;
@@ -190,7 +190,7 @@ bool URGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName Se
 
          // Our delegate should get called when this is complete (doesn't need to be successful!)
          return Sessions->CreateSession(*UserId, SessionName, *SessionSettings);
-         
+
       }
    } else {
       //GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("No OnlineSubsytem found!"));
@@ -253,7 +253,7 @@ void URGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSucce
 
    // If the start was successful, we can open a NewMap if we want. Make sure to use "listen" as a parameter!
    if (bWasSuccessful) {
-      
+
       //BattleArena
       UGameplayStatics::OpenLevel(GetWorld(), *TheMapName, true, "listen");
    }

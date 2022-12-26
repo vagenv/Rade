@@ -125,3 +125,4 @@ private:
    //UPROPERTY()
    //   TMap<FString, FString> RawData;
 };
+

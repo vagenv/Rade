@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 using UnrealBuildTool;
 
@@ -15,3 +15,4 @@ public class RSaveLib: ModuleRules
       });
    }
 }
+
