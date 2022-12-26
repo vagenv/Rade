@@ -71,7 +71,7 @@ bool URInventoryComponent::AddItem (FRItemData ItemData)
 {
    if (!bIsServer) return false;
 
-   //rlog ("Add item");
+   //R_LOG ("Add item");
    if (Items.Num () >= Capacity || !ItemData.ItemArch) return nullptr;
 
    // Check if item is stackable
@@ -111,7 +111,7 @@ bool URInventoryComponent::AddItem (FRItemData ItemData)
 bool URInventoryComponent::AddItem_Arch (TSubclassOf<URItem> Item)
 {
    if (!bIsServer) return false;
-   //rlog ("Add item arch");
+   //R_LOG ("Add item arch");
    if (Items.Num () >= Capacity || !Item) return false;
 
    URItem *ItemBP = Item->GetDefaultObject<URItem>();
@@ -127,7 +127,7 @@ bool URInventoryComponent::AddItem_Arch (TSubclassOf<URItem> Item)
 bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
 {
    if (!bIsServer) return false;
-   //rlog ("Add item pickup");
+   //R_LOG ("Add item pickup");
    if (!Pickup || !Pickup->Inventory) return false;
 
    TArray<FRItemData> ItemsLeft;
@@ -146,7 +146,7 @@ bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
 bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) return false;
-   //rlog ("rm item");
+   //R_LOG ("rm item");
    if (!Items.IsValidIndex (ItemIdx)) return false;
 
    if (Items[ItemIdx].Description.Count > Count) {
@@ -168,7 +168,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
    if (!FromInventory) return false;
    if (!ToInventory)   return false;
 
-   //rlog ("Transfer item");
+   //R_LOG ("Transfer item");
    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return false;
 
    FRItemData ItemData = FromInventory->Items[FromItemIdx];
@@ -190,7 +190,7 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
    if (!bIsServer) return false;
 
-   //rlog ("use item");
+   //R_LOG ("use item");
    // valid idx
    if (!Items.IsValidIndex (ItemIdx)) return false;
    // valid archetype
@@ -207,7 +207,7 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) return nullptr;
 
-   //rlog ("drop item");
+   //R_LOG ("drop item");
    // valid idx
    if (!Items.IsValidIndex (ItemIdx)) return false;
    // valid archetype
@@ -269,19 +269,19 @@ void URInventoryComponent::DropItem_Server_Implementation (int32 ItemIdx, int32 
 
 void URInventoryComponent::RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count)
 {
-   //rlog ("action");
+   //R_LOG ("action");
    RemoveItem (ItemIdx, Count);
 }
 
 void URInventoryComponent::AddItem_Server_Implementation (FRItemData ItemData)
 {
-   //rlog ("action");
+   //R_LOG ("action");
    AddItem (ItemData);
 }
 
 void URInventoryComponent::AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup)
 {
-   //rlog ("action");
+   //R_LOG ("action");
    AddItem_Pickup (Pickup);
 }
 
@@ -297,7 +297,7 @@ void URInventoryComponent::TransferItem_Server_Implementation (URInventoryCompon
    if (!ToInventory)   return;
    if (!bIsServer)     return;
 
-   //rlog ("Transfer item");
+   //R_LOG ("Transfer item");
    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return;
 
    FItemData ItemData = FromInventory->Items[FromItemIdx];
@@ -369,7 +369,7 @@ void URInventoryComponent::OnSave ()
    // Set
    bool res = URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary);
 
-   if (!res) rlog ("Failed to save player inventory");
+   if (!res) R_LOG ("Failed to save player inventory");
 }
 
 void URInventoryComponent::OnLoad ()
@@ -381,7 +381,7 @@ void URInventoryComponent::OnLoad ()
    TArray<uint8> BinaryArray;
    bool res = URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray);
    if (!res) {
-      rlog ("Failed to load player inventory");
+      R_LOG ("Failed to load player inventory");
       return;
    }
 

@@ -3,31 +3,35 @@
 #pragma once
 
 #include "Engine.h"
-
+#include "RMacro.h"
 
 RUTILLIB_API DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
 
-///////////////////////////////////////////////////////////////////////////////
-
+//=============================================================================
 //                        Custom Print Methods
+//=============================================================================
 
-static FString DxLog_GetAuthStr (UObject* WorldContext) {
-   if (!ensure (WorldContext)) return "";
-   UWorld* World = WorldContext->GetWorld ();
-   if (!ensure (World)) return "";
-   return World->IsNetMode (NM_Client) ? "[CLIENT] " : "[SERVER] ";
-}
+void RUTILLIB_API __rlog_raw   (const FString &msg);
+void RUTILLIB_API __rprint_raw (const FString &msg);
 
-#define rlog(text) UE_LOG (RadeLog, \
-                           Log, \
-                           TEXT("%s"), \
-                           *(DxLog_GetAuthStr (this) + __FUNCTION__ + FString (": ") + text));
-#define rprint(text) if (GEngine) GEngine->AddOnScreenDebugMessage (-1, 3, FColor::White, \
-                             DxLog_GetAuthStr (this) + __FUNCTION__ + FString (": ") + text);
+// --- General purpose message output.
+void RUTILLIB_API __rlog_internal (const UObject* WorldContext,
+                                   const FString &msg,
+                                   const char    *file,
+                                   int            line,
+                                   const char    *func);
+#define R_LOG(msg) __rlog_internal (this, FString (msg), __FILENAME__, __LINE__, __FUNCTION__);
 
-///////////////////////////////////////////////////////////////////////////////
+void RUTILLIB_API __rprint_internal (const UObject* WorldContext,
+                                     const FString &msg,
+                                     const char    *file,
+                                     int            line,
+                                     const char    *func);
+#define R_PRINT(msg) __rprint_internal (this, FString (msg), __FILENAME__, __LINE__, __FUNCTION__);
 
+//=============================================================================
 //                        Custom Load Object from Path
+//=============================================================================
 
 /*
 //TEMPLATE Load Obj From Path

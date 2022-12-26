@@ -1,7 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RGameMode.h"
-#include "UObject/ConstructorHelpers.h"
+#include "RUtilLib/Rlog.h"
+// #include "UObject/ConstructorHelpers.h"
 
 ARGameMode::ARGameMode()
 {
@@ -11,5 +12,11 @@ ARGameMode::ARGameMode()
    // {
    //    DefaultPawnClass = PlayerPawnBPClass.Class;
    // }
+}
+
+void ARGameMode::BeginPlay ()
+{
+   Super::BeginPlay ();
+   R_LOG ("Game mode started");
 }
 

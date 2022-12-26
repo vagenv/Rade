@@ -134,7 +134,7 @@ void ARPlayer::SaveGame ()
    // bool res = URSaveMgr::SaveSync (GetWorld ());
    bool res = URSaveMgr::SaveASync (GetWorld ());
    if (!res) {
-      rlog ("Save failed");
+      R_LOG ("Save failed");
       return;
    }
 }
@@ -144,7 +144,7 @@ void ARPlayer::LoadGame ()
    // bool res = URSaveMgr::LoadSync (GetWorld ());
    bool res = URSaveMgr::LoadASync (GetWorld ());
    if (!res) {
-      rlog ("Load failed");
+      R_LOG ("Load failed");
       return;
    }
 }
@@ -152,7 +152,7 @@ void ARPlayer::LoadGame ()
 void ARPlayer::OnSave ()
 {
    // --- Save player location
-   rlog ("Saving game. Set data to save file");
+   R_LOG ("Saving game. Set data to save file");
    FVector oldData = GetActorLocation ();
 
    FBufferArchive ToBinary;
@@ -161,7 +161,7 @@ void ARPlayer::OnSave ()
    bool res = URSaveMgr::Set (GetWorld (), FString ("PlayerLocation"), ToBinary);
 
    if (!res) {
-      rlog ("Set failed");
+      R_LOG ("Set failed");
       return;
    }
 }
@@ -169,12 +169,12 @@ void ARPlayer::OnSave ()
 void ARPlayer::OnLoad ()
 {
    // --- Load player location
-   rlog ("Load finished. Get data from save file");
+   R_LOG ("Load finished. Get data from save file");
 
    TArray<uint8> BinaryArray;
    bool res = URSaveMgr::Get (GetWorld (), FString ("PlayerLocation"), BinaryArray);
    if (!res) {
-      rlog ("Get failed");
+      R_LOG ("Get failed");
       return;
    }
 

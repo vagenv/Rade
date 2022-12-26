@@ -13,5 +13,7 @@ class ARGameMode : public AGameModeBase
 
 public:
    ARGameMode();
+
+   void BeginPlay () override;
 };
 
