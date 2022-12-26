@@ -5,26 +5,30 @@
 #include "Components/ActorComponent.h"
 #include "RJetpackComponent.generated.h"
 
+class UCharacterMovementComponent;
+
+
+
 UCLASS()
 class RADE_API URJetpackComponent : public UActorComponent
 {
    GENERATED_BODY()
 public:
 
-   //--------------------------------------------------------------------------
+   //==========================================================================
    //                         Core
-   //--------------------------------------------------------------------------
+   //==========================================================================
 
    // Base events
    URJetpackComponent ();
    virtual void BeginPlay () override;
 
    // Owners Movement Component
-   class UCharacterMovementComponent *MovementComponent;
+   TObjectPtr<UCharacterMovementComponent> MovementComponent;
 
-   //--------------------------------------------------------------------------
+   //==========================================================================
    //                         Params
-   //--------------------------------------------------------------------------
+   //==========================================================================
 
    // Current Charge Percent
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
@@ -46,9 +50,9 @@ public:
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
       float PushPower;
 
-   //--------------------------------------------------------------------------
+   //==========================================================================
    //                         Calls
-   //--------------------------------------------------------------------------
+   //==========================================================================
 
    UFUNCTION(Reliable, Server)
       void Use ();
