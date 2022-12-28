@@ -11,9 +11,10 @@ class ROPTIONSLIB_API UROptionManager : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+   //==========================================================================
    //               Input Settings
+   //==========================================================================
+
 
    // Get All Action Inputs
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
@@ -27,9 +28,9 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
       static void SetActionInput(const FName& ActionName, const FText& ActionKey);
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+   //==========================================================================
    //               Audio Settings
+   //==========================================================================
 
    // Get Global Sound Volume
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
@@ -40,9 +41,9 @@ public:
       static void SetGlobalSoundVolume(UObject* WorldContextObject, const float NewVolume);
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //                Graphics Quality
+   //==========================================================================
+   //                Graphics Quality
+   //==========================================================================
 
    // Get Video Quality Settings
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
@@ -63,9 +64,9 @@ public:
                                           const int32 EffectQuality,
                                           const int32 PostProcessQuality);
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+   //==========================================================================
    //               Screen  Resolution
+   //==========================================================================
 
 
    // Update Screen Resolution

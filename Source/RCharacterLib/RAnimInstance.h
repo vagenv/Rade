@@ -5,9 +5,9 @@
 #include "Animation/AnimInstance.h"
 #include "RAnimInstance.generated.h"
 
-////////////////////////////////////////////////////////////////////////////////////////
-
+//=============================================================================
 //                     Custom Anim Type
+//=============================================================================
 
 // Weapon Anim Archetype Enum
 UENUM(BlueprintType)
@@ -55,9 +55,9 @@ public:
    // Find/Reset Reference to The Character Class
    void ResetRadeCharacterRef();
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   //                              Main References and Properties
+   //==========================================================================
+   //                  Main References and Properties
+   //==========================================================================
 
    // Current Weapon Archetype
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade")
@@ -72,9 +72,9 @@ public:
    // UPROPERTY(EditAnywhere, BlueprintReadOnly)
    //    class ARCharacter* TheCharacter;
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   //                              Animation Control and Events
+   //==========================================================================
+   //                   Animation Control and Events
+   //==========================================================================
 
    // Notification in blueprint that animation started
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
@@ -93,11 +93,11 @@ private:
 
 public:
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //==========================================================================
+   //                           State Checking
+   //==========================================================================
 
-   //                              State Checking
-
-   /// Global Anim state Check
+   // Global Anim state Check
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
       bool IsAnimState(ERAnimState currentAnimCheck);
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
@@ -119,9 +119,9 @@ public:
 
 protected:
 
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   //                                  Custom Melee Sword
+   //==========================================================================
+   //                      Custom Melee Sword
+   //==========================================================================
 
    // Start Trace of Sword Weapon
    UFUNCTION(BlueprintCallable, Category = "Rade")

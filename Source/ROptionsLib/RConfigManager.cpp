@@ -2,9 +2,9 @@
 
 #include "RConfigManager.h"
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//=============================================================================
 //                Config Settings
+//=============================================================================
 
 //             String
 void URConfigManager::SaveConfig_String(const FString& FileName, const FString& SettingGroup, const FString& SettingName, const FString& SettingValue) {
@@ -70,3 +70,4 @@ FORCEINLINE FString URConfigManager::GetConfigFullAddress(const FString &FileNam
    return ((FileName.Len() < 1 || FileName.Equals(" ")) ? (FPaths::ProjectConfigDir() + TEXT("DefaultGameUserSettings.ini")) :
       (FPaths::ProjectConfigDir () + FileName + TEXT(".ini")));
 }
+

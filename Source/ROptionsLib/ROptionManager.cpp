@@ -7,11 +7,11 @@
 #include "GameFramework/InputSettings.h"
 #include "GameFramework/GameUserSettings.h"
 
-///////////////////////////////////////////////////////////////////////////////
+//==========================================================================//
 
 //               Input Settings
 
-///////////////////////////////////////////////////////////////////////////////
+//==========================================================================//
 
 void UROptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys)
 {
@@ -64,11 +64,11 @@ void UROptionManager::SetActionInput(const FName& ActionName, const FText& Actio
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
+//==========================================================================//
 
 //                Audio Volume Settings
 
-///////////////////////////////////////////////////////////////////////////////
+//==========================================================================//
 
 void UROptionManager::GetGlobalSoundVolume(UObject* WorldContextObject, float &Volume) {
    if (WorldContextObject != nullptr){
@@ -84,11 +84,11 @@ void UROptionManager::SetGlobalSoundVolume(UObject* WorldContextObject, const fl
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+//==========================================================================//
 
 //                Video Quality Settings
 
-///////////////////////////////////////////////////////////////////////////////
+//==========================================================================//
 
 // Get current video quality
 bool UROptionManager::GetVideoQualitySettings(int32& ResolutionQuality,

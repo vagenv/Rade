@@ -38,9 +38,9 @@ public:
 
    URGameInstance();
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   /////               Callable Events and Functions
+   //==========================================================================
+   //               Callable Events and Functions
+   //==========================================================================
 
 
    // Host Default  Online Map Session
@@ -72,9 +72,9 @@ public:
       void DestroySessionAndLeaveGame();
 
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   /////               Data about the Sessions and Game Instance
+   //==========================================================================
+   //               Data about the Sessions and Game Instance
+   //==========================================================================
 
    // Current Online Sessions Search Result
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
@@ -105,9 +105,9 @@ public:
       void SetPlayerStats(FString newPlayerName, FLinearColor newPlayerColor, FVector newMaterialSettings);
 
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   /////               Settings
+   //==========================================================================
+   //               Settings
+   //==========================================================================
 
    //   Variable Part for FINDING a Session
    TSharedPtr<FOnlineSessionSearch> SessionSearch;
@@ -115,9 +115,9 @@ public:
    // Session Setting
    TSharedPtr<FOnlineSessionSettings> SessionSettings;
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   /////               Delegate
+   //==========================================================================
+   //               Delegate
+   //==========================================================================
 
    // Delegate called when session created
    FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
@@ -127,7 +127,6 @@ public:
    // Handles to registered delegates for creating a session
    FDelegateHandle OnCreateSessionCompleteDelegateHandle;
    FDelegateHandle OnStartSessionCompleteDelegateHandle;
-
 
    // Delegate for searching for sessions
    FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
@@ -151,10 +150,9 @@ public:
    // Handle to registered delegate for destroying a session
    FDelegateHandle OnDestroySessionCompleteDelegateHandle;
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   /////                        Internal Events
-
+   //==========================================================================
+   //                        Internal Events
+   //==========================================================================
 
    //         Host A Game
    /**
@@ -229,7 +227,7 @@ public:
 
 
 
-   ////////            Fired When Join Session is Complete
+   //            Fired When Join Session is Complete
    /**
    *   Delegate fired when a session join request has completed
    *

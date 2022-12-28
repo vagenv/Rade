@@ -18,7 +18,9 @@ public:
    FORCEINLINE static FString GetConfigFullAddress(const FString & FileName);
 
 
+   //==========================================================================
    //                         Strings
+   //==========================================================================
 
    // Save Config - String
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
@@ -28,7 +30,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static void LoadConfig_String(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FString& SettingValue);
 
+   //==========================================================================
    //                         Int
+   //==========================================================================
 
    // Save Config - Int
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
@@ -38,7 +42,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static void LoadConfig_Int(const FString& FileName, const FString& SettingGroup, const FString& SettingName, int32& SettingValue);
 
+   //==========================================================================
    //                        Float
+   //==========================================================================
 
    // Save Config - Float
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
@@ -48,7 +54,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static void LoadConfig_Float(const FString& FileName, const FString& SettingGroup, const FString& SettingName, float& SettingValue);
 
+   //==========================================================================
    //                         Vector
+   //==========================================================================
 
    // Save Config - Vector
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
@@ -58,7 +66,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static void LoadConfig_Vector(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FVector& SettingValue);
 
+   //==========================================================================
    //                         Rotator
+   //==========================================================================
 
    // Save Config - Rotator
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
@@ -68,7 +78,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static void LoadConfig_Rotator(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FRotator& SettingValue);
 
+   //==========================================================================
    //                         Color
+   //==========================================================================
 
    // Save Config - Color
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
@@ -77,6 +89,5 @@ public:
    // Load Config - Color
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static void LoadConfig_Color(const FString& FileName, const FString& SettingGroup, const FString& SettingName, FColor& SettingValue);
-
 };
 

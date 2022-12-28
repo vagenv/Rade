@@ -133,9 +133,10 @@ void URGameInstance::DestroySessionAndLeaveGame()
    }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
+//                      Internal Code
+//=============================================================================
 
-///                                       Internal Code
 /*
 Code Part for CREATING a Session and starting it, as well as handling
 the delegates that get called when the creation or start request is done.

@@ -8,9 +8,9 @@
 //#include "Net/UnrealNetwork.h"
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//=============================================================================
 //            Base
+//=============================================================================
 
 URAnimInstance::URAnimInstance()
 {
@@ -34,9 +34,9 @@ void URAnimInstance::ResetRadeCharacterRef()
    //    TheCharacter = Cast<ARCharacter>(TryGetPawnOwner());
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-//                              Animation Control and Events
+//=============================================================================
+//                     Animation Control and Events
+//=============================================================================
 
 // Set Anim State Value
 void URAnimInstance::PlayLocalAnim(ERAnimState AnimID)
@@ -61,9 +61,9 @@ void URAnimInstance::SetAnimArchetype(ERAnimArchetype newAnimArchtype)
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//                                 State Checking
+//=============================================================================
+//                      State Checking
+//=============================================================================
 
 // Get Value from player class
 bool URAnimInstance::CanFireInAir()
@@ -112,9 +112,9 @@ bool URAnimInstance::IsAnimArchetype(ERAnimArchetype AnimArchtypeCheck)
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//                                    Custom Sword Events
+//=============================================================================
+//                            Custom Sword Events
+//=============================================================================
 
 // Start Trace of Sword Weapon
 void URAnimInstance::StartSwordWeaponTrace()

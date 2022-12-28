@@ -25,11 +25,9 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
 
-   /////////////////////////////////////////////////////////////////////////////
-
+   //==========================================================================
    //          Components
-
-   /////////////////////////////////////////////////////////////////////////////
+   //==========================================================================
 
    // Trigger Sphere
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
@@ -46,11 +44,9 @@ public:
    // Called if blueprint archetype of pickup was not defined;
    void InitEmpty ();
 
-   /////////////////////////////////////////////////////////////////////////////
-
+   //==========================================================================
    //          Core properties
-
-   /////////////////////////////////////////////////////////////////////////////
+   //==========================================================================
 
    // Activation delay
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
@@ -65,11 +61,9 @@ public:
       bool bAutoDestroy;
 
 
-   /////////////////////////////////////////////////////////////////////////////
-
+   //==========================================================================
    //          Events
-
-   /////////////////////////////////////////////////////////////////////////////
+   //==========================================================================
 
    // Item was picked up by player
    void PickedUp (AActor* InventoryOwner);
