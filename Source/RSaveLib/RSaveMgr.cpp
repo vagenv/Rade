@@ -82,7 +82,6 @@ bool URSaveMgr::Set (const UWorld *World, const FString &key, const TArray<uint8
 
 URSaveMgr::URSaveMgr()
 {
-   SaveFile = nullptr;
 }
 
 void URSaveMgr::CheckSaveFile ()

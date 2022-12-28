@@ -68,7 +68,6 @@ public:
    //               Screen  Resolution
    //==========================================================================
 
-
    // Update Screen Resolution
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
       static bool ChangeScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen);

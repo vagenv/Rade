@@ -77,11 +77,11 @@ public:
 
    // Rade Player Controller
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Player")
-      TObjectPtr<APlayerController> PlayerController = nullptr;
+      TObjectPtr<APlayerController> PlayerController;
 
    // Rade Player Controller
    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Player")
-      TObjectPtr<URJetpackComponent> Jetpack = nullptr;
+      TObjectPtr<URJetpackComponent> Jetpack;
 
    //==========================================================================
    //            1st person Mesh and animation
@@ -89,24 +89,24 @@ public:
 
    // First Person Mesh Anim Instance
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade|Player")
-      TObjectPtr<URAnimInstance> ArmsAnimInstance = nullptr;
+      TObjectPtr<URAnimInstance> ArmsAnimInstance;
 
    //  First Person Mesh
    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-      TObjectPtr<USkeletalMeshComponent> Mesh1P = nullptr;
+      TObjectPtr<USkeletalMeshComponent> Mesh1P;
 
    //==========================================================================
    //            1st person and 3rd person cameras
    //==========================================================================
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      TObjectPtr<UCameraComponent> FirstPersonCameraComponent = nullptr;
+      TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom = nullptr;
+      TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      TObjectPtr<UCameraComponent> ThirdPersonCameraComponent = nullptr;
+      TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;
 
    // Begin play Camera state
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
@@ -141,31 +141,31 @@ public:
 
    // MappingContext
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;
+	   TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Move = nullptr;
+	   TObjectPtr<UInputAction> InputAction_Move;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Look = nullptr;
+	   TObjectPtr<UInputAction> InputAction_Look;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Jump = nullptr;
+	   TObjectPtr<UInputAction> InputAction_Jump;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Camera = nullptr;
+	   TObjectPtr<UInputAction> InputAction_Camera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Inventory = nullptr;
+	   TObjectPtr<UInputAction> InputAction_Inventory;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Option = nullptr;
+      TObjectPtr<UInputAction> InputAction_Option;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Save = nullptr;
+      TObjectPtr<UInputAction> InputAction_Save;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Load = nullptr;
+      TObjectPtr<UInputAction> InputAction_Load;
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInputEvent OnToggleInventory;
 
