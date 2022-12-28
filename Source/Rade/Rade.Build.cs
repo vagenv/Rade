@@ -12,9 +12,13 @@ public class Rade : ModuleRules
          "CoreUObject",
          "Engine",
          "InputCore",
+         "EnhancedInput",
          "RUtilLib",
+         "RSessionManagerLib",
          "RSaveLib",
-         "RCharacterLib"
+         "ROptionsLib",
+         "RInventoryLib",
+         "RCharacterLib",
       });
    }
 }
