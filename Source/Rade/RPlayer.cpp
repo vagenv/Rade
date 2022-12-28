@@ -85,6 +85,14 @@ void ARPlayer::BeginPlay ()
    // Get Player Controller
    if (GetController() && Cast<APlayerController>(GetController())) {
       PlayerController = Cast<APlayerController>(GetController());
+
+      /*
+      //Add Input Mapping Context
+      if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+      */
    }
 
    // Get First Person Anim Instance
@@ -192,43 +200,52 @@ void ARPlayer::OnLoad ()
 
 
 // Bind input to events
-void ARPlayer::SetupPlayerInputComponent (UInputComponent* inputComponent)
+void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 {
    // set up gameplay key bindings
-   check(inputComponent);
+   check(PlayerInputComponent);
 
-   // Movement Input
-   inputComponent->BindAxis   ("MoveForward",      this, &ARPlayer::Input_MoveForward);
-   inputComponent->BindAxis   ("MoveRight",        this, &ARPlayer::Input_MoveRight);
-   inputComponent->BindAction ("Jump", IE_Pressed, this, &ARPlayer::Input_Jump);
+   /*
 
-   // Camera Input
-   inputComponent->BindAxis   ("Turn",                     this, &ARPlayer::Input_AddControllerYawInput);
-   inputComponent->BindAxis   ("LookUp",                   this, &ARPlayer::Input_AddControllerPitchInput);
-   inputComponent->BindAction ("ChangeCamera", IE_Pressed, this, &ARPlayer::Input_ChangeCamera);
+   // Set up action bindings
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 
-   // Action/Inventory Input
-   inputComponent->BindAction ("Inventory", IE_Pressed, this, &ARPlayer::Input_ToggleInventory);
-   inputComponent->BindAxis   ("MouseScroll",           this, &ARPlayer::Input_MouseScroll);
+		// Moving
+		EnhancedInputComponent->BindAction (InputAction_Move, ETriggerEvent::Triggered, this, &ARPlayer::Move);
 
-   inputComponent->BindAction ("Action",    IE_Pressed, this, &ARPlayer::Input_Action);
-   inputComponent->BindAction ("FAction",   IE_Pressed, this, &ARPlayer::Input_FAction);
+		//Looking
+		EnhancedInputComponent->BindAction (InputAction_Look, ETriggerEvent::Triggered, this, &ARPlayer::Look);
 
+      //Jumping
+		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-   // Weapon Input
-   //inputComponent->BindAction("Fire",         IE_Pressed,  this, &ARPlayer::FireStart);
-   //inputComponent->BindAction("Fire",         IE_Released, this, &ARPlayer::FireEnd);
-   //inputComponent->BindAction("AltFire",      IE_Pressed,  this, &ARPlayer::AltFireStart);
-   //inputComponent->BindAction("AltFire",      IE_Released, this, &ARPlayer::AltFireEnd);
-   inputComponent->BindAction ("MeleeAction",  IE_Pressed, this, &ARPlayer::Input_MeleeAction);
-   inputComponent->BindAction ("Reload",       IE_Pressed, this, &ARPlayer::Input_Reload);
+      EnhancedInputComponent->BindAction (InputAction_Camera,    ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
+      EnhancedInputComponent->BindAction (InputAction_Inventory, ETriggerEvent::Started, this, &ARPlayer::Input_ToggleInventory);
+      EnhancedInputComponent->BindAction (InputAction_Option,    ETriggerEvent::Started, this, &ARPlayer::Input_ToggleOption);
 
-   // Option and chat
-   inputComponent->BindAction ("Option", IE_Pressed, this, &ARPlayer::Input_ToggleOption);
+      EnhancedInputComponent->BindAction (InputAction_Save, ETriggerEvent::Started, this, &ARPlayer::SaveGame);
+      EnhancedInputComponent->BindAction (InputAction_Load, ETriggerEvent::Started, this, &ARPlayer::LoadGame);
+	}
 
-   // Save/Load
-   inputComponent->BindAction ("Save",       IE_Pressed, this, &ARPlayer::SaveGame);
-   inputComponent->BindAction ("Load",       IE_Pressed, this, &ARPlayer::LoadGame);
+   */
+
+   // inputComponent->BindAction ("ChangeCamera", IE_Pressed, this, &ARPlayer::Input_ChangeCamera);
+
+   // // Action/Inventory Input
+   // inputComponent->BindAction ("Inventory", IE_Pressed, this, &ARPlayer::Input_ToggleInventory);
+   // inputComponent->BindAxis   ("MouseScroll",           this, &ARPlayer::Input_MouseScroll);
+
+   // inputComponent->BindAction ("Action",    IE_Pressed, this, &ARPlayer::Input_Action);
+   // inputComponent->BindAction ("FAction",   IE_Pressed, this, &ARPlayer::Input_FAction);
+
+   // // Weapon Input
+   // //inputComponent->BindAction("Fire",         IE_Pressed,  this, &ARPlayer::FireStart);
+   // //inputComponent->BindAction("Fire",         IE_Released, this, &ARPlayer::FireEnd);
+   // //inputComponent->BindAction("AltFire",      IE_Pressed,  this, &ARPlayer::AltFireStart);
+   // //inputComponent->BindAction("AltFire",      IE_Released, this, &ARPlayer::AltFireEnd);
+   // inputComponent->BindAction ("MeleeAction",  IE_Pressed, this, &ARPlayer::Input_MeleeAction);
+   // inputComponent->BindAction ("Reload",       IE_Pressed, this, &ARPlayer::Input_Reload);
 }
 
 // ---  Movement Input

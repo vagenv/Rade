@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RCharacterLib/RCharacter.h"
+#include "InputActionValue.h"
 #include "RPlayer.generated.h"
 
 // For general input event
@@ -18,6 +19,8 @@ class URAnimInstance;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
+class UInputAction;
+class UInputMappingContext;
 
 //=============================================================================
 //                   Camera State Type
@@ -126,6 +129,43 @@ public:
    //                  Input events
    //==========================================================================
 
+
+protected:
+
+   // Binding Player Input to internal events
+   virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+public:
+
+   // --- Local event capture
+
+   // MappingContext
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> InputAction_Move = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> InputAction_Look = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> InputAction_Jump = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> InputAction_Camera = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> InputAction_Inventory = nullptr;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+      TObjectPtr<UInputAction> InputAction_Option = nullptr;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+      TObjectPtr<UInputAction> InputAction_Save = nullptr;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+      TObjectPtr<UInputAction> InputAction_Load = nullptr;
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInputEvent OnToggleInventory;
 
