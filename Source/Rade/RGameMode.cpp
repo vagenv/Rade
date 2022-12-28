@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RGameMode.h"
 #include "RSaveLib/RSaveMgr.h"
