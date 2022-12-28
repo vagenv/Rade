@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "RCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRCharacterEvent);
+
 class URAnimInstance;
 class URInventoryComponent;
 
@@ -96,6 +98,13 @@ private:
    FRotator Mesh_DefaultRelativeRot;
 
 public:
+
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade")
+      FRCharacterEvent OnDeath;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade")
+      FRCharacterEvent OnRevive;
 
    // Can Character Revive after death
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")

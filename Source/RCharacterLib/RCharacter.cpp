@@ -137,6 +137,7 @@ void ARCharacter::Die_Client_Implementation (AActor *DeathCauser, AController* E
 }
 void ARCharacter::Die (AActor *DeathCauser, AController* EventInstigator)
 {
+   OnDeath.Broadcast ();
    ForceRagdoll ();
    BP_Died (DeathCauser, EventInstigator);
 }
@@ -174,6 +175,7 @@ void ARCharacter::Revive_Client_Implementation ()
 }
 void ARCharacter::Revive ()
 {
+   OnRevive.Broadcast ();
    GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("Pawn");
    if (GetMesh()) {
       GetMesh()->SetSimulatePhysics (false);
