@@ -33,15 +33,15 @@ public:
 
    // Trigger Sphere
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      USphereComponent* TriggerSphere;
+      TObjectPtr<USphereComponent> TriggerSphere;
 
    // Mesh
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      UMeshComponent* MeshComponent;
+      TObjectPtr<UMeshComponent> MeshComponent;
 
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      URInventoryComponent* Inventory;
+      TObjectPtr<URInventoryComponent> Inventory;
 
    // Called if blueprint archetype of pickup was not defined;
    void InitEmpty ();
