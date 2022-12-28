@@ -22,8 +22,7 @@ FRAvaiableSessionsData::FRAvaiableSessionsData(FOnlineSessionSearchResult newSes
    NumberOfAvaiableConnections = NumberOfConnections - newSessionData.Session.NumOpenPublicConnections;
 }
 
-URGameInstance::URGameInstance(const FObjectInitializer& ObjectInitializer)
-   : Super(ObjectInitializer)
+URGameInstance::URGameInstance()
 {
    /** Bind function for CREATING a Session */
    OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnCreateSessionComplete);

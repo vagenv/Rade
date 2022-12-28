@@ -30,13 +30,13 @@ public:
 };
 
 // Custom Game Instance
-UCLASS()
+UCLASS(Blueprintable)
 class RSESSIONMANAGERLIB_API URGameInstance : public UGameInstance
 {
    GENERATED_BODY()
 public:
 
-   URGameInstance(const FObjectInitializer& ObjectInitializer);
+   URGameInstance();
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
