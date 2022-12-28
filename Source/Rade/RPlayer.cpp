@@ -11,8 +11,12 @@
 
 #include "RJetpackComponent.h"
 
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
-//#include "Net/UnrealNetwork.h"
+
+#include "Net/UnrealNetwork.h"
 
 //=============================================================================
 //             Core
@@ -60,11 +64,10 @@ ARPlayer::ARPlayer()
    GetMesh()->bOwnerNoSee = true;
    GetMesh()->SetIsReplicated(true);
 
-   // --- Inventory
-   if (Inventory) Inventory->bSaveLoadInventory = true;
-
    Jetpack = CreateDefaultSubobject<URJetpackComponent>(TEXT("Jetpack"));
 
+   // --- Inventory
+   Inventory->bSaveLoadInventory = true;
 
    PlayerController = nullptr;
    bAutoRevive      = true;
@@ -72,8 +75,6 @@ ARPlayer::ARPlayer()
    //CharacterName = "Rade Player";
    //bCanRevive = true;
 }
-
-
 
 void ARPlayer::BeginPlay ()
 {
@@ -85,13 +86,11 @@ void ARPlayer::BeginPlay ()
    if (GetController() && Cast<APlayerController>(GetController())) {
       PlayerController = Cast<APlayerController>(GetController());
 
-      /*
       //Add Input Mapping Context
       if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-      */
    }
 
    // Get First Person Anim Instance
@@ -123,7 +122,6 @@ void ARPlayer::BeginPlay ()
    // --- Seed out Spawn Location a bit
    //FVector RandomLoc = FVector(FMath::RandRange(-100, 100), FMath::RandRange(-100, 100), 0);
    //SetActorLocation(GetActorLocation() + RandomLoc);
-
 }
 
 void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -160,10 +158,11 @@ void ARPlayer::OnSave ()
 {
    // --- Save player location
    R_LOG ("Saving game. Set data to save file");
-   FVector oldData = GetActorLocation ();
+   FVector  loc = GetActorLocation ();
+   FRotator rot = GetActorRotation ();
 
    FBufferArchive ToBinary;
-   ToBinary << oldData;
+   ToBinary << loc << rot;
 
    bool res = URSaveMgr::Set (GetWorld (), FString ("PlayerLocation"), ToBinary);
 
@@ -185,12 +184,15 @@ void ARPlayer::OnLoad ()
       return;
    }
 
-   FVector newData;
+   FVector  loc;
+   FRotator rot;
    FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   FromBinary.Seek(0);
-   FromBinary << newData;
+   FromBinary.Seek (0);
+   FromBinary << loc;
+   FromBinary << rot;
 
-   SetActorLocation (newData);
+   SetActorLocation (loc);
+   SetActorRotation (rot);
 }
 
 //=============================================================================
@@ -202,32 +204,29 @@ void ARPlayer::OnLoad ()
 void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 {
    // set up gameplay key bindings
-   check(PlayerInputComponent);
-
-   /*
+   check (PlayerInputComponent);
 
    // Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 
 		// Moving
-		EnhancedInputComponent->BindAction (InputAction_Move, ETriggerEvent::Triggered, this, &ARPlayer::Move);
+		EnhancedInputComponent->BindAction (InputAction_Move, ETriggerEvent::Triggered, this, &ARPlayer::Input_Move);
 
 		//Looking
-		EnhancedInputComponent->BindAction (InputAction_Look, ETriggerEvent::Triggered, this, &ARPlayer::Look);
+		EnhancedInputComponent->BindAction (InputAction_Look, ETriggerEvent::Triggered, this, &ARPlayer::Input_Look);
 
       //Jumping
-		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Started,   this, &ARPlayer::Jump);
 		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-      EnhancedInputComponent->BindAction (InputAction_Camera,    ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
-      EnhancedInputComponent->BindAction (InputAction_Inventory, ETriggerEvent::Started, this, &ARPlayer::Input_ToggleInventory);
-      EnhancedInputComponent->BindAction (InputAction_Option,    ETriggerEvent::Started, this, &ARPlayer::Input_ToggleOption);
+      EnhancedInputComponent->BindAction (InputAction_ChangeCamera,    ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
+      EnhancedInputComponent->BindAction (InputAction_ToggleInventory, ETriggerEvent::Started, this, &ARPlayer::Input_ToggleInventory);
+      EnhancedInputComponent->BindAction (InputAction_ToggleOption,    ETriggerEvent::Started, this, &ARPlayer::Input_ToggleOption);
 
       EnhancedInputComponent->BindAction (InputAction_Save, ETriggerEvent::Started, this, &ARPlayer::SaveGame);
       EnhancedInputComponent->BindAction (InputAction_Load, ETriggerEvent::Started, this, &ARPlayer::LoadGame);
 	}
 
-   */
 
    // inputComponent->BindAction ("ChangeCamera", IE_Pressed, this, &ARPlayer::Input_ChangeCamera);
 
@@ -249,180 +248,94 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 
 // ---  Movement Input
 
-// Forward/Backward Movement Input
-void ARPlayer::Input_MoveForward (float Value)
+
+void ARPlayer::Input_Move (const FInputActionValue& Value)
 {
    if (bDead) return;
-   if (Value != 0.0f) AddMovementInput (GetActorForwardVector (), Value * MoveSpeed);
+
+	// input is a Vector2D
+	FVector2D MovementVector = Value.Get<FVector2D>();
+
+	if (Controller != nullptr) {
+		// find out which way is forward
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get forward vector
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+		// get right vector
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		// add movement
+		AddMovementInput (ForwardDirection, MovementVector.Y);
+		AddMovementInput (RightDirection,   MovementVector.X);
+	}
 }
 
-// Right/Left Movement Input
-void ARPlayer::Input_MoveRight (float Value)
+void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
    if (bDead) return;
-   if (Value != 0.0f) AddMovementInput (GetActorRightVector (), Value * MoveSpeed);
+	// input is a Vector2D
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		// add yaw and pitch input to controller
+		AddControllerYawInput(LookAxisVector.X);
+		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+
+// Player Pressed CameraChange
+void ARPlayer::Input_ChangeCamera ()
+{
+   if (bDead) return;
+
+   // Change Camera
+   if (DefaultCameraState == ECameraState::FP_Camera) {
+      DefaultCameraState = ECameraState::TP_Camera;
+      CurrentCameraState = DefaultCameraState;
+      UpdateComponentsVisibility ();
+   } else if (DefaultCameraState == ECameraState::TP_Camera) {
+      DefaultCameraState = ECameraState::FP_Camera;
+      CurrentCameraState = DefaultCameraState;
+      UpdateComponentsVisibility ();
+   }
+}
+
+// Toggle HUD Inventory visibility
+void ARPlayer::Input_ToggleInventory ()
+{
+   if (bDead) return;
+   Input_OnToggleInventory.Broadcast ();
+}
+
+void ARPlayer::Input_ToggleOption()
+{
+   Input_OnToggleOption.Broadcast ();
 }
 
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
    if (bDead) return;
-   Super::Jump ();
 
    if (Jetpack) Jetpack->Use ();
+
+   Super::Jump ();
 }
 
-
-// ---  Camera Input
-
-// Vertical Rotation Input
-void ARPlayer::Input_AddControllerPitchInput (float Rate)
+void ARPlayer::Input_Action ()
 {
-   if (Rate != 0.0f) Super::AddControllerPitchInput (Rate * CameraMouseSensivity);
+   Input_OnAction.Broadcast ();
 }
 
-// Horizontal Rotation Input
-void ARPlayer::Input_AddControllerYawInput (float Rate)
+void ARPlayer::Input_AltAction ()
 {
-   if (Rate != 0.0f) Super::AddControllerYawInput (Rate * CameraMouseSensivity);
+   Input_OnAltAction.Broadcast ();
 }
-
-// Player Pressed CameraChange
-void ARPlayer::Input_ChangeCamera()
-{
-   if (bDead) return;
-   // Change Camera
-   if (DefaultCameraState == ECameraState::FP_Camera) {
-      DefaultCameraState = ECameraState::TP_Camera;
-      CurrentCameraState = DefaultCameraState;
-      UpdateComponentsVisibility();
-   } else if (DefaultCameraState == ECameraState::TP_Camera) {
-      DefaultCameraState = ECameraState::FP_Camera;
-      CurrentCameraState = DefaultCameraState;
-      UpdateComponentsVisibility();
-   }
-}
-
-// Player Mesh Rotation after after the input
-void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
-{
-   Super::FaceRotation (NewControlRotation,DeltaTime);
-   if (FirstPersonCameraComponent) {
-      FRotator rot = FirstPersonCameraComponent->GetComponentRotation ();
-      rot.Pitch = NewControlRotation.Pitch;
-      FirstPersonCameraComponent->SetWorldRotation (rot);
-   }
-}
-
-
-// --- Action/Inventory Input
-
-// Toggle HUD Inventory visibility
-void ARPlayer::Input_ToggleInventory ()
-{
-   OnToggleInventory.Broadcast ();
-}
-
-// Player Scrolled Mouse Wheel
-void ARPlayer::Input_MouseScroll (float Value)
-{
-   if (Value != 0) OnScrollInventory.Broadcast (Value);
-}
-
-void ARPlayer::Input_Action()
-{
-   OnUseInventory.Broadcast ();
-}
-
-// Player Pressed FAction
-void ARPlayer::Input_FAction()
-{
-   OnDropInventory.Broadcast ();
-}
-
-// Player Pressed Alt Action
-void ARPlayer::Input_MeleeAction()
-{
-
-   /*
-   if (  TheWeapon
-      && IsAnimState(EAnimState::Idle_Run)
-      && CharacterMovementComponent
-      && CharacterMovementComponent->IsMovingOnGround()) {
-      TheWeapon->PreMeleeAttack();
-   }
-   */
-}
-
-
-// --- Weapon Input
-
-// Player Pressed Reload
-void ARPlayer::Input_Reload()
-{
-   /*
-   // Check if Player and Weapon are in state to reload
-   if (  IsAnimState(EAnimState::Idle_Run)
-      && CharacterMovementComponent
-      && CharacterMovementComponent->IsMovingOnGround()
-      && TheWeapon
-      && TheWeapon->CanReload())
-   {
-      TheWeapon->ReloadWeaponStart();
-   }
-   */
-}
-
-/*
-
-// Player Pressed Fire Button
-bool ARPlayer::FireStart_Validate()
-{
-   return true;
-}
-
-void ARPlayer::FireStart_Implementation()
-{
-   // Check if player has weapon and is in state to fire weapon
-   //if (TheWeapon && CanShoot()) TheWeapon->FireStart();
-}
-
-bool ARPlayer::FireEnd_Validate(){
-   return true;
-}
-
-// Player Released Fire button
-void ARPlayer::FireEnd_Implementation()
-{
-   //if (TheWeapon) TheWeapon->FireEnd();
-}
-
-// Player Pressed Alt Fire
-bool ARPlayer::AltFireStart_Validate(){
-   return true;
-}
-void ARPlayer::AltFireStart_Implementation()
-{
-   if (TheWeapon) TheWeapon->AltFireStart();
-}
-
-// Player Released AltFire
-bool ARPlayer::AltFireEnd_Validate(){
-   return true;
-}
-void ARPlayer::AltFireEnd_Implementation()
-{
-   if (TheWeapon)
-      TheWeapon->AltFireEnd();
-}
-
-*/
-
-void ARPlayer::Input_ToggleOption()
-{
-   OnToggleOption.Broadcast ();
-}
-
 
 //=============================================================================
 //             Weapon
@@ -813,15 +726,14 @@ void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifet
 {
    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-   //DISABLE_REPLICATED_PROPERTY (ARPlayer, FirstPersonCameraComponent);
-   //DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraBoom);
-   //DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraComponent);
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, FirstPersonCameraComponent);
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraBoom);
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraComponent);
+   DISABLE_REPLICATED_PROPERTY (ARPlayer, MoveSpeed);
 
-   //DOREPLIFETIME(ARPlayer, BodyAnimInstance);
-   //DOREPLIFETIME(ARPlayer, BodyAnimInstance);
-   //DOREPLIFETIME(ARPlayer, BodyAnimInstance);
+   // DOREPLIFETIME(ARPlayer, BodyAnimInstance);
 
-   //DOREPLIFETIME(ARPlayer, bInventoryOpen);
+   // DOREPLIFETIME(ARPlayer, bInventoryOpen);
    //DOREPLIFETIME(ARPlayer, CurrentItemSelectIndex);
    //DOREPLIFETIME(ARPlayer, CurrentCameraState);
    //DOREPLIFETIME(ARPlayer, currentPickup);

@@ -53,19 +53,6 @@ public:
    virtual void EndPlay  (const EEndPlayReason::Type EndPlayReason) override;
    virtual void Tick     (float DeltaTime) override;
 
-   //==========================================================================
-   //                         Save/Load
-   //==========================================================================
-
-   // Input events
-   void SaveGame ();
-   void LoadGame ();
-
-   // Rade Save events
-   UFUNCTION()
-      void OnSave ();
-   UFUNCTION()
-      void OnLoad ();
 
    //==========================================================================
    //                   Components and Important References
@@ -137,7 +124,7 @@ protected:
 
 public:
 
-   // --- Local event capture
+   // --- Input event capture
 
    // MappingContext
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -153,33 +140,50 @@ public:
 	   TObjectPtr<UInputAction> InputAction_Jump;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Camera;
+	   TObjectPtr<UInputAction> InputAction_ChangeCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Inventory;
+	   TObjectPtr<UInputAction> InputAction_ToggleInventory;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Option;
+      TObjectPtr<UInputAction> InputAction_ToggleOption;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> InputAction_Save;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> InputAction_Load;
+
+
+   // --- Internal function callen on onput
+	virtual void Input_Move (const FInputActionValue& Value);
+	virtual void Input_Look (const FInputActionValue& Value);
+   virtual void Input_Jump ();
+   virtual void Input_ChangeCamera ();
+   virtual void Input_ToggleInventory ();
+   virtual void Input_ToggleOption ();
+   virtual void Input_Action ();
+   virtual void Input_AltAction ();
+
+   // --- Event to subscribe to
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEvent OnToggleInventory;
+      FRInputEvent Input_OnChangeCamera;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEvent OnUseInventory;
+      FRInputEvent Input_OnToggleInventory;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEvent OnDropInventory;
+      FRInputEvent Input_OnToggleOption;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEventFloat OnScrollInventory;
+      FRInputEvent Input_OnAction;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEvent OnToggleOption;
+      FRInputEvent Input_OnAltAction;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInputEventFloat Input_OnScroll;
+
 
    //==========================================================================
    //                      Weapon Control and Events
@@ -205,6 +209,21 @@ public:
       bool bCanFireInAir = false;
    */
 
+
+
+   //==========================================================================
+   //                         Save/Load
+   //==========================================================================
+
+   // Input events
+   void SaveGame ();
+   void LoadGame ();
+
+   // Rade Save events
+   UFUNCTION()
+      void OnSave ();
+   UFUNCTION()
+      void OnLoad ();
 
 private:
    /*
@@ -360,75 +379,6 @@ protected:
    virtual bool AltFireEnd_Validate();
    virtual void AltFireEnd_Implementation();
    */
-
-   //==========================================================================
-   //         Internal Client Input
-   //==========================================================================
-
-protected:
-
-   // Binding Player Input to internal events
-   virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-/*
-   //  Player Pressed Action
-   UFUNCTION(Server, Reliable, Category = "Rade|Player")
-      virtual void Input_Action_Server ();
-      virtual void Input_Action_Server_Implementation();
-
-
-   //  Player Pressed FAction
-   UFUNCTION(Server, Reliable, Category = "Rade|Player")
-      virtual void Input_FAction_Server ();
-      virtual void Input_FAction_Server_Implementation();
-
-*/
-
-   // --- Server side
-
-   //  Player Pressed Action
-   virtual void Input_Action ();
-
-   //  Player Pressed FAction
-   virtual void Input_FAction ();
-
-   //  Player Pressed AltAction
-   virtual void Input_MeleeAction ();
-
-   //  Player Pressed Reload
-   virtual void Input_Reload ();
-
-   // --- Client side side
-
-   // Player pressed ChangeCamera
-   virtual void Input_ChangeCamera ();
-
-   // Player Pressed Jump
-   virtual void Input_Jump ();
-
-   // Player Pressed Toggle Inventory
-   virtual void Input_ToggleInventory ();
-
-   // Player Pressed Toggle Option menu
-   virtual void Input_ToggleOption ();
-
-   // Player Scrolled Mouse Wheel
-   virtual void Input_MouseScroll (float Value);
-
-   // Forward/Backward movement Input
-   virtual void Input_MoveForward (float Val);
-
-   // Right/Left movement Input
-   virtual void Input_MoveRight (float Val);
-
-   // Vertical rotation Input
-   virtual void Input_AddControllerPitchInput (float Rate);
-
-   // Horizontal rotation Input
-   virtual void Input_AddControllerYawInput (float Rate);
-
-   // Mesh Rotation on player rotation input
-   virtual void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
 
 
 public:
