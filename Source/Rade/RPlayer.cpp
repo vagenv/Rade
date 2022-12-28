@@ -216,7 +216,7 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction (InputAction_Look, ETriggerEvent::Triggered, this, &ARPlayer::Input_Look);
 
       //Jumping
-		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Started,   this, &ARPlayer::Jump);
+		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
 		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
       EnhancedInputComponent->BindAction (InputAction_ChangeCamera,    ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
@@ -226,28 +226,9 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
       EnhancedInputComponent->BindAction (InputAction_Save, ETriggerEvent::Started, this, &ARPlayer::SaveGame);
       EnhancedInputComponent->BindAction (InputAction_Load, ETriggerEvent::Started, this, &ARPlayer::LoadGame);
 	}
-
-
-   // inputComponent->BindAction ("ChangeCamera", IE_Pressed, this, &ARPlayer::Input_ChangeCamera);
-
-   // // Action/Inventory Input
-   // inputComponent->BindAction ("Inventory", IE_Pressed, this, &ARPlayer::Input_ToggleInventory);
-   // inputComponent->BindAxis   ("MouseScroll",           this, &ARPlayer::Input_MouseScroll);
-
-   // inputComponent->BindAction ("Action",    IE_Pressed, this, &ARPlayer::Input_Action);
-   // inputComponent->BindAction ("FAction",   IE_Pressed, this, &ARPlayer::Input_FAction);
-
-   // // Weapon Input
-   // //inputComponent->BindAction("Fire",         IE_Pressed,  this, &ARPlayer::FireStart);
-   // //inputComponent->BindAction("Fire",         IE_Released, this, &ARPlayer::FireEnd);
-   // //inputComponent->BindAction("AltFire",      IE_Pressed,  this, &ARPlayer::AltFireStart);
-   // //inputComponent->BindAction("AltFire",      IE_Released, this, &ARPlayer::AltFireEnd);
-   // inputComponent->BindAction ("MeleeAction",  IE_Pressed, this, &ARPlayer::Input_MeleeAction);
-   // inputComponent->BindAction ("Reload",       IE_Pressed, this, &ARPlayer::Input_Reload);
 }
 
 // ---  Movement Input
-
 
 void ARPlayer::Input_Move (const FInputActionValue& Value)
 {
@@ -276,17 +257,14 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
    if (bDead) return;
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
+	if (Controller != nullptr) {
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
-
 
 // Player Pressed CameraChange
 void ARPlayer::Input_ChangeCamera ()
@@ -312,7 +290,7 @@ void ARPlayer::Input_ToggleInventory ()
    Input_OnToggleInventory.Broadcast ();
 }
 
-void ARPlayer::Input_ToggleOption()
+void ARPlayer::Input_ToggleOption ()
 {
    Input_OnToggleOption.Broadcast ();
 }
@@ -320,10 +298,8 @@ void ARPlayer::Input_ToggleOption()
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
-   if (bDead) return;
-
+   if (bDead)   return;
    if (Jetpack) Jetpack->Use ();
-
    Super::Jump ();
 }
 
@@ -336,133 +312,6 @@ void ARPlayer::Input_AltAction ()
 {
    Input_OnAltAction.Broadcast ();
 }
-
-//=============================================================================
-//             Weapon
-//=============================================================================
-
-/*
-
-// Called to equip new Weapon
-void ARPlayer::EquipWeapon(ARadeWeapon* NewWeaponClass)
-{
-   if (!NewWeaponClass)return;
-
-   // If player has a weapon, Unequip it
-   if (TheWeapon) TheWeapon->UnEquipStart();
-
-   // Set next equip weapon
-   PendingEquipWeapon = NewWeaponClass;
-
-   // Start Player unequip anim even if there is no current weapon
-   UnEquipStart();
-}
-
-// Current Weapon in being unequiped
-void ARPlayer::UnEquipCurrentWeapon()
-{
-   if (TheWeapon) TheWeapon->UnEquipStart();
-   UnEquipStart();
-}
-
-// Player Started equip of new weapon
-void ARPlayer::EquipStart()
-{
-   if (PendingEquipWeapon && !TheWeapon)
-   {
-      // Set next weapon anim type
-      if (ArmsAnimInstance) ArmsAnimInstance->AnimArchetype = PendingEquipWeapon->AnimArchetype;
-      if (BodyAnimInstance) BodyAnimInstance->AnimArchetype = PendingEquipWeapon->AnimArchetype;
-
-      // Set Animation state
-      ServerSetAnimID(EAnimState::Equip);
-
-      // Spawn new weapon
-      TheWeapon = GetWorld()->SpawnActor<ARadeWeapon>(PendingEquipWeapon->GetClass());
-      TheWeapon->ThePlayer = this;
-      TheWeapon->SetOwner(this);
-      TheWeapon->EquipStart();
-
-      FTimerHandle myHandle;
-      GetWorldTimerManager().SetTimer(myHandle, this, &ARPlayer::EquipEnd, TheWeapon->EquipTime, false);
-   }
-   UpdateComponentsVisibility();
-}
-
-// Called when equip is finished
-void ARPlayer::EquipEnd()
-{
-   ServerSetAnimID(EAnimState::Idle_Run);
-
-   // Clear pending weapon
-   if (PendingEquipWeapon!=NULL)PendingEquipWeapon = NULL;
-
-   // Tell HUD that weapon is updated
-   if (TheHUD) TheHUD->BP_WeaponUpdated();
-}
-
-// Unequip curent weapon
-void ARPlayer::UnEquipStart()
-{
-   // Set Animation State
-   ServerSetAnimID(EAnimState::UnEquip);
-
-   if (TheWeapon) {
-      // Set Delay of current weapon
-      FTimerHandle myHandle;
-      GetWorldTimerManager().SetTimer(myHandle, this, &ARPlayer::UnEquipEnd, TheWeapon->EquipTime, false);
-   } else {
-      // Set Default Delay
-      FTimerHandle myHandle;
-      GetWorldTimerManager().SetTimer(myHandle, this, &ARPlayer::UnEquipEnd, DefaultWeaponEquipDelay, false);
-   }
-
-   UpdateComponentsVisibility();
-}
-
-// Unequip Ended
-void ARPlayer::UnEquipEnd()
-{
-   // Destroy Current weapon
-   if (TheWeapon) {
-      TheWeapon->Destroy();
-      TheWeapon = NULL;
-   }
-
-   // Weapon Was Updated
-   if (TheHUD) TheHUD->BP_WeaponUpdated();
-
-   // if there is new weapon Start the equip
-   if (PendingEquipWeapon) {
-      EquipStart();
-
-   // Else return to empty hand state
-   } else {
-      if (ArmsAnimInstance) ArmsAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
-      if (BodyAnimInstance) BodyAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
-      ServerSetAnimID(EAnimState::Idle_Run);
-   }
-}
-
-void ARPlayer::CurrentWeaponUpdated()
-{
-   Super::CurrentWeaponUpdated();
-
-   if (ArmsAnimInstance) {
-      if (TheWeapon) ArmsAnimInstance->AnimArchetype = TheWeapon->AnimArchetype;
-      else            ArmsAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
-   }
-
-   if (BodyAnimInstance) {
-      if (TheWeapon) BodyAnimInstance->AnimArchetype = TheWeapon->AnimArchetype;
-      else             BodyAnimInstance->AnimArchetype = EAnimArchetype::EmptyHand;
-   }
-
-   if (TheHUD) TheHUD->BP_WeaponUpdated();
-
-   UpdateComponentsVisibility();
-}
-*/
 
 //=============================================================================
 //                           State Checking
@@ -506,11 +355,8 @@ void ARPlayer::Landed(const FHitResult& Hit)
 
 */
 
-
-
-
 // Update First Person and Third Person Components visibility
-void ARPlayer::UpdateComponentsVisibility()
+void ARPlayer::UpdateComponentsVisibility ()
 {
    if (CurrentCameraState == ECameraState::FP_Camera) {
       if (ThirdPersonCameraComponent) ThirdPersonCameraComponent->Deactivate();
