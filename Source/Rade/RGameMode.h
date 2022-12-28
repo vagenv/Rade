@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "RGameMode.generated.h"
 
+class URSaveMgr;
+
 UCLASS(minimalapi)
 class ARGameMode : public AGameModeBase
 {
@@ -15,5 +17,8 @@ public:
    ARGameMode();
 
    void BeginPlay () override;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade")
+      TObjectPtr<URSaveMgr> SaveMgr;
 };
 
