@@ -7,11 +7,6 @@
 
 URJetpackComponent::URJetpackComponent ()
 {
-   CurrentChargePercent = 50;
-   MinUseablePercent    = 40;
-   RestoreSpeed         = 0.05f;
-   RestorePower         = 0.5f;
-   PushPower            = 7;
 }
 
 void URJetpackComponent::BeginPlay()

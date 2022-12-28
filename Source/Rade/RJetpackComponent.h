@@ -7,9 +7,7 @@
 
 class UCharacterMovementComponent;
 
-
-
-UCLASS()
+UCLASS(BlueprintType)
 class RADE_API URJetpackComponent : public UActorComponent
 {
    GENERATED_BODY()
@@ -24,7 +22,7 @@ public:
    virtual void BeginPlay () override;
 
    // Owners Movement Component
-   TObjectPtr<UCharacterMovementComponent> MovementComponent;
+   UCharacterMovementComponent *MovementComponent;
 
    //==========================================================================
    //                         Params
@@ -32,23 +30,23 @@ public:
 
    // Current Charge Percent
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float CurrentChargePercent;
+      float CurrentChargePercent = 50;
 
    // Minimal Usable Charge
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float MinUseablePercent;
+      float MinUseablePercent = 40;
 
    // restore Speed
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float RestoreSpeed;
+      float RestoreSpeed = 0.05f;
 
    // Restore Value
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float RestorePower;
+      float RestorePower = 0.5f;
 
    // Push Multiplier
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float PushPower;
+      float PushPower = 7;
 
    //==========================================================================
    //                         Calls
