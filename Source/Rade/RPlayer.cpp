@@ -66,7 +66,6 @@ ARPlayer::ARPlayer()
    Jetpack = CreateDefaultSubobject<URJetpackComponent>(TEXT("Jetpack"));
 
 
-   MoveSpeed        = 1;
    PlayerController = nullptr;
    bAutoRevive      = true;
 

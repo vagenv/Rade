@@ -73,15 +73,15 @@ public:
 
    // Character Current Health
    UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
-      float MoveSpeed;
+      float MoveSpeed = 1.f;
 
    // Rade Player Controller
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Player")
-      TObjectPtr<APlayerController> PlayerController;
+      TObjectPtr<APlayerController> PlayerController = nullptr;
 
    // Rade Player Controller
    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Player")
-      TObjectPtr<URJetpackComponent> Jetpack;
+      TObjectPtr<URJetpackComponent> Jetpack = nullptr;
 
    //==========================================================================
    //            1st person Mesh and animation
@@ -89,24 +89,24 @@ public:
 
    // First Person Mesh Anim Instance
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade|Player")
-      TObjectPtr<URAnimInstance> ArmsAnimInstance;
+      TObjectPtr<URAnimInstance> ArmsAnimInstance = nullptr;
 
    //  First Person Mesh
    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-      TObjectPtr<USkeletalMeshComponent> Mesh1P;
+      TObjectPtr<USkeletalMeshComponent> Mesh1P = nullptr;
 
    //==========================================================================
    //            1st person and 3rd person cameras
    //==========================================================================
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
+      TObjectPtr<UCameraComponent> FirstPersonCameraComponent = nullptr;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom;
+      TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom = nullptr;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-      TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;
+      TObjectPtr<UCameraComponent> ThirdPersonCameraComponent = nullptr;
 
    // Begin play Camera state
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
