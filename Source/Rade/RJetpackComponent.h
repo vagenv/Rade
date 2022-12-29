@@ -20,6 +20,7 @@ public:
    // Base events
    URJetpackComponent ();
    virtual void BeginPlay () override;
+   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
    // Owners Movement Component
    UCharacterMovementComponent *MovementComponent;
@@ -36,13 +37,9 @@ public:
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
       float MinUseablePercent = 40;
 
-   // restore Speed
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float RestoreSpeed = 0.05f;
-
    // Restore Value
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float RestorePower = 0.5f;
+      float RestorePower = 20;
 
    // Push Multiplier
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
@@ -57,6 +54,6 @@ public:
       void Use_Implementation ();
 
    protected:
-      void FillUp ();
+      void FillUp (float DeltaTime);
 };
 
