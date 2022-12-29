@@ -7,27 +7,23 @@
 #include "RInventoryLib/RInventoryComponent.h"
 #include "RUtilLib/RLog.h"
 
+class AController;
+
 //=============================================================================
 //                  Base Character
 //=============================================================================
 
-ARCharacter::ARCharacter()
+ARCharacter::ARCharacter ()
 {
    // Default fall damage Curve
-   FallDamageMinVelocity = 1000;
    FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
-   FallDamageCurveData->AddKey (FallDamageMinVelocity, 10);
-   FallDamageCurveData->AddKey (1500 ,40);
+   FallDamageCurveData->AddKey (1000, 0); // Minimum
+   FallDamageCurveData->AddKey (1500, 40);
    FallDamageCurveData->AddKey (2000, 100);
 
    Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
    //Inventory->SetIsReplicated(true);
-
-   HealthMax    = 100;
-   Health       = 90;
-   bDead        = false;
    bReplicates  = true;
-   //CharacterName = "Rade Character";
 }
 
 // Replication
@@ -176,27 +172,24 @@ void ARCharacter::Revive_Client_Implementation ()
 void ARCharacter::Revive ()
 {
    OnRevive.Broadcast ();
-   GetCapsuleComponent()->BodyInstance.SetCollisionProfileName("Pawn");
-   if (GetMesh()) {
-      GetMesh()->SetSimulatePhysics (false);
-      GetMesh()->AttachToComponent (RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-      GetMesh()->SetRelativeLocation (Mesh_DefaultRelativeLoc);
-      GetMesh()->SetRelativeRotation (Mesh_DefaultRelativeRot);
-      GetMesh()->BodyInstance.SetCollisionProfileName ("Pawn");
+   GetCapsuleComponent()->BodyInstance.SetCollisionProfileName ("Pawn");
+   USkeletalMeshComponent *skelMesh = GetMesh ();
+   if (skelMesh) {
+      skelMesh->SetSimulatePhysics (false);
+      skelMesh->AttachToComponent (RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+      skelMesh->SetRelativeLocation (Mesh_DefaultRelativeLoc);
+      skelMesh->SetRelativeRotation (Mesh_DefaultRelativeRot);
+      skelMesh->BodyInstance.SetCollisionProfileName ("Pawn");
    }
-   // Revived
-   BP_Revived ();
-
-   // Global_SetAnimArchtype_Implementation(ERAnimArchetype::EmptyHand);
 }
 
 
 
 // Take Damage
 float ARCharacter::TakeDamage (float DamageAmount,
-                                  struct FDamageEvent const& DamageEvent,
-                                  class AController* EventInstigator,
-                                  class AActor* DamageCauser)
+                               struct FDamageEvent const& DamageEvent,
+                               AController* EventInstigator,
+                               AActor* DamageCauser)
 {
    float ActualDamage = Super::TakeDamage (DamageAmount, DamageEvent, EventInstigator, DamageCauser);
    if (ActualDamage != .0f && !bDead) {
@@ -213,89 +206,14 @@ float ARCharacter::TakeDamage (float DamageAmount,
 // Character Landed on Ground
 void ARCharacter::Landed (const FHitResult& Hit)
 {
-   // Horizontal velocity is ignored
-   float FallVelocityZ = GetCharacterMovement()->Velocity.GetAbs ().Z;
-
-   // Fall Damage
-   if (FallVelocityZ > FallDamageMinVelocity)  {
-      FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
-
-      float dmg = 0;
-      if (FallDamageCurveData) dmg = FallDamageCurveData->Eval (FallVelocityZ);
+   const FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
+   if (FallDamageCurveData) {
+      // Horizontal velocity is ignored
+      float FallVelocityZ = GetCharacterMovement()->Velocity.GetAbs ().Z;
+      float dmg = FallDamageCurveData->Eval (FallVelocityZ);
       dmg = UGameplayStatics::ApplyDamage (this, dmg, GetController (), Hit.GetActor (), UDamageType::StaticClass ());
    }
+
    Super::Landed (Hit);
 }
-
-/*
-
-//=============================================================================
-//                         Network Anim
-//=============================================================================
-
-// Set Server Animation ID
-bool ARCharacter::ServerSetAnimID_Validate(ERAnimState AnimID){
-   return true;
-}
-void ARCharacter::ServerSetAnimID_Implementation(ERAnimState AnimID)
-{
-   // Set new State on all users
-   Global_SetAnimID(AnimID);
-}
-
-// Set Global Animation ID
-void ARCharacter::Global_SetAnimID_Implementation(ERAnimState AnimID)
-{
-   // Set The Value in anim instances
-   if (BodyAnimInstance)
-      BodyAnimInstance->RecieveGlobalAnimID(AnimID);
-}
-
-//         Check Current Animation State
-bool ARCharacter::IsAnimState(ERAnimState ThERAnimState)
-{
-   if (BodyAnimInstance)
-   {
-      if (BodyAnimInstance->IsAnimState(ThERAnimState))return true;
-      else return false;
-   }
-
-   return true;
-}
-//          Is Character In Air
-bool ARCharacter::IsAnimInAir()
-{
-   // Check each air state separately.
-   if (  IsAnimState(ERAnimState::JumpEnd)
-      || IsAnimState(ERAnimState::Jumploop)
-      || IsAnimState(ERAnimState::JumpStart))
-      return true;
-   else return false;
-}
-
-void ARCharacter::Global_SetAnimArchtype_Implementation(ERAnimArchetype newAnimArchetype)
-{
-   if (BodyAnimInstance) BodyAnimInstance->AnimArchetype = newAnimArchetype;
-}
-
-//=============================================================================
-//                          Character Stats
-//=============================================================================
-
-void ARCharacter::OnRep_CharacterStatsUpdated() {
-   BP_CharacterStatsUpdated();
-}
-
-bool ARCharacter::SetCharacterStats_Validate(const FString & newName, FLinearColor newColor)
-{
-   return true;
-}
-
-void ARCharacter::SetCharacterStats_Implementation(const FString & newName, FLinearColor newColor)
-{
-   CharacterName  = newName;
-   CharacterColor = newColor;
-   if (GetLocalRole() >= ROLE_Authority) OnRep_CharacterStatsUpdated();
-}
-*/
 
