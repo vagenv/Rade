@@ -3,9 +3,9 @@
 DEFINE_LOG_CATEGORY(RadeLog);
 
 FString RLog_GetAuthStr (const UObject* WorldContext) {
-   if (!ensure (WorldContext)) return "";
+   if (!ensure (WorldContext != nullptr)) return "[STATIC]";
    UWorld* World = WorldContext->GetWorld ();
-   if (!ensure (World)) return "";
+   if (!ensure (World != nullptr)) return "[No World]";
    return World->IsNetMode (NM_Client) ? "[CLIENT] " : "[SERVER] ";
 }
 
