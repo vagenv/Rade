@@ -2,7 +2,6 @@
 
 using UnrealBuildTool;
 using System.Collections.Generic;
-
 public class RadeEditorTarget : TargetRules
 {
    public RadeEditorTarget (TargetInfo Target) : base(Target)

@@ -29,6 +29,7 @@ public:
    // Save Slot Name
    UPROPERTY(VisibleAnywhere, Category = "Rade")
       FString SaveSlotName;
+
    // User Index
    UPROPERTY(VisibleAnywhere, Category = "Rade")
       uint32 UserIndex;

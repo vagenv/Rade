@@ -1,7 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 using UnrealBuildTool;
-
 public class ROptionsLib: ModuleRules
 {
    public ROptionsLib (ReadOnlyTargetRules Target) : base (Target)

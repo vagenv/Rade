@@ -5,7 +5,7 @@
 #include "Engine.h"
 #include "RMacro.h"
 
-RUTILLIB_API DECLARE_LOG_CATEGORY_EXTERN(RadeLog, Log, All);
+RUTILLIB_API DECLARE_LOG_CATEGORY_EXTERN (RadeLog, Log, All);
 
 //=============================================================================
 //                        Custom Print Methods
@@ -30,18 +30,4 @@ void RUTILLIB_API __rprint_internal (const UObject* WorldContext,
                                      const char    *func);
 #define R_PRINT(msg)        __rprint_internal (this,    FString (msg), __FILENAME__, __LINE__, __FUNCTION__);
 #define R_PRINT_STATIC(msg) __rprint_internal (nullptr, FString (msg), __FILENAME__, __LINE__, __FUNCTION__);
-
-//=============================================================================
-//                        Custom Load Object from Path
-//=============================================================================
-
-/*
-//TEMPLATE Load Obj From Path
-template <typename ObjClass>
-static ObjClass* LoadObjFromPath(const FName& Path)
-{
-   if (Path == NAME_None) return NULL;
-   return Cast<ObjClass>(StaticLoadObject(ObjClass::StaticClass(), NULL, *Path.ToString()));
-}
-*/
 

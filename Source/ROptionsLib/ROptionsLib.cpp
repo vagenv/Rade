@@ -2,5 +2,5 @@
 
 #include "ROptionsLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, ROptionsLib);
+IMPLEMENT_GAME_MODULE (FDefaultGameModuleImpl, ROptionsLib);
 

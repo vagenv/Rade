@@ -1,6 +1,6 @@
 #include "RLog.h"
 
-DEFINE_LOG_CATEGORY(RadeLog);
+DEFINE_LOG_CATEGORY (RadeLog);
 
 FString RLog_GetAuthStr (const UObject* WorldContext) {
    if (!ensure (WorldContext != nullptr)) return "[STATIC]";
@@ -53,6 +53,4 @@ void __rprint_internal (const UObject* WorldContext,
 
    __rprint_raw (res);
 }
-
-
 

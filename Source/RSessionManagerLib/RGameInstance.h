@@ -13,7 +13,6 @@ USTRUCT(BlueprintType)
 struct FRAvaiableSessionsData
 {
    GENERATED_USTRUCT_BODY()
-public:
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
       FString OwnerName;
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
@@ -25,8 +24,8 @@ public:
 
    FOnlineSessionSearchResult SessionData;
 
-   FRAvaiableSessionsData();
-   FRAvaiableSessionsData(FOnlineSessionSearchResult newSessionData);
+   FRAvaiableSessionsData ();
+   FRAvaiableSessionsData (FOnlineSessionSearchResult newSessionData);
 };
 
 // Custom Game Instance
@@ -36,7 +35,7 @@ class RSESSIONMANAGERLIB_API URGameInstance : public UGameInstance
    GENERATED_BODY()
 public:
 
-   URGameInstance();
+   URGameInstance ();
 
    //==========================================================================
    //               Callable Events and Functions
@@ -45,31 +44,31 @@ public:
 
    // Host Default  Online Map Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void StartOnlineGame();
+      void StartOnlineGame ();
 
    // Host Specific Online Map Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void StartOnlineGameMap(FString MapName=TEXT("BattleArena"),int32 MaxPlayerNumber=16);
+      void StartOnlineGameMap (FString MapName = TEXT ("BattleArena"), int32 MaxPlayerNumber = 16);
 
    // Find all available Online Sessions
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void FindOnlineGames();
+      void FindOnlineGames ();
 
    // Update available Online Sessions
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void UpdateSessionList();
+      void UpdateSessionList ();
 
    // Join Any Online Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void JoinOnlineGame();
+      void JoinOnlineGame ();
 
    // Join Specific Online Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void JoinSelectedOnlineGame(FRAvaiableSessionsData SessionData);
+      void JoinSelectedOnlineGame (FRAvaiableSessionsData SessionData);
 
    // Stop Session and Quit Game
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void DestroySessionAndLeaveGame();
+      void DestroySessionAndLeaveGame ();
 
 
    //==========================================================================
@@ -86,11 +85,11 @@ public:
 
    // Local Player Name
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
-      FString PlayerName="Empty Name";
+      FString PlayerName = "Empty Name";
 
    // Local Player Color
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
-      FLinearColor PlayerColor=FLinearColor::White;
+      FLinearColor PlayerColor = FLinearColor::White;
 
    // Local Player Material Settings
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
@@ -102,7 +101,7 @@ public:
 
    // Set Local Player Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void SetPlayerStats(FString newPlayerName, FLinearColor newPlayerColor, FVector newMaterialSettings);
+      void SetPlayerStats (FString newPlayerName, FLinearColor newPlayerColor, FVector newMaterialSettings);
 
 
    //==========================================================================
@@ -164,7 +163,7 @@ public:
    *   @Param      bIsPresence      "Is the Session to create a presence Session"
    *   @Param      MaxNumPlayers
    */
-   bool HostSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
+   bool HostSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
 
 
    //         Create Session Complete
@@ -174,7 +173,7 @@ public:
    *   @param SessionName the name of the session this callback is for
    *   @param bWasSuccessful true if the async action completed without error, false if there was an error
    */
-   virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+   virtual void OnCreateSessionComplete (FName SessionName, bool bWasSuccessful);
 
 
    //         Start Online Game Complete
@@ -184,7 +183,7 @@ public:
    *   @param SessionName the name of the session this callback is for
    *   @param bWasSuccessful true if the async action completed without error, false if there was an error
    */
-   void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
+   void OnStartOnlineGameComplete (FName SessionName, bool bWasSuccessful);
 
 
 
@@ -197,7 +196,7 @@ public:
    *   @param bIsLAN are we searching LAN matches
    *   @param bIsPresence are we searching presence sessions
    */
-   void FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, bool bIsLAN, bool bIsPresence);
+   void FindSessions (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, bool bIsLAN, bool bIsPresence);
 
 
    //            Find Session Complete
@@ -206,9 +205,7 @@ public:
    *
    *   @param bWasSuccessful true if the async action completed without error, false if there was an error
    */
-   void OnFindSessionsComplete(bool bWasSuccessful);
-
-
+   void OnFindSessionsComplete (bool bWasSuccessful);
 
 
    //            Join Session
@@ -220,10 +217,10 @@ public:
    *
    *   @return bool true if successful, false otherwise
    */
-   bool JoinSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
+   bool JoinSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
    // Find an Alternative to this shit// extra
-   virtual bool JoinSession(ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult) { return false; }
-   virtual bool JoinSession(ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) { return false; }
+   virtual bool JoinSession (ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult) { return false; }
+   virtual bool JoinSession (ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) { return false; }
 
 
 
@@ -234,7 +231,7 @@ public:
    *   @param SessionName the name of the session this callback is for
    *   @param bWasSuccessful true if the async action completed without error, false if there was an error
    */
-   void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+   void OnJoinSessionComplete (FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 
 
@@ -246,6 +243,6 @@ public:
    *   @param SessionName the name of the session this callback is for
    *   @param bWasSuccessful true if the async action completed without error, false if there was an error
    */
-   virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+   virtual void OnDestroySessionComplete (FName SessionName, bool bWasSuccessful);
 };
 

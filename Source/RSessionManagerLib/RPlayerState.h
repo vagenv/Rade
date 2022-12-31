@@ -12,7 +12,7 @@ class RSESSIONMANAGERLIB_API ARPlayerState : public APlayerState
    GENERATED_BODY()
 
 public:
-   virtual void BeginPlay()override;
+   virtual void BeginPlay ()override;
 
    // Number of Times Player Died
    UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "")

@@ -345,65 +345,65 @@ bool URGameInstance::JoinSession(TSharedPtr<const FUniqueNetId> UserId, FName Se
       // Get SessionInterface from the OnlineSubsystem
       IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
-      if (Sessions.IsValid() && UserId.IsValid()) {
+      if (Sessions.IsValid () && UserId.IsValid ()) {
          // Set the Handle again
-         OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
+         OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegate);
 
          // Call the "JoinSession" Function with the passed "SearchResult". The "SessionSearch->SearchResults" can be used to get such a
          // "FOnlineSessionSearchResult" and pass it. Pretty straight forward!
-         bSuccessful = Sessions->JoinSession(*UserId, SessionName, SearchResult);
+         bSuccessful = Sessions->JoinSession (*UserId, SessionName, SearchResult);
       }
    }
 
    return bSuccessful;
 }
 
-void URGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
    // Get the OnlineSubsystem we want to work with
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get ();
    if (OnlineSub) {
       // Get SessionInterface from the OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
 
       if (Sessions.IsValid()) {
          // Clear the Delegate again
-         Sessions->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegateHandle);
+         Sessions->ClearOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegateHandle);
 
          // Get the first local PlayerController, so we can call "ClientTravel" to get to the Server Map
          // This is something the Blueprint Node "Join Session" does automatically!
-         APlayerController * const PlayerController = GetFirstLocalPlayerController();
+         APlayerController * const PlayerController = GetFirstLocalPlayerController ();
 
          // We need a FString to use ClientTravel and we can let the SessionInterface construct such a
          // String for us by giving him the SessionName and an empty String. We want to do this, because
          // Every OnlineSubsystem uses different TravelURLs
          FString TravelURL;
 
-         if (PlayerController && Sessions->GetResolvedConnectString(SessionName, TravelURL)) {
+         if (PlayerController && Sessions->GetResolvedConnectString (SessionName, TravelURL)) {
             // Finally call the ClienTravel. If you want, you could print the TravelURL to see
             // how it really looks like
-            PlayerController->ClientTravel(TravelURL, ETravelType::TRAVEL_Absolute);
+            PlayerController->ClientTravel (TravelURL, ETravelType::TRAVEL_Absolute);
          }
       }
    }
 }
 
 // Destroy Session And return to Start Map
-void URGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
+void URGameInstance::OnDestroySessionComplete (FName SessionName, bool bWasSuccessful)
 {
    // Get the OnlineSubsystem we want to work with
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get ();
    if (OnlineSub) {
       // Get the SessionInterface from the OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
 
-      if (Sessions.IsValid()) {
+      if (Sessions.IsValid ()) {
          // Clear the Delegate
-         Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
+         Sessions->ClearOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegateHandle);
 
          // If it was successful, we just load another level (could be a MainMenu!)
          if (bWasSuccessful) {
-            UGameplayStatics::OpenLevel(GetWorld(), "SelectMap", true);
+            UGameplayStatics::OpenLevel (GetWorld (), "SelectMap", true);
          }
       }
    }

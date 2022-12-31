@@ -2,5 +2,5 @@
 
 #include "RUtilLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RUtilLib);
+IMPLEMENT_GAME_MODULE (FDefaultGameModuleImpl, RUtilLib);
 

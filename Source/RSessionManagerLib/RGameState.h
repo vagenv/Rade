@@ -17,6 +17,11 @@ struct FROnineMessageData
 {
    GENERATED_USTRUCT_BODY()
 public:
+
+   // Date of Message
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+      FDateTime Time;
+
    // The Actual Message
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
       FString Message = "Undefined";
@@ -25,13 +30,9 @@ public:
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
       FString Owner = "Undefined";
 
-   // Date of Message
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-      FDateTime Time;
-
    // Message Color
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
-      FLinearColor Color;
+      FLinearColor Color = FColor::Magenta;
 
    FROnineMessageData();
    FROnineMessageData(FString Message_, FString Owner_, FColor Color_);
