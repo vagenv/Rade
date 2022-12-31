@@ -3,29 +3,20 @@
 ===========================
 
 
-Inventory
+Inventory UI working.
 
-Item:
+Scroll/Action/Drop
 
-BasicItem (Sell, crafting)
-   Name      // Name
-   Tooltip   // Hover / Bottom menu
-   Icon      // Texture
-   Count     // Current Amount
-   MaxCount  // > 1, stackable
-   Weight    // per count
-   Cost      // per count
+Pickup + Inventory same widget
 
-QuestItem / Action Item (Quest, Health/Mana potion)
+
+ItemAction
    Function / Interface
 
-EquipmentItem ()
-   AttachSlot
+Weapons with:
    CurrenAmmo
    MaxAmmo
    MagSize
-
-pickup mesh?
 
 Chest with inventory
 
@@ -33,28 +24,18 @@ Chest with inventory
 
 Save/Load
 
-Network
+Network. Sharing chest items.
+
+
+Crafting system
+
+Store
+
+Health / Stats temporary change from items.
 
 
 
-Health / Stats as a component manager
-
-
-
-
-UI
-
-Option menu
-
-Inventory
-
-Items as json
-
-Fall damage
-
-Jetpack
-
-Equipment
+Equipment Manager with slots.
 
 Stats
 
@@ -67,6 +48,12 @@ Chat
 Pickup
 
 Session
+
+
+
+Option menu
+
+
 
 ===========================
    Rade
