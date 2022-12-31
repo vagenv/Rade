@@ -22,8 +22,8 @@ public:
    //          Core data
    //=============================================================================
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Item")
-   FRItemData ItemData;
+   // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Item")
+   // FRItemData ItemData;
 
    //=============================================================================
    //          Blueprint events
@@ -47,8 +47,8 @@ public:
    //UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
    //   void BP_Updated ();
 
-   // Advanced Item Pickup
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Item")
-      TSubclassOf<ARItemPickup> PickupArch;
+   // // Advanced Item Pickup
+   // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Item")
+   //    TSubclassOf<ARItemPickup> PickupArch;
 };
 

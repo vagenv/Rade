@@ -1,34 +1,78 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RItemTypes.h"
+#include "RUtilLib/Rlog.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
-FRItemProperty::FRItemProperty (const FString &Key_, const FString &Value_)
-   : Key(Key_), Value(Value_)
-{
-}
 
-FString FRItemData::ToJSON ()
-{
-   //ToRAW ();
-   FString OutString;
-   FJsonObjectConverter::UStructToJsonObjectString<FRItemData> (*this, OutString);
-   return OutString;
-}
+// FRItemRow_Base::FRItemRow_Base (const FDataTableRowHandle& RowHandle)
+// {
+//    auto it = RowHandle.GetRow<FRItemRow_Base> ("");
+//    if (it) {
+//       Name     = it->Name    ;
+//       Tooltip  = it->Tooltip ;
+//       Icon     = it->Icon    ;
+//       Count    = it->Count   ;
+//       MaxCount = it->MaxCount;
+//       Weight   = it->Weight  ;
+//       Cost     = it->Cost    ;
+//    }
+// }
 
-bool FRItemData::FromJSON (const FString &Data_)
+FString FRItemRow_Base::ToJSON (const FRItemRow_Base &item)
 {
-   bool res = FJsonObjectConverter::JsonObjectStringToUStruct (Data_, this, 0, 0);
-   //if (res) FromRAW ();
+   FString rawData;
+   FJsonObjectConverter::UStructToJsonObjectString<FRItemRow_Base> (item, rawData);
+   return rawData;
+}
+FRItemRow_Base FRItemRow_Base::FromJSON (const FString &rawData)
+{
+   FRItemRow_Base res;
+   bool success = FJsonObjectConverter::JsonObjectStringToUStruct (rawData, &res, 0, 0);
+   if (!success) R_LOG_STATIC ("Failed to parse raw JSON data");
    return res;
 }
+
+FRItemRow_Base FRItemRow_Base::FromRow (const FDataTableRowHandle& RowHandle)
+{
+   FRItemRow_Base res;
+
+   auto data = RowHandle.GetRow<FRItemRow_Base> ("");
+   if (data) {
+      res = FRItemRow_Base (*data);
+   } else {
+      R_LOG_STATIC (FString ("Failed to read row: ") + RowHandle.RowName.ToString ());
+   }
+   return res;
+}
+
+// FRItemProperty::FRItemProperty (const FString &Key_, const FString &Value_)
+//    : Key(Key_), Value(Value_)
+// {
+// }
+
+// FString FRItemData::ToJSON ()
+// {
+//    //ToRAW ();
+//    FString OutString;
+//    FJsonObjectConverter::UStructToJsonObjectString<FRItemData> (*this, OutString);
+//    return OutString;
+// }
+
+// bool FRItemData::FromJSON (const FString &Data_)
+// {
+//    bool res = FJsonObjectConverter::JsonObjectStringToUStruct (Data_, this, 0, 0);
+//    //if (res) FromRAW ();
+//    return res;
+// }
 
 
 //=============================================================================
 //                  RAW DATA Util functions
 //=============================================================================
 
+/*
 
 bool FRItemData::Has (const FString &Key_) const
 {
@@ -57,7 +101,7 @@ void FRItemData::Set (const FString &Key_, const FString &Value_)
    RawData.Add (FRItemProperty(Key_, Value_));
 }
 
-
+*/
 
 /*
 

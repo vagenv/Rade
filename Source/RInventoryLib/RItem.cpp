@@ -17,16 +17,16 @@ void URItem::PostCDOContruct ()
 {
    Super::PostCDOContruct ();
 
-   // --- A new blueprint class initialized
-   if (!ItemData.ItemArch && GetClass () != StaticClass()) {
-      ItemData.ItemArch = GetClass ();
+   // // --- A new blueprint class initialized
+   // if (!ItemData.ItemArch && GetClass () != StaticClass()) {
+   //    ItemData.ItemArch = GetClass ();
 
-      // Assign Description
-      if (ItemData.Description == FRItemDescription ()) {
-         ItemData.Description.Name    = GetClass()->GetName ();
-         ItemData.Description.Tooltip = "Use " + GetClass()->GetName ();
-      }
-   }
+   //    // Assign Description
+   //    if (ItemData.Description == FRItemDescription ()) {
+   //       ItemData.Description.Name    = GetClass()->GetName ();
+   //       ItemData.Description.Tooltip = "Use " + GetClass()->GetName ();
+   //    }
+   // }
 }
 
 void URItem::Used (AActor *InventoryOwner, URInventoryComponent *Inventory) {

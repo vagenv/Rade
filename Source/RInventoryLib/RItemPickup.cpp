@@ -235,19 +235,19 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
    // Null or itself
    if (OtherActor == nullptr || OtherActor == this) return;
 
-   // Does not have inventory
-   URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
-   if (PlayerInventory == nullptr) return;
+   // // Does not have inventory
+   // URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
+   // if (PlayerInventory == nullptr) return;
 
-   if (!bAutoPickup) {
-      PlayerInventory->CurrentPickups.Add (this);
-      PlayerInventory->OnPickupsUpdated.Broadcast ();
+   // if (!bAutoPickup) {
+   //    PlayerInventory->CurrentPickups.Add (this);
+   //    PlayerInventory->OnPickupsUpdated.Broadcast ();
 
-      // BP Event that player entered
-      BP_PlayerEntered (OtherActor);
-   } else {
-      PlayerInventory->AddItem_Pickup (this);
-   }
+   //    // BP Event that player entered
+   //    BP_PlayerEntered (OtherActor);
+   // } else {
+   //    PlayerInventory->AddItem_Pickup (this);
+   // }
 
    /*
       // Auto give player the item
@@ -283,11 +283,11 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
    URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
    if (PlayerInventory == nullptr) return;
 
-   PlayerInventory->CurrentPickups.RemoveSingle (this);
-   PlayerInventory->OnPickupsUpdated.Broadcast ();
+   // PlayerInventory->CurrentPickups.RemoveSingle (this);
+   // PlayerInventory->OnPickupsUpdated.Broadcast ();
 
-   // BP Event that player Exited
-   BP_PlayerLeft (OtherActor);
+   // // BP Event that player Exited
+   // BP_PlayerLeft (OtherActor);
 
    /*
 
@@ -306,20 +306,20 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
 // The Actual event of pickup
 void ARItemPickup::PickedUp (AActor *InventoryOwner)
 {
-   if (!InventoryOwner) return;
-   URInventoryComponent *PlayerInventory = InventoryOwner->FindComponentByClass<URInventoryComponent> ();
-   if (!Inventory) return;
+   // if (!InventoryOwner) return;
+   // URInventoryComponent *PlayerInventory = InventoryOwner->FindComponentByClass<URInventoryComponent> ();
+   // if (!Inventory) return;
 
-   if (bAutoDestroy) PlayerInventory->CurrentPickups.RemoveSingle (this);
-   PlayerInventory->OnPickupsUpdated.Broadcast ();
-   BP_PickedUp (InventoryOwner);
-   if (bAutoDestroy) Destroy ();
+   // if (bAutoDestroy) PlayerInventory->CurrentPickups.RemoveSingle (this);
+   // PlayerInventory->OnPickupsUpdated.Broadcast ();
+   // BP_PickedUp (InventoryOwner);
+   // if (bAutoDestroy) Destroy ();
 }
 
 void ARItemPickup::OnInventoryUpdate ()
 {
-   if (bAutoDestroy && Inventory && Inventory->GetItems ().Num () == 0) {
-      Destroy ();
-   }
+   // if (bAutoDestroy && Inventory && Inventory->GetItems ().Num () == 0) {
+   //    Destroy ();
+   // }
 }
 

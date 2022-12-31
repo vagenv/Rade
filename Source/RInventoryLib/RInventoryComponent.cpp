@@ -1,12 +1,18 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RInventoryComponent.h"
-#include "RItemTypes.h"
-#include "RItem.h"
-#include "RItemPickup.h"
+// #include "RItemTypes.h"
+// #include "RItem.h"
+// #include "RItemPickup.h"
 #include "RUtilLib/RLog.h"
 #include "RSaveLib/RSaveMgr.h"
 #include "Net/UnrealNetwork.h"
+
+
+//=============================================================================
+//                 Editor
+//=============================================================================
+
 
 //=============================================================================
 //                 Core
@@ -25,8 +31,8 @@ void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 
    DOREPLIFETIME (URInventoryComponent, Capacity);
    DOREPLIFETIME (URInventoryComponent, TotalWeight);
-   DOREPLIFETIME (URInventoryComponent, Items);
-   DOREPLIFETIME (URInventoryComponent, CurrentPickups);
+   // DOREPLIFETIME (URInventoryComponent, Items);
+   // DOREPLIFETIME (URInventoryComponent, CurrentPickups);
 }
 
 void URInventoryComponent::BeginPlay()
@@ -47,303 +53,315 @@ void URInventoryComponent::BeginPlay()
       URSaveMgr::OnLoad (GetWorld (), LoadedDelegate);
    }
 
-   // Add default items
-   for (auto &itItem : DefaultItems) {
-      AddItem_Arch (itItem);
+   for (const auto &itItem : DefaultItems) {
+      // R_LOG (FRItemRow_Base::FromRow (itItem).Name);
+      FRItemRawData raw;
+      raw.Data = FRItemRow_Base::ToJSON (FRItemRow_Base::FromRow (itItem));
+      raw.Type = FRItemType::Base;
+      ItemsRaw.Add (raw);
    }
+
+   // // Add default items
+   // for (auto &itItem : DefaultItems) {
+   //    AddItem_Arch (itItem);
+   // }
 }
 
 //=============================================================================
 //                 Add Item
 //=============================================================================
 
-const TArray<FRItemData> URInventoryComponent::GetItems () const
+TArray<FRItemRow_Base> URInventoryComponent::GetItems () const
 {
-   return Items;
-}
-
-void URInventoryComponent::OnRep_Items ()
-{
-   OnInventoryUpdated.Broadcast ();
-}
-
-bool URInventoryComponent::AddItem (FRItemData ItemData)
-{
-   if (!bIsServer) return false;
-
-   //R_LOG ("Add item");
-   if (Items.Num () >= Capacity || !ItemData.ItemArch) return nullptr;
-
-   // Check if item is stackable
-   if (ItemData.Description.Count < ItemData.Description.MaxCount) {
-      for (FRItemData &itData : Items) {
-
-         // Wrong type
-         // GetClass returns in all cases 'BlueprintGeneratedClass'
-         if (itData.ItemArch != ItemData.ItemArch) continue;
-
-         // Slot full
-         if (itData.Description.Count > itData.Description.MaxCount) continue;
-
-         // Full fit
-         if (itData.Description.Count + ItemData.Description.Count < ItemData.Description.MaxCount) {
-
-            itData.Description.Count += ItemData.Description.Count;
-            OnInventoryUpdated.Broadcast ();
-            return true;
-         };
-
-         // Partial fit
-         int32 addCount = itData.Description.MaxCount - itData.Description.Count;
-         if (ItemData.Description.Count < addCount) addCount = ItemData.Description.Count;
-
-           itData.Description.Count += addCount;
-         ItemData.Description.Count -= addCount;
-      }
+   TArray<FRItemRow_Base> res;
+   for (const auto &it : ItemsRaw) {
+      res.Add (FRItemRow_Base::FromJSON (it.Data));
    }
-
-   Items.Add (ItemData);
-   OnInventoryUpdated.Broadcast ();
-   return true;
+   return res;
 }
 
+// void URInventoryComponent::OnRep_Items ()
+// {
+//    OnInventoryUpdated.Broadcast ();
+// }
 
-bool URInventoryComponent::AddItem_Arch (TSubclassOf<URItem> Item)
-{
-   if (!bIsServer) return false;
-   //R_LOG ("Add item arch");
-   if (Items.Num () >= Capacity || !Item) return false;
+// bool URInventoryComponent::AddItem (FRItemData ItemData)
+// {
+//    if (!bIsServer) return false;
 
-   URItem *ItemBP = Item->GetDefaultObject<URItem>();
-   if (!ItemBP) return false;
+//    //R_LOG ("Add item");
+//    if (Items.Num () >= Capacity || !ItemData.ItemArch) return nullptr;
 
-   FRItemData data = ItemBP->ItemData;
-   data.ItemArch = Item;
+//    // Check if item is stackable
+//    if (ItemData.Description.Count < ItemData.Description.MaxCount) {
+//       for (FRItemData &itData : Items) {
 
-   return AddItem (data);
-}
+//          // Wrong type
+//          // GetClass returns in all cases 'BlueprintGeneratedClass'
+//          if (itData.ItemArch != ItemData.ItemArch) continue;
 
+//          // Slot full
+//          if (itData.Description.Count > itData.Description.MaxCount) continue;
 
-bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
-{
-   if (!bIsServer) return false;
-   //R_LOG ("Add item pickup");
-   if (!Pickup || !Pickup->Inventory) return false;
+//          // Full fit
+//          if (itData.Description.Count + ItemData.Description.Count < ItemData.Description.MaxCount) {
 
-   TArray<FRItemData> ItemsLeft;
-   for (const FRItemData &ItItem : Pickup->Inventory->Items) {
-      bool res = AddItem (ItItem);
-      if (!res) ItemsLeft.Add (ItItem);
-   }
+//             itData.Description.Count += ItemData.Description.Count;
+//             OnInventoryUpdated.Broadcast ();
+//             return true;
+//          };
 
-   Pickup->Inventory->Items = ItemsLeft;
-   Pickup->PickedUp (GetOwner());
+//          // Partial fit
+//          int32 addCount = itData.Description.MaxCount - itData.Description.Count;
+//          if (ItemData.Description.Count < addCount) addCount = ItemData.Description.Count;
 
-   return true;
-}
+//            itData.Description.Count += addCount;
+//          ItemData.Description.Count -= addCount;
+//       }
+//    }
 
-
-bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
-{
-   if (!bIsServer) return false;
-   //R_LOG ("rm item");
-   if (!Items.IsValidIndex (ItemIdx)) return false;
-
-   if (Items[ItemIdx].Description.Count > Count) {
-      Items[ItemIdx].Description.Count -= Count;
-   } else {
-      Items.RemoveAt (ItemIdx);
-   }
-
-   OnInventoryUpdated.Broadcast ();
-
-   return true;
-}
-
-bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
-                                         URInventoryComponent *ToInventory,
-                                         int32 FromItemIdx,
-                                         int32 FromItemCount)
-{
-   if (!FromInventory) return false;
-   if (!ToInventory)   return false;
-
-   //R_LOG ("Transfer item");
-   if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return false;
-
-   FRItemData ItemData = FromInventory->Items[FromItemIdx];
-   ItemData.Description.Count = FromItemCount;
-
-   FromInventory->RemoveItem (FromItemIdx, FromItemCount);
-     ToInventory->AddItem    (ItemData);
-
-   return true;
-}
+//    Items.Add (ItemData);
+//    OnInventoryUpdated.Broadcast ();
+//    return true;
+// }
 
 
-//=============================================================================
-//                 Item action
-//=============================================================================
+// bool URInventoryComponent::AddItem_Arch (TSubclassOf<URItem> Item)
+// {
+//    if (!bIsServer) return false;
+//    //R_LOG ("Add item arch");
+//    if (Items.Num () >= Capacity || !Item) return false;
+
+//    URItem *ItemBP = Item->GetDefaultObject<URItem>();
+//    if (!ItemBP) return false;
+
+//    FRItemData data = ItemBP->ItemData;
+//    data.ItemArch = Item;
+
+//    return AddItem (data);
+// }
 
 
-bool URInventoryComponent::UseItem (int32 ItemIdx)
-{
-   if (!bIsServer) return false;
+// bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
+// {
+//    if (!bIsServer) return false;
+//    //R_LOG ("Add item pickup");
+//    if (!Pickup || !Pickup->Inventory) return false;
 
-   //R_LOG ("use item");
-   // valid idx
-   if (!Items.IsValidIndex (ItemIdx)) return false;
-   // valid archetype
-   if (!Items[ItemIdx].ItemArch) return false;
-   URItem *ItemBP = Items[ItemIdx].ItemArch->GetDefaultObject<URItem>();
+//    TArray<FRItemData> ItemsLeft;
+//    for (const FRItemData &ItItem : Pickup->Inventory->Items) {
+//       bool res = AddItem (ItItem);
+//       if (!res) ItemsLeft.Add (ItItem);
+//    }
 
-   BP_Used (ItemBP);
-   ItemBP->Used (GetOwner(), this);
+//    Pickup->Inventory->Items = ItemsLeft;
+//    Pickup->PickedUp (GetOwner());
 
-   return true;
-}
-
-ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
-{
-   if (!bIsServer) return nullptr;
-
-   //R_LOG ("drop item");
-   // valid idx
-   if (!Items.IsValidIndex (ItemIdx)) return false;
-   // valid archetype
-   if (!Items[ItemIdx].ItemArch) return false;
-   URItem *ItemBP = Items[ItemIdx].ItemArch->GetDefaultObject<URItem>();
-   if (!ItemBP) return false;
-
-   FRItemData ItemData = Items[ItemIdx];
-   if (Count > ItemData.Description.Count) Count = ItemData.Description.Count;
-   if (!RemoveItem (ItemIdx, Count)) return false;
+//    return true;
+// }
 
 
-   AActor *Player = GetOwner ();
-   // Get Player Rotation
-   FRotator rot = Player->GetActorRotation();
-   FVector forwardVector = rot.Vector() * 300;
-           forwardVector.Z = 0;
-   FVector spawnLoc = Player->GetActorLocation() + forwardVector + FVector(0, 0, 50);
+// bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
+// {
+//    if (!bIsServer) return false;
+//    //R_LOG ("rm item");
+//    if (!Items.IsValidIndex (ItemIdx)) return false;
 
-   // Create pickup
-   ARItemPickup *Pickup = nullptr;
+//    if (Items[ItemIdx].Description.Count > Count) {
+//       Items[ItemIdx].Description.Count -= Count;
+//    } else {
+//       Items.RemoveAt (ItemIdx);
+//    }
 
-   if (ItemBP->PickupArch) {
-      Pickup = GetWorld()->SpawnActor<ARItemPickup>(ItemBP->PickupArch, spawnLoc, rot);
+//    OnInventoryUpdated.Broadcast ();
 
-   } else {
-      Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
-      Pickup->InitEmpty ();
-   }
-   Pickup->bAutoPickup  = false;
-   Pickup->bAutoDestroy = true;
+//    return true;
+// }
 
-   Pickup->Inventory->DefaultItems.Empty ();
-   Pickup->Inventory->Items.Empty ();
+// bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
+//                                          URInventoryComponent *ToInventory,
+//                                          int32 FromItemIdx,
+//                                          int32 FromItemCount)
+// {
+//    if (!FromInventory) return false;
+//    if (!ToInventory)   return false;
 
-   ItemData.Description.Count = Count;
-   Pickup->Inventory->Items.Add (ItemData);
+//    //R_LOG ("Transfer item");
+//    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return false;
 
-   BP_Droped (ItemBP, Pickup);
-   ItemBP->Droped (GetOwner(), this, Pickup);
+//    FRItemData ItemData = FromInventory->Items[FromItemIdx];
+//    ItemData.Description.Count = FromItemCount;
 
-   return Pickup;
-}
+//    FromInventory->RemoveItem (FromItemIdx, FromItemCount);
+//      ToInventory->AddItem    (ItemData);
 
-
-//=============================================================================
-//                 Server
-//=============================================================================
-
-void URInventoryComponent::UseItem_Server_Implementation (int32 ItemIdx)
-{
-   UseItem (ItemIdx);
-}
-
-void URInventoryComponent::DropItem_Server_Implementation (int32 ItemIdx, int32 Count)
-{
-   DropItem (ItemIdx, Count);
-}
-
-void URInventoryComponent::RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count)
-{
-   //R_LOG ("action");
-   RemoveItem (ItemIdx, Count);
-}
-
-void URInventoryComponent::AddItem_Server_Implementation (FRItemData ItemData)
-{
-   //R_LOG ("action");
-   AddItem (ItemData);
-}
-
-void URInventoryComponent::AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup)
-{
-   //R_LOG ("action");
-   AddItem_Pickup (Pickup);
-}
-
-void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *FromInventory,
-                                                               URInventoryComponent *ToInventory,
-                                                               int32 FromItemIdx,
-                                                               int32 FromItemCount)
-{
-   if (!bIsServer) return;
-   URInventoryComponent::TransferItem (FromInventory, ToInventory, FromItemIdx, FromItemCount);
-   /*
-   if (!FromInventory) return;
-   if (!ToInventory)   return;
-   if (!bIsServer)     return;
-
-   //R_LOG ("Transfer item");
-   if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return;
-
-   FItemData ItemData = FromInventory->Items[FromItemIdx];
-   ItemData.Description.Count = FromItemCount;
-
-   FromInventory->RemoveItem (FromItemIdx, FromItemCount);
-     ToInventory->AddItem    (ItemData);
-   */
-}
+//    return true;
+// }
 
 
+// //=============================================================================
+// //                 Item action
+// //=============================================================================
 
-//=============================================================================
-//                 Pickup
-//=============================================================================
 
-void URInventoryComponent::OnRep_CurrentPickups ()
-{
-   OnPickupsUpdated.Broadcast ();
-}
+// bool URInventoryComponent::UseItem (int32 ItemIdx)
+// {
+//    if (!bIsServer) return false;
 
-ARItemPickup* URInventoryComponent::GetClosestPickup ()
-{
-   ARItemPickup *ClosestPickup = nullptr;
+//    //R_LOG ("use item");
+//    // valid idx
+//    if (!Items.IsValidIndex (ItemIdx)) return false;
+//    // valid archetype
+//    if (!Items[ItemIdx].ItemArch) return false;
+//    URItem *ItemBP = Items[ItemIdx].ItemArch->GetDefaultObject<URItem>();
 
-   FVector PlayerLoc = GetOwner ()->GetActorLocation ();
-   FVector PickupLoc;
+//    BP_Used (ItemBP);
+//    ItemBP->Used (GetOwner(), this);
 
-   for (ARItemPickup *itPickup : CurrentPickups) {
-      if (!itPickup) continue;
+//    return true;
+// }
 
-      FVector itLoc = itPickup->GetActorLocation ();
+// ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
+// {
+//    if (!bIsServer) return nullptr;
 
-      if (!ClosestPickup) {
-         ClosestPickup = itPickup;
-         PickupLoc = itLoc;
-      }
+//    //R_LOG ("drop item");
+//    // valid idx
+//    if (!Items.IsValidIndex (ItemIdx)) return false;
+//    // valid archetype
+//    if (!Items[ItemIdx].ItemArch) return false;
+//    URItem *ItemBP = Items[ItemIdx].ItemArch->GetDefaultObject<URItem>();
+//    if (!ItemBP) return false;
 
-      if (FVector::Distance (PlayerLoc, itLoc) < FVector::Distance (PlayerLoc, PickupLoc)) {
-         ClosestPickup = itPickup;
-         PickupLoc = itLoc;
-      }
-   }
+//    FRItemData ItemData = Items[ItemIdx];
+//    if (Count > ItemData.Description.Count) Count = ItemData.Description.Count;
+//    if (!RemoveItem (ItemIdx, Count)) return false;
 
-   return ClosestPickup;
-}
+
+//    AActor *Player = GetOwner ();
+//    // Get Player Rotation
+//    FRotator rot = Player->GetActorRotation();
+//    FVector forwardVector = rot.Vector() * 300;
+//            forwardVector.Z = 0;
+//    FVector spawnLoc = Player->GetActorLocation() + forwardVector + FVector(0, 0, 50);
+
+//    // Create pickup
+//    ARItemPickup *Pickup = nullptr;
+
+//    if (ItemBP->PickupArch) {
+//       Pickup = GetWorld()->SpawnActor<ARItemPickup>(ItemBP->PickupArch, spawnLoc, rot);
+
+//    } else {
+//       Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
+//       Pickup->InitEmpty ();
+//    }
+//    Pickup->bAutoPickup  = false;
+//    Pickup->bAutoDestroy = true;
+
+//    Pickup->Inventory->DefaultItems.Empty ();
+//    Pickup->Inventory->Items.Empty ();
+
+//    ItemData.Description.Count = Count;
+//    Pickup->Inventory->Items.Add (ItemData);
+
+//    BP_Droped (ItemBP, Pickup);
+//    ItemBP->Droped (GetOwner(), this, Pickup);
+
+//    return Pickup;
+// }
+
+
+// //=============================================================================
+// //                 Server
+// //=============================================================================
+
+// void URInventoryComponent::UseItem_Server_Implementation (int32 ItemIdx)
+// {
+//    UseItem (ItemIdx);
+// }
+
+// void URInventoryComponent::DropItem_Server_Implementation (int32 ItemIdx, int32 Count)
+// {
+//    DropItem (ItemIdx, Count);
+// }
+
+// void URInventoryComponent::RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count)
+// {
+//    //R_LOG ("action");
+//    RemoveItem (ItemIdx, Count);
+// }
+
+// void URInventoryComponent::AddItem_Server_Implementation (FRItemData ItemData)
+// {
+//    //R_LOG ("action");
+//    AddItem (ItemData);
+// }
+
+// void URInventoryComponent::AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup)
+// {
+//    //R_LOG ("action");
+//    AddItem_Pickup (Pickup);
+// }
+
+// void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *FromInventory,
+//                                                                URInventoryComponent *ToInventory,
+//                                                                int32 FromItemIdx,
+//                                                                int32 FromItemCount)
+// {
+//    if (!bIsServer) return;
+//    URInventoryComponent::TransferItem (FromInventory, ToInventory, FromItemIdx, FromItemCount);
+//    /*
+//    if (!FromInventory) return;
+//    if (!ToInventory)   return;
+//    if (!bIsServer)     return;
+
+//    //R_LOG ("Transfer item");
+//    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return;
+
+//    FItemData ItemData = FromInventory->Items[FromItemIdx];
+//    ItemData.Description.Count = FromItemCount;
+
+//    FromInventory->RemoveItem (FromItemIdx, FromItemCount);
+//      ToInventory->AddItem    (ItemData);
+//    */
+// }
+
+
+
+// //=============================================================================
+// //                 Pickup
+// //=============================================================================
+
+// void URInventoryComponent::OnRep_CurrentPickups ()
+// {
+//    OnPickupsUpdated.Broadcast ();
+// }
+
+// ARItemPickup* URInventoryComponent::GetClosestPickup ()
+// {
+//    ARItemPickup *ClosestPickup = nullptr;
+
+//    FVector PlayerLoc = GetOwner ()->GetActorLocation ();
+//    FVector PickupLoc;
+
+//    for (ARItemPickup *itPickup : CurrentPickups) {
+//       if (!itPickup) continue;
+
+//       FVector itLoc = itPickup->GetActorLocation ();
+
+//       if (!ClosestPickup) {
+//          ClosestPickup = itPickup;
+//          PickupLoc = itLoc;
+//       }
+
+//       if (FVector::Distance (PlayerLoc, itLoc) < FVector::Distance (PlayerLoc, PickupLoc)) {
+//          ClosestPickup = itPickup;
+//          PickupLoc = itLoc;
+//       }
+//    }
+
+//    return ClosestPickup;
+// }
 
 
 //=============================================================================
@@ -355,53 +373,53 @@ void URInventoryComponent::OnSave ()
    // --- Save player Inventory
 
    // Convert ItemData to array of JSON strings
-   TArray<FString> ItemData;
-   for (FRItemData &item : Items) {
-      ItemData.Add (item.ToJSON ());
-   }
+   // TArray<FString> ItemData;
+   // for (FRItemData &item : Items) {
+   //    ItemData.Add (item.ToJSON ());
+   // }
 
-   // Push to buffer
-   FBufferArchive ToBinary;
-   ToBinary << ItemData;
+   // // Push to buffer
+   // FBufferArchive ToBinary;
+   // ToBinary << ItemData;
 
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   // FString InventoryUniqueId = GetOwner ()->GetName ();
 
-   // Set
-   bool res = URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary);
+   // // Set
+   // bool res = URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary);
 
-   if (!res) R_LOG ("Failed to save player inventory");
+   // if (!res) R_LOG ("Failed to save player inventory");
 }
 
 void URInventoryComponent::OnLoad ()
 {
    // --- Load player Inventory
 
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   // FString InventoryUniqueId = GetOwner ()->GetName ();
 
-   TArray<uint8> BinaryArray;
-   bool res = URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray);
-   if (!res) {
-      R_LOG ("Failed to load player inventory");
-      return;
-   }
+   // TArray<uint8> BinaryArray;
+   // bool res = URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray);
+   // if (!res) {
+   //    R_LOG ("Failed to load player inventory");
+   //    return;
+   // }
 
-   // Convert Binary to array of JSON strings
-   TArray<FString> ItemsData;
-   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   FromBinary.Seek(0);
-   FromBinary << ItemsData;
+   // // Convert Binary to array of JSON strings
+   // TArray<FString> ItemsData;
+   // FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
+   // FromBinary.Seek(0);
+   // FromBinary << ItemsData;
 
-   // Convert JSON strings to ItemData
-   TArray<FRItemData> loadedItems;
-   for (FString &ItemData : ItemsData) {
-      FRItemData Item;
-      Item.FromJSON (ItemData);
-      loadedItems.Add (Item);
-   }
+   // // Convert JSON strings to ItemData
+   // TArray<FRItemData> loadedItems;
+   // for (FString &ItemData : ItemsData) {
+   //    FRItemData Item;
+   //    Item.FromJSON (ItemData);
+   //    loadedItems.Add (Item);
+   // }
 
-   // Update inventory
-   Items = loadedItems;
-   OnInventoryUpdated.Broadcast ();
+   // // Update inventory
+   // Items = loadedItems;
+   // OnInventoryUpdated.Broadcast ();
 }
 
 

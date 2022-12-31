@@ -8,12 +8,13 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 
+struct FRItemRow_Base;
 class URItem;
 class ARItemPickup;
 class URInventoryComponent;
 
 // Inventory Component. Holds all items an actor own
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, BlueprintType)
 class RINVENTORYLIB_API URInventoryComponent : public UActorComponent
 {
    GENERATED_BODY()
@@ -46,20 +47,29 @@ public:
    //                 Item list
    //=============================================================================
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      const TArray<FRItemData> GetItems() const;
-protected:
-   UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      TArray<FRItemData> Items;
+      TArray<FRItemRow_Base> GetItems () const;
 
-   // Network call when Item list has been updated
-   UFUNCTION()
-      void OnRep_Items ();
+   // UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+      // TArray<TSharedPtr<FRItemRow_Base> > Items;
+
+protected:
+   // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   //    TArray<FRItemData> Items;
+
+   // // Network call when Item list has been updated
+   // UFUNCTION()
+   //    void OnRep_Items ();
+
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+      TArray<FRItemRawData> ItemsRaw;
 
 public:
 
    // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, Category = "Rade|Inventory")
-      TArray<TSubclassOf<URItem> > DefaultItems;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+      TArray<FDataTableRowHandle> DefaultItems;
+
+
 
    // Delegate when Item list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
@@ -71,50 +81,50 @@ public:
    //=============================================================================
 
 
-   // List of currently available pickup
-   UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
-             meta = (GetByRef))
-      TArray<ARItemPickup*> CurrentPickups;
+   // // List of currently available pickup
+   // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
+   //           meta = (GetByRef))
+   //    TArray<ARItemPickup*> CurrentPickups;
 
-   // Network call when Item list has been updated
-   UFUNCTION()
-      void OnRep_CurrentPickups ();
+   // // Network call when Item list has been updated
+   // UFUNCTION()
+   //    void OnRep_CurrentPickups ();
 
-   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      ARItemPickup* GetClosestPickup ();
+   // UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+   //    ARItemPickup* GetClosestPickup ();
 
-   // Delegate when pickup list updated
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInventoryEvent OnPickupsUpdated;
+   // // Delegate when pickup list updated
+   // UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   //    FRInventoryEvent OnPickupsUpdated;
 
    //=============================================================================
    //                 Add/Remove to Inventory
    //=============================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem        (FRItemData ItemData);
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem_Arch   (TSubclassOf<URItem> Item);
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem_Pickup (ARItemPickup *Pickup);
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool RemoveItem (int32 ItemIdx, int32 Count = 1);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool AddItem        (FRItemData ItemData);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool AddItem_Arch   (TSubclassOf<URItem> Item);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool AddItem_Pickup (ARItemPickup *Pickup);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool RemoveItem (int32 ItemIdx, int32 Count = 1);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   static bool TransferItem (URInventoryComponent *FromInventory,
-                             URInventoryComponent *ToInventory,
-                             int32 FromItemIdx,
-                             int32 FromItemCount);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   // static bool TransferItem (URInventoryComponent *FromInventory,
+   //                           URInventoryComponent *ToInventory,
+   //                           int32 FromItemIdx,
+   //                           int32 FromItemCount);
 
    //=============================================================================
    //                 Item use / drop events
    //=============================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool UseItem (int32 ItemIdx);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool UseItem (int32 ItemIdx);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 1);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 1);
 
    //=============================================================================
    //                 Server
@@ -123,46 +133,46 @@ public:
 protected:
    // --- In case the event occured on client, pass those events to server
 
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void UseItem_Server                (int32 ItemIdx);
-      void UseItem_Server_Implementation (int32 ItemIdx);
+   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+   //    void UseItem_Server                (int32 ItemIdx);
+   //    void UseItem_Server_Implementation (int32 ItemIdx);
 
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void DropItem_Server                (int32 ItemIdx, int32 Count = 1);
-      void DropItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
+   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+   //    void DropItem_Server                (int32 ItemIdx, int32 Count = 1);
+   //    void DropItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
 
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void RemoveItem_Server                (int32 ItemIdx, int32 Count = 1);
-      void RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
+   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+   //    void RemoveItem_Server                (int32 ItemIdx, int32 Count = 1);
+   //    void RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
 
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void AddItem_Server                (FRItemData ItemData);
-      void AddItem_Server_Implementation (FRItemData ItemData);
+   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+   //    void AddItem_Server                (FRItemData ItemData);
+   //    void AddItem_Server_Implementation (FRItemData ItemData);
 
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void AddItem_Pickup_Server                (ARItemPickup *Pickup);
-      void AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup);
+   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+   //    void AddItem_Pickup_Server                (ARItemPickup *Pickup);
+   //    void AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup);
 
 
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void TransferItem_Server                (URInventoryComponent *FromInventory,
-                                               URInventoryComponent *ToInventory,
-                                               int32 FromItemIdx,
-                                               int32 FromItemCount);
-      void TransferItem_Server_Implementation (URInventoryComponent *FromInventory,
-                                               URInventoryComponent *ToInventory,
-                                               int32 FromItemIdx,
-                                               int32 FromItemCount);
+   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+   //    void TransferItem_Server                (URInventoryComponent *FromInventory,
+   //                                             URInventoryComponent *ToInventory,
+   //                                             int32 FromItemIdx,
+   //                                             int32 FromItemCount);
+   //    void TransferItem_Server_Implementation (URInventoryComponent *FromInventory,
+   //                                             URInventoryComponent *ToInventory,
+   //                                             int32 FromItemIdx,
+   //                                             int32 FromItemCount);
 
    //=============================================================================
    //                 Events
    //=============================================================================
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Used (URItem *Item);
+   // UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
+   //    void BP_Used (URItem *Item);
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Droped (URItem *Item, ARItemPickup *Pickup);
+   // UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
+   //    void BP_Droped (URItem *Item, ARItemPickup *Pickup);
 
 
    //=============================================================================
