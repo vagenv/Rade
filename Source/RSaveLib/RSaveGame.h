@@ -35,6 +35,6 @@ public:
 
    // --- Save Data
    UPROPERTY(VisibleAnywhere, Category = "Rade")
-      TMap<FString, FRSaveData > RawData;
+      TMap<FString, FRSaveData> RawData;
 };
 

@@ -8,13 +8,13 @@
 
 class URSaveMgr;
 
-UCLASS(minimalapi)
-class ARGameMode : public AGameModeBase
+UCLASS()
+class RADE_API ARGameMode : public AGameModeBase
 {
    GENERATED_BODY()
 
 public:
-   ARGameMode();
+   ARGameMode ();
 
    void BeginPlay () override;
 

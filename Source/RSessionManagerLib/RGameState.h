@@ -38,7 +38,7 @@ public:
 };
 
 // Custom Game State
-UCLASS()
+UCLASS(Blueprintable)
 class RSESSIONMANAGERLIB_API ARGameState : public AGameState
 {
    GENERATED_BODY()
