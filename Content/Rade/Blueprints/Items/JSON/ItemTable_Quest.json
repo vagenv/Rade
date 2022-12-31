@@ -1,0 +1,20 @@
+[
+	{
+		"Name": "MusicNotes",
+		"Tooltip": "A quest item to delivery",
+		"Icon": "/Script/Engine.Texture2D'/Game/Rade/Sprites/Dark/flatDark16.flatDark16'",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0,
+		"Cost": 0
+	},
+	{
+		"Name": "HeavyRocks",
+		"Tooltip": "A heavy quest item",
+		"Icon": "/Script/Engine.Texture2D'/Game/Rade/Sprites/Dark/flatDark28.flatDark28'",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 20,
+		"Cost": 0
+	}
+]

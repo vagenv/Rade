@@ -1,0 +1,32 @@
+[
+	{
+		"Name": "Hat",
+		"WeaponSlot": "head",
+		"Tooltip": "A funny hat",
+		"Icon": "/Script/Engine.Texture2D'/Game/Rade/Sprites/Dark/flatDark49.flatDark49'",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 1,
+		"Cost": 0
+	},
+	{
+		"Name": "Sword",
+		"WeaponSlot": "rhand",
+		"Tooltip": "A long sword",
+		"Icon": "/Script/Engine.Texture2D'/Game/Rade/Sprites/Dark/flatDark13.flatDark13'",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 6,
+		"Cost": 20
+	},
+	{
+		"Name": "Pistol",
+		"WeaponSlot": "rhand",
+		"Tooltip": "A nice pistol",
+		"Icon": "/Script/Engine.Texture2D'/Game/Rade/Sprites/Dark/flatDark30.flatDark30'",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 2,
+		"Cost": 30
+	}
+]
