@@ -120,7 +120,7 @@ public:
 protected:
 
    // Binding Player Input to internal events
-   virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+   virtual void SetupPlayerInputComponent (class UInputComponent* InputComponent) override;
 
 public:
 
@@ -164,6 +164,9 @@ public:
    virtual void Input_ToggleOption ();
    virtual void Input_Action ();
    virtual void Input_AltAction ();
+
+   // For First person Camera
+   void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
 
    // --- Event to subscribe to
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")

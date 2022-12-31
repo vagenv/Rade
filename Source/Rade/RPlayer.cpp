@@ -239,14 +239,14 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 
 	if (Controller != nullptr) {
 		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator Rotation = Controller->GetControlRotation ();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector ForwardDirection = FRotationMatrix (YawRotation).GetUnitAxis (EAxis::X);
 
 		// get right vector
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		const FVector RightDirection = FRotationMatrix (YawRotation).GetUnitAxis (EAxis::Y);
 
 		// add movement
 		AddMovementInput (ForwardDirection, MovementVector.Y);
@@ -261,9 +261,20 @@ void ARPlayer::Input_Look (const FInputActionValue& Value)
 
 	if (Controller != nullptr) {
 		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		AddControllerYawInput (LookAxisVector.X);
+		AddControllerPitchInput (LookAxisVector.Y);
 	}
+}
+
+// Player Mesh Rotation after after the input
+void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
+{
+   Super::FaceRotation (NewControlRotation,DeltaTime);
+   if (FirstPersonCameraComponent) {
+      FRotator rot = FirstPersonCameraComponent->GetComponentRotation();
+      rot.Pitch = NewControlRotation.Pitch;
+      FirstPersonCameraComponent->SetWorldRotation (rot);
+   }
 }
 
 // Player Pressed CameraChange
