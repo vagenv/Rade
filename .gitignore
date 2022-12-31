@@ -2,6 +2,9 @@
 .vs/
 .vscode/
 
+# Notepad++ files
+*.bak
+
 # Compiled Object files
 *.slo
 *.lo
