@@ -32,10 +32,6 @@ public:
    //                 Inventory info
    //=============================================================================
 
-   // == Items.Num ()
-   UPROPERTY(Replicated, EditDefaultsOnly, Category = "Rade|Inventory")
-      int32 SlotsCurrent = 0;
-
    // Maximum number
    UPROPERTY(Replicated, EditDefaultsOnly, Category = "Rade|Inventory")
       int32 SlotsMax = 5;
@@ -65,6 +61,9 @@ protected:
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
 
+
+   void CalcWeight ();
+
 public:
 
    // Item to be added upon game start
@@ -86,7 +85,7 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       bool AddItem_Pickup (ARItemPickup *Pickup);
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool RemoveItem (int32 ItemIdx, int32 Count = 1);
+      bool RemoveItem     (int32 ItemIdx, int32 Count = 1);
 
    // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
    // static bool TransferItem (URInventoryComponent *FromInventory,

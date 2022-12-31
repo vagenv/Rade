@@ -85,15 +85,14 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
    if (!bIsServer) return false;
 
-   // Item slots
-   if (Items.Num () >= SlotsMax) return false;
+   // --- Limit weight being used
+   float WeightAdd = NewItem.Count * NewItem.Weight;
+   if (WeightCurrent + WeightAdd > WeightMax) return false;
 
-   // if (WeightCurrent + NewItem.Weight * ItemData.)
-
-   // Check if item is stackable
+   // --- Check if item is stackable
    if (NewItem.MaxCount > 1) {
 
-      // Find same kind of item
+      // --- Find same kind of item
       for (FRItemData &ItItem : Items) {
 
          // Not same item type
@@ -104,23 +103,28 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
          // Slot full
          if (ItItemCountLeft <= 0) continue;
 
-         // Full fit
+         // --- Full fit
          if (NewItem.Count <= ItItemCountLeft) {
             ItItem.Count += NewItem.Count;
+            CalcWeight ();
             OnInventoryUpdated.Broadcast ();
             return true;
          }
 
-         // Partial fit
+         // --- Partial fit
           ItItem.Count += ItItemCountLeft;
          NewItem.Count -= ItItemCountLeft;
       }
    }
 
-   // Check if overflow
+   // --- Check if overflow. For default items.
    if (NewItem.Count > NewItem.MaxCount) {
       int n = NewItem.Count / NewItem.MaxCount;
       for (int i = 0; i < n; i++) {
+
+         // Check if slot available
+         if (Items.Num () >= SlotsMax) break;
+
          FRItemData it (NewItem);
          it.Count = it.MaxCount;
          NewItem.Count -= it.Count;
@@ -128,7 +132,15 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
       }
    }
 
+   // Limit number of slots used
+   if (Items.Num () >= SlotsMax) {
+      CalcWeight ();
+      OnInventoryUpdated.Broadcast ();
+      return false;
+   }
+
    Items.Add (NewItem);
+   CalcWeight ();
    OnInventoryUpdated.Broadcast ();
    return true;
 }
@@ -187,6 +199,18 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
 
 //    return true;
 // }
+
+
+void URInventoryComponent::CalcWeight ()
+{
+   float WeightNew = 0;
+   // Find same kind of item
+   for (const FRItemData &ItItem : Items) {
+      WeightNew += (ItItem.Count * ItItem.Weight);
+   }
+
+   WeightCurrent = WeightNew;
+}
 
 
 // //=============================================================================
