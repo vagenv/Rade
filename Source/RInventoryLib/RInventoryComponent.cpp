@@ -53,8 +53,9 @@ void URInventoryComponent::BeginPlay()
    }
 
    for (const auto &itItem : DefaultItems) {
-
-      AddItem_Arch (itItem);
+      if (!AddItem_Arch (itItem))
+         R_LOG (FString::Printf (TEXT ("Failed to add default item [%s] to [%s]"),
+                *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ()));
    }
 }
 
@@ -74,7 +75,8 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 
 bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
 {
-   FRItemData newItem = FRItemData::FromRow (ItemData.Arch);
+   FRItemData newItem;
+   if (!FRItemData::FromRow (ItemData.Arch, newItem)) return false;
    newItem.Count = ItemData.Count;
    return AddItem (newItem);
 }

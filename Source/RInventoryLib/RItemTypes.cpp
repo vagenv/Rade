@@ -5,32 +5,21 @@
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
-FRItemData FRItemData::FromJSON (const FString &jsonString)
+bool FRItemData::FromJSON (const FString &src, FRItemData &dst)
 {
-   FRItemData res;
-   bool success = FJsonObjectConverter::JsonObjectStringToUStruct (jsonString, &res, 0, 0);
-   if (!success) R_LOG_STATIC ("Failed to parse raw JSON data");
-   return res;
+   return FJsonObjectConverter::JsonObjectStringToUStruct (src, &dst, 0, 0);
 }
 
-FRItemData FRItemData::FromRow (const FDataTableRowHandle &rowHandle)
+bool FRItemData::FromRow (const FDataTableRowHandle &src, FRItemData &dst)
 {
-   FRItemData res;
-   const FRItemData *rowData = rowHandle.GetRow<FRItemData> ("");
-   if (rowData) {
-      res = FRItemData (*rowData);
-   } else {
-      R_LOG_STATIC (FString::Printf (TEXT ("Failed to read row: %s"), *rowHandle.RowName.ToString ()));
-   }
-
-   return res;
+   const FRItemData *rowData = src.GetRow<FRItemData> ("");
+   if (!rowData) return false;
+   dst = FRItemData (*rowData);
+   return true;
 }
 
-FString FRItemData::ToJSON () const
+bool FRItemData::ToJSON (const FRItemData &src, FString &dst)
 {
-   FString jsonString;
-   bool success = FJsonObjectConverter::UStructToJsonObjectString<FRItemData> (*this, jsonString);
-   if (!success) R_LOG_STATIC ("Failed to convert Item object to json string");
-   return jsonString;
+   return FJsonObjectConverter::UStructToJsonObjectString<FRItemData> (src, dst);
 }
 

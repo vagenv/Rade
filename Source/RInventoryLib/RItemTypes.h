@@ -50,9 +50,9 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    GENERATED_BODY()
 public:
 
-   static FRItemData FromJSON (const FString             &jsonString);
-   static FRItemData FromRow  (const FDataTableRowHandle &rowHandle);
-   FString ToJSON () const;
+   static bool FromJSON (const FString             &src, FRItemData &dst);
+   static bool FromRow  (const FDataTableRowHandle &src, FRItemData &dst);
+   static bool ToJSON   (const FRItemData          &src, FString    &dst);
 
 
    // --- Base data every item should have
