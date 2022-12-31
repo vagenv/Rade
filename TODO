@@ -1,0 +1,136 @@
+===========================
+   Reset
+===========================
+
+
+Inventory
+
+Item:
+
+BasicItem (Sell, crafting)
+   Name      // Name
+   Tooltip   // Hover / Bottom menu
+   Icon      // Texture
+   Count     // Current Amount
+   MaxCount  // > 1, stackable
+   Weight    // per count
+   Cost      // per count
+
+QuestItem / Action Item (Quest, Health/Mana potion)
+   Function / Interface
+
+EquipmentItem ()
+   AttachSlot
+   CurrenAmmo
+   MaxAmmo
+   MagSize
+
+pickup mesh?
+
+Chest with inventory
+
+
+
+Save/Load
+
+Network
+
+
+
+Health / Stats as a component manager
+
+
+
+
+UI
+
+Option menu
+
+Inventory
+
+Items as json
+
+Fall damage
+
+Jetpack
+
+Equipment
+
+Stats
+
+Aura/buffs
+
+Network spawn
+
+Chat
+
+Pickup
+
+Session
+
+===========================
+   Rade
+===========================
+
+ARadeEquipmentMgr.
+ARadeEqup
+Equipment Manager. (Armor, hats, weapon)
+Weapon Equip/unequip
+
+
+Anim BP with states
+3rd person anim
+Death animation (network).
+
+
+UI: Weapon stats
+Weapon Fire
+Simple Item/Weapon callbacks
+Launcher Weapon
+weapon equip scale position
+Damage Effects.
+Reload sound
+
+
+RadeBlock Module
+
+
+NETWORK
+UI: Player List with Username
+Animation sync.
+
+
+AI
+AI react if attacked.
+Ranged AI
+
+
+Item color (Green consumable, grey not usage, red weapon)
+Inventory tabs. (All, weapon, consumables, crafting)
+Crafting?
+
+
+Bigger Level with larger navmesh
+
+
+
+===========================
+   Unreal Engine:
+===========================
+
+epic network services
+
+level breaking and layering
+
+smooth level transition
+
+server instance
+
+terrain perlin noise
+
+Custom plugins
+
+Nanite and lumen
+
+desert terrain
+
