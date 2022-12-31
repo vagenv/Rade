@@ -8,32 +8,16 @@
 //#include "GameFramework/Character.h"
 //#include "RUtilLib/Log.h"
 
-
 class AActor;
 class URInventoryComponent;
 class ARItemPickup;
 
-void URItem::PostCDOContruct ()
-{
-   Super::PostCDOContruct ();
 
-   // // --- A new blueprint class initialized
-   // if (!ItemData.ItemArch && GetClass () != StaticClass()) {
-   //    ItemData.ItemArch = GetClass ();
-
-   //    // Assign Description
-   //    if (ItemData.Description == FRItemDescription ()) {
-   //       ItemData.Description.Name    = GetClass()->GetName ();
-   //       ItemData.Description.Tooltip = "Use " + GetClass()->GetName ();
-   //    }
-   // }
-}
-
-void URItem::Used (AActor *InventoryOwner, URInventoryComponent *Inventory) {
+void URItemAction::Used (AActor *InventoryOwner, URInventoryComponent *Inventory) {
    BP_Used (InventoryOwner, Inventory);
 }
 
-void URItem::Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup) {
+void URItemAction::Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup) {
    BP_Droped (InventoryOwner, Inventory, Pickup);
 }
 

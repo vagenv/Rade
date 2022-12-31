@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "RItemTypes.h"
+#include "UObject/Object.h"
 #include "RItem.generated.h"
 
 class AActor;
@@ -10,20 +10,10 @@ class URInventoryComponent;
 class ARItemPickup;
 
 UCLASS(Abstract, DefaultToInstanced, BlueprintType, Blueprintable, EditInlineNew, NotPlaceable)
-class RINVENTORYLIB_API URItem : public UObject
+class RINVENTORYLIB_API URItemAction : public UObject
 {
 public:
    GENERATED_BODY()
-
-   // A hack to initialize default value for class from blueprint state
-   virtual void PostCDOContruct () override;
-
-   //=============================================================================
-   //          Core data
-   //=============================================================================
-
-   // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Item")
-   // FRItemData ItemData;
 
    //=============================================================================
    //          Blueprint events
@@ -44,11 +34,5 @@ public:
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
       void BP_Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup);
 
-   //UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-   //   void BP_Updated ();
-
-   // // Advanced Item Pickup
-   // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Item")
-   //    TSubclassOf<ARItemPickup> PickupArch;
 };
 

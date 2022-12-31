@@ -9,7 +9,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 
 struct FRItemRow_Base;
-class URItem;
 class ARItemPickup;
 class URInventoryComponent;
 
@@ -47,7 +46,7 @@ public:
    //                 Item list
    //=============================================================================
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      TArray<FRItemRow_Base> GetItems () const;
+      TArray<FRItemData> GetItems () const;
 
    // UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
       // TArray<TSharedPtr<FRItemRow_Base> > Items;
@@ -61,7 +60,7 @@ protected:
    //    void OnRep_Items ();
 
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      TArray<FRItemRawData> ItemsRaw;
+      TArray<FRItemData> Items;
 
 public:
 

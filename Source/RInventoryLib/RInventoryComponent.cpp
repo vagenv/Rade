@@ -55,10 +55,10 @@ void URInventoryComponent::BeginPlay()
 
    for (const auto &itItem : DefaultItems) {
       // R_LOG (FRItemRow_Base::FromRow (itItem).Name);
-      FRItemRawData raw;
-      raw.Data = FRItemRow_Base::ToJSON (FRItemRow_Base::FromRow (itItem));
-      raw.Type = FRItemType::Base;
-      ItemsRaw.Add (raw);
+      // FRItemRawData raw;
+      // raw.Data = FRItemRow_Base::ToJSON (FRItemRow_Base::FromRow (itItem));
+      // raw.Type = FRItemType::Base;
+      Items.Add (FRItemData::FromRow (itItem));
    }
 
    // // Add default items
@@ -71,13 +71,9 @@ void URInventoryComponent::BeginPlay()
 //                 Add Item
 //=============================================================================
 
-TArray<FRItemRow_Base> URInventoryComponent::GetItems () const
+TArray<FRItemData> URInventoryComponent::GetItems () const
 {
-   TArray<FRItemRow_Base> res;
-   for (const auto &it : ItemsRaw) {
-      res.Add (FRItemRow_Base::FromJSON (it.Data));
-   }
-   return res;
+   return Items;
 }
 
 // void URInventoryComponent::OnRep_Items ()
@@ -123,22 +119,6 @@ TArray<FRItemRow_Base> URInventoryComponent::GetItems () const
 //    Items.Add (ItemData);
 //    OnInventoryUpdated.Broadcast ();
 //    return true;
-// }
-
-
-// bool URInventoryComponent::AddItem_Arch (TSubclassOf<URItem> Item)
-// {
-//    if (!bIsServer) return false;
-//    //R_LOG ("Add item arch");
-//    if (Items.Num () >= Capacity || !Item) return false;
-
-//    URItem *ItemBP = Item->GetDefaultObject<URItem>();
-//    if (!ItemBP) return false;
-
-//    FRItemData data = ItemBP->ItemData;
-//    data.ItemArch = Item;
-
-//    return AddItem (data);
 // }
 
 
