@@ -8,7 +8,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 
-struct FRItemRow_Base;
 class ARItemPickup;
 class URInventoryComponent;
 
@@ -33,32 +32,36 @@ public:
    //                 Inventory info
    //=============================================================================
 
-   // Number of item slots
+   // == Items.Num ()
    UPROPERTY(Replicated, EditDefaultsOnly, Category = "Rade|Inventory")
-      int32 Capacity;
+      int32 SlotsCurrent = 0;
 
-   // Total Weight of Inventory
+   // Maximum number
+   UPROPERTY(Replicated, EditDefaultsOnly, Category = "Rade|Inventory")
+      int32 SlotsMax = 5;
+
+   // Current
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      float TotalWeight;
+      float WeightCurrent = 0;
 
+   // Maximum weight actor can carry
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+      float WeightMax = 25;
 
    //=============================================================================
    //                 Item list
    //=============================================================================
+
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       TArray<FRItemData> GetItems () const;
 
-   // UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-      // TArray<TSharedPtr<FRItemRow_Base> > Items;
-
 protected:
-   // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-   //    TArray<FRItemData> Items;
 
    // // Network call when Item list has been updated
    // UFUNCTION()
    //    void OnRep_Items ();
 
+   // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
 
@@ -66,14 +69,40 @@ public:
 
    // Item to be added upon game start
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-      TArray<FDataTableRowHandle> DefaultItems;
-
-
+      TArray<FRDefaultItem> DefaultItems;
 
    // Delegate when Item list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnInventoryUpdated;
 
+   //=============================================================================
+   //                 Add/Remove to Inventory
+   //=============================================================================
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool AddItem        (FRItemData ItemData);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool AddItem_Arch   (const FRDefaultItem &Item);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool AddItem_Pickup (ARItemPickup *Pickup);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool RemoveItem (int32 ItemIdx, int32 Count = 1);
+
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   // static bool TransferItem (URInventoryComponent *FromInventory,
+   //                           URInventoryComponent *ToInventory,
+   //                           int32 FromItemIdx,
+   //                           int32 FromItemCount);
+
+   //=============================================================================
+   //                 Item use / drop events
+   //=============================================================================
+
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool UseItem (int32 ItemIdx);
+
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 1);
 
    //=============================================================================
    //                 Pickups
@@ -95,35 +124,6 @@ public:
    // // Delegate when pickup list updated
    // UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
    //    FRInventoryEvent OnPickupsUpdated;
-
-   //=============================================================================
-   //                 Add/Remove to Inventory
-   //=============================================================================
-
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool AddItem        (FRItemData ItemData);
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool AddItem_Arch   (TSubclassOf<URItem> Item);
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool AddItem_Pickup (ARItemPickup *Pickup);
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool RemoveItem (int32 ItemIdx, int32 Count = 1);
-
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   // static bool TransferItem (URInventoryComponent *FromInventory,
-   //                           URInventoryComponent *ToInventory,
-   //                           int32 FromItemIdx,
-   //                           int32 FromItemCount);
-
-   //=============================================================================
-   //                 Item use / drop events
-   //=============================================================================
-
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool UseItem (int32 ItemIdx);
-
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 1);
 
    //=============================================================================
    //                 Server

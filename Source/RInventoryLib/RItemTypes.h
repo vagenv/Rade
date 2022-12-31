@@ -120,3 +120,16 @@ private:
       FString RuntimeData;
 };
 
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FRDefaultItem
+{
+   GENERATED_BODY()
+public:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+      FDataTableRowHandle Arch;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+      int32 Count = 1;
+};
+
+

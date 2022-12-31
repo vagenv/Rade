@@ -1,11 +1,11 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RInventoryComponent.h"
-// #include "RItemTypes.h"
-// #include "RItem.h"
-// #include "RItemPickup.h"
 #include "RUtilLib/RLog.h"
 #include "RSaveLib/RSaveMgr.h"
+
+// #include "RItem.h"
+#include "RItemPickup.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -21,7 +21,6 @@
 URInventoryComponent::URInventoryComponent ()
 {
    SetIsReplicatedByDefault (true);
-   Capacity = 10;
 }
 
 // Replication
@@ -29,8 +28,8 @@ void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 
-   DOREPLIFETIME (URInventoryComponent, Capacity);
-   DOREPLIFETIME (URInventoryComponent, TotalWeight);
+   // DOREPLIFETIME (URInventoryComponent, Capacity);
+   // DOREPLIFETIME (URInventoryComponent, TotalWeight);
    // DOREPLIFETIME (URInventoryComponent, Items);
    // DOREPLIFETIME (URInventoryComponent, CurrentPickups);
 }
@@ -54,17 +53,9 @@ void URInventoryComponent::BeginPlay()
    }
 
    for (const auto &itItem : DefaultItems) {
-      // R_LOG (FRItemRow_Base::FromRow (itItem).Name);
-      // FRItemRawData raw;
-      // raw.Data = FRItemRow_Base::ToJSON (FRItemRow_Base::FromRow (itItem));
-      // raw.Type = FRItemType::Base;
-      Items.Add (FRItemData::FromRow (itItem));
-   }
 
-   // // Add default items
-   // for (auto &itItem : DefaultItems) {
-   //    AddItem_Arch (itItem);
-   // }
+      AddItem_Arch (itItem);
+   }
 }
 
 //=============================================================================
@@ -81,82 +72,99 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 //    OnInventoryUpdated.Broadcast ();
 // }
 
-// bool URInventoryComponent::AddItem (FRItemData ItemData)
-// {
-//    if (!bIsServer) return false;
+bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
+{
+   FRItemData newItem = FRItemData::FromRow (ItemData.Arch);
+   newItem.Count = ItemData.Count;
+   return AddItem (newItem);
+}
 
-//    //R_LOG ("Add item");
-//    if (Items.Num () >= Capacity || !ItemData.ItemArch) return nullptr;
+bool URInventoryComponent::AddItem (FRItemData NewItem)
+{
+   if (!bIsServer) return false;
 
-//    // Check if item is stackable
-//    if (ItemData.Description.Count < ItemData.Description.MaxCount) {
-//       for (FRItemData &itData : Items) {
+   // Item slots
+   if (Items.Num () >= SlotsMax) return false;
 
-//          // Wrong type
-//          // GetClass returns in all cases 'BlueprintGeneratedClass'
-//          if (itData.ItemArch != ItemData.ItemArch) continue;
+   // if (WeightCurrent + NewItem.Weight * ItemData.)
 
-//          // Slot full
-//          if (itData.Description.Count > itData.Description.MaxCount) continue;
+   // Check if item is stackable
+   if (NewItem.MaxCount > 1) {
 
-//          // Full fit
-//          if (itData.Description.Count + ItemData.Description.Count < ItemData.Description.MaxCount) {
+      // Find same kind of item
+      for (FRItemData &ItItem : Items) {
 
-//             itData.Description.Count += ItemData.Description.Count;
-//             OnInventoryUpdated.Broadcast ();
-//             return true;
-//          };
+         // Not same item type
+         if (ItItem.Name != NewItem.Name) continue;
 
-//          // Partial fit
-//          int32 addCount = itData.Description.MaxCount - itData.Description.Count;
-//          if (ItemData.Description.Count < addCount) addCount = ItemData.Description.Count;
+         int32 ItItemCountLeft = ItItem.MaxCount - ItItem.Count;
 
-//            itData.Description.Count += addCount;
-//          ItemData.Description.Count -= addCount;
-//       }
-//    }
+         // Slot full
+         if (ItItemCountLeft <= 0) continue;
 
-//    Items.Add (ItemData);
-//    OnInventoryUpdated.Broadcast ();
-//    return true;
-// }
+         // Full fit
+         if (NewItem.Count <= ItItemCountLeft) {
+            ItItem.Count += NewItem.Count;
+            OnInventoryUpdated.Broadcast ();
+            return true;
+         }
 
+         // Partial fit
+          ItItem.Count += ItItemCountLeft;
+         NewItem.Count -= ItItemCountLeft;
+      }
+   }
 
-// bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
-// {
-//    if (!bIsServer) return false;
-//    //R_LOG ("Add item pickup");
-//    if (!Pickup || !Pickup->Inventory) return false;
+   // Check if overflow
+   if (NewItem.Count > NewItem.MaxCount) {
+      int n = NewItem.Count / NewItem.MaxCount;
+      for (int i = 0; i < n; i++) {
+         FRItemData it (NewItem);
+         it.Count = it.MaxCount;
+         NewItem.Count -= it.Count;
+         Items.Add (it);
+      }
+   }
 
-//    TArray<FRItemData> ItemsLeft;
-//    for (const FRItemData &ItItem : Pickup->Inventory->Items) {
-//       bool res = AddItem (ItItem);
-//       if (!res) ItemsLeft.Add (ItItem);
-//    }
-
-//    Pickup->Inventory->Items = ItemsLeft;
-//    Pickup->PickedUp (GetOwner());
-
-//    return true;
-// }
+   Items.Add (NewItem);
+   OnInventoryUpdated.Broadcast ();
+   return true;
+}
 
 
-// bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
-// {
-//    if (!bIsServer) return false;
-//    //R_LOG ("rm item");
-//    if (!Items.IsValidIndex (ItemIdx)) return false;
+bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
+{
+   if (!bIsServer) return false;
+   // //R_LOG ("Add item pickup");
+   if (!Pickup || !Pickup->Inventory) return false;
 
-//    if (Items[ItemIdx].Description.Count > Count) {
-//       Items[ItemIdx].Description.Count -= Count;
-//    } else {
-//       Items.RemoveAt (ItemIdx);
-//    }
+   // TArray<FRItemData> ItemsLeft;
+   // for (const FRItemData &ItItem : Pickup->Inventory->Items) {
+   //    bool res = AddItem (ItItem);
+   //    if (!res) ItemsLeft.Add (ItItem);
+   // }
 
-//    OnInventoryUpdated.Broadcast ();
+   // Pickup->Inventory->Items = ItemsLeft;
+   // Pickup->PickedUp (GetOwner());
 
-//    return true;
-// }
+   return true;
+}
+
+
+bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
+{
+   if (!bIsServer) return false;
+   if (!Items.IsValidIndex (ItemIdx)) return false;
+
+   if (Items[ItemIdx].Count > Count) {
+      Items[ItemIdx].Count -= Count;
+   } else {
+      Items.RemoveAt (ItemIdx);
+   }
+
+   OnInventoryUpdated.Broadcast ();
+   return true;
+}
 
 // bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
 //                                          URInventoryComponent *ToInventory,
