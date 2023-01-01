@@ -149,6 +149,9 @@ public:
       TObjectPtr<UInputAction> InputAction_ToggleOption;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+      TObjectPtr<UInputAction> InputAction_Scroll;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> InputAction_Save;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -164,6 +167,7 @@ public:
    virtual void Input_ToggleOption ();
    virtual void Input_Action ();
    virtual void Input_AltAction ();
+   virtual void Input_Scroll (const FInputActionValue& Value);
 
    // For First person Camera
    void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;

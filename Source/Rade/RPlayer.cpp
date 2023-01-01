@@ -215,6 +215,9 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 		//Looking
 		EnhancedInputComponent->BindAction (InputAction_Look, ETriggerEvent::Triggered, this, &ARPlayer::Input_Look);
 
+
+      EnhancedInputComponent->BindAction (InputAction_Scroll, ETriggerEvent::Triggered, this, &ARPlayer::Input_Scroll);
+
       //Jumping
 		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
 		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -322,6 +325,12 @@ void ARPlayer::Input_Action ()
 void ARPlayer::Input_AltAction ()
 {
    Input_OnAltAction.Broadcast ();
+}
+
+void ARPlayer::Input_Scroll (const FInputActionValue& Value)
+{
+   float scrollValue = Value.Get<float>();
+   Input_OnScroll.Broadcast (scrollValue);
 }
 
 //=============================================================================
