@@ -30,7 +30,7 @@ void URJetpackComponent::TickComponent (float DeltaTime, enum ELevelTick TickTyp
 
 void URJetpackComponent::Use_Implementation ()
 {
-   if (!MovementComponent) return;
+   if (ensure (!MovementComponent)) return;
    if (MovementComponent->IsMovingOnGround ()) return;
 
    if (CurrentChargePercent < MinUseablePercent) return;
@@ -42,8 +42,7 @@ void URJetpackComponent::Use_Implementation ()
 
 void URJetpackComponent::FillUp (float DeltaTime)
 {
-
-   if (!MovementComponent) return;
+   if (!ensure (MovementComponent)) return;
 
    if (MovementComponent->IsMovingOnGround ()) {
       if (CurrentChargePercent < 100) {

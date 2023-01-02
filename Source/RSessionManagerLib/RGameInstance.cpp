@@ -82,7 +82,7 @@ void URGameInstance::FindOnlineGames()
 // Update Available Sessions List
 void URGameInstance::UpdateSessionList()
 {
-   if (!SessionSearch.IsValid()) return;
+   if (!SessionSearch.IsValid ()) return;
 
    CurrentSessionSearch.Empty();
    for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++) {

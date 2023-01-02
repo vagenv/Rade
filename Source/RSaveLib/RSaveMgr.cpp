@@ -11,10 +11,10 @@
 
 URSaveMgr* URSaveMgr::GetInstance (const UWorld *World)
 {
-   if (!World) return nullptr;
+   if (!ensure (World)) return nullptr;
 
    AGameModeBase *GameMode = World->GetAuthGameMode ();
-   if (!GameMode) return nullptr;
+   if (!ensure (GameMode)) return nullptr;
 
    return GameMode->FindComponentByClass<URSaveMgr>();
 }
@@ -140,11 +140,10 @@ bool URSaveMgr::LoadASync ()
    return true;
 }
 
-
 void URSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
 {
    if (!bSuccess) {
-      R_LOG (FString::Printf (TEXT ("Saving [%s] [%lld] failed")));
+      R_LOG (FString::Printf (TEXT ("Saving [%s] [%lld] failed"), *SaveSlot, PlayerIndex));
       return;
    }
 }
@@ -153,7 +152,7 @@ void URSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class 
 {
    SaveFile = Cast<URSaveGame> (SaveGame);
    if (!SaveFile) {
-      R_LOG (FString::Printf (TEXT ("Loading [%s] [%lld] failed")));
+      R_LOG (FString::Printf (TEXT ("Loading [%s] [%lld] failed"), *SaveSlot, PlayerIndex));
       return;
    }
    BroadcastLoad ();

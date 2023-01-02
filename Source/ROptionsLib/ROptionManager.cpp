@@ -100,7 +100,7 @@ bool UROptionManager::GetVideoQualitySettings(int32& ResolutionQuality,
                                              int32& PostProcessQuality)
 {
    UGameUserSettings* Settings = GetGameUserSettings();
-   if (!Settings) return false;
+   if (!ensure (Settings)) return false;
 
    const Scalability::FQualityLevels &quality = Settings->ScalabilityQuality;
    ResolutionQuality  = quality.ResolutionQuality;
@@ -123,7 +123,7 @@ bool UROptionManager::SetVideoQualitySettings(const int32 ResolutionQuality,
                                              const int32 PostProcessQuality)
 {
    UGameUserSettings* Settings = GetGameUserSettings();
-   if (!Settings) return false;
+   if (!ensure (Settings)) return false;
 
    Settings->ScalabilityQuality.ResolutionQuality   = ResolutionQuality;
    Settings->ScalabilityQuality.ViewDistanceQuality = ViewDistance;
@@ -139,7 +139,7 @@ bool UROptionManager::SetVideoQualitySettings(const int32 ResolutionQuality,
 bool UROptionManager::SaveVideoModeAndQuality()
 {
    UGameUserSettings* Settings = GetGameUserSettings();
-   if (!Settings) return false;
+   if (!ensure (Settings)) return false;
    Settings->ConfirmVideoMode();
    Settings->ApplyNonResolutionSettings();
    Settings->SaveSettings();
@@ -150,10 +150,10 @@ bool UROptionManager::SaveVideoModeAndQuality()
 bool UROptionManager::SetScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen)
 {
    UGameUserSettings* Settings = GetGameUserSettings();
-   if (!Settings) return false;
+   if (!ensure (Settings)) return false;
 
-   Settings->SetScreenResolution(FIntPoint(Width, Height));
-   Settings->SetFullscreenMode(Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed);
+   Settings->SetScreenResolution (FIntPoint(Width, Height));
+   Settings->SetFullscreenMode (Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed);
    return true;
 }
 
@@ -161,14 +161,12 @@ bool UROptionManager::SetScreenResolution(const int32 Width, const int32 Height,
 bool UROptionManager::ChangeScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen)
 {
    UGameUserSettings* Settings = GetGameUserSettings();
-   if (!Settings) return false;
+   if (!ensure (Settings)) return false;
 
    EWindowMode::Type WindowMode = Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed;
    Settings->RequestResolutionChange(Width, Height, WindowMode, false);
    return true;
 }
-
-
 
 // Get List of Supported Resolutions
 bool UROptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions)
@@ -187,7 +185,7 @@ bool UROptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions
 
 
 // Get Screen Resolution
-bool UROptionManager::GetScreenResolutions(int32 & Width, int32 & Height)
+bool UROptionManager::GetScreenResolutions (int32 &Width, int32 &Height)
 {
    UGameUserSettings* Settings = GetGameUserSettings();
    if (Settings) {
@@ -196,7 +194,7 @@ bool UROptionManager::GetScreenResolutions(int32 & Width, int32 & Height)
       Height = TheResolution.Y;
       return true;
    }
-   else return false;
+   return false;
 }
 
 // Get Game User Setting
