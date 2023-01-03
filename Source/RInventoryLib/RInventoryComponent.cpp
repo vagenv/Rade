@@ -52,8 +52,8 @@ void URInventoryComponent::BeginPlay()
 
    for (const auto &itItem : DefaultItems) {
       if (!AddItem_Arch (itItem))
-         R_LOG (FString::Printf (TEXT ("Failed to add default item [%s] to [%s]"),
-                *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ()));
+         R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
+            *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
    }
 
    if (bCheckClosestPickup) {
@@ -218,7 +218,8 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *SrcInventory,
    }
 
    if (!SrcInventory->Items.IsValidIndex (SrcItemIdx)) {
-      R_LOG_STATIC (FString::Printf (TEXT ("Invalid Source Inventory Index [%d]. Must be [0-%d]"), SrcItemIdx, SrcInventory->GetItems ().Num ()));
+      R_LOG_STATIC_PRINTF ("Invalid Source Inventory Index [%d]. Must be [0-%d]",
+         SrcItemIdx, SrcInventory->GetItems ().Num ());
       return false;
    }
 
@@ -455,7 +456,7 @@ void URInventoryComponent::OnSave ()
       if (FRItemData::ToJSON (item, res)) {
          ItemData.Add (res);
       } else {
-         R_LOG (FString::Printf (TEXT ("Failed to save %s"), *item.Name));
+         R_LOG_PRINTF ("Failed to save %s", *item.Name);
       }
    }
 
@@ -467,7 +468,7 @@ void URInventoryComponent::OnSave ()
 
    // Set binary data to save file
    if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
-      R_LOG (FString::Printf (TEXT ("Failed to save [%s] Inventory."), *InventoryUniqueId));
+      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *InventoryUniqueId);
    }
 }
 
@@ -480,7 +481,7 @@ void URInventoryComponent::OnLoad ()
    // Get binary data from save file
    TArray<uint8> BinaryArray;
    if (!URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray)) {
-      R_LOG (FString::Printf (TEXT ("Failed to load [%s] Inventory."), *InventoryUniqueId));
+      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *InventoryUniqueId);
       return;
    }
 
@@ -497,7 +498,7 @@ void URInventoryComponent::OnLoad ()
       if (FRItemData::FromJSON (ItemData, Item)) {
          loadedItems.Add (Item);
       } else {
-         R_LOG (FString::Printf (TEXT ("Failed to parse Item string [%s]"), *ItemData));
+         R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemData);
       }
    }
 

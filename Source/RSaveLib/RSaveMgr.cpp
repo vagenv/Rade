@@ -101,7 +101,7 @@ bool URSaveMgr::SaveSync ()
 {
    CheckSaveFile ();
    BroadcastSave ();
-   R_LOG (FString::Printf (TEXT ("Saving to [%s] [%lld]"), *SaveFile->SaveSlotName, SaveFile->UserIndex));
+   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
    return UGameplayStatics::SaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
 }
 
@@ -109,7 +109,7 @@ bool URSaveMgr::SaveASync ()
 {
    CheckSaveFile ();
    BroadcastSave ();
-   R_LOG (FString::Printf (TEXT ("Saving to [%s] [%lld]"), *SaveFile->SaveSlotName, SaveFile->UserIndex));
+   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
 
    // Setup save complete delegate.
    FAsyncSaveGameToSlotDelegate SavedDelegate;
@@ -121,7 +121,7 @@ bool URSaveMgr::SaveASync ()
 bool URSaveMgr::LoadSync ()
 {
    CheckSaveFile ();
-   R_LOG (FString::Printf (TEXT ("Loading from [%s] [%lld]"), *SaveFile->SaveSlotName, SaveFile->UserIndex));
+   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
    SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveFile->SaveSlotName, SaveFile->UserIndex));
    if (SaveFile != nullptr) BroadcastLoad ();
    return (SaveFile != nullptr);
@@ -130,7 +130,7 @@ bool URSaveMgr::LoadSync ()
 bool URSaveMgr::LoadASync ()
 {
    CheckSaveFile ();
-   R_LOG (FString::Printf (TEXT ("Loading from [%s] [%lld]"), *SaveFile->SaveSlotName, SaveFile->UserIndex));
+   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
 
    FAsyncLoadGameFromSlotDelegate LoadedDelegate;
 
@@ -143,7 +143,7 @@ bool URSaveMgr::LoadASync ()
 void URSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
 {
    if (!bSuccess) {
-      R_LOG (FString::Printf (TEXT ("Saving [%s] [%lld] failed"), *SaveSlot, PlayerIndex));
+      R_LOG_PRINTF ("Saving [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
 }
@@ -152,7 +152,7 @@ void URSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class 
 {
    SaveFile = Cast<URSaveGame> (SaveGame);
    if (!SaveFile) {
-      R_LOG (FString::Printf (TEXT ("Loading [%s] [%lld] failed"), *SaveSlot, PlayerIndex));
+      R_LOG_PRINTF ("Loading [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
    BroadcastLoad ();

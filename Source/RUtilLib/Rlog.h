@@ -23,6 +23,9 @@ void RUTILLIB_API __rlog_internal (const UObject* WorldContext,
 #define R_LOG(msg)        __rlog_internal (this,    FString (msg), __FILENAME__, __LINE__, __FUNCTION__);
 #define R_LOG_STATIC(msg) __rlog_internal (nullptr, FString (msg), __FILENAME__, __LINE__, __FUNCTION__);
 
+#define R_LOG_PRINTF(msg, ...)        R_LOG(FString::Printf (TEXT(msg), __VA_ARGS__))
+#define R_LOG_STATIC_PRINTF(msg, ...) R_LOG_STATIC(FString::Printf (TEXT(msg), __VA_ARGS__))
+
 void RUTILLIB_API __rprint_internal (const UObject* WorldContext,
                                      const FString &msg,
                                      const char    *file,
