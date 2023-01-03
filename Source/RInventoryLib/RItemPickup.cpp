@@ -65,7 +65,7 @@ void ARItemPickup::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLif
    DOREPLIFETIME (ARItemPickup, bAutoDestroy);
 }
 
-void ARItemPickup::InitEmpty()
+void ARItemPickup::InitEmpty ()
 {
    UStaticMeshComponent *StaticMeshComponent
       = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass (), NAME_None, RF_Transient);
@@ -85,16 +85,11 @@ void ARItemPickup::InitEmpty()
    MeshComponent->BodyInstance.SetCollisionProfileName ("BlockAll");
    MeshComponent->SetSimulatePhysics (true);
    MeshComponent->bAutoActivate = true;
-
-   PickupActivationDelay = 1.;
-   bAutoPickup  = false;
-   bAutoDestroy = true;
 }
 
-
-void ARItemPickup::BeginPlay()
+void ARItemPickup::BeginPlay ()
 {
-   Super::BeginPlay();
+   Super::BeginPlay ();
 
    // Enable overlap after a delay
    FTimerHandle MyHandle;
@@ -127,7 +122,7 @@ void ARItemPickup::BeginPlay()
    */
 
    if (Inventory) {
-       Inventory->OnInventoryUpdated.AddDynamic (this, &ARItemPickup::OnInventoryUpdate);
+      Inventory->OnInventoryUpdated.AddDynamic (this, &ARItemPickup::OnInventoryUpdate);
    }
 }
 
@@ -235,19 +230,22 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
    // Null or itself
    if (OtherActor == nullptr || OtherActor == this) return;
 
-   // // Does not have inventory
-   // URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
-   // if (PlayerInventory == nullptr) return;
+   if (!Inventory) return;
 
-   // if (!bAutoPickup) {
-   //    PlayerInventory->CurrentPickups.Add (this);
-   //    PlayerInventory->OnPickupsUpdated.Broadcast ();
+   // if (!Inventory->GetItems ().Num ()) return;
 
-   //    // BP Event that player entered
-   //    BP_PlayerEntered (OtherActor);
-   // } else {
-   //    PlayerInventory->AddItem_Pickup (this);
-   // }
+   // Only Inventory containing actors
+   URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
+   if (PlayerInventory == nullptr) return;
+
+   if (!bAutoPickup) {
+      PlayerInventory->Pickup_Add (this);
+
+      // BP Event that player entered
+      BP_PlayerEntered (OtherActor);
+   } else {
+      PlayerInventory->AddItem_Pickup (this);
+   }
 
    /*
       // Auto give player the item
@@ -283,14 +281,12 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
    URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
    if (PlayerInventory == nullptr) return;
 
-   // PlayerInventory->CurrentPickups.RemoveSingle (this);
-   // PlayerInventory->OnPickupsUpdated.Broadcast ();
+   PlayerInventory->Pickup_Rm (this);
 
-   // // BP Event that player Exited
-   // BP_PlayerLeft (OtherActor);
+   // BP Event that player Exited
+   BP_PlayerLeft (OtherActor);
 
    /*
-
    // Clean Pickup reference in player class
    if (GetLocalRole() >= ROLE_Authority && radePlayer->currentPickup == this)
    radePlayer->currentPickup = nullptr;
@@ -318,8 +314,8 @@ void ARItemPickup::PickedUp (AActor *InventoryOwner)
 
 void ARItemPickup::OnInventoryUpdate ()
 {
-   // if (bAutoDestroy && Inventory && Inventory->GetItems ().Num () == 0) {
-   //    Destroy ();
-   // }
+   if (bAutoDestroy && Inventory && Inventory->GetItems ().Num () == 0) {
+      Destroy ();
+   }
 }
 

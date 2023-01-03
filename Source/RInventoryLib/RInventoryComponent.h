@@ -33,15 +33,15 @@ public:
    //=============================================================================
 
    // Maximum number
-   UPROPERTY(Replicated, EditDefaultsOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       int32 SlotsMax = 5;
 
    // Current
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightCurrent = 0;
 
    // Maximum weight actor can carry
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightMax = 25;
 
    //=============================================================================
@@ -58,7 +58,7 @@ protected:
    //    void OnRep_Items ();
 
    // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated)
       TArray<FRItemData> Items;
 
 
@@ -67,7 +67,7 @@ protected:
 public:
 
    // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade")
       TArray<FRDefaultItem> DefaultItems;
 
    // Delegate when Item list updated
@@ -87,11 +87,11 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       bool RemoveItem     (int32 ItemIdx, int32 Count = 1);
 
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   // static bool TransferItem (URInventoryComponent *FromInventory,
-   //                           URInventoryComponent *ToInventory,
-   //                           int32 FromItemIdx,
-   //                           int32 FromItemCount);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      static bool TransferItem (URInventoryComponent *FromInventory,
+                                URInventoryComponent *ToInventory,
+                                int32 FromItemIdx,
+                                int32 FromItemCount);
 
    //=============================================================================
    //                 Item use / drop events
@@ -102,27 +102,6 @@ public:
 
    // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
    //    class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 1);
-
-   //=============================================================================
-   //                 Pickups
-   //=============================================================================
-
-
-   // // List of currently available pickup
-   // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
-   //           meta = (GetByRef))
-   //    TArray<ARItemPickup*> CurrentPickups;
-
-   // // Network call when Item list has been updated
-   // UFUNCTION()
-   //    void OnRep_CurrentPickups ();
-
-   // UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-   //    ARItemPickup* GetClosestPickup ();
-
-   // // Delegate when pickup list updated
-   // UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-   //    FRInventoryEvent OnPickupsUpdated;
 
    //=============================================================================
    //                 Server
@@ -174,6 +153,56 @@ protected:
 
 
    //=============================================================================
+   //                 Pickups
+   //=============================================================================
+
+protected:
+   // List of currently available pickup
+   // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
+             meta = (GetByRef))
+      TArray<const ARItemPickup*> CurrentPickups;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+      const ARItemPickup* ClosestPickup = nullptr;
+
+   // Delegate when pickup list updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInventoryEvent OnPickupListUpdated;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInventoryEvent OnClosestPickupUpdated;
+
+
+   FTimerHandle TimerClosestPickup;
+
+   UFUNCTION()
+      void CheckClosestPickup ();
+
+public:
+
+   // // Network call when Item list has been updated
+   // UFUNCTION()
+   //    void OnRep_CurrentPickups ();
+
+   // Owner overlaps pickup
+   bool Pickup_Add (const ARItemPickup* Pickup);
+
+   // Owner no longer overlaps
+   bool Pickup_Rm  (const ARItemPickup* Pickup);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      const ARItemPickup* GetClosestPickup () const;
+
+
+   // Should be used only for main local Player.
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+      bool bCheckClosestPickup = false;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+      float CheckClosestDelay = 0.5f;
+
+   //=============================================================================
    //                 Save / Load
    //=============================================================================
 
@@ -183,6 +212,7 @@ public:
    // Careful with collision of 'InventoryUniqueId'
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bSaveLoadInventory = false;
+
 
 protected:
    // Rade Save events

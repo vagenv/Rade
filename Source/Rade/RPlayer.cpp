@@ -68,12 +68,9 @@ ARPlayer::ARPlayer()
 
    // --- Inventory
    Inventory->bSaveLoadInventory = true;
+   Inventory->bCheckClosestPickup = true;
 
-   PlayerController = nullptr;
-   bAutoRevive      = true;
-
-   //CharacterName = "Rade Player";
-   //bCanRevive = true;
+   bAutoRevive = true;
 }
 
 void ARPlayer::BeginPlay ()
@@ -136,7 +133,6 @@ void ARPlayer::Tick (float DeltaTime)
 
 void ARPlayer::SaveGame ()
 {
-   // bool res = URSaveMgr::SaveSync (GetWorld ());
    bool res = URSaveMgr::SaveASync (GetWorld ());
    if (!res) {
       R_LOG ("Save failed");
@@ -146,7 +142,6 @@ void ARPlayer::SaveGame ()
 
 void ARPlayer::LoadGame ()
 {
-   // bool res = URSaveMgr::LoadSync (GetWorld ());
    bool res = URSaveMgr::LoadASync (GetWorld ());
    if (!res) {
       R_LOG ("Load failed");
@@ -210,24 +205,26 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 
 		// Moving
-		EnhancedInputComponent->BindAction (InputAction_Move, ETriggerEvent::Triggered, this, &ARPlayer::Input_Move);
+		EnhancedInputComponent->BindAction (IA_Move, ETriggerEvent::Triggered, this, &ARPlayer::Input_Move);
 
 		//Looking
-		EnhancedInputComponent->BindAction (InputAction_Look, ETriggerEvent::Triggered, this, &ARPlayer::Input_Look);
-
-
-      EnhancedInputComponent->BindAction (InputAction_Scroll, ETriggerEvent::Triggered, this, &ARPlayer::Input_Scroll);
+		EnhancedInputComponent->BindAction (IA_Look, ETriggerEvent::Triggered, this, &ARPlayer::Input_Look);
 
       //Jumping
-		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
-		EnhancedInputComponent->BindAction (InputAction_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
+		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-      EnhancedInputComponent->BindAction (InputAction_ChangeCamera,    ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
-      EnhancedInputComponent->BindAction (InputAction_ToggleInventory, ETriggerEvent::Started, this, &ARPlayer::Input_ToggleInventory);
-      EnhancedInputComponent->BindAction (InputAction_ToggleOption,    ETriggerEvent::Started, this, &ARPlayer::Input_ToggleOption);
+      EnhancedInputComponent->BindAction (IA_ChangeCamera, ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
+      EnhancedInputComponent->BindAction (IA_Action,       ETriggerEvent::Started, this, &ARPlayer::Input_Action);
+      EnhancedInputComponent->BindAction (IA_AltAction,    ETriggerEvent::Started, this, &ARPlayer::Input_AltAction);
 
-      EnhancedInputComponent->BindAction (InputAction_Save, ETriggerEvent::Started, this, &ARPlayer::SaveGame);
-      EnhancedInputComponent->BindAction (InputAction_Load, ETriggerEvent::Started, this, &ARPlayer::LoadGame);
+      EnhancedInputComponent->BindAction (IA_ScrollV,         ETriggerEvent::Started, this, &ARPlayer::Input_ScrollV);
+      EnhancedInputComponent->BindAction (IA_ScrollH,         ETriggerEvent::Started, this, &ARPlayer::Input_ScrollH);
+      EnhancedInputComponent->BindAction (IA_ToggleInventory, ETriggerEvent::Started,   this, &ARPlayer::Input_ToggleInventory);
+      EnhancedInputComponent->BindAction (IA_ToggleOption,    ETriggerEvent::Started,   this, &ARPlayer::Input_ToggleOption);
+
+      EnhancedInputComponent->BindAction (IA_Save, ETriggerEvent::Started, this, &ARPlayer::SaveGame);
+      EnhancedInputComponent->BindAction (IA_Load, ETriggerEvent::Started, this, &ARPlayer::LoadGame);
 	}
 }
 
@@ -280,6 +277,14 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
    }
 }
 
+// Player Pressed Jump
+void ARPlayer::Input_Jump ()
+{
+   if (bDead)   return;
+   if (Jetpack) Jetpack->Use ();
+   Super::Jump ();
+}
+
 // Player Pressed CameraChange
 void ARPlayer::Input_ChangeCamera ()
 {
@@ -295,6 +300,17 @@ void ARPlayer::Input_ChangeCamera ()
       CurrentCameraState = DefaultCameraState;
       UpdateComponentsVisibility ();
    }
+   Input_OnChangeCamera.Broadcast ();
+}
+
+void ARPlayer::Input_Action ()
+{
+   Input_OnAction.Broadcast ();
+}
+
+void ARPlayer::Input_AltAction ()
+{
+   Input_OnAltAction.Broadcast ();
 }
 
 // Toggle HUD Inventory visibility
@@ -309,28 +325,16 @@ void ARPlayer::Input_ToggleOption ()
    Input_OnToggleOption.Broadcast ();
 }
 
-// Player Pressed Jump
-void ARPlayer::Input_Jump ()
-{
-   if (bDead)   return;
-   if (Jetpack) Jetpack->Use ();
-   Super::Jump ();
-}
-
-void ARPlayer::Input_Action ()
-{
-   Input_OnAction.Broadcast ();
-}
-
-void ARPlayer::Input_AltAction ()
-{
-   Input_OnAltAction.Broadcast ();
-}
-
-void ARPlayer::Input_Scroll (const FInputActionValue& Value)
+void ARPlayer::Input_ScrollV (const FInputActionValue& Value)
 {
    float scrollValue = Value.Get<float>();
-   Input_OnScroll.Broadcast (scrollValue);
+   Input_OnScrollV.Broadcast (scrollValue);
+}
+
+void ARPlayer::Input_ScrollH (const FInputActionValue& Value)
+{
+   float scrollValue = Value.Get<float>();
+   Input_OnScrollH.Broadcast (scrollValue);
 }
 
 //=============================================================================
@@ -571,7 +575,7 @@ void ARPlayer::SetCharacterStats_Implementation(const FString &newName, FLinearC
 
 ARPlayer* ARPlayer::GetLocalRadePlayer (UObject* WorldContextObject)
 {
-   if (!WorldContextObject) return nullptr;
+   if (!ensure (WorldContextObject)) return nullptr;
    UWorld* World = GEngine->GetWorldFromContextObject (WorldContextObject, EGetWorldErrorMode::ReturnNull);
    if (World) {
       APlayerController *localPC = World->GetFirstPlayerController ();

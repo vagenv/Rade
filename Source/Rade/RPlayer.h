@@ -131,43 +131,55 @@ public:
 	   TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Move;
+	   TObjectPtr<UInputAction> IA_Move;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Look;
+	   TObjectPtr<UInputAction> IA_Look;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_Jump;
+	   TObjectPtr<UInputAction> IA_Jump;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_ChangeCamera;
+	   TObjectPtr<UInputAction> IA_ChangeCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> InputAction_ToggleInventory;
+	   TObjectPtr<UInputAction> IA_Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> IA_AltAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	   TObjectPtr<UInputAction> IA_ToggleInventory;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_ToggleOption;
+      TObjectPtr<UInputAction> IA_ToggleOption;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Scroll;
+      TObjectPtr<UInputAction> IA_ScrollV;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Save;
+      TObjectPtr<UInputAction> IA_ScrollH;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> InputAction_Load;
+      TObjectPtr<UInputAction> IA_Save;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+      TObjectPtr<UInputAction> IA_Load;
 
 
    // --- Internal function callen on onput
 	virtual void Input_Move (const FInputActionValue& Value);
 	virtual void Input_Look (const FInputActionValue& Value);
    virtual void Input_Jump ();
+
    virtual void Input_ChangeCamera ();
-   virtual void Input_ToggleInventory ();
-   virtual void Input_ToggleOption ();
    virtual void Input_Action ();
    virtual void Input_AltAction ();
-   virtual void Input_Scroll (const FInputActionValue& Value);
+
+   virtual void Input_ScrollV (const FInputActionValue& Value);
+   virtual void Input_ScrollH (const FInputActionValue& Value);
+   virtual void Input_ToggleInventory ();
+   virtual void Input_ToggleOption ();
 
    // For First person Camera
    void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
@@ -177,19 +189,22 @@ public:
       FRInputEvent Input_OnChangeCamera;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEvent Input_OnToggleInventory;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEvent Input_OnToggleOption;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInputEvent Input_OnAction;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInputEvent Input_OnAltAction;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInputEventFloat Input_OnScroll;
+      FRInputEventFloat Input_OnScrollV;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInputEventFloat Input_OnScrollH;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInputEvent Input_OnToggleInventory;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInputEvent Input_OnToggleOption;
 
 
    //==========================================================================

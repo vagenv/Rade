@@ -38,7 +38,7 @@ public:
       TObjectPtr<UMeshComponent> MeshComponent;
 
    //  Inventory Component
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade")
       TObjectPtr<URInventoryComponent> Inventory;
 
    // Called if blueprint archetype of pickup was not defined;
@@ -50,15 +50,15 @@ public:
 
    // Activation delay
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-      float PickupActivationDelay;
+      float PickupActivationDelay = 1.;
 
    // Auto Pickup
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-      bool bAutoPickup;
+      bool bAutoPickup = false;
 
    // Auto Pickup
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-      bool bAutoDestroy;
+      bool bAutoDestroy = true;
 
 
    //==========================================================================

@@ -37,6 +37,9 @@ void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 void URInventoryComponent::BeginPlay()
 {
    Super::BeginPlay();
+   const UWorld *world = GetWorld ();
+   if (!ensure (world)) return;
+
    bIsServer = GetOwner ()->HasAuthority ();
 
    if (!bIsServer) return;
@@ -45,11 +48,11 @@ void URInventoryComponent::BeginPlay()
    if (bSaveLoadInventory) {
       FRSaveEvent SavedDelegate;
       SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
-      URSaveMgr::OnSave (GetWorld (), SavedDelegate);
+      URSaveMgr::OnSave (world, SavedDelegate);
 
       FRSaveEvent LoadedDelegate;
       LoadedDelegate.AddDynamic (this, &URInventoryComponent::OnLoad);
-      URSaveMgr::OnLoad (GetWorld (), LoadedDelegate);
+      URSaveMgr::OnLoad (world, LoadedDelegate);
    }
 
    for (const auto &itItem : DefaultItems) {
@@ -57,6 +60,12 @@ void URInventoryComponent::BeginPlay()
          R_LOG (FString::Printf (TEXT ("Failed to add default item [%s] to [%s]"),
                 *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ()));
    }
+
+   if (bCheckClosestPickup) {
+      world->GetTimerManager ().SetTimer (TimerClosestPickup,
+         this, &URInventoryComponent::CheckClosestPickup, CheckClosestDelay, true);
+   }
+
 }
 
 //=============================================================================
@@ -150,20 +159,20 @@ bool URInventoryComponent::AddItem_Pickup (ARItemPickup *Pickup)
 {
    if (!bIsServer) return false;
    // //R_LOG ("Add item pickup");
-   if (!Pickup || !Pickup->Inventory) return false;
+   if (!ensure (Pickup))            return false;
+   if (!ensure (Pickup->Inventory)) return false;
 
-   // TArray<FRItemData> ItemsLeft;
-   // for (const FRItemData &ItItem : Pickup->Inventory->Items) {
-   //    bool res = AddItem (ItItem);
-   //    if (!res) ItemsLeft.Add (ItItem);
-   // }
+   TArray<FRItemData> ItemsLeft;
+   for (const FRItemData &ItItem : Pickup->Inventory->Items) {
+      bool res = AddItem (ItItem);
+      if (!res) ItemsLeft.Add (ItItem);
+   }
 
-   // Pickup->Inventory->Items = ItemsLeft;
-   // Pickup->PickedUp (GetOwner());
+   Pickup->Inventory->Items = ItemsLeft;
+   Pickup->PickedUp (GetOwner());
 
    return true;
 }
-
 
 bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
 {
@@ -180,25 +189,28 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
    return true;
 }
 
-// bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
-//                                          URInventoryComponent *ToInventory,
-//                                          int32 FromItemIdx,
-//                                          int32 FromItemCount)
-// {
-//    if (!FromInventory) return false;
-//    if (!ToInventory)   return false;
+bool URInventoryComponent::TransferItem (URInventoryComponent *FromInventory,
+                                         URInventoryComponent *ToInventory,
+                                         int32 FromItemIdx,
+                                         int32 FromItemCount)
+{
+   if (!FromInventory) return false;
+   if (!ToInventory)   return false;
 
-//    //R_LOG ("Transfer item");
-//    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return false;
+   if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return false;
 
-//    FRItemData ItemData = FromInventory->Items[FromItemIdx];
-//    ItemData.Description.Count = FromItemCount;
+   FRItemData ItemData = FromInventory->Items[FromItemIdx];
 
-//    FromInventory->RemoveItem (FromItemIdx, FromItemCount);
-//      ToInventory->AddItem    (ItemData);
+   // All items
+   if (FromItemCount <= 0) FromItemCount = ItemData.Count;
+   ItemData.Count = FromItemCount;
 
-//    return true;
-// }
+   // Try to add item
+   if (!ToInventory->AddItem (ItemData)) return false;
+
+   // Cleanup
+   return FromInventory->RemoveItem (FromItemIdx, FromItemCount);
+}
 
 
 void URInventoryComponent::CalcWeight ()
@@ -351,31 +363,55 @@ void URInventoryComponent::CalcWeight ()
 //    OnPickupsUpdated.Broadcast ();
 // }
 
-// ARItemPickup* URInventoryComponent::GetClosestPickup ()
-// {
-//    ARItemPickup *ClosestPickup = nullptr;
+bool URInventoryComponent::Pickup_Add (const ARItemPickup* Pickup)
+{
+   if (Pickup == nullptr) return false;
+   CurrentPickups.Add (Pickup);
+   OnPickupListUpdated.Broadcast ();
+   return true;
+}
 
-//    FVector PlayerLoc = GetOwner ()->GetActorLocation ();
-//    FVector PickupLoc;
+bool URInventoryComponent::Pickup_Rm  (const ARItemPickup* Pickup)
+{
+   if (Pickup == nullptr) return false;
+   CurrentPickups.RemoveSingle (Pickup);
+   OnPickupListUpdated.Broadcast ();
+   return true;
+}
 
-//    for (ARItemPickup *itPickup : CurrentPickups) {
-//       if (!itPickup) continue;
+const ARItemPickup* URInventoryComponent::GetClosestPickup () const
+{
+   return ClosestPickup;
+}
 
-//       FVector itLoc = itPickup->GetActorLocation ();
+void URInventoryComponent::CheckClosestPickup ()
+{
+   FVector PlayerLoc = GetOwner ()->GetActorLocation ();
 
-//       if (!ClosestPickup) {
-//          ClosestPickup = itPickup;
-//          PickupLoc = itLoc;
-//       }
+   FVector              newClosestPickupLoc;
+   const ARItemPickup * newClosestPickup = nullptr;
 
-//       if (FVector::Distance (PlayerLoc, itLoc) < FVector::Distance (PlayerLoc, PickupLoc)) {
-//          ClosestPickup = itPickup;
-//          PickupLoc = itLoc;
-//       }
-//    }
+   for (const ARItemPickup *itPickup : CurrentPickups) {
+      if (!ensure (itPickup)) continue;
 
-//    return ClosestPickup;
-// }
+      FVector itLoc = itPickup->GetActorLocation ();
+
+      if (!newClosestPickup) {
+         newClosestPickup    = itPickup;
+         newClosestPickupLoc = itLoc;
+      }
+
+      if (FVector::Distance (PlayerLoc, itLoc) < FVector::Distance (PlayerLoc, newClosestPickupLoc)) {
+         newClosestPickup    = itPickup;
+         newClosestPickupLoc = itLoc;
+      }
+   }
+
+   if (newClosestPickup != ClosestPickup) {
+      ClosestPickup = newClosestPickup;
+      OnClosestPickupUpdated.Broadcast ();
+   }
+}
 
 
 //=============================================================================
