@@ -1,11 +1,5 @@
 
 
-UE Dynamic Shooter Template.
-=
-![alt tag](https://raw.github.com/vagenv/rade/master/Content/Rade/Splash/Splash.png)
-
-Details
-=
 
 Unreal Engine Project template.
 
