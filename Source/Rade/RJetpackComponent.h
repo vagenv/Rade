@@ -23,7 +23,7 @@ public:
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
    // Owners Movement Component
-   UCharacterMovementComponent *MovementComponent;
+   UCharacterMovementComponent *MovementComponent = nullptr;
 
    //==========================================================================
    //                         Params

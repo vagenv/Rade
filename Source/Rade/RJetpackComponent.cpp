@@ -16,9 +16,8 @@ URJetpackComponent::URJetpackComponent ()
 void URJetpackComponent::BeginPlay()
 {
    Super::BeginPlay ();
-   ACharacter *Character = Cast<ACharacter> (GetOwner ());
-   if (Character) {
-      MovementComponent = Character->GetCharacterMovement();
+   if (ACharacter *Character = Cast<ACharacter> (GetOwner ())) {
+      MovementComponent = Character->GetCharacterMovement ();
    }
 }
 
@@ -30,7 +29,7 @@ void URJetpackComponent::TickComponent (float DeltaTime, enum ELevelTick TickTyp
 
 void URJetpackComponent::Use_Implementation ()
 {
-   if (ensure (!MovementComponent)) return;
+   if (!ensure (MovementComponent)) return;
    if (MovementComponent->IsMovingOnGround ()) return;
 
    if (CurrentChargePercent < MinUseablePercent) return;
