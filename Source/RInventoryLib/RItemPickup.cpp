@@ -99,15 +99,9 @@ void ARItemPickup::BeginPlay ()
                                     PickupActivationDelay,
                                     false);
    /*
-   // Disable Skeletal Mesh Outline
-   if (SkeletalMesh) {
-      SkeletalMesh->SetRenderCustomDepth(false);
-      SkeletalMesh->SetIsReplicated(true);
-   }
 
    // Disable Static Mesh Outline
    if (Mesh) Mesh->SetRenderCustomDepth(false);
-
 
    // If Mesh is Set , Activate Pickup
    if (  (Mesh         && Mesh->GetStaticMesh ())
@@ -126,32 +120,9 @@ void ARItemPickup::BeginPlay ()
    }
 }
 
+
+
 /*
-
-// Enable It as a Skeletal Mesh Pickup
-bool ARItemPickup::SetAsSkeletalMeshPickup_Validate(){
-   return true;
-}
-void ARItemPickup::SetAsSkeletalMeshPickup_Implementation()
-{
-   // TODO: Causes a crash. Still looking into it.
-   // Set It as Root
-   //SetRootComponent(SkeletalMesh);
-
-   // Destroy Extra Component
-   if (Mesh) Mesh->DestroyComponent();
-
-   // Attach Trigger to Skeletal Mesh Component
-   TriggerSphere->AttachToComponent(SkeletalMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
-
-   // Set Its Properties
-   SkeletalMesh->SetMobility(EComponentMobility::Movable);
-   SkeletalMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-   SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-
-   // Enable Replication of Its Movement
-   SetReplicateMovement(true);
-}
 
 // Enable It as a Static Mesh Pickup
 bool ARItemPickup::SetAsMeshPickup_Validate(){
@@ -161,9 +132,6 @@ void ARItemPickup::SetAsMeshPickup_Implementation()
 {
    // Set It as Root
    SetRootComponent(Mesh);
-
-   // Destroy Extra Component
-   if (SkeletalMesh) SkeletalMesh->DestroyComponent();
 
    // Attach Trigger to Static Mesh Component
    TriggerSphere->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
@@ -226,46 +194,21 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
                                    bool bFromSweep,
                                    const FHitResult & SweepResult)
 {
-
    // Null or itself
    if (OtherActor == nullptr || OtherActor == this) return;
-
-   if (!Inventory) return;
-
-   // if (!Inventory->GetItems ().Num ()) return;
 
    // Only Inventory containing actors
    URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
    if (PlayerInventory == nullptr) return;
 
-   if (!bAutoPickup) {
+   if (bAutoPickup) {
+      URInventoryComponent::TransferAll (Inventory, PlayerInventory);
+   } else {
       PlayerInventory->Pickup_Add (this);
 
       // BP Event that player entered
       BP_PlayerEntered (OtherActor);
-   } else {
-      PlayerInventory->AddItem_Pickup (this);
    }
-
-   /*
-      // Auto give player the item
-      if (bAutoPickup) {
-         if (GetLocalRole() >= ROLE_Authority) PickedUp(radePlayer);
-
-      // Wait player Input
-      } else {
-         // Set player ref of item pickup
-         //Cast<ARadePlayer>(OtherActor)->currentPickup = this;
-         if (radePlayer->IsLocallyControlled()) {
-            if (SkeletalMesh != nullptr) SkeletalMesh->SetRenderCustomDepth(true);
-            if (Mesh != nullptr)         Mesh->SetRenderCustomDepth(true);
-         }
-         if (GetLocalRole() >= ROLE_Authority)
-            radePlayer->currentPickup = this;
-      }
-
-   }
-   */
 }
 
 // Player Exited The Pickup Area
@@ -285,18 +228,6 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
 
    // BP Event that player Exited
    BP_PlayerLeft (OtherActor);
-
-   /*
-   // Clean Pickup reference in player class
-   if (GetLocalRole() >= ROLE_Authority && radePlayer->currentPickup == this)
-   radePlayer->currentPickup = nullptr;
-
-   // Enable Highlighting on Local Users
-   if (radePlayer->IsLocallyControlled()) {
-      if (SkeletalMesh != nullptr) SkeletalMesh->SetRenderCustomDepth(false);
-      if (Mesh         != nullptr) Mesh->SetRenderCustomDepth(false);
-   }
-   */
 }
 
 // The Actual event of pickup
@@ -314,7 +245,7 @@ void ARItemPickup::PickedUp (AActor *InventoryOwner)
 
 void ARItemPickup::OnInventoryUpdate ()
 {
-   if (bAutoDestroy && Inventory && Inventory->GetItems ().Num () == 0) {
+   if (bAutoDestroy && Inventory->GetItems ().Num () == 0) {
       Destroy ();
    }
 }

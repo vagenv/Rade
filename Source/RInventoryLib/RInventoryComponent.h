@@ -22,6 +22,7 @@ public:
    URInventoryComponent ();
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
+   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
 private:
       // Has authority to change inventory
@@ -33,15 +34,15 @@ public:
    //=============================================================================
 
    // Maximum number
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-      int32 SlotsMax = 5;
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+      int32 SlotsMax = 10;
 
    // Current
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightCurrent = 0;
 
    // Maximum weight actor can carry
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightMax = 25;
 
    //=============================================================================
@@ -82,26 +83,30 @@ public:
       bool AddItem        (FRItemData ItemData);
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       bool AddItem_Arch   (const FRDefaultItem &Item);
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem_Pickup (ARItemPickup *Pickup);
+   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   //    bool AddItem_Pickup (ARItemPickup *Pickup);
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       bool RemoveItem     (int32 ItemIdx, int32 Count = 1);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool TransferItem (URInventoryComponent *FromInventory,
-                                URInventoryComponent *ToInventory,
-                                int32 FromItemIdx,
-                                int32 FromItemCount);
+      static bool TransferAll (URInventoryComponent *SrcInventory,
+                               URInventoryComponent *DstInventory);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      static bool TransferItem (URInventoryComponent *SrcInventory,
+                                URInventoryComponent *DstInventory,
+                                int32 SrcItemIdx,
+                                int32 DstItemCount);
 
    //=============================================================================
    //                 Item use / drop events
    //=============================================================================
 
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool UseItem (int32 ItemIdx);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool UseItem (int32 ItemIdx);
 
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 1);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0);
 
    //=============================================================================
    //                 Server
@@ -193,7 +198,6 @@ public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       const ARItemPickup* GetClosestPickup () const;
-
 
    // Should be used only for main local Player.
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
