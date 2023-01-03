@@ -448,57 +448,63 @@ void URInventoryComponent::OnSave ()
 {
    // --- Save player Inventory
 
-   // Convert ItemData to array of JSON strings
-   // TArray<FString> ItemData;
-   // for (FRItemData &item : Items) {
-   //    ItemData.Add (item.ToJSON ());
-   // }
+   // Convert ItemData to array to JSON strings
+   TArray<FString> ItemData;
+   for (const FRItemData &item : Items) {
+      FString res;
+      if (FRItemData::ToJSON (item, res)) {
+         ItemData.Add (res);
+      } else {
+         R_LOG (FString::Printf (TEXT ("Failed to save %s"), *item.Name));
+      }
+   }
 
-   // // Push to buffer
-   // FBufferArchive ToBinary;
-   // ToBinary << ItemData;
+   // Convert array into buffer
+   FBufferArchive ToBinary;
+   ToBinary << ItemData;
 
-   // FString InventoryUniqueId = GetOwner ()->GetName ();
+   FString InventoryUniqueId = GetOwner ()->GetName ();
 
-   // // Set
-   // bool res = URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary);
-
-   // if (!res) R_LOG ("Failed to save player inventory");
+   // Set binary data to save file
+   if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
+      R_LOG (FString::Printf (TEXT ("Failed to save [%s] Inventory."), *InventoryUniqueId));
+   }
 }
 
 void URInventoryComponent::OnLoad ()
 {
    // --- Load player Inventory
 
-   // FString InventoryUniqueId = GetOwner ()->GetName ();
+   FString InventoryUniqueId = GetOwner ()->GetName ();
 
-   // TArray<uint8> BinaryArray;
-   // bool res = URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray);
-   // if (!res) {
-   //    R_LOG ("Failed to load player inventory");
-   //    return;
-   // }
+   // Get binary data from save file
+   TArray<uint8> BinaryArray;
+   if (!URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray)) {
+      R_LOG (FString::Printf (TEXT ("Failed to load [%s] Inventory."), *InventoryUniqueId));
+      return;
+   }
 
-   // // Convert Binary to array of JSON strings
-   // TArray<FString> ItemsData;
-   // FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   // FromBinary.Seek(0);
-   // FromBinary << ItemsData;
+   // Convert Binary to array of JSON strings
+   TArray<FString> ItemsData;
+   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
+   FromBinary.Seek(0);
+   FromBinary << ItemsData;
 
-   // // Convert JSON strings to ItemData
-   // TArray<FRItemData> loadedItems;
-   // for (FString &ItemData : ItemsData) {
-   //    FRItemData Item;
-   //    Item.FromJSON (ItemData);
-   //    loadedItems.Add (Item);
-   // }
+   // Convert JSON strings to ItemData
+   TArray<FRItemData> loadedItems;
+   for (const FString &ItemData : ItemsData) {
+      FRItemData Item;
+      if (FRItemData::FromJSON (ItemData, Item)) {
+         loadedItems.Add (Item);
+      } else {
+         R_LOG (FString::Printf (TEXT ("Failed to parse Item string [%s]"), *ItemData));
+      }
+   }
 
-   // // Update inventory
-   // Items = loadedItems;
-   // OnInventoryUpdated.Broadcast ();
+   // Update inventory
+   Items = loadedItems;
+   OnInventoryUpdated.Broadcast ();
 }
-
-
 
 
 /*
