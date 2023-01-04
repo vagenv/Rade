@@ -28,15 +28,15 @@ public:
    //==========================================================================
 
    // Mesh
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TObjectPtr<UStaticMeshComponent> MeshComponent;
 
    // Trigger Sphere
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TObjectPtr<USphereComponent> TriggerSphere;
 
    //  Inventory Component
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TObjectPtr<URInventoryComponent> Inventory;
 
    //==========================================================================
@@ -44,17 +44,16 @@ public:
    //==========================================================================
 
    // Activation delay
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       float PickupActivationDelay = 1.;
 
    // Auto Pickup
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bAutoPickup = false;
 
    // Auto Pickup
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bAutoDestroy = true;
-
 
    //==========================================================================
    //          Events

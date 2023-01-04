@@ -38,7 +38,7 @@ public:
       int32 SlotsMax = 10;
 
    // Current
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       float WeightCurrent = 0;
 
    // Maximum weight actor can carry
@@ -68,7 +68,7 @@ protected:
 public:
 
    // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       TArray<FRDefaultItem> DefaultItems;
 
    // Delegate when Item list updated
@@ -164,11 +164,11 @@ protected:
 protected:
    // List of currently available pickup
    // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory",
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory",
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
              meta = (GetByRef))
       TArray<const ARItemPickup*> CurrentPickups;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       const ARItemPickup* ClosestPickup = nullptr;
 
    // Delegate when pickup list updated
@@ -200,10 +200,10 @@ public:
       const ARItemPickup* GetClosestPickup () const;
 
    // Should be used only for main local Player.
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bCheckClosestPickup = false;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       float CheckClosestDelay = 0.5f;
 
    //=============================================================================
@@ -214,9 +214,8 @@ public:
    // Inventory Saved / Loaded between sessions.
    // Should be used only for Player.
    // Careful with collision of 'InventoryUniqueId'
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bSaveLoadInventory = false;
-
 
 protected:
    // Rade Save events

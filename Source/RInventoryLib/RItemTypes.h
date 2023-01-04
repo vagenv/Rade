@@ -56,7 +56,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
       FString Name = FString ("Undefined item name");
 
    // Tooltip or Press E to Use/Equip
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (MultiLine = true))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString Tooltip = FString ("Undefined item tooltip");
 
    // Item Icon
