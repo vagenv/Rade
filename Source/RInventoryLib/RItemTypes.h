@@ -13,34 +13,26 @@ class ARItemPickup;
 class URItemAction;
 class UStaticMesh;
 
-// The class item will be cast to
-UENUM(BlueprintType)
-enum class FRItemType : uint8
-{
-   Base        UMETA(DisplayName = "Base"),
-   Action      UMETA(DisplayName = "Action"),
-   Equipment   UMETA(DisplayName = "Equipment"),
-};
-
 // Rarity of item
 UENUM(BlueprintType)
 enum class FRItemRarity : uint8
 {
-   // --- Items
-   POOR       UMETA(DisplayName = "POOR"),
-   COMMON     UMETA(DisplayName = "COMMON"),
-   UNCOMMON   UMETA(DisplayName = "UNCOMMON"),
-   RARE       UMETA(DisplayName = "RARE"),
-   EPIC       UMETA(DisplayName = "EPIC"),
-   LEGENDARY  UMETA(DisplayName = "LEGENDARY"),
-   DIVINE     UMETA(DisplayName = "DIVINE"),
+   F    UMETA(DisplayName =    "F Grade"),
+   E    UMETA(DisplayName =    "E Grade"),
+   D    UMETA(DisplayName =    "D Grade"),
+   C    UMETA(DisplayName =    "C Grade"),
+   B    UMETA(DisplayName =    "B Grade"),
+   BB   UMETA(DisplayName =   "BB Grade"),
+   A    UMETA(DisplayName =    "A Grade"),
+   AA   UMETA(DisplayName =   "AA Grade"),
+   AAA  UMETA(DisplayName =  "AAA Grade"),
+   S    UMETA(DisplayName =    "S Grade"),
+   SS   UMETA(DisplayName =   "SS Grade"),
+   SSS  UMETA(DisplayName =  "SSS Grade"),
+   SSSS UMETA(DisplayName = "SSSS Grade"),
 
-   // --- Custom
-   SPECIAL    UMETA(DisplayName = "SPECIAL"),
-
-   // --- Quest
-   MAINQUEST  UMETA(DisplayName = "MAIN QUEST"),
-   QUEST      UMETA(DisplayName = "QUEST")
+   MAINQUEST UMETA(DisplayName = "Main Quest Item"),
+   QUEST     UMETA(DisplayName = "Quest Item")
 };
 
 // Minimal data contained in row
