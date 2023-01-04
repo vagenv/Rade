@@ -3,14 +3,8 @@
 ===========================
 
 
-Inventory UI working.
 
-Scroll/Action/Drop
-
-Pickup + Inventory same widget
-
-
-ItemAction
+Item action Blueprint
    Function / Interface
 
 Weapons with:
@@ -18,57 +12,59 @@ Weapons with:
    MaxAmmo
    MagSize
 
-Chest with inventory
+Network Inventory System
+
+Persistent chests items.
 
 
-
-Save/Load
-
-Network. Sharing chest items.
+Store to exchange
+   Item <-> Gold
 
 
 Crafting system
+   Item <-> Objects
 
-Store
+Equipment Manager with slots.
+
 
 Health / Stats temporary change from items.
 
-
-
-Equipment Manager with slots.
+Items affect stats
 
 Stats
 
 Aura/buffs
 
-Network spawn
-
-Chat
-
-Pickup
-
-Session
-
-
-
 Option menu
 
 
+Session
+
+Chat
+
+
+Item quality scaling.
+Random properties
+
+
+Inventory
+- Tabs [All][Equipment][Consumables][Craft][Quest]
+- Rarity color
+
+AI
+- pathfinding
+- patrol
+- Melee and ranged
+- React if attacked
+
 
 ===========================
-   Rade
+   Old
 ===========================
-
-ARadeEquipmentMgr.
-ARadeEqup
-Equipment Manager. (Armor, hats, weapon)
-Weapon Equip/unequip
-
 
 Anim BP with states
 3rd person anim
 Death animation (network).
-
 
 UI: Weapon stats
 Weapon Fire
@@ -77,29 +73,6 @@ Launcher Weapon
 weapon equip scale position
 Damage Effects.
 Reload sound
-
-
-RadeBlock Module
-
-
-NETWORK
-UI: Player List with Username
-Animation sync.
-
-
-AI
-AI react if attacked.
-Ranged AI
-
-
-Item color (Green consumable, grey not usage, red weapon)
-Inventory tabs. (All, weapon, consumables, crafting)
-Crafting?
-
-
-Bigger Level with larger navmesh
-
-
 
 ===========================
    Unreal Engine:
