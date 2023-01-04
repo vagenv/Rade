@@ -3,14 +3,12 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "RItemTypes.h"
 #include "RItemPickup.generated.h"
 
 class USphereComponent;
 class UMeshComponent;
 class UPrimitiveComponent;
 class AActor;
-
 class URInventoryComponent;
 
 // General pickup Class for Any Child of class "Item"
