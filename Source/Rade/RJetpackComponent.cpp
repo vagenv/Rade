@@ -10,7 +10,6 @@ URJetpackComponent::URJetpackComponent ()
 {
    PrimaryComponentTick.bCanEverTick = true;
    PrimaryComponentTick.bStartWithTickEnabled = true;
-   RegisterComponent ();
 }
 
 void URJetpackComponent::BeginPlay()
@@ -19,6 +18,7 @@ void URJetpackComponent::BeginPlay()
    if (ACharacter *Character = Cast<ACharacter> (GetOwner ())) {
       MovementComponent = Character->GetCharacterMovement ();
    }
+   RegisterComponent ();
 }
 
 void URJetpackComponent::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
