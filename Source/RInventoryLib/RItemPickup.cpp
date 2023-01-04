@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RItemPickup.h"
-#include "RItem.h"
+#include "RItemAction.h"
 #include "RInventoryComponent.h"
 #include "RUtilLib/RLog.h"
 

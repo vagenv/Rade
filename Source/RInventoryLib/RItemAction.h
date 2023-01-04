@@ -4,7 +4,7 @@
 
 #include "UObject/Object.h"
 #include "RItemTypes.h"
-#include "RItem.generated.h"
+#include "RItemAction.generated.h"
 
 class AActor;
 class URInventoryComponent;
