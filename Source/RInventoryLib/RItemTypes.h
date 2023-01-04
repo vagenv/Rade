@@ -32,7 +32,9 @@ enum class FRItemRarity : uint8
    SSSS UMETA(DisplayName = "SSSS Grade"),
 
    MAINQUEST UMETA(DisplayName = "Main Quest Item"),
-   QUEST     UMETA(DisplayName = "Quest Item")
+   QUEST     UMETA(DisplayName = "Quest Item"),
+
+   None     UMETA(DisplayName = "Please set it")
 };
 
 // Minimal data contained in row
@@ -49,7 +51,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    // Rarity
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRItemRarity Rarity;
+      FRItemRarity Rarity = FRItemRarity::None;
 
    // Item Name
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
