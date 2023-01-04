@@ -30,7 +30,7 @@ ARItemPickup::ARItemPickup ()
    TriggerSphere->InitSphereRadius (400);
    TriggerSphere->SetIsReplicated (true);
    TriggerSphere->BodyInstance.SetCollisionProfileName ("Pickup");
-   TriggerSphere->AttachToComponent (MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
+   TriggerSphere->SetupAttachment (MeshComponent);
 
    Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
    Inventory->SetIsReplicated (true);
