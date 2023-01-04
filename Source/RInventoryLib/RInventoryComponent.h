@@ -38,7 +38,7 @@ public:
       int32 SlotsMax = 10;
 
    // Current
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightCurrent = 0;
 
    // Maximum weight actor can carry
@@ -58,7 +58,7 @@ protected:
    // UFUNCTION()
    //    void OnRep_Items ();
 
-   // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
    UPROPERTY(Replicated)
       TArray<FRItemData> Items;
 
@@ -163,12 +163,12 @@ protected:
 
 protected:
    // List of currently available pickup
-   // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
+   // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory",
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory",
              meta = (GetByRef))
       TArray<const ARItemPickup*> CurrentPickups;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       const ARItemPickup* ClosestPickup = nullptr;
 
    // Delegate when pickup list updated

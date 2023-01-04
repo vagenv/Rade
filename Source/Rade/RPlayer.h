@@ -59,15 +59,15 @@ public:
    //==========================================================================
 
    // Character Current Health
-   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       float MoveSpeed = 1.f;
 
    // Rade Player Controller
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Player")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       TObjectPtr<APlayerController> PlayerController;
 
    // Rade Player Controller
-   UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade|Player")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       TObjectPtr<URJetpackComponent> Jetpack;
 
    //==========================================================================
@@ -75,36 +75,36 @@ public:
    //==========================================================================
 
    // First Person Mesh Anim Instance
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Rade|Player")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Rade|Player")
       TObjectPtr<URAnimInstance> ArmsAnimInstance;
 
    //  First Person Mesh
-   UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
+   UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Rade|Player")
       TObjectPtr<USkeletalMeshComponent> Mesh1P;
 
    //==========================================================================
    //            1st person and 3rd person cameras
    //==========================================================================
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;
 
    // Begin play Camera state
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       ECameraState DefaultCameraState = ECameraState::TP_Camera;
 
    // Current Camera State
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       ECameraState CurrentCameraState = ECameraState::TP_Camera;
 
    // Camera Mouse sensitivity
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       float CameraMouseSensivity = 1.0;
 
    // Updates Component Visibility when Camera State Changes
@@ -127,43 +127,43 @@ public:
    // --- Input event capture
 
    // MappingContext
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_Move;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_Look;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_Jump;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_ChangeCamera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_AltAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_ToggleInventory;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_ToggleOption;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_ScrollV;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_ScrollH;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_Save;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_Load;
 
 
@@ -185,52 +185,26 @@ public:
    void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
 
    // --- Event to subscribe to
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnChangeCamera;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnAction;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnAltAction;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEventFloat Input_OnScrollV;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEventFloat Input_OnScrollH;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnToggleInventory;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnToggleOption;
-
-
-   //==========================================================================
-   //                      Weapon Control and Events
-   //==========================================================================
-
-   /*
-   // Called from inventory when player wants to equip new weapon
-   void EquipWeapon(class ARadeWeapon* NewWeaponClass)override;
-
-   // Called when player unequips current weapon
-   void UnEquipCurrentWeapon();
-
-   // Time before new weapon is spawned if returning to empty weapon state
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
-      float DefaultWeaponEquipDelay = 0.4f;
-
-   // Current Weapon Stats Was updated.
-   UFUNCTION()
-      virtual void CurrentWeaponUpdated() override;
-
-   // Can Player Fire in Air
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade Player")
-      bool bCanFireInAir = false;
-   */
-
 
 
    //==========================================================================
@@ -247,19 +221,6 @@ public:
    UFUNCTION()
       void OnLoad ();
 
-private:
-   /*
-   // Internal Events when weapon in changed
-   void EquipStart();
-   void EquipEnd();
-   void UnEquipStart();
-   void UnEquipEnd();
-
-   // The next weapon class to equip from inventory (During weapon change)
-   UPROPERTY()
-      class ARadeWeapon* PendingEquipWeapon;
-   */
-
 public:
 
    //==========================================================================
@@ -268,7 +229,7 @@ public:
 
    /*
 
- // Character Name
+   // Character Name
    UPROPERTY(ReplicatedUsing = OnRep_CharacterStatsUpdated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       FString CharacterName;
 
@@ -409,7 +370,7 @@ public:
    //==========================================================================
 
    // Get local Rade player for HUD
-   UFUNCTION(BlueprintPure, Category = "Rade", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Local Rade Player", CompactNodeTitle = "Get Rade Player", Keywords = "get rade player"))
+   UFUNCTION(BlueprintPure, Category = "Rade|Player", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Local Rade Player", CompactNodeTitle = "Get Rade Player", Keywords = "get rade player"))
       static ARPlayer* GetLocalRadePlayer (UObject* WorldContextObject);
 };
 

@@ -11,44 +11,31 @@
 // Sets default values
 ARItemPickup::ARItemPickup ()
 {
-   // Set Root Component
-   RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-   RootComponent->SetIsReplicated (true);
-   SetRootComponent (RootComponent);
-
-/*
-   // Set Skeletal Mesh Component
-   SkeletalMesh = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("SkeletalMesh"));
-   SkeletalMesh->SetIsReplicated(true);
-   SkeletalMesh->BodyInstance.SetCollisionProfileName("BlockAll");
-   SkeletalMesh->SetSimulatePhysics(true);
-   SkeletalMesh->SetupAttachment (GetRootComponent ());
-
    // Set Static Mesh Component
-   Mesh = PCIP.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-   Mesh->SetIsReplicated(true);
-   Mesh->BodyInstance.SetCollisionProfileName("BlockAll");
-   Mesh->SetSimulatePhysics(true);
-   Mesh->bAutoActivate = true;
-   Mesh->SetupAttachment (GetRootComponent ());
+   MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+   MeshComponent->SetMobility (EComponentMobility::Movable);
+   MeshComponent->SetCollisionResponseToAllChannels (ECollisionResponse::ECR_Block);
+   MeshComponent->SetCollisionEnabled (ECollisionEnabled::PhysicsOnly);
+   MeshComponent->BodyInstance.SetCollisionProfileName("BlockAll");
+   MeshComponent->SetSimulatePhysics (true);
+   MeshComponent->SetIsReplicated (true);
+   MeshComponent->bAutoActivate = true;
 
-   */
+   static ConstructorHelpers::FObjectFinder<UStaticMesh>
+      defaultMesh (TEXT("StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cube.Shape_Cube'"));
+   MeshComponent->SetStaticMesh (defaultMesh.Object);
 
    // Set Trigger Component
    TriggerSphere = CreateDefaultSubobject<USphereComponent> (TEXT("TriggerSphere"));
    TriggerSphere->InitSphereRadius (400);
    TriggerSphere->SetIsReplicated (true);
    TriggerSphere->BodyInstance.SetCollisionProfileName ("Pickup");
-   TriggerSphere->SetupAttachment (GetRootComponent ());
-
+   TriggerSphere->AttachToComponent (MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 
    Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
    Inventory->SetIsReplicated (true);
 
    bReplicates = true;
-   PickupActivationDelay = 1.;
-   bAutoPickup  = false;
-   bAutoDestroy = true;
    SetReplicatingMovement (true);
 }
 
@@ -65,28 +52,6 @@ void ARItemPickup::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLif
    DOREPLIFETIME (ARItemPickup, bAutoDestroy);
 }
 
-void ARItemPickup::InitEmpty ()
-{
-   UStaticMeshComponent *StaticMeshComponent
-      = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass (), NAME_None, RF_Transient);
-   FString defaultMeshPath = "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cube.Shape_Cube";
-   UStaticMesh *StaticMesh = Cast<UStaticMesh>(StaticLoadObject (UStaticMesh::StaticClass (), NULL, *defaultMeshPath));
-   StaticMeshComponent->SetStaticMesh (StaticMesh);
-
-   MeshComponent = StaticMeshComponent;
-   MeshComponent->SetupAttachment (GetRootComponent ());
-   MeshComponent->RegisterComponent ();
-   TriggerSphere->AttachToComponent (MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
-
-   // Set Its Properties
-   MeshComponent->SetMobility (EComponentMobility::Movable);
-   MeshComponent->SetCollisionResponseToAllChannels (ECollisionResponse::ECR_Block);
-   MeshComponent->SetCollisionEnabled (ECollisionEnabled::PhysicsOnly);
-   MeshComponent->BodyInstance.SetCollisionProfileName ("BlockAll");
-   MeshComponent->SetSimulatePhysics (true);
-   MeshComponent->bAutoActivate = true;
-}
-
 void ARItemPickup::BeginPlay ()
 {
    Super::BeginPlay ();
@@ -98,28 +63,11 @@ void ARItemPickup::BeginPlay ()
                                     &ARItemPickup::ActivatePickupOverlap,
                                     PickupActivationDelay,
                                     false);
-   /*
-
-   // Disable Static Mesh Outline
-   if (Mesh) Mesh->SetRenderCustomDepth(false);
-
-   // If Mesh is Set , Activate Pickup
-   if (  (Mesh         && Mesh->GetStaticMesh ())
-      || (SkeletalMesh && SkeletalMesh->SkeletalMesh)) {
-      ActivatePickupPhysics();
-
-   // Else Activate it after a delay
-   } else  {
-      FTimerHandle MyActivatePhysicsHandle;
-      GetWorldTimerManager().SetTimer(MyActivatePhysicsHandle, this, &AItemPickup::ActivatePickupPhysics, 0.1f, false);
-   }
-   */
 
    if (Inventory) {
       Inventory->OnInventoryUpdated.AddDynamic (this, &ARItemPickup::OnInventoryUpdate);
    }
 }
-
 
 
 /*

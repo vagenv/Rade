@@ -40,72 +40,70 @@ USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
-public:
 
    static bool FromJSON (const FString             &src, FRItemData &dst);
    static bool FromRow  (const FDataTableRowHandle &src, FRItemData &dst);
    static bool ToJSON   (const FRItemData          &src, FString    &dst);
 
-
    // --- Base data every item should have
 
    // Rarity
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FRItemRarity Rarity;
 
    // Item Name
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString Name = FString ("Undefined item name");
 
    // Tooltip or Press E to Use/Equip
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (MultiLine = true), Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (MultiLine = true))
       FString Tooltip = FString ("Undefined item tooltip");
 
    // Item Icon
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSoftObjectPtr<UTexture2D> Icon;
 
    // Number of item instances
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Count = 1;
 
    // Max number of item instances per item slot
    // MaxCount > 1 => Stackable
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 MaxCount = 1;
 
    // Item Weight of each instance
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 0.0), Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 0.0))
       float Weight = 1;
 
    // Selling price
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Cost = 0;
 
    // --- Interactable items
 
    // Use interface callback
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSubclassOf<URItemAction> Action;
 
    // --- Pickup
 
    // Pickup mesh
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TObjectPtr<UStaticMesh> PickupMesh;
 
    // Custom pickup class. Will be used if set.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSubclassOf<ARItemPickup> Pickup;
 
 
    // --- Equipment
 
    // Socket to which item will be attached on spawn
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString AttachSocket;
 
-private:
+protected:
 
    // For subclass runtime data serialization
    UPROPERTY()
@@ -116,7 +114,6 @@ USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRDefaultItem
 {
    GENERATED_BODY()
-public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
       FDataTableRowHandle Arch;
 

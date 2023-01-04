@@ -30,11 +30,11 @@ public:
    //==========================================================================
 
    // Third Person Anim Instance
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       TObjectPtr<URAnimInstance> BodyAnimInstance;
 
    //  Inventory Component
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       TObjectPtr<URInventoryComponent> Inventory;
 
    //==========================================================================
@@ -42,15 +42,15 @@ public:
    //==========================================================================
 
    // Character Maximum Health
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       float HealthMax = 100;
 
    // Character Current Health
-   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       float Health = 90;
 
    // Is The Character Dead?
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       bool bDead = false;
 
    //==========================================================================
@@ -58,7 +58,7 @@ public:
    //==========================================================================
 
    // Fall Velocity To Damage Curve
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       FRuntimeFloatCurve FallDamageCurve;
 
    // Something hit
@@ -83,23 +83,23 @@ private:
 
 public:
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Character")
       FRCharacterEvent OnDeath;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Character")
       FRCharacterEvent OnRevive;
 
    // Can Character Revive after death
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       bool bAutoRevive = false;
 
    // Delay Before Revived. (Count started after death event)
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Character")
       float ReviveTime = 5;
 
    // --- Death
    virtual void Die (class AActor* DeathCauser, class AController* EventInstigator);
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Character")
       void BP_Died (class AActor* DeathCauser, class AController* EventInstigator);
    virtual void ForceRagdoll ();
 

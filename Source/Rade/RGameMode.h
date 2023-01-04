@@ -18,7 +18,7 @@ public:
 
    void BeginPlay () override;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade")
       TObjectPtr<URSaveMgr> SaveMgr;
 };
 

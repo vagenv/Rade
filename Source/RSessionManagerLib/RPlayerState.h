@@ -15,15 +15,15 @@ public:
    virtual void BeginPlay ()override;
 
    // Number of Times Player Died
-   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
       int32 nDeaths = 0;
 
    // Number of Timer Player Killed
-   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(Replicated,EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
       int32 nKills = 0;
 
    // Player Color
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
       FLinearColor PlayerColor = FLinearColor::White;
 };
 

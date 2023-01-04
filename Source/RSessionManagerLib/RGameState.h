@@ -15,23 +15,22 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSimpleEventDelegate);
 USTRUCT(BlueprintType)
 struct FROnineMessageData
 {
-   GENERATED_USTRUCT_BODY()
-public:
+   GENERATED_BODY()
 
    // Date of Message
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FDateTime Time;
 
    // The Actual Message
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString Message = "Undefined";
 
    // Player Name of the Message Owner
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString Owner = "Undefined";
 
    // Message Color
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FLinearColor Color = FColor::Magenta;
 
    FROnineMessageData();
@@ -50,7 +49,7 @@ public:
    virtual void BeginPlay();
 
    // Array of All Online Messages
-   UPROPERTY(ReplicatedUsing = OnRep_MessagesList, EditAnywhere, BlueprintReadOnly, Category = "RadeSession")
+   UPROPERTY(ReplicatedUsing = OnRep_MessagesList, EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
       TArray<FROnineMessageData> Messages;
 
    // Events when Message List Replicated
@@ -58,7 +57,7 @@ public:
       void OnRep_MessagesList();
 
    // Chat Update Delegate
-   UPROPERTY(BlueprintAssignable, Category = "RadeSession")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
       FSimpleEventDelegate ChatUpdateDelegate;
 
    //Add Chat Message, Should Be called on Server

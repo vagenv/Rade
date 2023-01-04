@@ -168,7 +168,7 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
       return false;
    }
    if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG ("Invalid intem index");
+      R_LOG ("Invalid Item index");
       return false;
    }
 
@@ -193,7 +193,7 @@ bool URInventoryComponent::TransferAll (URInventoryComponent *SrcInventory,
       R_LOG_STATIC ("Invalid Destination Inventory");
       return false;
    }
-   int n = SrcInventory->GetItems ().Num ();
+   int n = SrcInventory->Items.Num ();
    for (int i = 0; i< n; i++) {
       if (!TransferItem (SrcInventory, DstInventory, 0, 0)) {
          return false;
@@ -218,8 +218,8 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *SrcInventory,
    }
 
    if (!SrcInventory->Items.IsValidIndex (SrcItemIdx)) {
-      R_LOG_STATIC_PRINTF ("Invalid Source Inventory Index [%d]. Must be [0-%d]",
-         SrcItemIdx, SrcInventory->GetItems ().Num ());
+      R_LOG_STATIC_PRINTF ("Invalid Source Inventory Item Index [%d]. Must be [0-%d]",
+         SrcItemIdx, SrcInventory->Items.Num ());
       return false;
    }
 
@@ -274,53 +274,65 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) return nullptr;
-   R_LOG ("drop item");
 
-   return nullptr;
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return nullptr;
+   }
+
+   FRItemData ItemData = Items[ItemIdx];
+
+   // Everything
+   if (Count <= 0)             Count = ItemData.Count;
+   // Overflow
+   if (Count > ItemData.Count) Count = ItemData.Count;
+
+   ItemData.Count = Count;
+
+   // Error will be logged.
+   if (!RemoveItem (ItemIdx, Count)) return nullptr;
 
 
-   // // valid idx
-   // if (!Items.IsValidIndex (ItemIdx)) return false;
-   // // valid archetype
-   // if (!Items[ItemIdx].ItemArch) return false;
-   // URItem *ItemBP = Items[ItemIdx].ItemArch->GetDefaultObject<URItem>();
-   // if (!ItemBP) return false;
+   AActor *Player = GetOwner ();
 
-   // FRItemData ItemData = Items[ItemIdx];
-   // if (Count > ItemData.Description.Count) Count = ItemData.Description.Count;
-   // if (!RemoveItem (ItemIdx, Count)) return false;
+   // Get Player Rotation
+   FRotator rot = Player->GetActorRotation();
+   FVector forwardVector = rot.Vector() * 300;
+           forwardVector.Z = 0;
+   FVector spawnLoc = Player->GetActorLocation() + forwardVector + FVector(0, 0, 50);
 
+   // Create pickup
+   ARItemPickup *Pickup = nullptr;
 
-   // AActor *Player = GetOwner ();
-   // // Get Player Rotation
-   // FRotator rot = Player->GetActorRotation();
-   // FVector forwardVector = rot.Vector() * 300;
-   //         forwardVector.Z = 0;
-   // FVector spawnLoc = Player->GetActorLocation() + forwardVector + FVector(0, 0, 50);
+   // Custom Pickup Type
+   if (ItemData.Pickup) {
+      Pickup = GetWorld()->SpawnActor<ARItemPickup>(ItemData.Pickup, spawnLoc, rot);
 
-   // // Create pickup
-   // ARItemPickup *Pickup = nullptr;
+   // Custom mesh pickup
+   } else {
+      Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
+      // Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
 
-   // if (ItemBP->PickupArch) {
-   //    Pickup = GetWorld()->SpawnActor<ARItemPickup>(ItemBP->PickupArch, spawnLoc, rot);
+      if (ItemData.PickupMesh) {
+         Pickup->MeshComponent->SetStaticMesh (ItemData.PickupMesh);
+      }
 
-   // } else {
-   //    Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
-   //    Pickup->InitEmpty ();
-   // }
-   // Pickup->bAutoPickup  = false;
-   // Pickup->bAutoDestroy = true;
+      // Pickup->InitEmpty ();
+   }
+   Pickup->bAutoPickup  = false;
+   Pickup->bAutoDestroy = true;
 
-   // Pickup->Inventory->DefaultItems.Empty ();
-   // Pickup->Inventory->Items.Empty ();
+   Pickup->Inventory->DefaultItems.Empty ();
+   Pickup->Inventory->Items.Empty ();
 
-   // ItemData.Description.Count = Count;
-   // Pickup->Inventory->Items.Add (ItemData);
+   Pickup->Inventory->Items.Add (ItemData);
 
    // BP_Droped (ItemBP, Pickup);
    // ItemBP->Droped (GetOwner(), this, Pickup);
 
-   // return Pickup;
+   return Pickup;
 }
 
 

@@ -28,10 +28,10 @@ public:
 
    // --- Events
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
       void BP_Used (AActor *InventoryOwner, URInventoryComponent *Inventory);
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
       void BP_Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup);
 
 };

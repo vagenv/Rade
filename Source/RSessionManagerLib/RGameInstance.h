@@ -12,14 +12,14 @@ class FOnlineSessionSearch;
 USTRUCT(BlueprintType)
 struct FRAvaiableSessionsData
 {
-   GENERATED_USTRUCT_BODY()
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   GENERATED_BODY()
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString OwnerName;
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Ping;
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 NumberOfConnections;
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 NumberOfAvaiableConnections;
 
    FOnlineSessionSearchResult SessionData;

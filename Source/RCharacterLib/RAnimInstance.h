@@ -60,16 +60,16 @@ public:
    //==========================================================================
 
    // Current Weapon Archetype
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Anim")
       ERAnimArchetype AnimArchetype;
 
    // Current Animation playing
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade" )
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Anim" )
       ERAnimState PlayerCurrentAnimState;
 
 
    // // Reference to the player
-   // UPROPERTY(EditAnywhere, BlueprintReadOnly)
+   // UPROPERTY(EditAnywhere, BlueprintReadWrite)
    //    class ARCharacter* TheCharacter;
 
    //==========================================================================
@@ -77,11 +77,11 @@ public:
    //==========================================================================
 
    // Notification in blueprint that animation started
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Anim")
       void BP_AnimStarted(ERAnimState currentAnimCheck);
 
    // Set Animation Archetype
-   UFUNCTION(BlueprintCallable, Category = "Rade")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Anim")
       void SetAnimArchetype(ERAnimArchetype newAnimArchtype);
 
    // Receive the animation from player Class
@@ -98,22 +98,22 @@ public:
    //==========================================================================
 
    // Global Anim state Check
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Anim")
       bool IsAnimState(ERAnimState currentAnimCheck);
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Anim")
       bool IsAnimArchetype(ERAnimArchetype AnimArchtypeCheck);
 
    // Check value from player class
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Anim")
       bool CanFireInAir();
 
    // Event called in blueprint when Jump_Start -> Jump_Idle , To enable fire in Air
-   UFUNCTION(BlueprintCallable, Category = "Rade")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Anim")
       void InAirIdleStateEntered();
 
 
    // In air check from current animation state
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Anim")
       bool IsInAir();
 
 
@@ -124,11 +124,11 @@ protected:
    //==========================================================================
 
    // Start Trace of Sword Weapon
-   UFUNCTION(BlueprintCallable, Category = "Rade")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Anim")
       void StartSwordWeaponTrace();
 
    // End Trace of Sword Weapon
-   UFUNCTION(BlueprintCallable, Category = "Rade")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Anim")
       void EndSwordWeaponTrace();
 };
 

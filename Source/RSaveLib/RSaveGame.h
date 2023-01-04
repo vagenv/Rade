@@ -9,7 +9,6 @@ USTRUCT(BlueprintType)
 struct RSAVELIB_API FRSaveData
 {
    GENERATED_BODY()
-public:
 
    UPROPERTY(VisibleAnywhere, Category = "Rade")
       TArray<uint8> Data;
@@ -27,15 +26,15 @@ public:
    // --- Default Save Slot Info
 
    // Save Slot Name
-   UPROPERTY(VisibleAnywhere, Category = "Rade")
+   UPROPERTY(EditAnywhere, Category = "Rade|Save")
       FString SaveSlotName;
 
    // User Index
-   UPROPERTY(VisibleAnywhere, Category = "Rade")
+   UPROPERTY(EditAnywhere, Category = "Rade|Save")
       uint32 UserIndex;
 
    // --- Save Data
-   UPROPERTY(VisibleAnywhere, Category = "Rade")
+   UPROPERTY(EditAnywhere, Category = "Rade|Save")
       TMap<FString, FRSaveData> RawData;
 };
 

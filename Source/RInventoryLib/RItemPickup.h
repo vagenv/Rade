@@ -29,20 +29,17 @@ public:
    //          Components
    //==========================================================================
 
+   // Mesh
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+      TObjectPtr<UStaticMeshComponent> MeshComponent;
+
    // Trigger Sphere
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       TObjectPtr<USphereComponent> TriggerSphere;
 
-   // Mesh
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      TObjectPtr<UMeshComponent> MeshComponent;
-
    //  Inventory Component
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Rade")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       TObjectPtr<URInventoryComponent> Inventory;
-
-   // Called if blueprint archetype of pickup was not defined;
-   void InitEmpty ();
 
    //==========================================================================
    //          Core properties
