@@ -3,36 +3,34 @@
 #pragma once
 
 #include "UObject/Object.h"
+#include "RItemTypes.h"
 #include "RItem.generated.h"
 
 class AActor;
 class URInventoryComponent;
 class ARItemPickup;
 
-UCLASS(Abstract, DefaultToInstanced, BlueprintType, Blueprintable, EditInlineNew, NotPlaceable)
-class RINVENTORYLIB_API URItemAction : public UObject
+// UCLASS(Abstract, DefaultToInstanced, BlueprintType, Blueprintable, EditInlineNew, NotPlaceable)
+UCLASS(Abstract, DefaultToInstanced, BlueprintType, EditInlineNew, NotPlaceable)
+class RINVENTORYLIB_API URItemAction : public UBlueprintFunctionLibrary
 {
-public:
    GENERATED_BODY()
+public:
 
    //=============================================================================
    //          Blueprint events
    //=============================================================================
 
-public:
-   // --- Get objects
-
    // C++
-   virtual void Used   (AActor *InventoryOwner, URInventoryComponent *Inventory);
-   virtual void Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup);
+   virtual void Used (URInventoryComponent *Inventory, FRItemData ItemData, int32 ItemIdx);
+   // virtual void Droped (URInventoryComponent *Inventory, FRItemData ItemData, ARItemPickup* Pickup);
 
-   // --- Events
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_Used (AActor *InventoryOwner, URInventoryComponent *Inventory);
+   // --- BP Events
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup);
+      void BP_Used (URInventoryComponent *Inventory, FRItemData ItemData, int32 ItemIdx);
 
+   // UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
+   //    void BP_Droped (URInventoryComponent *Inventory, FRItemData ItemData, ARItemPickup* Pickup);
 };
 

@@ -13,19 +13,12 @@ class URInventoryComponent;
 class ARItemPickup;
 
 
-void URItemAction::Used (AActor *InventoryOwner, URInventoryComponent *Inventory) {
-   BP_Used (InventoryOwner, Inventory);
-}
-
-void URItemAction::Droped (AActor *InventoryOwner, URInventoryComponent *Inventory, ARItemPickup* Pickup) {
-   BP_Droped (InventoryOwner, Inventory, Pickup);
-}
-
-/*
-// Replicate Player Reference
-void AItem::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+void URItemAction::Used (URInventoryComponent *Inventory, FRItemData ItemData, int32 ItemIdx)
 {
-   Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+   BP_Used (Inventory, ItemData, ItemIdx);
 }
-*/
 
+// void URItemAction::Droped (URInventoryComponent *Inventory, FRItemData ItemData, ARItemPickup* Pickup)
+// {
+//    BP_Droped (Inventory, ItemData, Pickup);
+// }

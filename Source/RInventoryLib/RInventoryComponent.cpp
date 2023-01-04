@@ -4,7 +4,7 @@
 #include "RUtilLib/RLog.h"
 #include "RSaveLib/RSaveMgr.h"
 
-// #include "RItem.h"
+#include "RItem.h"
 #include "RItemPickup.h"
 #include "Net/UnrealNetwork.h"
 
@@ -258,17 +258,27 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
    if (!bIsServer) return false;
 
-   R_LOG ("use item");
-   // // valid idx
-   // if (!Items.IsValidIndex (ItemIdx)) return false;
-   // // valid archetype
-   // if (!Items[ItemIdx].ItemArch) return false;
-   // URItem *ItemBP = Items[ItemIdx].ItemArch->GetDefaultObject<URItem>();
 
-   // BP_Used (ItemBP);
-   // ItemBP->Used (GetOwner(), this);
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return nullptr;
+   }
 
-   return true;
+   FRItemData ItemData = Items[ItemIdx];
+
+   // valid archetype
+   if (!ItemData.Action) return false;
+
+
+   URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
+
+   if (!ensure (ItemBP)) return false;
+   ItemBP->Used (this, ItemData, ItemIdx);
+
+   // Consumable
+   return RemoveItem (ItemIdx, 1);
 }
 
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
@@ -331,6 +341,7 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 
    // BP_Droped (ItemBP, Pickup);
    // ItemBP->Droped (GetOwner(), this, Pickup);
+   // ItemBP->Droped (this, ItemData, Pickup);
 
    return Pickup;
 }
