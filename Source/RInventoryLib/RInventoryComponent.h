@@ -54,12 +54,11 @@ public:
 
 protected:
 
-   // // Network call when Item list has been updated
-   // UFUNCTION()
-   //    void OnRep_Items ();
+   // Network call when Item list has been updated
+   UFUNCTION()
+      void OnRep_Items ();
 
-   // UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-   UPROPERTY(Replicated)
+   UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
 
 
@@ -80,13 +79,13 @@ public:
    //=============================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem        (FRItemData ItemData);
+      bool AddItem (FRItemData ItemData);
+
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem_Arch   (const FRDefaultItem &Item);
-   // UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-   //    bool AddItem_Pickup (ARItemPickup *Pickup);
+      bool AddItem_Arch (const FRDefaultItem &Item);
+
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool RemoveItem     (int32 ItemIdx, int32 Count = 1);
+      bool RemoveItem (int32 ItemIdx, int32 Count = 1);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       static bool TransferAll (URInventoryComponent *SrcInventory,
@@ -177,7 +176,6 @@ protected:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnClosestPickupUpdated;
-
 
    FTimerHandle TimerClosestPickup;
 

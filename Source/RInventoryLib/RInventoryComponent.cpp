@@ -22,10 +22,10 @@ void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 
+   DOREPLIFETIME (URInventoryComponent, Items);
+
    // DOREPLIFETIME (URInventoryComponent, Capacity);
    // DOREPLIFETIME (URInventoryComponent, TotalWeight);
-   // DOREPLIFETIME (URInventoryComponent, Items);
-   // DOREPLIFETIME (URInventoryComponent, CurrentPickups);
 }
 
 void URInventoryComponent::BeginPlay()
@@ -37,10 +37,9 @@ void URInventoryComponent::BeginPlay()
    bIsServer = GetOwner ()->HasAuthority ();
    // if (GetLocalRole() >= ROLE_Authority)
 
-   if (!bIsServer) return;
 
    // Save/Load inventory
-   if (bSaveLoadInventory) {
+   if (bSaveLoadInventory && bIsServer) {
       FRSaveEvent SavedDelegate;
       SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
       URSaveMgr::OnSave (world, SavedDelegate);
@@ -50,10 +49,12 @@ void URInventoryComponent::BeginPlay()
       URSaveMgr::OnLoad (world, LoadedDelegate);
    }
 
-   for (const auto &itItem : DefaultItems) {
-      if (!AddItem_Arch (itItem))
-         R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
-            *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
+   if (bIsServer) {
+      for (const auto &itItem : DefaultItems) {
+         if (!AddItem_Arch (itItem))
+            R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
+               *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
+      }
    }
 
    if (bCheckClosestPickup) {
@@ -80,13 +81,19 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
    return Items;
 }
 
-// void URInventoryComponent::OnRep_Items ()
-// {
-//    OnInventoryUpdated.Broadcast ();
-// }
+void URInventoryComponent::OnRep_Items ()
+{
+   CalcWeight ();
+   OnInventoryUpdated.Broadcast ();
+}
 
 bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
 {
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return false;
+   }
+
    FRItemData newItem;
    if (!FRItemData::FromRow (ItemData.Arch, newItem)) return false;
    newItem.Count = ItemData.Count;
@@ -96,7 +103,7 @@ bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
    if (!bIsServer) {
-      R_LOG ("Not server");
+      R_LOG ("Client has no authority to perform this action.");
       return false;
    }
 
@@ -164,9 +171,10 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) {
-      R_LOG ("Not server");
+      R_LOG ("Client has no authority to perform this action.");
       return false;
    }
+
    if (!Items.IsValidIndex (ItemIdx)) {
       R_LOG ("Invalid Item index");
       return false;
@@ -256,8 +264,10 @@ void URInventoryComponent::CalcWeight ()
 
 bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
-   if (!bIsServer) return false;
-
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return false;
+   }
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -283,7 +293,11 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   if (!bIsServer) return nullptr;
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return nullptr;
+   }
+
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -470,6 +484,10 @@ void URInventoryComponent::CheckClosestPickup ()
 
 void URInventoryComponent::OnSave ()
 {
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+   }
+
    // --- Save player Inventory
 
    // Convert ItemData to array to JSON strings
@@ -497,6 +515,9 @@ void URInventoryComponent::OnSave ()
 
 void URInventoryComponent::OnLoad ()
 {
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+   }
    // --- Load player Inventory
 
    FString InventoryUniqueId = GetOwner ()->GetName ();
