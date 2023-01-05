@@ -106,14 +106,16 @@ void ARPlayer::BeginPlay ()
    UpdateComponentsVisibility();
 
 
-   // --- Save / Load data
-   FRSaveEvent SavedDelegate;
-   SavedDelegate.AddDynamic (this, &ARPlayer::OnSave);
-   URSaveMgr::OnSave (GetWorld (), SavedDelegate);
+   if (HasAuthority ()) {
+      // --- Save / Load data
+      FRSaveEvent SavedDelegate;
+      SavedDelegate.AddDynamic (this, &ARPlayer::OnSave);
+      URSaveMgr::OnSave (GetWorld (), SavedDelegate);
 
-   FRSaveEvent LoadedDelegate;
-   LoadedDelegate.AddDynamic (this, &ARPlayer::OnLoad);
-   URSaveMgr::OnLoad (GetWorld (), LoadedDelegate);
+      FRSaveEvent LoadedDelegate;
+      LoadedDelegate.AddDynamic (this, &ARPlayer::OnLoad);
+      URSaveMgr::OnLoad (GetWorld (), LoadedDelegate);
+   }
 
 
    // --- Seed out Spawn Location a bit
