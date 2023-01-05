@@ -71,20 +71,16 @@ void ARItemPickup::BeginPlay ()
 // Activate Overlap detection
 void ARItemPickup::ActivatePickupOverlap ()
 {
-
-   /*
    // Check if Any Player is within the range to pickup this item
-   if (GetLocalRole() >= ROLE_Authority && bAutoPickup) {
+   for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
 
-      for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-      {
+      // Only if actor has Inventory
+      if (ActorItr->FindComponentByClass<URInventoryComponent>()) {
          float distance = FVector::Distance (ActorItr->GetActorLocation (), GetActorLocation());
-         if (distance > TriggerSphere->GetUnscaledSphereRadius()) continue;
-
+         if (distance > TriggerSphere->GetUnscaledSphereRadius ()) continue;
          OnBeginOverlap (nullptr, *ActorItr, nullptr, 0, false, FHitResult());
       }
    }
-   */
 
    // Enable Overlap Component
    TriggerSphere->OnComponentBeginOverlap.AddDynamic (this, &ARItemPickup::OnBeginOverlap);
@@ -97,7 +93,7 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
                                    UPrimitiveComponent* OtherComp,
                                    int32 OtherBodyIndex,
                                    bool bFromSweep,
-                                   const FHitResult & SweepResult)
+                                   const FHitResult &SweepResult)
 {
    // Null or itself
    if (OtherActor == nullptr || OtherActor == this) return;
