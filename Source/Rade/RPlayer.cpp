@@ -64,7 +64,7 @@ ARPlayer::ARPlayer()
    GetMesh()->bOwnerNoSee = true;
    GetMesh()->SetIsReplicated(true);
 
-   Jetpack = CreateDefaultSubobject<URJetpackComponent>(TEXT("Jetpack"));
+   Jetpack = CreateDefaultSubobject<URJetpackComponent> (TEXT("Jetpack"));
 
    // --- Inventory
    Inventory->bSaveLoadInventory = true;
@@ -72,6 +72,26 @@ ARPlayer::ARPlayer()
 
    bAutoRevive = true;
 }
+
+// Replication of data
+void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+   Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, FirstPersonCameraComponent);
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraBoom);
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraComponent);
+   // DISABLE_REPLICATED_PROPERTY (ARPlayer, MoveSpeed);
+
+   // DOREPLIFETIME(ARPlayer, BodyAnimInstance);
+
+   // DOREPLIFETIME(ARPlayer, bInventoryOpen);
+   //DOREPLIFETIME(ARPlayer, CurrentItemSelectIndex);
+   //DOREPLIFETIME(ARPlayer, CurrentCameraState);
+   //DOREPLIFETIME(ARPlayer, currentPickup);
+}
+
+
 
 void ARPlayer::BeginPlay ()
 {
@@ -592,22 +612,4 @@ ARPlayer* ARPlayer::GetLocalRadePlayer (UObject* WorldContextObject)
 
 
 
-
-// Replication of data
-void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-   Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, FirstPersonCameraComponent);
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraBoom);
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraComponent);
-   DISABLE_REPLICATED_PROPERTY (ARPlayer, MoveSpeed);
-
-   // DOREPLIFETIME(ARPlayer, BodyAnimInstance);
-
-   // DOREPLIFETIME(ARPlayer, bInventoryOpen);
-   //DOREPLIFETIME(ARPlayer, CurrentItemSelectIndex);
-   //DOREPLIFETIME(ARPlayer, CurrentCameraState);
-   //DOREPLIFETIME(ARPlayer, currentPickup);
-}
 

@@ -148,7 +148,6 @@ public:
 
 protected:
    // List of currently available pickup
-   // UPROPERTY(ReplicatedUsing = "OnRep_CurrentPickups", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory",
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
              meta = (GetByRef))
       TArray<const ARItemPickup*> CurrentPickups;

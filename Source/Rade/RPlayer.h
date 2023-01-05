@@ -59,7 +59,7 @@ public:
    //==========================================================================
 
    // Character Current Health
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       float MoveSpeed = 1.f;
 
    // Rade Player Controller

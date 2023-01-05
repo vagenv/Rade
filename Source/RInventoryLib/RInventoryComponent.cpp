@@ -21,7 +21,9 @@ URInventoryComponent::URInventoryComponent ()
 void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-
+   DOREPLIFETIME (URInventoryComponent, SlotsMax);
+   DOREPLIFETIME (URInventoryComponent, WeightCurrent);
+   DOREPLIFETIME (URInventoryComponent, WeightMax);
    DOREPLIFETIME (URInventoryComponent, Items);
 }
 

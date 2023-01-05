@@ -21,8 +21,8 @@ ARCharacter::ARCharacter ()
    FallDamageCurveData->AddKey (1500, 40);
    FallDamageCurveData->AddKey (2000, 100);
 
-   Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
-   //Inventory->SetIsReplicated(true);
+   Inventory = CreateDefaultSubobject<URInventoryComponent> (TEXT("Inventory"));
+   Inventory->SetIsReplicated (true);
    bReplicates  = true;
 }
 
@@ -30,18 +30,11 @@ ARCharacter::ARCharacter ()
 void ARCharacter::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-
+   DOREPLIFETIME (ARCharacter, BodyAnimInstance);
+   DOREPLIFETIME (ARCharacter, Inventory);
    DOREPLIFETIME (ARCharacter, HealthMax);
    DOREPLIFETIME (ARCharacter, Health);
    DOREPLIFETIME (ARCharacter, bDead);
-
-   /*
-   DOREPLIFETIME(ARCharacter, TheInventory);
-   DOREPLIFETIME(ARCharacter, TheWeapon);
-
-   DOREPLIFETIME(ARCharacter, CharacterName);
-   DOREPLIFETIME(ARCharacter, CharacterColor);
-   */
 }
 
 
