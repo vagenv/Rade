@@ -56,6 +56,8 @@ void ARItemPickup::BeginPlay ()
 {
    Super::BeginPlay ();
 
+   Inventory->OnInventoryUpdated.AddDynamic (this, &ARItemPickup::OnInventoryUpdate);
+
    // Enable overlap after a delay
    FTimerHandle MyHandle;
    GetWorldTimerManager().SetTimer (MyHandle,
@@ -63,43 +65,13 @@ void ARItemPickup::BeginPlay ()
                                     &ARItemPickup::ActivatePickupOverlap,
                                     PickupActivationDelay,
                                     false);
-
-   if (Inventory) {
-      Inventory->OnInventoryUpdated.AddDynamic (this, &ARItemPickup::OnInventoryUpdate);
-   }
 }
-
-
-/*
-
-// Enable It as a Static Mesh Pickup
-bool ARItemPickup::SetAsMeshPickup_Validate(){
-   return true;
-}
-void ARItemPickup::SetAsMeshPickup_Implementation()
-{
-   // Set It as Root
-   SetRootComponent(Mesh);
-
-   // Attach Trigger to Static Mesh Component
-   TriggerSphere->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
-
-   // Set Its Properties
-   Mesh->SetMobility(EComponentMobility::Movable);
-   Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-   Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-
-   // Enable Replication of Its Movement
-   SetReplicateMovement(true);
-}
-*/
-
 
 // Activate Overlap detection
 void ARItemPickup::ActivatePickupOverlap ()
 {
 
-      /*
+   /*
    // Check if Any Player is within the range to pickup this item
    if (GetLocalRole() >= ROLE_Authority && bAutoPickup) {
 
@@ -111,27 +83,11 @@ void ARItemPickup::ActivatePickupOverlap ()
          OnBeginOverlap (nullptr, *ActorItr, nullptr, 0, false, FHitResult());
       }
    }
-
    */
 
    // Enable Overlap Component
    TriggerSphere->OnComponentBeginOverlap.AddDynamic (this, &ARItemPickup::OnBeginOverlap);
    TriggerSphere->OnComponentEndOverlap.AddDynamic   (this, &ARItemPickup::OnEndOverlap);
-}
-
-// Activate Pickup Physics
-void ARItemPickup::ActivatePickupPhysics ()
-{
-   /*
-   // If Already activated (One of components Destroyed) Stop
-   if (!Mesh || !SkeletalMesh) return;
-
-   // Enable As Static Mesh Pickup
-   if (Mesh && Mesh->GetStaticMesh()) SetAsMeshPickup();
-
-   // Enable As Skeletal Mesh Pickup
-   else if (SkeletalMesh && SkeletalMesh->SkeletalMesh) SetAsSkeletalMeshPickup();
-   */
 }
 
 // Player Entered The Pickup Area
@@ -150,7 +106,8 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
    if (PlayerInventory == nullptr) return;
 
    if (bAutoPickup) {
-      URInventoryComponent::TransferAll (Inventory, PlayerInventory);
+      if (HasAuthority ())
+         Inventory->TransferAll (PlayerInventory);
    } else {
       PlayerInventory->Pickup_Add (this);
 

@@ -23,9 +23,6 @@ void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 
    DOREPLIFETIME (URInventoryComponent, Items);
-
-   // DOREPLIFETIME (URInventoryComponent, Capacity);
-   // DOREPLIFETIME (URInventoryComponent, TotalWeight);
 }
 
 void URInventoryComponent::BeginPlay()
@@ -36,7 +33,6 @@ void URInventoryComponent::BeginPlay()
 
    bIsServer = GetOwner ()->HasAuthority ();
    // if (GetLocalRole() >= ROLE_Authority)
-
 
    // Save/Load inventory
    if (bSaveLoadInventory && bIsServer) {
@@ -71,7 +67,6 @@ void URInventoryComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 	GetWorld()->GetTimerManager ().ClearTimer (TimerClosestPickup);
 }
 
-
 //=============================================================================
 //                 Add Item
 //=============================================================================
@@ -100,6 +95,10 @@ bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
    return AddItem (newItem);
 }
 
+void URInventoryComponent::AddItem_Server_Implementation (FRItemData NewItem)
+{
+   AddItem (NewItem);
+}
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
    if (!bIsServer) {
@@ -168,6 +167,10 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    return true;
 }
 
+void URInventoryComponent::RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count)
+{
+   RemoveItem (ItemIdx, Count);
+}
 bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) {
@@ -190,48 +193,47 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
    return true;
 }
 
-bool URInventoryComponent::TransferAll (URInventoryComponent *SrcInventory,
-                                        URInventoryComponent *DstInventory)
+void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *DstInventory)
 {
-   if (!SrcInventory) {
-      R_LOG_STATIC ("Invalid Source Inventory");
-      return false;
-   }
+   TransferAll (DstInventory);
+}
+bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
+{
    if (!DstInventory) {
-      R_LOG_STATIC ("Invalid Destination Inventory");
+      R_LOG ("Invalid Destination Inventory");
       return false;
    }
-   int n = SrcInventory->Items.Num ();
+   int n = Items.Num ();
    for (int i = 0; i< n; i++) {
-      if (!TransferItem (SrcInventory, DstInventory, 0, 0)) {
+      if (!TransferItem (DstInventory, 0, 0)) {
          return false;
       }
    }
    return true;
 }
 
-
-bool URInventoryComponent::TransferItem (URInventoryComponent *SrcInventory,
-                                         URInventoryComponent *DstInventory,
+void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                                               int32 SrcItemIdx,
+                                                               int32 SrcItemCount)
+{
+   TransferItem (DstInventory, SrcItemIdx, SrcItemCount);
+}
+bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
                                          int32 SrcItemIdx,
                                          int32 SrcItemCount)
 {
-   if (!SrcInventory) {
-      R_LOG_STATIC ("Invalid Source Inventory");
-      return false;
-   }
    if (!DstInventory) {
-      R_LOG_STATIC ("Invalid Destination Inventory");
+      R_LOG ("Invalid Destination Inventory");
       return false;
    }
 
-   if (!SrcInventory->Items.IsValidIndex (SrcItemIdx)) {
-      R_LOG_STATIC_PRINTF ("Invalid Source Inventory Item Index [%d]. Must be [0-%d]",
-         SrcItemIdx, SrcInventory->Items.Num ());
+   if (!Items.IsValidIndex (SrcItemIdx)) {
+      R_LOG_PRINTF ("Invalid Source Inventory Item Index [%d]. Must be [0-%d]",
+         SrcItemIdx, Items.Num ());
       return false;
    }
 
-   FRItemData ItemData = SrcInventory->Items[SrcItemIdx];
+   FRItemData ItemData = Items[SrcItemIdx];
 
    // All items
    if (SrcItemCount <= 0) SrcItemCount = ItemData.Count;
@@ -241,9 +243,8 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *SrcInventory,
    if (!DstInventory->AddItem (ItemData)) return false;
 
    // Cleanup
-   return SrcInventory->RemoveItem (SrcItemIdx, SrcItemCount);
+   return RemoveItem (SrcItemIdx, SrcItemCount);
 }
-
 
 void URInventoryComponent::CalcWeight ()
 {
@@ -256,12 +257,14 @@ void URInventoryComponent::CalcWeight ()
    WeightCurrent = WeightNew;
 }
 
+//=============================================================================
+//                 Item action
+//=============================================================================
 
-// //=============================================================================
-// //                 Item action
-// //=============================================================================
-
-
+void URInventoryComponent::UseItem_Server_Implementation (int32 ItemIdx)
+{
+   UseItem (ItemIdx);
+}
 bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
    if (!bIsServer) {
@@ -286,18 +289,22 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 
    if (!ensure (ItemBP)) return false;
    ItemBP->Used (this, ItemData, ItemIdx);
+   BP_Used (ItemIdx);
 
    // Consumable
    return RemoveItem (ItemIdx, 1);
 }
 
+void URInventoryComponent::DropItem_Server_Implementation (int32 ItemIdx, int32 Count)
+{
+   DropItem (ItemIdx, Count);
+}
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
       return nullptr;
    }
-
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -318,7 +325,6 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
    // Error will be logged.
    if (!RemoveItem (ItemIdx, Count)) return nullptr;
 
-
    AActor *Player = GetOwner ();
 
    // Get Player Rotation
@@ -332,19 +338,16 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 
    // Custom Pickup Type
    if (ItemData.Pickup) {
-      Pickup = GetWorld()->SpawnActor<ARItemPickup>(ItemData.Pickup, spawnLoc, rot);
-
-   // Custom mesh pickup
+      Pickup = GetWorld ()->SpawnActor<ARItemPickup>(ItemData.Pickup, spawnLoc, rot);
    } else {
-      Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
-      // Pickup = GetWorld()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
-
+      // Default Pickup type
+      Pickup = GetWorld ()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
+      // Custom mesh pickup
       if (ItemData.PickupMesh) {
          Pickup->MeshComponent->SetStaticMesh (ItemData.PickupMesh);
       }
-
-      // Pickup->InitEmpty ();
    }
+   Pickup->SetOwner (GetOwner ());
    Pickup->bAutoPickup  = false;
    Pickup->bAutoDestroy = true;
 
@@ -353,79 +356,15 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 
    Pickup->Inventory->Items.Add (ItemData);
 
-   // BP_Droped (ItemBP, Pickup);
-   // ItemBP->Droped (GetOwner(), this, Pickup);
-   // ItemBP->Droped (this, ItemData, Pickup);
+   BP_Droped (ItemIdx, Pickup);
 
    return Pickup;
 }
 
 
-// //=============================================================================
-// //                 Server
-// //=============================================================================
-
-// void URInventoryComponent::UseItem_Server_Implementation (int32 ItemIdx)
-// {
-//    UseItem (ItemIdx);
-// }
-
-// void URInventoryComponent::DropItem_Server_Implementation (int32 ItemIdx, int32 Count)
-// {
-//    DropItem (ItemIdx, Count);
-// }
-
-// void URInventoryComponent::RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count)
-// {
-//    //R_LOG ("action");
-//    RemoveItem (ItemIdx, Count);
-// }
-
-// void URInventoryComponent::AddItem_Server_Implementation (FRItemData ItemData)
-// {
-//    //R_LOG ("action");
-//    AddItem (ItemData);
-// }
-
-// void URInventoryComponent::AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup)
-// {
-//    //R_LOG ("action");
-//    AddItem_Pickup (Pickup);
-// }
-
-// void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *FromInventory,
-//                                                                URInventoryComponent *ToInventory,
-//                                                                int32 FromItemIdx,
-//                                                                int32 FromItemCount)
-// {
-//    if (!bIsServer) return;
-//    URInventoryComponent::TransferItem (FromInventory, ToInventory, FromItemIdx, FromItemCount);
-//    /*
-//    if (!FromInventory) return;
-//    if (!ToInventory)   return;
-//    if (!bIsServer)     return;
-
-//    //R_LOG ("Transfer item");
-//    if (!FromInventory->Items.IsValidIndex (FromItemIdx)) return;
-
-//    FItemData ItemData = FromInventory->Items[FromItemIdx];
-//    ItemData.Description.Count = FromItemCount;
-
-//    FromInventory->RemoveItem (FromItemIdx, FromItemCount);
-//      ToInventory->AddItem    (ItemData);
-//    */
-// }
-
-
-
-// //=============================================================================
-// //                 Pickup
-// //=============================================================================
-
-// void URInventoryComponent::OnRep_CurrentPickups ()
-// {
-//    OnPickupsUpdated.Broadcast ();
-// }
+//=============================================================================
+//                 Pickup
+//=============================================================================
 
 bool URInventoryComponent::Pickup_Add (const ARItemPickup* Pickup)
 {
@@ -435,7 +374,7 @@ bool URInventoryComponent::Pickup_Add (const ARItemPickup* Pickup)
    return true;
 }
 
-bool URInventoryComponent::Pickup_Rm  (const ARItemPickup* Pickup)
+bool URInventoryComponent::Pickup_Rm (const ARItemPickup* Pickup)
 {
    if (Pickup == nullptr) return false;
    CurrentPickups.RemoveSingle (Pickup);

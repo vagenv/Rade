@@ -78,83 +78,69 @@ public:
    //                 Add/Remove to Inventory
    //=============================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem (FRItemData ItemData);
-
+   // --- Add Default item
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       bool AddItem_Arch (const FRDefaultItem &Item);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool RemoveItem (int32 ItemIdx, int32 Count = 1);
+   // --- Add Item struct
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void AddItem_Server                (FRItemData ItemData);
+      void AddItem_Server_Implementation (FRItemData ItemData);
+   UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
+      bool AddItem                       (FRItemData ItemData);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool TransferAll (URInventoryComponent *SrcInventory,
-                               URInventoryComponent *DstInventory);
+   // --- Remove item
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void RemoveItem_Server                (int32 ItemIdx, int32 Count = 1);
+      void RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
+   UFUNCTION(                 BlueprintCallable, Category = "Rade|Inventory")
+      bool RemoveItem                       (int32 ItemIdx, int32 Count = 1);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool TransferItem (URInventoryComponent *SrcInventory,
-                                URInventoryComponent *DstInventory,
-                                int32 SrcItemIdx,
-                                int32 DstItemCount);
+   // --- Transfer everything
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void TransferAll_Server                (URInventoryComponent *DstInventory);
+      void TransferAll_Server_Implementation (URInventoryComponent *DstInventory);
+   UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
+      bool TransferAll                       (URInventoryComponent *DstInventory);
+
+   // --- Transfer a single item
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void TransferItem_Server                (URInventoryComponent *DstInventory,
+                                               int32 SrcItemIdx,
+                                               int32 SrcItemCount);
+      void TransferItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                               int32 SrcItemIdx,
+                                               int32 SrcItemCount);
+   UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
+      bool TransferItem                        (URInventoryComponent *DstInventory,
+                                                int32 SrcItemIdx,
+                                                int32 SrcItemCount);
 
    //=============================================================================
    //                 Item use / drop events
    //=============================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool UseItem (int32 ItemIdx);
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void UseItem_Server                (int32 ItemIdx);
+      void UseItem_Server_Implementation (int32 ItemIdx);
+   UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
+      bool UseItem                       (int32 ItemIdx);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      class ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0);
-
-   //=============================================================================
-   //                 Server
-   //=============================================================================
-
-protected:
-   // --- In case the event occured on client, pass those events to server
-
-   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-   //    void UseItem_Server                (int32 ItemIdx);
-   //    void UseItem_Server_Implementation (int32 ItemIdx);
-
-   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-   //    void DropItem_Server                (int32 ItemIdx, int32 Count = 1);
-   //    void DropItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
-
-   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-   //    void RemoveItem_Server                (int32 ItemIdx, int32 Count = 1);
-   //    void RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
-
-   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-   //    void AddItem_Server                (FRItemData ItemData);
-   //    void AddItem_Server_Implementation (FRItemData ItemData);
-
-   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-   //    void AddItem_Pickup_Server                (ARItemPickup *Pickup);
-   //    void AddItem_Pickup_Server_Implementation (ARItemPickup *Pickup);
-
-
-   // UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-   //    void TransferItem_Server                (URInventoryComponent *FromInventory,
-   //                                             URInventoryComponent *ToInventory,
-   //                                             int32 FromItemIdx,
-   //                                             int32 FromItemCount);
-   //    void TransferItem_Server_Implementation (URInventoryComponent *FromInventory,
-   //                                             URInventoryComponent *ToInventory,
-   //                                             int32 FromItemIdx,
-   //                                             int32 FromItemCount);
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void DropItem_Server                (int32 ItemIdx, int32 Count = 0);
+      void DropItem_Server_Implementation (int32 ItemIdx, int32 Count = 0);
+   UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
+      class ARItemPickup* DropItem        (int32 ItemIdx, int32 Count = 0);
 
    //=============================================================================
    //                 Events
    //=============================================================================
 
-   // UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-   //    void BP_Used (URItem *Item);
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
+      void BP_Used (int32 ItemIdx);
 
-   // UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-   //    void BP_Droped (URItem *Item, ARItemPickup *Pickup);
-
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
+      void BP_Droped (int32 ItemIdx, ARItemPickup *Pickup);
 
    //=============================================================================
    //                 Pickups
