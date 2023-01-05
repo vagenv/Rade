@@ -84,33 +84,41 @@ public:
 
    // --- Add Item struct
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void AddItem_Server                (FRItemData ItemData);
-      void AddItem_Server_Implementation (FRItemData ItemData);
+      void AddItem_Server                (URInventoryComponent *DstInventory,
+                                          FRItemData ItemData) const;
+      void AddItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                          FRItemData ItemData) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       bool AddItem                       (FRItemData ItemData);
 
    // --- Remove item
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void RemoveItem_Server                (int32 ItemIdx, int32 Count = 1);
-      void RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count = 1);
+      void RemoveItem_Server                (URInventoryComponent *DstInventory,
+                                             int32 ItemIdx, int32 Count = 1) const;
+      void RemoveItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                             int32 ItemIdx, int32 Count = 1) const;
    UFUNCTION(                 BlueprintCallable, Category = "Rade|Inventory")
       bool RemoveItem                       (int32 ItemIdx, int32 Count = 1);
 
    // --- Transfer everything
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void TransferAll_Server                (URInventoryComponent *DstInventory);
-      void TransferAll_Server_Implementation (URInventoryComponent *DstInventory);
+      void TransferAll_Server                (URInventoryComponent *SrcInventory,
+                                              URInventoryComponent *DstInventory) const;
+      void TransferAll_Server_Implementation (URInventoryComponent *SrcInventory,
+                                              URInventoryComponent *DstInventory) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       bool TransferAll                       (URInventoryComponent *DstInventory);
 
    // --- Transfer a single item
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void TransferItem_Server                (URInventoryComponent *DstInventory,
+      void TransferItem_Server                (URInventoryComponent *SrcInventory,
+                                               URInventoryComponent *DstInventory,
                                                int32 SrcItemIdx,
-                                               int32 SrcItemCount);
-      void TransferItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                               int32 SrcItemCount) const;
+      void TransferItem_Server_Implementation (URInventoryComponent *SrcInventory,
+                                               URInventoryComponent *DstInventory,
                                                int32 SrcItemIdx,
-                                               int32 SrcItemCount);
+                                               int32 SrcItemCount) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       bool TransferItem                        (URInventoryComponent *DstInventory,
                                                 int32 SrcItemIdx,
@@ -121,14 +129,18 @@ public:
    //=============================================================================
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void UseItem_Server                (int32 ItemIdx);
-      void UseItem_Server_Implementation (int32 ItemIdx);
+      void UseItem_Server                (URInventoryComponent *SrcInventory,
+                                          int32 ItemIdx) const;
+      void UseItem_Server_Implementation (URInventoryComponent *SrcInventory,
+                                          int32 ItemIdx) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       bool UseItem                       (int32 ItemIdx);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void DropItem_Server                (int32 ItemIdx, int32 Count = 0);
-      void DropItem_Server_Implementation (int32 ItemIdx, int32 Count = 0);
+      void DropItem_Server                (URInventoryComponent *SrcInventory,
+                                           int32 ItemIdx, int32 Count = 0) const;
+      void DropItem_Server_Implementation (URInventoryComponent *SrcInventory,
+                                           int32 ItemIdx, int32 Count = 0) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       class ARItemPickup* DropItem        (int32 ItemIdx, int32 Count = 0);
 

@@ -97,9 +97,14 @@ bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
    return AddItem (newItem);
 }
 
-void URInventoryComponent::AddItem_Server_Implementation (FRItemData NewItem)
+void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                                          FRItemData NewItem) const
 {
-   AddItem (NewItem);
+   if (!DstInventory) {
+      R_LOG ("Invalid Destination Inventory");
+      return;
+   }
+   DstInventory->AddItem (NewItem);
 }
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
@@ -169,9 +174,14 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    return true;
 }
 
-void URInventoryComponent::RemoveItem_Server_Implementation (int32 ItemIdx, int32 Count)
+void URInventoryComponent::RemoveItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                                             int32 ItemIdx, int32 Count) const
 {
-   RemoveItem (ItemIdx, Count);
+   if (!DstInventory) {
+      R_LOG ("Invalid Destination Inventory");
+      return;
+   }
+   DstInventory->RemoveItem (ItemIdx, Count);
 }
 bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
 {
@@ -195,9 +205,18 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
    return true;
 }
 
-void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *DstInventory)
+void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                              URInventoryComponent *DstInventory) const
 {
-   TransferAll (DstInventory);
+   if (!SrcInventory) {
+      R_LOG ("Invalid Source Inventory");
+      return;
+   }
+   if (!DstInventory) {
+      R_LOG ("Invalid Destination Inventory");
+      return;
+   }
+   SrcInventory->TransferAll (DstInventory);
 }
 bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
 {
@@ -214,11 +233,20 @@ bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
    return true;
 }
 
-void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *DstInventory,
+void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                               URInventoryComponent *DstInventory,
                                                                int32 SrcItemIdx,
-                                                               int32 SrcItemCount)
+                                                               int32 SrcItemCount) const
 {
-   TransferItem (DstInventory, SrcItemIdx, SrcItemCount);
+   if (!SrcInventory) {
+      R_LOG ("Invalid Source Inventory");
+      return;
+   }
+   if (!DstInventory) {
+      R_LOG ("Invalid Destination Inventory");
+      return;
+   }
+   SrcInventory->TransferItem (DstInventory, SrcItemIdx, SrcItemCount);
 }
 bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
                                          int32 SrcItemIdx,
@@ -263,9 +291,14 @@ void URInventoryComponent::CalcWeight ()
 //                 Item action
 //=============================================================================
 
-void URInventoryComponent::UseItem_Server_Implementation (int32 ItemIdx)
+void URInventoryComponent::UseItem_Server_Implementation (URInventoryComponent *DstInventory,
+                                                          int32 ItemIdx) const
 {
-   UseItem (ItemIdx);
+   if (!DstInventory) {
+      R_LOG ("Invalid Destination Inventory");
+      return;
+   }
+   DstInventory->UseItem (ItemIdx);
 }
 bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
@@ -297,9 +330,14 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
    return RemoveItem (ItemIdx, 1);
 }
 
-void URInventoryComponent::DropItem_Server_Implementation (int32 ItemIdx, int32 Count)
+void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                           int32 ItemIdx, int32 Count) const
 {
-   DropItem (ItemIdx, Count);
+   if (!SrcInventory) {
+      R_LOG ("Invalid Source Inventory");
+      return;
+   }
+   SrcInventory->DropItem (ItemIdx, Count);
 }
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
@@ -362,7 +400,6 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 
    return Pickup;
 }
-
 
 //=============================================================================
 //                 Pickup
