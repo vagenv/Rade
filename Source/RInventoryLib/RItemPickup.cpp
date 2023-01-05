@@ -24,6 +24,7 @@ ARItemPickup::ARItemPickup ()
    static ConstructorHelpers::FObjectFinder<UStaticMesh>
       defaultMesh (TEXT("StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cube.Shape_Cube'"));
    MeshComponent->SetStaticMesh (defaultMesh.Object);
+   SetRootComponent (MeshComponent);
 
    // Set Trigger Component
    TriggerSphere = CreateDefaultSubobject<USphereComponent> (TEXT("TriggerSphere"));
