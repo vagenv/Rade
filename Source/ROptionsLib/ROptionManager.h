@@ -45,24 +45,29 @@ public:
    //                Graphics Quality
    //==========================================================================
 
+   // --- Values
+
+   // ResolutionQuality [10.0f - 100.0f];
+   // Other Value 0:low, 1:medium, 2:high, 3:epic, 4:cinematic
+
    // Get Video Quality Settings
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-      static bool GetVideoQualitySettings(int32& ResolutionQuality,
-                                          int32& ViewDistance ,
-                                          int32& AntiAliasing,
-                                          int32& TextureQuality,
-                                          int32& ShadowQuality,
-                                          int32& EffectQuality,
-                                          int32& PostProcessQuality);
+      static bool GetVideoQualitySettings (float& ResolutionQuality,
+                                           int32& ViewDistance ,
+                                           int32& AntiAliasing,
+                                           int32& TextureQuality,
+                                           int32& ShadowQuality,
+                                           int32& EffectQuality,
+                                           int32& PostProcessQuality);
    // Set Video Quality Settings
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool SetVideoQualitySettings(const int32 ResolutionQuality,
-                                          const int32 ViewDistance,
-                                          const int32 AntiAliasing,
-                                          const int32 TextureQuality,
-                                          const int32 ShadowQuality,
-                                          const int32 EffectQuality,
-                                          const int32 PostProcessQuality);
+      static bool SetVideoQualitySettings (float ResolutionQuality,
+                                           int32 ViewDistance,
+                                           int32 AntiAliasing,
+                                           int32 TextureQuality,
+                                           int32 ShadowQuality,
+                                           int32 EffectQuality,
+                                           int32 PostProcessQuality);
 
    //==========================================================================
    //               Screen  Resolution
@@ -70,23 +75,23 @@ public:
 
    // Update Screen Resolution
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool ChangeScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen);
+      static bool ChangeScreenResolution (const int32 Width, const int32 Height, const bool Fullscreen);
 
    // Set Screen Resolution without current
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool SetScreenResolution(const int32 Width, const int32 Height, const bool Fullscreen);
+      static bool SetScreenResolution (const int32 Width, const int32 Height, const bool Fullscreen);
 
    // Get a list of supported resolution
    UFUNCTION(BlueprintPure, Category = "Rade|Settings")
-      static bool GetSupportedScreenResolutions(TArray<FString>& Resolutions);
+      static bool GetSupportedScreenResolutions (TArray<FString>& Resolutions);
 
    // Get current Screen Resolution
    UFUNCTION(BlueprintPure, Category = "Rade|Settings")
-      static bool GetScreenResolutions(int32 & Width, int32 & Height);
+      static bool GetScreenResolutions (int32 & Width, int32 & Height);
 
    // Save Video Quality
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool SaveVideoModeAndQuality();
+      static bool SaveVideoModeAndQuality ();
 
 private:
    // Try to get the Game User Settings
