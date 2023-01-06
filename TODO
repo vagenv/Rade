@@ -2,54 +2,98 @@
    Reset
 ===========================
 
+ItemData
+-Rarity
+-Name
+-Tooltip
+-Icon
+-Count
+-MaxCount
+-Weight
+-Cost
+-PickupMesh
+-Pickup
+
+CraftItem : ItemData
+-
+
+ActionItem : ItemData
+- Action
+
+ConsumableItem : ItemData
+- Effect Blueprint? Duration and action?
+
+EquipmentItem : ActionData
+- AttachSocket
+
+WeaponItem : EquipmentItem
+- CurrenAmmo
+- MaxAmmo
+- MagSize
 
 
-Item action Blueprint
-   Function / Interface
-
-Weapons with:
-   CurrenAmmo
-   MaxAmmo
-   MagSize
-
-Network Inventory System
-
-Persistent chests items.
-
-
-Store to exchange
-   Item <-> Gold
-
-
-Crafting system
-   Item <-> Objects
-
-Equipment Manager with slots.
-
-
-Health / Stats temporary change from items.
-
-Items affect stats
-
-Stats
-
-Aura/buffs
-
-Option menu
-
-
-Session
-
-Chat
-
-
-Item quality scaling.
-Random properties
 
 
 Inventory
-- Tabs [All][Equipment][Consumables][Craft][Quest]
+- Tabs [All][Equipment][Consumables][Craft][Quest][...]
 - Rarity color
+
+Store to exchange
+- Widget
+- Data taken from "Price". Item <-> Gold. Sell/Buy difference?
+- Store item list from DataTable or Store Blueprint object
+
+Crafting
+- Widget. With list of requirement next to it. Number: Required/Current
+- Datatable: Item <-> List<Item>
+- Datatable: Which item crafting available
+- Local/Store crafting
+
+Option menu
+- Update widget
+- Video
+- Audio channels
+- Input
+
+Chat
+- Update Widget
+- Independent component like USaveMgr?
+- A new module?
+- Audio messages?
+
+Equipment Manager
+- Widget next to item?
+- Extends InventoryComponent?
+- Slots.
+
+Status components
+- Add widget
+- Health
+- Stats
+- Temporary Auras/Effects
+- Skills
+- Resistance against damage type
+
+Equipment effects:
+- Affects Status component
+- Item quality affects strength of effects
+- Random effects?
+
+Session
+- Deep dive / Analysis / Simplification
+- Persistent session widget
+- Real time data. (Latency, Player count)
+- Return to main screen
+- Persistent data between sessions
+
+Animation
+- Look around
+- Run/Sprint
+- Ragdoll death
+- Melee fight
+- Network
+- Partial body blend
+- IK to weapon attach socket
 
 AI
 - pathfinding
@@ -57,40 +101,72 @@ AI
 - Melee and ranged
 - React if attacked
 
+Database
+- Local Mysql?
 
-===========================
-   Old
-===========================
+External Network API
+- For optional data.
+- Authenticate
+- Get User info
+- Stream picture/content on demand
 
-Anim BP with states
-3rd person anim
-Death animation (network).
+VCPP
+- Link against and build with CMAKE
 
-UI: Weapon stats
-Weapon Fire
-Simple Item/Weapon callbacks
-Launcher Weapon
-weapon equip scale position
-Damage Effects.
-Reload sound
+Equipment
+- Head
+- Chest / Shoulder + Torso
+- Arms
+- Grieves
+- Legs
 
-===========================
-   Unreal Engine:
-===========================
+Weapons (with damage type)
+- Rifle
+- Shotgun
+- Launcher
+- Sword
+- Shield
+- Attack combo?
 
-epic network services
+Damage based on:
+- What component hit
+- Armor for that component
+- Current stats and rotection
+- Resistance
 
-level breaking and layering
+Sound
+- Jump / Land
+- Running
+- Weapon Attack / Reloading
+- Getting hit
+- Explosion
+- Environment
 
-smooth level transition
+VFX
+- Blood
+- Explosion
+- Smoke
 
-server instance
+Epic network services
+- Register to API
+- Connecting to user epic account
 
-terrain perlin noise
+Dedicated server instance
+- Linux / Windows
+- Optimization
 
-Custom plugins
+World
+- Level breaking and layering
+- Smooth level transition
+
+Open World
+- Desert terrain generated using perlin noise
+- Forrest
+
+Custom plugin
+- Block constructor or something new
 
 Nanite and lumen
-
-desert terrain
+- Load high detail models on demand
+- Analyse budget, resource usage and disk read pattern
 
