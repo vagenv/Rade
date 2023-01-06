@@ -34,7 +34,7 @@ enum class FRItemRarity : uint8
    MAINQUEST UMETA(DisplayName = "Main Quest Item"),
    QUEST     UMETA(DisplayName = "Quest Item"),
 
-   None     UMETA(DisplayName = "Please set it")
+   None      UMETA(DisplayName = "Please set it")
 };
 
 // Minimal data contained in row
@@ -66,7 +66,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
       TSoftObjectPtr<UTexture2D> Icon;
 
    // Number of item instances
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       int32 Count = 1;
 
    // Max number of item instances per item slot
@@ -98,29 +98,48 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSubclassOf<ARItemPickup> Pickup;
 
+protected:
 
-   // --- Equipment
+
+
+   // For subclass runtime data serialization
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      FString RuntimeData;
+};
+
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FREquipmentData : public FRItemData
+{
+   GENERATED_BODY()
 
    // Socket to which item will be attached on spawn
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString AttachSocket;
 
-protected:
-
-   // For subclass runtime data serialization
-   UPROPERTY()
-      FString RuntimeData;
+   // --- Defence and attack stats
 };
 
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRDefaultItem
 {
    GENERATED_BODY()
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType=RItemData))
       FDataTableRowHandle Arch;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
       int32 Count = 1;
+};
+
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType=RItemData))
+      FDataTableRowHandle CreateItem;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      TArray<FRDefaultItem> RequiredItems;
 };
 
 

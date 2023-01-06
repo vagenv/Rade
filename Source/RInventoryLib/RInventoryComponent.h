@@ -58,7 +58,7 @@ protected:
    UFUNCTION()
       void OnRep_Items ();
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
 
 
@@ -67,7 +67,7 @@ protected:
 public:
 
    // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       TArray<FRDefaultItem> DefaultItems;
 
    // Delegate when Item list updated

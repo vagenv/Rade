@@ -1,0 +1,36 @@
+[
+	{
+		"Name": "Pistol",
+		"CreateItem":
+		{
+			"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+			"RowName": "Pistol"
+		},
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Gold"
+				},
+				"Count": 50
+			},
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Rock"
+				},
+				"Count": 2
+			},
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Stick"
+				},
+				"Count": 1
+			}
+		]
+	}
+]
