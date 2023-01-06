@@ -75,7 +75,21 @@ public:
       FRInventoryEvent OnInventoryUpdated;
 
    //=============================================================================
-   //                 Add/Remove to Inventory
+   //                 Check if contains
+   //=============================================================================
+
+
+
+   // --- Check if Inventory contains.
+   //     Convenience functions
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool HasItem (const FRDefaultItem &CheckItem) const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      bool HasItems (const TArray<FRDefaultItem> &CheckItems) const;
+
+   //=============================================================================
+   //                 Add/Remove to/from Inventory
    //=============================================================================
 
    // --- Add Default item

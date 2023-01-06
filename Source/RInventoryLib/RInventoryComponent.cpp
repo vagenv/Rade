@@ -84,6 +84,54 @@ void URInventoryComponent::OnRep_Items ()
    OnInventoryUpdated.Broadcast ();
 }
 
+bool URInventoryComponent::HasItem (const FRDefaultItem &CheckItem) const
+{
+   // --- Create required item info
+   FRItemData requireItem;
+   if (!FRItemData::FromRow (CheckItem.Arch, requireItem)) return false;
+   requireItem.Count = CheckItem.Count;
+
+   // --- Iterate over inventory items
+   for (const FRItemData &itItem : Items) {
+      if (itItem.Name != requireItem.Name) continue;
+      requireItem.Count -= itItem.Count;
+      if (requireItem.Count <= 0) break;
+   }
+
+   return (requireItem.Count <= 0);
+}
+
+bool URInventoryComponent::HasItems (const TArray<FRDefaultItem> &CheckItems) const
+{
+   // --- Create list of required item infos
+   TArray<FRItemData> requiredItems;
+   for (const FRDefaultItem &itItem : CheckItems) {
+      FRItemData requireItem;
+      if (!FRItemData::FromRow (itItem.Arch, requireItem)) return false;
+      requireItem.Count = itItem.Count;
+      requiredItems.Add (requireItem);
+   }
+
+   // --- Iterate over inventory items
+   for (const FRItemData &itItem : Items) {
+
+      // --- Iterate over required items
+      for (int i = 0; i < requiredItems.Num (); i++) {
+         FRItemData &requireItem = requiredItems[i];
+         if (itItem.Name != requireItem.Name) continue;
+
+         requireItem.Count -= itItem.Count;
+         if (requireItem.Count <= 0) {
+            requiredItems.RemoveAt (i);
+            break;
+         };
+      }
+   }
+
+   return requiredItems.Num () == 0;
+}
+
+
 bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
 {
    if (!bIsServer) {
