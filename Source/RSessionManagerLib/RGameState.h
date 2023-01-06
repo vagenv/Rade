@@ -49,7 +49,7 @@ public:
    virtual void BeginPlay();
 
    // Array of All Online Messages
-   UPROPERTY(ReplicatedUsing = OnRep_MessagesList, EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
+   UPROPERTY(ReplicatedUsing = OnRep_MessagesList, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Network")
       TArray<FROnineMessageData> Messages;
 
    // Events when Message List Replicated

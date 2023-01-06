@@ -2,20 +2,17 @@
 
 #include "RGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "RUtilLib/Rlog.h"
 
 const FName theSessionName ("RadeSessionName");
 
-FRAvaiableSessionsData::FRAvaiableSessionsData()
+FRAvaiableSessionsData::FRAvaiableSessionsData ()
 {
-   OwnerName                   = "Undefined";
-   Ping                        = 0;
-   NumberOfConnections         = 0;
-   NumberOfAvaiableConnections = 0;
 }
 
-FRAvaiableSessionsData::FRAvaiableSessionsData(FOnlineSessionSearchResult newSessionData)
+FRAvaiableSessionsData::FRAvaiableSessionsData (const FOnlineSessionSearchResult &newSessionData)
 {
-   SessionData                 = newSessionData;
+   SessionData                 = FOnlineSessionSearchResult (newSessionData);
    OwnerName                   = newSessionData.Session.OwningUserName;
    Ping                        = newSessionData.PingInMs;
    NumberOfConnections         = newSessionData.Session.SessionSettings.NumPublicConnections;
@@ -53,10 +50,8 @@ void URGameInstance::StartOnlineGame()
    // Creating a local player where we can get the UserID from
    ULocalPlayer* const Player = GetFirstGamePlayer();
 
-   TheMapName = "BattleArena";
-
    // Call our custom HostSession function. GameSessionName is a GameInstance variable
-   HostSession(Player->GetPreferredUniqueNetId ().GetUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
+   HostSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
 }
 
 // Host Specific Map
@@ -76,7 +71,7 @@ void URGameInstance::StartOnlineGameMap(FString MapName, int32 MaxPlayerNumber)
 void URGameInstance::FindOnlineGames()
 {
    ULocalPlayer* const Player = GetFirstGamePlayer();
-   FindSessions(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, true, true);
+   FindSessions (Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, true, true);
 }
 
 // Update Available Sessions List
@@ -89,6 +84,7 @@ void URGameInstance::UpdateSessionList()
       FRAvaiableSessionsData NewData(SessionSearch->SearchResults[i]);
       CurrentSessionSearch.Add(NewData);
    }
+   OnSessionListUpdated.Broadcast ();
 }
 
 // Join Any Available Online Game

@@ -3,10 +3,11 @@
 #include "RPlayerState.h"
 #include "Net/UnrealNetwork.h"
 
-// Reset Values at the start of Game
 void ARPlayerState::BeginPlay ()
 {
    Super::BeginPlay ();
+
+   // Reset Values at the start of Game
    nDeaths = 0;
    nKills  = 0;
 }

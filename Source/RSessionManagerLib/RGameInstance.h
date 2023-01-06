@@ -6,6 +6,8 @@
 #include "Online.h"
 #include "RGameInstance.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSessionEvent);
+
 class FOnlineSessionSearch;
 
 // Online Session Data Struct
@@ -13,19 +15,24 @@ USTRUCT(BlueprintType)
 struct FRAvaiableSessionsData
 {
    GENERATED_BODY()
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString OwnerName;
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 Ping;
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 NumberOfConnections;
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 NumberOfAvaiableConnections;
 
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FString OwnerName = "Not Set";
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      int32 Ping = 0;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      int32 NumberOfConnections = 0;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      int32 NumberOfAvaiableConnections = 0;
+
+   // Keep copy
    FOnlineSessionSearchResult SessionData;
 
    FRAvaiableSessionsData ();
-   FRAvaiableSessionsData (FOnlineSessionSearchResult newSessionData);
+   FRAvaiableSessionsData (const FOnlineSessionSearchResult &newSessionData);
 };
 
 // Custom Game Instance
@@ -48,7 +55,7 @@ public:
 
    // Host Specific Online Map Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void StartOnlineGameMap (FString MapName = TEXT ("BattleArena"), int32 MaxPlayerNumber = 16);
+      void StartOnlineGameMap (FString MapName = TEXT ("NewMap"), int32 MaxPlayerNumber = 16);
 
    // Find all available Online Sessions
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
@@ -76,11 +83,15 @@ public:
    //==========================================================================
 
    // Current Online Sessions Search Result
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Network")
       TArray<FRAvaiableSessionsData> CurrentSessionSearch;
 
+   // Delegate when Item list updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
+      FRSessionEvent OnSessionListUpdated;
+
    // Is Currently Searching Sessions?
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Network")
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Network")
       bool bIsSearchingSession = false;
 
    // Local Player Name
@@ -97,7 +108,7 @@ public:
 
    //  Start Sessions Selected Map Name
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Network")
-      FString TheMapName = "BattleArena";
+      FString TheMapName = "NewMap";
 
    // Set Local Player Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
