@@ -8,90 +8,93 @@
 #include "GameFramework/GameUserSettings.h"
 #include "Math/UnrealMathUtility.h"
 
-//==========================================================================//
 
-//               Input Settings
-
-//==========================================================================//
-
-void UROptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys)
+// Get Game User Setting
+UGameUserSettings* UROptionManager::GetGameUserSettings ()
 {
-   UInputSettings* settings = UInputSettings::GetInputSettings();
-   if (!ensure (settings)) return;
-
-   InputActions.Empty();
-   InputKeys.Empty();
-
-   const TArray <FInputActionKeyMapping> &mapping = settings->GetActionMappings();
-   for (auto map : mapping) {
-      InputActions.Add (FText::FromName(map.ActionName));
-      InputKeys.Add (map.Key.GetDisplayName());
-   }
+   return (GEngine != nullptr ? GEngine->GameUserSettings : nullptr);
 }
 
-void UROptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
+
+bool FRScreenResolution::operator == (const FRScreenResolution &res) const noexcept
 {
-   UInputSettings* settings = UInputSettings::GetInputSettings();
-   if (!ensure (settings)) return;
-   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
-   for (auto map : mapping) {
-      if (map.ActionName == ActionName) {
-         ActionKey = map.Key.GetDisplayName ();
-         return;
+   return (Width == res.Width && Height == res.Height);
+}
+
+FString UROptionManager::ToString (const FRScreenResolution &Resolution)
+{
+   return FString::Printf (TEXT("%lldx%lld"), Resolution.Width, Resolution.Height);
+}
+
+bool UROptionManager::EqualEqual_FRScreenResolution (const FRScreenResolution& A, const FRScreenResolution& B)
+{
+   return A == B;
+}
+
+FRScreenResolution UROptionManager::ToResolution (const FString &Resolution)
+{
+   FRScreenResolution res;
+
+   FString Width;
+   FString Height;
+   if (Resolution.Split (FString ("x"), &Width, &Height)) {
+      res.Width  = FCString::Atoi (*Width);
+      res.Height = FCString::Atoi (*Height);
+   }
+   return res;
+}
+
+
+
+
+//==========================================================================//
+//                Screen resolution
+//==========================================================================//
+
+// Get List of Supported Resolutions
+bool UROptionManager::GetSupportedScreenResolutions (TArray<FRScreenResolution>& Resolutions)
+{
+   FScreenResolutionArray ResolutionsArray;
+   if (RHIGetAvailableResolutions (ResolutionsArray, true)){
+      for (const FScreenResolutionRHI& Resolution : ResolutionsArray){
+         FRScreenResolution res;
+         res.Height = Resolution.Height;
+         res.Width  = Resolution.Width;
+         Resolutions.AddUnique (res);
       }
+      return true;
    }
+   return false;
 }
 
-void UROptionManager::SetActionInput(const FName& ActionName, const FText& ActionKey)
+bool UROptionManager::GetCurrentScreenResolution (FRScreenResolution &Resolutions)
 {
-   UInputSettings* settings = UInputSettings::GetInputSettings();
-   if (!ensure (settings)) return;
-   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
+   UGameUserSettings* Settings = GetGameUserSettings ();
+   if (!ensure (Settings)) return false;
 
-   for (auto map : mapping) {
-      if (map.ActionName == ActionName) {
-         FInputActionKeyMapping newAction = map;
-         newAction.Key = FKey (*ActionKey.ToString());
-         settings->RemoveActionMapping(map);
-         settings->AddActionMapping(newAction);
-      }
-   }
-
-   settings->SaveKeyMappings();
-   for (TObjectIterator<UPlayerInput> It; It; ++It) {
-      It->ForceRebuildingKeyMaps(true);
-      It->TryUpdateDefaultConfigFile ();
-   }
+   FIntPoint res = Settings->GetScreenResolution ();
+   Resolutions.Width = res.X;
+   Resolutions.Height = res.Y;
+   return true;
 }
+
+
+// Change the current screen resolution
+bool UROptionManager::ChangeScreenResolution (const FRScreenResolution &Resolution, EWindowMode::Type WindowMode)
+{
+   UGameUserSettings* Settings = GetGameUserSettings ();
+   if (!ensure (Settings)) return false;
+
+   Settings->RequestResolutionChange (Resolution.Width, Resolution.Height, WindowMode, false);
+   return true;
+}
+
 
 
 //==========================================================================//
-
-//                Audio Volume Settings
-
-//==========================================================================//
-
-void UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &Volume)
-{
-   if (WorldContextObject != nullptr){
-      FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld ()->GetAudioDevice ();
-      Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
-   }
-}
-
-void UROptionManager::SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume)
-{
-   if (WorldContextObject != nullptr) {
-      FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld()->GetAudioDevice();
-      audioDeviceHandler->SetTransientPrimaryVolume (NewVolume);
-   }
-}
-
-//==========================================================================//
-
 //                Video Quality Settings
-
 //==========================================================================//
+
 
 // Get current video quality
 bool UROptionManager::GetVideoQualitySettings (float& ResolutionQuality,
@@ -141,66 +144,89 @@ bool UROptionManager::SetVideoQualitySettings (float ResolutionQuality,
 // Confirm and save current video mode (resolution and fullscreen/windowed)
 bool UROptionManager::SaveVideoModeAndQuality()
 {
-   UGameUserSettings* Settings = GetGameUserSettings();
-   if (!ensure (Settings)) return false;
-   Settings->ConfirmVideoMode();
-   Settings->ApplyNonResolutionSettings();
-   Settings->ApplySettings (false);
-   Settings->SaveSettings();
-   return true;
-}
-
-bool UROptionManager::SetScreenResolution (const int32 Width, const int32 Height, const bool Fullscreen)
-{
-   UGameUserSettings* Settings = GetGameUserSettings();
-   if (!ensure (Settings)) return false;
-
-   Settings->SetScreenResolution (FIntPoint (Width, Height));
-   Settings->SetFullscreenMode (Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed);
-   return true;
-}
-
-// Change the current screen resolution
-bool UROptionManager::ChangeScreenResolution (const int32 Width, const int32 Height, const bool Fullscreen)
-{
    UGameUserSettings* Settings = GetGameUserSettings ();
    if (!ensure (Settings)) return false;
-
-   EWindowMode::Type WindowMode = Fullscreen ? EWindowMode::Fullscreen : EWindowMode::Windowed;
-   Settings->RequestResolutionChange(Width, Height, WindowMode, false);
+   Settings->ConfirmVideoMode ();
+   Settings->ApplyNonResolutionSettings ();
+   Settings->ApplySettings (false);
+   Settings->SaveSettings ();
    return true;
 }
 
-// Get List of Supported Resolutions
-bool UROptionManager::GetSupportedScreenResolutions(TArray<FString>& Resolutions)
+
+
+//=============================================================================
+//                Audio Volume Settings
+//=============================================================================
+
+void UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &Volume)
 {
-   FScreenResolutionArray ResolutionsArray;
-   if (RHIGetAvailableResolutions(ResolutionsArray, true)){
-      for (const FScreenResolutionRHI& Resolution : ResolutionsArray){
-         FString StrW = FString::FromInt (Resolution.Width);
-         FString StrH = FString::FromInt (Resolution.Height);
-         Resolutions.AddUnique (StrW + "x" + StrH);
+   if (WorldContextObject != nullptr){
+      FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld ()->GetAudioDevice ();
+      Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
+   }
+}
+
+void UROptionManager::SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume)
+{
+   if (WorldContextObject != nullptr) {
+      FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld()->GetAudioDevice();
+      audioDeviceHandler->SetTransientPrimaryVolume (NewVolume);
+   }
+}
+
+
+//=============================================================================
+//               Input Settings
+//=============================================================================
+
+void UROptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys)
+{
+   UInputSettings* settings = UInputSettings::GetInputSettings();
+   if (!ensure (settings)) return;
+
+   InputActions.Empty();
+   InputKeys.Empty();
+
+   const TArray <FInputActionKeyMapping> &mapping = settings->GetActionMappings();
+   for (auto map : mapping) {
+      InputActions.Add (FText::FromName(map.ActionName));
+      InputKeys.Add (map.Key.GetDisplayName());
+   }
+}
+
+void UROptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
+{
+   UInputSettings* settings = UInputSettings::GetInputSettings();
+   if (!ensure (settings)) return;
+   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
+   for (auto map : mapping) {
+      if (map.ActionName == ActionName) {
+         ActionKey = map.Key.GetDisplayName ();
+         return;
       }
-      return true;
    }
-   return false;
 }
 
-// Get Screen Resolution
-bool UROptionManager::GetScreenResolutions (int32 &Width, int32 &Height)
+void UROptionManager::SetActionInput(const FName& ActionName, const FText& ActionKey)
 {
-   UGameUserSettings* Settings = GetGameUserSettings();
-   if (Settings) {
-      FIntPoint TheResolution = Settings->GetScreenResolution ();
-      Width  = TheResolution.X;
-      Height = TheResolution.Y;
-      return true;
-   }
-   return false;
-}
+   UInputSettings* settings = UInputSettings::GetInputSettings();
+   if (!ensure (settings)) return;
+   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
 
-// Get Game User Setting
-UGameUserSettings* UROptionManager::GetGameUserSettings() {
-   return (GEngine != nullptr ? GEngine->GameUserSettings : nullptr);
+   for (auto map : mapping) {
+      if (map.ActionName == ActionName) {
+         FInputActionKeyMapping newAction = map;
+         newAction.Key = FKey (*ActionKey.ToString());
+         settings->RemoveActionMapping(map);
+         settings->AddActionMapping(newAction);
+      }
+   }
+
+   settings->SaveKeyMappings();
+   for (TObjectIterator<UPlayerInput> It; It; ++It) {
+      It->ForceRebuildingKeyMaps(true);
+      It->TryUpdateDefaultConfigFile ();
+   }
 }
 

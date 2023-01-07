@@ -4,41 +4,85 @@
 
 #include "ROptionManager.generated.h"
 
+USTRUCT(BlueprintType)
+struct ROPTIONSLIB_API FRScreenResolution
+{
+   GENERATED_BODY()
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Width = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Height = 0;
+
+   bool operator == (const FRScreenResolution &res) const noexcept;
+};
+
+
+USTRUCT(BlueprintType)
+struct ROPTIONSLIB_API FRVideoQuality
+{
+   GENERATED_BODY()
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      float ResolutionQuality = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      int32 ViewDistance = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      int32 AntiAliasing = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      int32 TextureQuality = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      int32 ShadowQuality = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      int32 EffectQuality = 0;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      int32 PostProcessQuality = 0;
+};
+
 // Manager for Audio/Video/Input
 UCLASS()
 class ROPTIONSLIB_API UROptionManager : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
+
+   // Try to get the Game User Settings
+   static UGameUserSettings* GetGameUserSettings ();
 public:
 
-   //==========================================================================
-   //               Input Settings
-   //==========================================================================
-
-
-   // Get All Action Inputs
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-      static void GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys);
+      static FString ToString (const FRScreenResolution &Resolution);
 
-   // Get Action Input with Name
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-      static void GetActionInput(const FName& ActionName, FText& ActionKey);
+      static FRScreenResolution ToResolution (const FString &Resolution);
 
-   // Set Action Input with Name
+   UFUNCTION(BlueprintPure, meta=(DisplayName="Equal (FRScreenResolution)", CompactNodeTitle="==", BlueprintThreadSafe))
+	   static bool EqualEqual_FRScreenResolution (const FRScreenResolution& A, const FRScreenResolution& B);
+
+
+
+   //==========================================================================
+   //               Screen  Resolution
+   //==========================================================================
+
+
+   // Get a list of supported resolution
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static void SetActionInput(const FName& ActionName, const FText& ActionKey);
+      static bool GetSupportedScreenResolutions (TArray<FRScreenResolution>& Resolutions);
 
-   //==========================================================================
-   //               Audio Settings
-   //==========================================================================
-
-   // Get Global Sound Volume
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-      static void GetGlobalSoundVolume(UObject* WorldContextObject, float & Volume);
-
-   // Set Global Sound Volume
+   // Get a current resolution
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static void SetGlobalSoundVolume(UObject* WorldContextObject, const float NewVolume);
+      static bool GetCurrentScreenResolution (FRScreenResolution &Resolutions);
+
+   // Update Screen Resolution
+   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
+      static bool ChangeScreenResolution (const FRScreenResolution &Resolution, EWindowMode::Type WindowMode);
 
 
    //==========================================================================
@@ -69,32 +113,37 @@ public:
                                            int32 EffectQuality,
                                            int32 PostProcessQuality);
 
-   //==========================================================================
-   //               Screen  Resolution
-   //==========================================================================
-
-   // Update Screen Resolution
-   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool ChangeScreenResolution (const int32 Width, const int32 Height, const bool Fullscreen);
-
-   // Set Screen Resolution without current
-   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool SetScreenResolution (const int32 Width, const int32 Height, const bool Fullscreen);
-
-   // Get a list of supported resolution
-   UFUNCTION(BlueprintPure, Category = "Rade|Settings")
-      static bool GetSupportedScreenResolutions (TArray<FString>& Resolutions);
-
-   // Get current Screen Resolution
-   UFUNCTION(BlueprintPure, Category = "Rade|Settings")
-      static bool GetScreenResolutions (int32 & Width, int32 & Height);
-
    // Save Video Quality
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
       static bool SaveVideoModeAndQuality ();
 
-private:
-   // Try to get the Game User Settings
-   static UGameUserSettings* GetGameUserSettings();
+   //==========================================================================
+   //               Input Settings
+   //==========================================================================
+
+   // Get All Action Inputs
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
+      static void GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys);
+
+   // Get Action Input with Name
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
+      static void GetActionInput (const FName& ActionName, FText& ActionKey);
+
+   // Set Action Input with Name
+   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
+      static void SetActionInput (const FName& ActionName, const FText& ActionKey);
+
+   //==========================================================================
+   //               Audio Settings
+   //==========================================================================
+
+   // Get Global Sound Volume
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
+      static void GetGlobalSoundVolume (UObject* WorldContextObject, float & Volume);
+
+   // Set Global Sound Volume
+   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
+      static void SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume);
+
 };
 
