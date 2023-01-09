@@ -7,6 +7,7 @@
 #include "GameFramework/InputSettings.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Math/UnrealMathUtility.h"
+#include "RUtilLib/Rlog.h"
 
 
 // Get Game User Setting
@@ -15,26 +16,45 @@ UGameUserSettings* UROptionManager::GetGameUserSettings ()
    return (GEngine != nullptr ? GEngine->GameUserSettings : nullptr);
 }
 
-
 bool FRScreenResolution::operator == (const FRScreenResolution &res) const noexcept
 {
    return (Width == res.Width && Height == res.Height);
 }
 
-FString UROptionManager::ToString (const FRScreenResolution &Resolution)
+bool FRVideoQualitySetting::operator == (const FRVideoQualitySetting &res) const noexcept
+{
+   return (
+      VSyncEnabled       == res.VSyncEnabled       &&
+      FrameRate          == res.FrameRate          &&
+      ResolutionQuality  == res.ResolutionQuality  &&
+      AntiAliasing       == res.AntiAliasing       &&
+      DynamicResolution  == res.DynamicResolution  &&
+      ViewDistance       == res.ViewDistance       &&
+      TextureQuality     == res.TextureQuality     &&
+      ShadowQuality      == res.ShadowQuality      &&
+      ShadingQuality     == res.ShadingQuality     &&
+      GlobalIllumination == res.GlobalIllumination &&
+      ReflectionQuality  == res.ReflectionQuality  &&
+      FoliageQuality     == res.FoliageQuality     &&
+      EffectQuality      == res.EffectQuality      &&
+      PostProcessQuality == res.PostProcessQuality
+   );
+}
+
+
+FString UROptionUtilFunc::FRScreenResolution_ToString (const FRScreenResolution &Resolution)
 {
    return FString::Printf (TEXT("%lldx%lld"), Resolution.Width, Resolution.Height);
 }
 
-bool UROptionManager::EqualEqual_FRScreenResolution (const FRScreenResolution& A, const FRScreenResolution& B)
+bool UROptionUtilFunc::FRScreenResolution_EqualEqual (const FRScreenResolution& A, const FRScreenResolution& B)
 {
    return A == B;
 }
 
-FRScreenResolution UROptionManager::ToResolution (const FString &Resolution)
+FRScreenResolution UROptionUtilFunc::FRScreenResolution_FromString (const FString &Resolution)
 {
    FRScreenResolution res;
-
    FString Width;
    FString Height;
    if (Resolution.Split (FString ("x"), &Width, &Height)) {
@@ -44,8 +64,10 @@ FRScreenResolution UROptionManager::ToResolution (const FString &Resolution)
    return res;
 }
 
-
-
+bool UROptionUtilFunc::FRVideoQualitySetting_EqualEqual (const FRVideoQualitySetting& A, const FRVideoQualitySetting& B)
+{
+   return A == B;
+}
 
 //==========================================================================//
 //                Screen resolution
@@ -67,92 +89,91 @@ bool UROptionManager::GetSupportedScreenResolutions (TArray<FRScreenResolution>&
    return false;
 }
 
-bool UROptionManager::GetCurrentScreenResolution (FRScreenResolution &Resolutions)
+bool UROptionManager::GetCurrentScreenResolution (FRScreenResolution &Resolutions, TEnumAsByte<EWindowMode::Type> &WindowMode)
 {
    UGameUserSettings* Settings = GetGameUserSettings ();
    if (!ensure (Settings)) return false;
 
+   // Resolution
    FIntPoint res = Settings->GetScreenResolution ();
    Resolutions.Width = res.X;
    Resolutions.Height = res.Y;
+
+   // Window Mode
+   WindowMode = Settings->GetFullscreenMode ();
+
    return true;
 }
 
-
 // Change the current screen resolution
-bool UROptionManager::ChangeScreenResolution (const FRScreenResolution &Resolution, EWindowMode::Type WindowMode)
+bool UROptionManager::SetScreenResolution (const FRScreenResolution &Resolution, const EWindowMode::Type WindowMode)
 {
    UGameUserSettings* Settings = GetGameUserSettings ();
    if (!ensure (Settings)) return false;
 
-   Settings->RequestResolutionChange (Resolution.Width, Resolution.Height, WindowMode, false);
+   bool checkCmdLine = false;
+   Settings->SetScreenResolution (FIntPoint(Resolution.Width, Resolution.Height));
+   Settings->SetFullscreenMode (WindowMode);
+
+   Settings->ApplyResolutionSettings (checkCmdLine);
+   Settings->SaveSettings ();
    return true;
 }
-
-
 
 //==========================================================================//
 //                Video Quality Settings
 //==========================================================================//
 
-
 // Get current video quality
-bool UROptionManager::GetVideoQualitySettings (float& ResolutionQuality,
-                                               int32& ViewDistance,
-                                               int32& AntiAliasing,
-                                               int32& TextureQuality,
-                                               int32& ShadowQuality,
-                                               int32& EffectQuality,
-                                               int32& PostProcessQuality)
+bool UROptionManager::GetCurrentVideoQualitySettings (FRVideoQualitySetting& QualitySettings)
 {
    UGameUserSettings* Settings = GetGameUserSettings ();
    if (!ensure (Settings)) return false;
 
-   const Scalability::FQualityLevels &quality = Settings->ScalabilityQuality;
-   ResolutionQuality  = quality.ResolutionQuality;
-   ViewDistance       = quality.ViewDistanceQuality;
-   AntiAliasing       = quality.AntiAliasingQuality;
-   TextureQuality     = quality.TextureQuality;
-   ShadowQuality      = quality.ShadowQuality;
-   EffectQuality      = quality.EffectsQuality;
-   PostProcessQuality = quality.PostProcessQuality;
+   QualitySettings.VSyncEnabled       = Settings->IsVSyncEnabled ();
+   QualitySettings.FrameRate          = Settings->GetFrameRateLimit ();
+   QualitySettings.ResolutionQuality  = Settings->GetResolutionScaleNormalized ();
+   QualitySettings.DynamicResolution  = Settings->IsDynamicResolutionEnabled ();
+   QualitySettings.AntiAliasing       = Settings->GetAntiAliasingQuality ();
+   QualitySettings.ViewDistance       = Settings->GetViewDistanceQuality ();
+   QualitySettings.TextureQuality     = Settings->GetTextureQuality ();
+   QualitySettings.ShadowQuality      = Settings->GetShadowQuality ();
+   QualitySettings.ShadingQuality     = Settings->GetShadingQuality ();
+   QualitySettings.GlobalIllumination = Settings->GetGlobalIlluminationQuality ();
+   QualitySettings.ReflectionQuality  = Settings->GetReflectionQuality ();
+   QualitySettings.FoliageQuality     = Settings->GetFoliageQuality ();
+   QualitySettings.EffectQuality      = Settings->GetVisualEffectQuality ();
+   QualitySettings.PostProcessQuality = Settings->GetPostProcessingQuality ();
    return true;
 }
 
 // Set Video Quality
-bool UROptionManager::SetVideoQualitySettings (float ResolutionQuality,
-                                               int32 ViewDistance,
-                                               int32 AntiAliasing,
-                                               int32 TextureQuality,
-                                               int32 ShadowQuality,
-                                               int32 EffectQuality,
-                                               int32 PostProcessQuality)
+bool UROptionManager::SetVideoQualitySettings (const FRVideoQualitySetting& QualitySettings)
 {
    UGameUserSettings* Settings = GetGameUserSettings ();
    if (!ensure (Settings)) return false;
 
-   Settings->ScalabilityQuality.ResolutionQuality   = ResolutionQuality;
-   Settings->ScalabilityQuality.ViewDistanceQuality = ViewDistance;
-   Settings->ScalabilityQuality.AntiAliasingQuality = AntiAliasing;
-   Settings->ScalabilityQuality.TextureQuality      = TextureQuality;
-   Settings->ScalabilityQuality.ShadowQuality       = ShadowQuality;
-   Settings->ScalabilityQuality.EffectsQuality      = EffectQuality;
-   Settings->ScalabilityQuality.PostProcessQuality  = PostProcessQuality;
-   return true;
-}
+   Settings->SetVSyncEnabled              (QualitySettings.VSyncEnabled      );
+   Settings->SetFrameRateLimit            (QualitySettings.FrameRate         );
+   Settings->SetResolutionScaleNormalized (QualitySettings.ResolutionQuality );
+   Settings->SetDynamicResolutionEnabled  (QualitySettings.DynamicResolution );
 
-// Confirm and save current video mode (resolution and fullscreen/windowed)
-bool UROptionManager::SaveVideoModeAndQuality()
-{
-   UGameUserSettings* Settings = GetGameUserSettings ();
-   if (!ensure (Settings)) return false;
-   Settings->ConfirmVideoMode ();
+   Settings->SetAntiAliasingQuality       (QualitySettings.AntiAliasing      );
+   Settings->SetViewDistanceQuality       (QualitySettings.ViewDistance      );
+   Settings->SetTextureQuality            (QualitySettings.TextureQuality    );
+   Settings->SetShadowQuality             (QualitySettings.ShadowQuality     );
+   Settings->SetShadingQuality            (QualitySettings.ShadingQuality    );
+   Settings->SetGlobalIlluminationQuality (QualitySettings.GlobalIllumination);
+   Settings->SetReflectionQuality         (QualitySettings.ReflectionQuality );
+   Settings->SetFoliageQuality            (QualitySettings.FoliageQuality    );
+   Settings->SetVisualEffectQuality       (QualitySettings.EffectQuality     );
+   Settings->SetPostProcessingQuality     (QualitySettings.PostProcessQuality);
+
    Settings->ApplyNonResolutionSettings ();
-   Settings->ApplySettings (false);
    Settings->SaveSettings ();
+
    return true;
 }
-
 
 
 //=============================================================================

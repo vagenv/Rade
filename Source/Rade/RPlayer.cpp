@@ -153,7 +153,7 @@ void ARPlayer::Tick (float DeltaTime)
    Super::Tick (DeltaTime);
 }
 
-void ARPlayer::SaveGame ()
+void ARPlayer::Input_SaveGame ()
 {
    bool res = URSaveMgr::SaveASync (GetWorld ());
    if (!res) {
@@ -162,7 +162,7 @@ void ARPlayer::SaveGame ()
    }
 }
 
-void ARPlayer::LoadGame ()
+void ARPlayer::Input_LoadGame ()
 {
    bool res = URSaveMgr::LoadASync (GetWorld ());
    if (!res) {
@@ -240,13 +240,8 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
       EnhancedInputComponent->BindAction (IA_Action,       ETriggerEvent::Started, this, &ARPlayer::Input_Action);
       EnhancedInputComponent->BindAction (IA_AltAction,    ETriggerEvent::Started, this, &ARPlayer::Input_AltAction);
 
-      EnhancedInputComponent->BindAction (IA_ScrollV,         ETriggerEvent::Started, this, &ARPlayer::Input_ScrollV);
-      EnhancedInputComponent->BindAction (IA_ScrollH,         ETriggerEvent::Started, this, &ARPlayer::Input_ScrollH);
-      EnhancedInputComponent->BindAction (IA_ToggleInventory, ETriggerEvent::Started,   this, &ARPlayer::Input_ToggleInventory);
-      EnhancedInputComponent->BindAction (IA_ToggleOption,    ETriggerEvent::Started,   this, &ARPlayer::Input_ToggleOption);
-
-      EnhancedInputComponent->BindAction (IA_Save, ETriggerEvent::Started, this, &ARPlayer::SaveGame);
-      EnhancedInputComponent->BindAction (IA_Load, ETriggerEvent::Started, this, &ARPlayer::LoadGame);
+      EnhancedInputComponent->BindAction (IA_Save, ETriggerEvent::Started, this, &ARPlayer::Input_SaveGame);
+      EnhancedInputComponent->BindAction (IA_Load, ETriggerEvent::Started, this, &ARPlayer::Input_LoadGame);
 	}
 }
 
@@ -333,30 +328,6 @@ void ARPlayer::Input_Action ()
 void ARPlayer::Input_AltAction ()
 {
    Input_OnAltAction.Broadcast ();
-}
-
-// Toggle HUD Inventory visibility
-void ARPlayer::Input_ToggleInventory ()
-{
-   if (bDead) return;
-   Input_OnToggleInventory.Broadcast ();
-}
-
-void ARPlayer::Input_ToggleOption ()
-{
-   Input_OnToggleOption.Broadcast ();
-}
-
-void ARPlayer::Input_ScrollV (const FInputActionValue& Value)
-{
-   float scrollValue = Value.Get<float>();
-   Input_OnScrollV.Broadcast (scrollValue);
-}
-
-void ARPlayer::Input_ScrollH (const FInputActionValue& Value)
-{
-   float scrollValue = Value.Get<float>();
-   Input_OnScrollH.Broadcast (scrollValue);
 }
 
 //=============================================================================

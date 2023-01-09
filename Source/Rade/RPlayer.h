@@ -109,13 +109,11 @@ public:
 
    // Updates Component Visibility when Camera State Changes
    UFUNCTION()
-      void UpdateComponentsVisibility();
-
+      virtual void UpdateComponentsVisibility ();
 
    //==========================================================================
    //                  Input events
    //==========================================================================
-
 
 protected:
 
@@ -148,24 +146,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_AltAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> IA_ToggleInventory;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> IA_ToggleOption;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> IA_ScrollV;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> IA_ScrollH;
-
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_Save;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
       TObjectPtr<UInputAction> IA_Load;
-
 
    // --- Internal function callen on onput
 	virtual void Input_Move (const FInputActionValue& Value);
@@ -176,13 +161,8 @@ public:
    virtual void Input_Action ();
    virtual void Input_AltAction ();
 
-   virtual void Input_ScrollV (const FInputActionValue& Value);
-   virtual void Input_ScrollH (const FInputActionValue& Value);
-   virtual void Input_ToggleInventory ();
-   virtual void Input_ToggleOption ();
-
    // For First person Camera
-   void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
+   virtual void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
 
    // --- Event to subscribe to
    UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
@@ -194,31 +174,18 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnAltAction;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEventFloat Input_OnScrollV;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEventFloat Input_OnScrollH;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEvent Input_OnToggleInventory;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEvent Input_OnToggleOption;
-
-
    //==========================================================================
    //                         Save/Load
    //==========================================================================
 
    // Input events
-   void SaveGame ();
-   void LoadGame ();
+   void Input_SaveGame ();
+   void Input_LoadGame ();
 
-   // Rade Save events
-   UFUNCTION()
+   // Callbacks, called by USaveMgr
+   UFUNCTION ()
       void OnSave ();
-   UFUNCTION()
+   UFUNCTION ()
       void OnLoad ();
 
 public:
