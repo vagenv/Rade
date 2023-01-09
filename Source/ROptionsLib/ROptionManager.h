@@ -149,7 +149,7 @@ public:
    //==========================================================================
 
    // Get Global Sound Volume
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
       static void GetGlobalSoundVolume (UObject* WorldContextObject, float & Volume);
 
    // Set Global Sound Volume
