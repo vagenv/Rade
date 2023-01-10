@@ -1,12 +1,7 @@
-// Copyright 2015-2021 Vagen Ayrapetyan
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "Rade.h"
+#include "Modules/ModuleManager.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Rade, "Rade" );
 
-DEFINE_LOG_CATEGORY(RadeLog);
-
-void rlog (FString txt) 
-{
-   UE_LOG(RadeLog, Warning, TEXT("%s"), *txt);
-} 

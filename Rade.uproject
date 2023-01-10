@@ -1,25 +1,75 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{773B22BD-46E9-6B05-0721-D38D4E5E7573}",
+	"EngineAssociation": "5.1",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
+			"Name": "RUtilLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RSessionManagerLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RSaveLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RSaveLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "ROptionsLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RInventoryLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RCharacterLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "Rade",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "AnalyticsBlueprintLibrary",
-			"Enabled": true
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
 		},
 		{
-			"Name": "AndroidDeviceProfileSelector",
+			"Name": "AndroidFileServer",
+			"Enabled": false
+		},
+		{
+			"Name": "OnlineSubsystemGooglePlay",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Android"
+			]
+		},
+		{
+			"Name": "AndroidPermission",
+			"Enabled": false
+		},
+		{
+			"Name": "AndroidMoviePlayer",
 			"Enabled": false
 		},
 		{
@@ -27,7 +77,11 @@
 			"Enabled": false
 		},
 		{
-			"Name": "AndroidMoviePlayer",
+			"Name": "AndroidDeviceProfileSelector",
+			"Enabled": false
+		},
+		{
+			"Name": "AppleImageUtils",
 			"Enabled": false
 		},
 		{
@@ -39,19 +93,39 @@
 			"Enabled": false
 		},
 		{
-			"Name": "BlueprintStats",
-			"Enabled": true
+			"Name": "CableComponent",
+			"Enabled": false
 		},
 		{
-			"Name": "CodeView",
-			"Enabled": true
+			"Name": "CLionSourceCodeAccess",
+			"Enabled": false
 		},
 		{
-			"Name": "FileLogging",
-			"Enabled": true
+			"Name": "CodeLiteSourceCodeAccess",
+			"Enabled": false
 		},
 		{
-			"Name": "GitSourceControl",
+			"Name": "GLTFExporter",
+			"Enabled": false
+		},
+		{
+			"Name": "MeshPainting",
+			"Enabled": false
+		},
+		{
+			"Name": "InterchangeEditor",
+			"Enabled": false
+		},
+		{
+			"Name": "InterchangeTests",
+			"Enabled": false
+		},
+		{
+			"Name": "GoogleCloudMessaging",
+			"Enabled": false
+		},
+		{
+			"Name": "GooglePAD",
 			"Enabled": false
 		},
 		{
@@ -63,31 +137,43 @@
 			"Enabled": false
 		},
 		{
+			"Name": "NullSourceCodeAccess",
+			"Enabled": false
+		},
+		{
+			"Name": "LinuxDeviceProfileSelector",
+			"Enabled": false
+		},
+		{
 			"Name": "MacGraphicsSwitching",
 			"Enabled": false
 		},
 		{
-			"Name": "MediaPlayerEditor",
+			"Name": "MobilePatchingUtils",
 			"Enabled": false
 		},
 		{
-			"Name": "OculusRift",
+			"Name": "WebMMoviePlayer",
 			"Enabled": false
 		},
 		{
-			"Name": "Paper2D",
+			"Name": "OnlineSubsystemIOS",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"IOS",
+				"TVOS"
+			]
+		},
+		{
+			"Name": "OodleNetwork",
 			"Enabled": false
 		},
 		{
-			"Name": "PerforceSourceControl",
+			"Name": "TextureFormatOodle",
 			"Enabled": false
 		},
 		{
-			"Name": "SlateRemote",
-			"Enabled": false
-		},
-		{
-			"Name": "WmfMedia",
+			"Name": "SubversionSourceControl",
 			"Enabled": false
 		},
 		{
@@ -95,8 +181,15 @@
 			"Enabled": false
 		},
 		{
-			"Name": "XCodeSourceCodeAccess",
+			"Name": "WmfMedia",
 			"Enabled": false
+		},
+		{
+			"Name": "XCodeSourceCodeAccess",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Mac"
+			]
 		}
 	]
 }
