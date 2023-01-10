@@ -10,11 +10,28 @@ Roll + Sprint
 
 Attack / Alt Attack
 
-
 ===========================
    Reset
 ===========================
 
+=== UI
+
+Options
+- Redesign Inventory Item widget
+- Player Status Widget
+- Audio channels
+- Persistent Audio Settings
+- Input
+Inventory
+- Tabs [All][Equipment][Consumables][Craft][Quest][...]
+- Rarity color
+Status
+- Inventory
+- Equipment slots
+- Character stats
+- Info? Health
+
+=== Inventory
 ItemData
 -Rarity
 -Name
@@ -28,13 +45,16 @@ ItemData
 -Pickup
 
 CraftItem : ItemData
--
+- List<Item>
 
 ActionItem : ItemData
-- Action
+- TSubclass<Action>
 
-ConsumableItem : ItemData
-- Effect Blueprint? Duration and action?
+ConsumableItem : ActionItem
+- Duration
+- ItemData.Action will apply the effect and manage video/audio effects
+
+===  Should be moved to subclass of RInventory?
 
 EquipmentItem : ActionData
 - AttachSocket
@@ -45,11 +65,7 @@ WeaponItem : EquipmentItem
 - MagSize
 
 
-
-
-Inventory
-- Tabs [All][Equipment][Consumables][Craft][Quest][...]
-- Rarity color
+=== Other
 
 Store to exchange
 - Widget
@@ -61,10 +77,6 @@ Crafting
 - Datatable: Item <-> List<Item>
 - Datatable: Which item crafting available
 - Local/Store crafting
-
-Option menu
-- Audio channels
-- Input
 
 Chat
 - Update Widget
