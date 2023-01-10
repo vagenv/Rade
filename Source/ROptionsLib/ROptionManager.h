@@ -133,16 +133,16 @@ public:
    //==========================================================================
 
    // Get All Action Inputs
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-      static void GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
+      static bool GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys);
 
    // Get Action Input with Name
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
-      static void GetActionInput (const FName& ActionName, FText& ActionKey);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
+      static bool GetActionInput (const FName& ActionName, FText& ActionKey);
 
    // Set Action Input with Name
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static void SetActionInput (const FName& ActionName, const FText& ActionKey);
+      static bool SetActionInput (const FName& ActionName, const FText& ActionKey);
 
    //==========================================================================
    //               Audio Settings
@@ -150,11 +150,11 @@ public:
 
    // Get Global Sound Volume
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static void GetGlobalSoundVolume (UObject* WorldContextObject, float & Volume);
+      static bool GetGlobalSoundVolume (UObject* WorldContextObject, float & Volume);
 
    // Set Global Sound Volume
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static void SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume);
+      static bool SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume);
 
 };
 

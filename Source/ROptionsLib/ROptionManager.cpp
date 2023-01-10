@@ -180,20 +180,26 @@ bool UROptionManager::SetVideoQualitySettings (const FRVideoQualitySetting& Qual
 //                Audio Volume Settings
 //=============================================================================
 
-void UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &Volume)
+bool UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &Volume)
 {
-   if (WorldContextObject != nullptr){
-      FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld ()->GetAudioDevice ();
-      Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
-   }
+   if (!ensure (WorldContextObject)) return false;
+   const UWorld *world = WorldContextObject->GetWorld ();
+   if (!ensure (world)) return false;
+
+   FAudioDeviceHandle audioDeviceHandler = world->GetAudioDevice ();
+   Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
+   return true;
 }
 
-void UROptionManager::SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume)
+bool UROptionManager::SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume)
 {
-   if (WorldContextObject != nullptr) {
-      FAudioDeviceHandle audioDeviceHandler = WorldContextObject->GetWorld()->GetAudioDevice();
-      audioDeviceHandler->SetTransientPrimaryVolume (NewVolume);
-   }
+   if (!ensure (WorldContextObject)) return false;
+   const UWorld *world = WorldContextObject->GetWorld ();
+   if (!ensure (world)) return false;
+
+   FAudioDeviceHandle audioDeviceHandler = world->GetAudioDevice ();
+   audioDeviceHandler->SetTransientPrimaryVolume (NewVolume);
+   return true;
 }
 
 
@@ -201,10 +207,10 @@ void UROptionManager::SetGlobalSoundVolume (UObject* WorldContextObject, const f
 //               Input Settings
 //=============================================================================
 
-void UROptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText>&InputKeys)
+bool UROptionManager::GetAllActionInput (TArray<FText>&InputActions, TArray<FText>&InputKeys)
 {
    UInputSettings* settings = UInputSettings::GetInputSettings();
-   if (!ensure (settings)) return;
+   if (!ensure (settings)) return false;
 
    InputActions.Empty();
    InputKeys.Empty();
@@ -214,40 +220,43 @@ void UROptionManager::GetAllActionInput(TArray<FText>&InputActions, TArray<FText
       InputActions.Add (FText::FromName(map.ActionName));
       InputKeys.Add (map.Key.GetDisplayName());
    }
+   return true;
 }
 
-void UROptionManager::GetActionInput(const FName& ActionName, FText& ActionKey)
+bool UROptionManager::GetActionInput (const FName& ActionName, FText& ActionKey)
 {
    UInputSettings* settings = UInputSettings::GetInputSettings();
-   if (!ensure (settings)) return;
+   if (!ensure (settings)) return false;
    const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
    for (auto map : mapping) {
       if (map.ActionName == ActionName) {
          ActionKey = map.Key.GetDisplayName ();
-         return;
+         return true;
       }
    }
+   return false;
 }
 
-void UROptionManager::SetActionInput(const FName& ActionName, const FText& ActionKey)
+bool UROptionManager::SetActionInput (const FName& ActionName, const FText& ActionKey)
 {
    UInputSettings* settings = UInputSettings::GetInputSettings();
-   if (!ensure (settings)) return;
-   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
+   if (!ensure (settings)) return false;
+   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings ();
 
-   for (auto map : mapping) {
+   for (auto &map : mapping) {
       if (map.ActionName == ActionName) {
          FInputActionKeyMapping newAction = map;
          newAction.Key = FKey (*ActionKey.ToString());
-         settings->RemoveActionMapping(map);
-         settings->AddActionMapping(newAction);
+         settings->RemoveActionMapping (map);
+         settings->AddActionMapping (newAction);
       }
    }
 
    settings->SaveKeyMappings();
    for (TObjectIterator<UPlayerInput> It; It; ++It) {
-      It->ForceRebuildingKeyMaps(true);
+      It->ForceRebuildingKeyMaps (true);
       It->TryUpdateDefaultConfigFile ();
    }
+   return true;
 }
 
