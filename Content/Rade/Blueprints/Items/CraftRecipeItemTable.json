@@ -10,24 +10,24 @@
 			{
 				"Arch":
 				{
-					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-					"RowName": "Gold"
+					"DataTable": "None",
+					"RowName": "None"
 				},
-				"Count": 50
+				"Count": 1
 			},
 			{
 				"Arch":
 				{
-					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-					"RowName": "Rock"
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "ManaStone_Small"
 				},
-				"Count": 2
+				"Count": 1
 			},
 			{
 				"Arch":
 				{
-					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-					"RowName": "Stick"
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "Glass"
 				},
 				"Count": 1
 			}

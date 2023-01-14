@@ -9,32 +9,65 @@
 //                   Item description
 //=============================================================================
 
-class ARItemPickup;
-class URItemAction;
-class UStaticMesh;
+
+class  ARItemPickup;
+class  URItemAction;
+class  URInventoryComponent;
+class  UStaticMesh;
+struct FRItemDataHandle;
+struct FRItemData;
+
+// --- Handle for ItemData defined in a table
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FRItemDataHandle
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
+      FDataTableRowHandle Arch;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+      int32 Count = 1;
+
+   // Converts Handle to ItemData;
+   bool ToItem (FRItemData &dst) const;
+};
+
+// --- Recipe
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
+      FDataTableRowHandle CreateItem;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      TArray<FRItemDataHandle> RequiredItems;
+};
 
 // Rarity of item
 UENUM(BlueprintType)
 enum class FRItemRarity : uint8
 {
-   F    UMETA(DisplayName =    "F Grade"),
-   E    UMETA(DisplayName =    "E Grade"),
-   D    UMETA(DisplayName =    "D Grade"),
-   C    UMETA(DisplayName =    "C Grade"),
-   B    UMETA(DisplayName =    "B Grade"),
-   BB   UMETA(DisplayName =   "BB Grade"),
-   A    UMETA(DisplayName =    "A Grade"),
-   AA   UMETA(DisplayName =   "AA Grade"),
-   AAA  UMETA(DisplayName =  "AAA Grade"),
-   S    UMETA(DisplayName =    "S Grade"),
-   SS   UMETA(DisplayName =   "SS Grade"),
-   SSS  UMETA(DisplayName =  "SSS Grade"),
-   SSSS UMETA(DisplayName = "SSSS Grade"),
+   F         UMETA (DisplayName =    "F Grade"),
+   E         UMETA (DisplayName =    "E Grade"),
+   D         UMETA (DisplayName =    "D Grade"),
+   C         UMETA (DisplayName =    "C Grade"),
+   B         UMETA (DisplayName =    "B Grade"),
+   BB        UMETA (DisplayName =   "BB Grade"),
+   A         UMETA (DisplayName =    "A Grade"),
+   AA        UMETA (DisplayName =   "AA Grade"),
+   AAA       UMETA (DisplayName =  "AAA Grade"),
+   S         UMETA (DisplayName =    "S Grade"),
+   SS        UMETA (DisplayName =   "SS Grade"),
+   SSS       UMETA (DisplayName =  "SSS Grade"),
+   SSSS      UMETA (DisplayName = "SSSS Grade"),
 
-   MAINQUEST UMETA(DisplayName = "Main Quest Item"),
-   QUEST     UMETA(DisplayName = "Quest Item"),
+   MAINQUEST UMETA (DisplayName = "Main Quest Item"),
+   QUEST     UMETA (DisplayName =      "Quest Item"),
 
-   None      UMETA(DisplayName = "Please set it")
+   None      UMETA (DisplayName = "Please set it")
 };
 
 // Minimal data contained in row
@@ -43,9 +76,11 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
 
-   static bool FromJSON (const FString             &src, FRItemData &dst);
-   static bool FromRow  (const FDataTableRowHandle &src, FRItemData &dst);
-   static bool ToJSON   (const FRItemData          &src, FString    &dst);
+   friend class  URInventoryComponent;
+   friend struct FRItemDataHandle;
+
+   static bool FromJSON (const FString    &src, FRItemData &dst);
+   static bool ToJSON   (const FRItemData &src, FString    &dst);
 
    // --- Base data every item should have
 
@@ -55,11 +90,11 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    // Item Name
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Name = FString ("Undefined item name");
+      FString Name = FString ("Please set item name");
 
    // Tooltip or Press E to Use/Equip
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Tooltip = FString ("Undefined item tooltip");
+      FString Tooltip = FString ("Please set item tooltip");
 
    // Item Icon
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -79,16 +114,12 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
       float Weight = 1;
 
    // Selling price
+   // 0 -> Can't sell
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 Cost = 0;
-
-   // --- Interactable items
-
-   // Use interface callback
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TSubclassOf<URItemAction> Action;
+      int32 Price = 0;
 
    // --- Pickup
+   //    If both are empty, item can not be dropped.
 
    // Pickup mesh
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -100,15 +131,34 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
 protected:
 
-
-
    // For subclass runtime data serialization
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      FString RuntimeData;
+   // UPROPERTY()
+   //    FDataTableRowHandle Arch;
+
+   // This data will be serialized. Subclasses must write data into here
+   UPROPERTY()
+      FString JsonData;
 };
 
+// --- Item with use action
 USTRUCT(BlueprintType)
-struct RINVENTORYLIB_API FREquipmentData : public FRItemData
+struct RINVENTORYLIB_API FRActionItemData : public FRItemData
+{
+   GENERATED_BODY()
+
+   static bool FromJSON (const FString &src, FRActionItemData &dst);
+
+   // Use interface callback
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      TSubclassOf<URItemAction> Action;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      bool DestroyOnAction = false;
+};
+
+// --- Move to RCharacter?
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
 
@@ -119,27 +169,13 @@ struct RINVENTORYLIB_API FREquipmentData : public FRItemData
    // --- Defence and attack stats
 };
 
+// Move to RCharacter
 USTRUCT(BlueprintType)
-struct RINVENTORYLIB_API FRDefaultItem
-{
-   GENERATED_BODY()
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType=RItemData))
-      FDataTableRowHandle Arch;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-      int32 Count = 1;
-};
-
-USTRUCT(BlueprintType)
-struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
+struct RINVENTORYLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType=RItemData))
-      FDataTableRowHandle CreateItem;
+   // Duration effect
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TArray<FRDefaultItem> RequiredItems;
 };
-
 

@@ -84,12 +84,11 @@ void URInventoryComponent::OnRep_Items ()
    OnInventoryUpdated.Broadcast ();
 }
 
-bool URInventoryComponent::HasItem (const FRDefaultItem &CheckItem) const
+bool URInventoryComponent::HasItem (const FRItemDataHandle &CheckItem) const
 {
    // --- Create required item info
    FRItemData requireItem;
-   if (!FRItemData::FromRow (CheckItem.Arch, requireItem)) return false;
-   requireItem.Count = CheckItem.Count;
+   if (!CheckItem.ToItem (requireItem)) return false;
 
    // --- Iterate over inventory items
    for (const FRItemData &itItem : Items) {
@@ -101,14 +100,13 @@ bool URInventoryComponent::HasItem (const FRDefaultItem &CheckItem) const
    return (requireItem.Count <= 0);
 }
 
-bool URInventoryComponent::HasItems (const TArray<FRDefaultItem> &CheckItems) const
+bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems) const
 {
    // --- Create list of required item infos
    TArray<FRItemData> requiredItems;
-   for (const FRDefaultItem &itItem : CheckItems) {
+   for (const FRItemDataHandle &itItem : CheckItems) {
       FRItemData requireItem;
-      if (!FRItemData::FromRow (itItem.Arch, requireItem)) return false;
-      requireItem.Count = itItem.Count;
+      if (!itItem.ToItem (requireItem)) return false;
       requiredItems.Add (requireItem);
    }
 
@@ -132,16 +130,14 @@ bool URInventoryComponent::HasItems (const TArray<FRDefaultItem> &CheckItems) co
 }
 
 
-bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
+bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
       return false;
    }
-
    FRItemData newItem;
-   if (!FRItemData::FromRow (ItemData.Arch, newItem)) return false;
-   newItem.Count = ItemData.Count;
+   if (!ItemHandle.ToItem (newItem)) return false;
    return AddItem (newItem);
 }
 
@@ -362,11 +358,13 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
       return nullptr;
    }
 
-   FRItemData ItemData = Items[ItemIdx];
+   FRActionItemData ItemData;
+   if (!FRActionItemData::FromJSON (Items[ItemIdx].JsonData, ItemData)) {
+      return false;
+   }
 
    // valid archetype
    if (!ItemData.Action) return false;
-
 
    URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
 
@@ -375,7 +373,8 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
    BP_Used (ItemIdx);
 
    // Consumable
-   return RemoveItem (ItemIdx, 1);
+   if (ItemData.DestroyOnAction) return RemoveItem (ItemIdx, 1);
+   return true;
 }
 
 void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent *SrcInventory,
@@ -514,29 +513,29 @@ void URInventoryComponent::OnSave ()
       R_LOG ("Client has no authority to perform this action.");
    }
 
-   // --- Save player Inventory
+   // // --- Save player Inventory
 
-   // Convert ItemData to array to JSON strings
-   TArray<FString> ItemData;
-   for (const FRItemData &item : Items) {
-      FString res;
-      if (FRItemData::ToJSON (item, res)) {
-         ItemData.Add (res);
-      } else {
-         R_LOG_PRINTF ("Failed to save %s", *item.Name);
-      }
-   }
+   // // Convert ItemData to array to JSON strings
+   // TArray<FString> ItemData;
+   // for (const FRItemData &item : Items) {
+   //    FString res;
+   //    if (FRItemData::ToJSON (item, res)) {
+   //       ItemData.Add (res);
+   //    } else {
+   //       R_LOG_PRINTF ("Failed to save %s", *item.Name);
+   //    }
+   // }
 
-   // Convert array into buffer
-   FBufferArchive ToBinary;
-   ToBinary << ItemData;
+   // // Convert array into buffer
+   // FBufferArchive ToBinary;
+   // ToBinary << ItemData;
 
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   // FString InventoryUniqueId = GetOwner ()->GetName ();
 
-   // Set binary data to save file
-   if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
-      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *InventoryUniqueId);
-   }
+   // // Set binary data to save file
+   // if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
+   //    R_LOG_PRINTF ("Failed to save [%s] Inventory.", *InventoryUniqueId);
+   // }
 }
 
 void URInventoryComponent::OnLoad ()
@@ -546,35 +545,35 @@ void URInventoryComponent::OnLoad ()
    }
    // --- Load player Inventory
 
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   // FString InventoryUniqueId = GetOwner ()->GetName ();
 
-   // Get binary data from save file
-   TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *InventoryUniqueId);
-      return;
-   }
+   // // Get binary data from save file
+   // TArray<uint8> BinaryArray;
+   // if (!URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray)) {
+   //    R_LOG_PRINTF ("Failed to load [%s] Inventory.", *InventoryUniqueId);
+   //    return;
+   // }
 
-   // Convert Binary to array of JSON strings
-   TArray<FString> ItemsData;
-   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   FromBinary.Seek(0);
-   FromBinary << ItemsData;
+   // // Convert Binary to array of JSON strings
+   // TArray<FString> ItemsData;
+   // FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
+   // FromBinary.Seek(0);
+   // FromBinary << ItemsData;
 
-   // Convert JSON strings to ItemData
-   TArray<FRItemData> loadedItems;
-   for (const FString &ItemData : ItemsData) {
-      FRItemData Item;
-      if (FRItemData::FromJSON (ItemData, Item)) {
-         loadedItems.Add (Item);
-      } else {
-         R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemData);
-      }
-   }
+   // // Convert JSON strings to ItemData
+   // TArray<FRItemData> loadedItems;
+   // for (const FString &ItemData : ItemsData) {
+   //    FRItemData Item;
+   //    if (FRItemData::FromJSON (ItemData, Item)) {
+   //       loadedItems.Add (Item);
+   //    } else {
+   //       R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemData);
+   //    }
+   // }
 
-   // Update inventory
-   Items = loadedItems;
-   OnInventoryUpdated.Broadcast ();
+   // // Update inventory
+   // Items = loadedItems;
+   // OnInventoryUpdated.Broadcast ();
 }
 
 

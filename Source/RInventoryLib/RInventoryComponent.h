@@ -9,7 +9,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 
 class ARItemPickup;
-class URInventoryComponent;
 
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType)
@@ -68,7 +67,7 @@ public:
 
    // Item to be added upon game start
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
-      TArray<FRDefaultItem> DefaultItems;
+      TArray<FRItemDataHandle> DefaultItems;
 
    // Delegate when Item list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
@@ -83,10 +82,10 @@ public:
    // --- Check if Inventory contains.
    //     Convenience functions
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool HasItem (const FRDefaultItem &CheckItem) const;
+      bool HasItem (const FRItemDataHandle &CheckItem) const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool HasItems (const TArray<FRDefaultItem> &CheckItems) const;
+      bool HasItems (const TArray<FRItemDataHandle> &CheckItems) const;
 
    //=============================================================================
    //                 Add/Remove to/from Inventory
@@ -94,7 +93,7 @@ public:
 
    // --- Add Default item
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      bool AddItem_Arch (const FRDefaultItem &Item);
+      bool AddItem_Arch (const FRItemDataHandle &Item);
 
    // --- Add Item struct
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")

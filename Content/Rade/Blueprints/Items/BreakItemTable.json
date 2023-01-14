@@ -1,28 +1,11 @@
 [
 	{
-		"Name": "Pistol",
+		"Name": "NewRow",
 		"CreateItem":
 		{
-			"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-			"RowName": "Pistol"
+			"DataTable": "None",
+			"RowName": "None"
 		},
-		"RequiredItems": [
-			{
-				"Arch":
-				{
-					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-					"RowName": "Rock"
-				},
-				"Count": 2
-			},
-			{
-				"Arch":
-				{
-					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-					"RowName": "Stick"
-				},
-				"Count": 1
-			}
-		]
+		"RequiredItems": []
 	}
 ]
