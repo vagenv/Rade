@@ -12,11 +12,6 @@
 		"Price": 20,
 		"PickupMesh": "None",
 		"Pickup": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C'",
-		"Arch":
-		{
-			"DataTable": "None",
-			"RowName": "None"
-		},
 		"JsonData": ""
 	}
 ]

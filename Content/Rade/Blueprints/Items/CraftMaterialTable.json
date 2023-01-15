@@ -10,7 +10,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Wood",
@@ -23,7 +23,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "AnimalHide",
@@ -36,7 +36,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Leather",
@@ -49,7 +49,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Bone",
@@ -62,7 +62,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "RawIron",
@@ -75,7 +75,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "IronIngot",
@@ -88,7 +88,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "SteelIngot",
@@ -101,7 +101,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "RawCopper",
@@ -114,7 +114,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "CopperIngot",
@@ -127,7 +127,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "RawSilver",
@@ -140,7 +140,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "SilverIngot",
@@ -153,7 +153,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "RawGold",
@@ -166,7 +166,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "GoldIngot",
@@ -179,7 +179,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "ManaStone_Small",
@@ -192,7 +192,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "ManaStone_Medium",
@@ -205,7 +205,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "ManaStone_Big",
@@ -218,7 +218,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Sand",
@@ -231,7 +231,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Glass",
@@ -244,6 +244,6 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	}
 ]

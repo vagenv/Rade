@@ -13,7 +13,7 @@
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Sword",
@@ -29,7 +29,7 @@
 		"Price": 20,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Pistol",
@@ -45,7 +45,7 @@
 		"Price": 30,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "WoodenShield",
@@ -61,6 +61,6 @@
 		"Price": 10,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	}
 ]

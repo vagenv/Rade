@@ -10,7 +10,7 @@
 		"Price": 10,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "MusicNotes",
@@ -23,7 +23,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "HeavyRocks",
@@ -36,7 +36,7 @@
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Gold",
@@ -49,6 +49,6 @@
 		"Price": 1,
 		"PickupMesh": "/Script/Engine.StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	}
 ]

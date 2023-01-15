@@ -17,7 +17,10 @@ class  UStaticMesh;
 struct FRItemDataHandle;
 struct FRItemData;
 
-// --- Handle for ItemData defined in a table
+// ============================================================================
+//          Handle for ItemData defined in a table
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRItemDataHandle
 {
@@ -33,7 +36,10 @@ struct RINVENTORYLIB_API FRItemDataHandle
    bool ToItem (FRItemData &dst) const;
 };
 
-// --- Recipe
+// ============================================================================
+//          Item Recipe. Mapping Item <=> Array Of Items
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
 {
@@ -46,9 +52,12 @@ struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
       TArray<FRItemDataHandle> RequiredItems;
 };
 
-// Rarity of item
+// ============================================================================
+//          Rarity of Item
+// ============================================================================
+
 UENUM(BlueprintType)
-enum class FRItemRarity : uint8
+enum class ERItemRarity : uint8
 {
    F         UMETA (DisplayName =    "F Grade"),
    E         UMETA (DisplayName =    "E Grade"),
@@ -70,23 +79,19 @@ enum class FRItemRarity : uint8
    None      UMETA (DisplayName = "Please set it")
 };
 
-// Minimal data contained in row
+// ============================================================================
+//          Minimal data contained in row
+// ============================================================================
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
 
-   friend class  URInventoryComponent;
-   friend struct FRItemDataHandle;
-
-   static bool FromJSON (const FString    &src, FRItemData &dst);
-   static bool ToJSON   (const FRItemData &src, FString    &dst);
-
    // --- Base data every item should have
 
    // Rarity
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRItemRarity Rarity = FRItemRarity::None;
+      ERItemRarity Rarity = ERItemRarity::None;
 
    // Item Name
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -105,9 +110,9 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
       int32 Count = 1;
 
    // Max number of item instances per item slot
-   // MaxCount > 1 => Stackable
+   // Stackable: MaxCount > 1
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 MaxCount = 1;
+      int32 MaxCount = 100;
 
    // Item Weight of each instance
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 0.0))
@@ -129,6 +134,24 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSubclassOf<ARItemPickup> Pickup;
 
+
+   // --- Internal Runtime information
+
+   // Refreshes member variables from internal JsonData
+
+   // Parse JsonData and update current class variables
+   virtual bool ReadJSON ();
+
+   // Constructs JSON string of current structt and assigns it to JsonData
+   // DANGEROUS!!! Only call it on correct subclass version.
+   virtual bool WriteJSON ();
+
+   // Get a copy of internal value
+   FString GetJSON () const              { return JsonData; };
+
+   // Sets the internal value
+   void    SetJSON (const FString &data) { JsonData = data; };
+
 protected:
 
    // For subclass runtime data serialization
@@ -140,13 +163,14 @@ protected:
       FString JsonData;
 };
 
-// --- Item with use action
+// ============================================================================
+//          Item with use action
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 {
    GENERATED_BODY()
-
-   static bool FromJSON (const FString &src, FRActionItemData &dst);
 
    // Use interface callback
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -154,9 +178,32 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       bool DestroyOnAction = false;
+
+   static bool Cast (const FRItemData &src, FRActionItemData &dst);
 };
 
-// --- Move to RCharacter?
+// ============================================================================
+//          Move to RCharacter ?
+// ============================================================================
+
+
+USTRUCT(BlueprintType)
+struct RINVENTORYLIB_API FRConsumableItemData : public FRActionItemData
+{
+   GENERATED_BODY()
+
+   // 0 = Single instance effect
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float DurationSec = 0;
+
+   // ----
+   // List of applied effects.
+   // ----
+
+   static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
+};
+
+
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FREquipmentData : public FRActionItemData
 {
@@ -166,16 +213,52 @@ struct RINVENTORYLIB_API FREquipmentData : public FRActionItemData
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString AttachSocket;
 
-   // --- Defence and attack stats
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float CurrentDurability = 100;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float MaxDurability = 100;
+
+   // ----
+   // List of applied stats
+   // List of applied abilities
+   // ----
+
+   static bool Cast (const FRItemData &src, FREquipmentData &dst);
 };
 
-// Move to RCharacter
-USTRUCT(BlueprintType)
-struct RINVENTORYLIB_API FRConsumableItemData : public FRActionItemData
+
+// ============================================================================
+//          Blueprint Library
+// ============================================================================
+
+UENUM(BlueprintType)
+enum class ERActionResult : uint8
+{
+   Success UMETA (DisplayName = "Success"),
+   Failure UMETA (DisplayName = "Failure")
+};
+
+UCLASS()
+class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
+public:
 
-   // Duration effect
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
+      static void ItemHandle_To_Item (const FRItemDataHandle &src, FRItemData &ItemData,
+                                      ERActionResult &Branches);
 
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
+      static void Item_To_ActionItem (const FRItemData &src, FRActionItemData &ItemData,
+                                      ERActionResult &Branches);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
+      static void Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &ItemData,
+                                          ERActionResult &Branches);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
+      static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
+                                         ERActionResult &Branches);
 };
 
