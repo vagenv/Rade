@@ -11,10 +11,8 @@ Roll + Sprint
 Attack / Alt Attack
 
 ===========================
-   Reset
+   UI
 ===========================
-
-=== UI
 
 Options
 - Redesign Inventory Item widget
@@ -31,41 +29,20 @@ Status
 - Character stats
 - Info? Health
 
-=== Inventory
-ItemData
--Rarity
--Name
--Tooltip
--Icon
--Count
--MaxCount
--Weight
--Cost
--PickupMesh
--Pickup
+===========================
+   Other
+===========================
 
-CraftItem : ItemData
-- List<Item>
-
-ActionItem : ItemData
-- TSubclass<Action>
-
-ConsumableItem : ActionItem
-- Duration
-- ItemData.Action will apply the effect and manage video/audio effects
-
-===  Should be moved to subclass of RInventory?
-
-EquipmentItem : ActionData
-- AttachSocket
-
-WeaponItem : EquipmentItem
-- CurrenAmmo
-- MaxAmmo
-- MagSize
+Chat
+- Update Widget
+- Independent component like USaveMgr?
+- A new module?
+- Audio messages?
 
 
-=== Other
+===========================
+   Inventory
+===========================
 
 Store to exchange
 - Widget
@@ -78,63 +55,25 @@ Crafting
 - Datatable: Which item crafting available
 - Local/Store crafting
 
-Chat
-- Update Widget
-- Independent component like USaveMgr?
-- A new module?
-- Audio messages?
 
-Equipment Manager
+===========================
+   Character
+===========================
+
+Equipment Manager. Subclass of Inventory?
 - Widget next to item?
 - Extends InventoryComponent?
 - Slots.
 
-Status components
-- Add widget
+StatusManager Component.
+- UI
 - Health
-- Stats
-- Temporary Auras/Effects
-- Skills
-- Resistance against damage type
-
-Equipment effects:
-- Affects Status component
-- Item quality affects strength of effects
-- Random effects?
-
-Session
-- Deep dive / Analysis / Simplification
-- Persistent session widget
-- Real time data. (Latency, Player count)
-- Return to main screen
-- Persistent data between sessions
-
-Animation
-- Look around
-- Run/Sprint
-- Ragdoll death
-- Melee fight
-- Network
-- Partial body blend
-- IK to weapon attach socket
-
-AI
-- pathfinding
-- patrol
-- Melee and ranged
-- React if attacked
-
-Database
-- Local Mysql?
-
-External Network API
-- For optional data.
-- Authenticate
-- Get User info
-- Stream picture/content on demand
-
-VCPP
-- Link against and build with CMAKE
+- Energy
+- List of Stats (Base)
+- List of Resistance against damage type
+- List of Abilities
+- List of Auras/Effects
+- List of Skills
 
 Equipment
 - Head
@@ -151,13 +90,79 @@ Weapons (with damage type)
 - Shield
 - Attack combo?
 
+Equipment effects:
+- Affects Status component
+- Item quality affects strength of effects
+- Random effects?
+
 Damage based on:
 - What component hit
 - Armor for that component
 - Current stats and rotection
 - Resistance
 
-Sound
+
+=== Should be moved to subclass of RCharacter
+
+ConsumableItem : ActionItem
+- Duration
+- ItemData.Action will apply the effect and manage video/audio effects
+- Effect?
+
+EquipmentItem : ActionData
+- AttachSocket
+
+WeaponItem : EquipmentItem
+- CurrenAmmo
+- MaxAmmo
+- MagSize
+
+
+
+===========================
+   Network
+===========================
+
+Select spawn point
+See status. Smooth start
+
+Session
+- Deep dive / Analysis / Simplification
+- Persistent session widget
+- Real time data. (Latency, Player count)
+- Return to main screen
+- Persistent data between sessions
+
+
+===========================
+   Animation
+===========================
+
+Animation Blueprint
+
+Blend animation. Upper + Lower body
+
+- Look around
+- Run/Sprint
+- Ragdoll death
+- Melee fight
+- Network
+- Partial body blend
+- IK to weapon attach socket
+
+===========================
+   AI
+===========================
+
+- pathfinding
+- patrol
+- Melee and ranged
+- React if attacked
+
+===========================
+   Sound
+===========================
+
 - Jump / Land
 - Running
 - Weapon Attack / Reloading
@@ -165,10 +170,31 @@ Sound
 - Explosion
 - Environment
 
-VFX
+===========================
+   VFX
+===========================
+
 - Blood
 - Explosion
 - Smoke
+- GPU particles
+- Niagara
+
+===========================
+   Other
+===========================
+
+Database
+- Local Mysql?
+
+External Network API
+- For optional data.
+- Authenticate
+- Get User info
+- Stream picture/content on demand
+
+VCPP
+- Link against and build with CMAKE
 
 Epic network services
 - Register to API
