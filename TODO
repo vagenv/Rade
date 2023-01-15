@@ -2,43 +2,37 @@
    Game Design
 ===========================
 
-3rd/1st Person Shooter/Slasher
+Style:
+- 3rd/1st Person Shooter/Slasher
 
-Jump
+Movement:
+- Jump
+- Roll + Sprint
 
-Roll + Sprint
+Attack types
+- Melee / Ranged
+- Guns
+- Spells. Instant + Casting
+- Environment
+- Turrents / Towers
+- Ally NPCs
 
-Attack / Alt Attack
+Battles
+- Many enemies
+- Spawn in waves
+- Defend checkpoint
+- Buy upgrades
+- Change terrain?
+- Hire more NPCs and upgrade them.
+
 
 ===========================
    UI
 ===========================
 
-Options
-- Redesign Inventory Item widget
-- Player Status Widget
 - Audio channels
 - Persistent Audio Settings
 - Input
-Inventory
-- Tabs [All][Equipment][Consumables][Craft][Quest][...]
-- Rarity color
-Status
-- Inventory
-- Equipment slots
-- Character stats
-- Info? Health
-
-===========================
-   Other
-===========================
-
-Chat
-- Update Widget
-- Independent component like USaveMgr?
-- A new module?
-- Audio messages?
-
 
 ===========================
    Inventory
@@ -55,10 +49,16 @@ Crafting
 - Datatable: Which item crafting available
 - Local/Store crafting
 
+Inventory
+- Tabs [All][Equipment][Consumables][Craft][Quest][...]
+- Rarity color
+- Sorting?
 
 ===========================
    Character
 ===========================
+
+Player Status Widget
 
 Equipment Manager. Subclass of Inventory?
 - Widget next to item?
@@ -117,8 +117,6 @@ WeaponItem : EquipmentItem
 - MaxAmmo
 - MagSize
 
-
-
 ===========================
    Network
 ===========================
@@ -133,6 +131,15 @@ Session
 - Return to main screen
 - Persistent data between sessions
 
+===========================
+   Chat
+===========================
+
+Chat
+- Update Widget
+- Independent component like USaveMgr?
+- A new module?
+- Audio messages?
 
 ===========================
    Animation
