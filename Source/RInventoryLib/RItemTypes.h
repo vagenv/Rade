@@ -179,6 +179,10 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       bool DestroyOnAction = false;
 
+
+   virtual bool ReadJSON  () override;
+   virtual bool WriteJSON () override;
+
    static bool Cast (const FRItemData &src, FRActionItemData &dst);
 };
 

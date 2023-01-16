@@ -5,7 +5,6 @@
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
-
 // ============================================================================
 //                      FRItemDataHandle
 // ============================================================================
@@ -85,7 +84,6 @@ bool FRItemData::WriteJSON ()
 //    return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0);
 // }
 
-
 // bool FRItemData::FromJSON (const FString &src, FRItemData &dst)
 // {
 //    return FJsonObjectConverter::JsonObjectStringToUStruct (src, &dst, 0, 0);
@@ -100,10 +98,34 @@ bool FRItemData::WriteJSON ()
 //                      FRActionItemData
 // ============================================================================
 
-// bool FRActionItemData::FromJSON (const FString &src, FRActionItemData &dst)
-// {
-//    return FJsonObjectConverter::JsonObjectStringToUStruct (src, &dst, 0, 0);
-// }
+bool FRActionItemData::ReadJSON ()
+{
+   // Destination of data to be read
+   FRActionItemData dst;
+   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0)) return false;
+
+   // Create reference for direct assignment
+   FRActionItemData &obj = *this;
+
+   // Create a backup of JsonData. It will be overwritten by assignment.
+   FString JsonDataBackup = JsonData;
+
+   // Should assign all the member variables
+   obj = dst;
+
+   // Restore backup
+   obj.JsonData = JsonDataBackup;
+   return true;
+}
+
+bool FRActionItemData::WriteJSON ()
+{
+   FString dst;
+   JsonData = "";
+   if (!FJsonObjectConverter::UStructToJsonObjectString<FRActionItemData> (*this, dst)) return false;
+   JsonData = dst;
+   return true;
+}
 
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
