@@ -179,7 +179,6 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       bool DestroyOnAction = false;
 
-
    virtual bool ReadJSON  () override;
    virtual bool WriteJSON () override;
 
@@ -189,7 +188,6 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 // ============================================================================
 //          Move to RCharacter ?
 // ============================================================================
-
 
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRConsumableItemData : public FRActionItemData
