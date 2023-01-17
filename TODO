@@ -38,21 +38,33 @@ Battles
    Inventory
 ===========================
 
-Store to exchange
-- Widget
-- Data taken from "Price". Item <-> Gold. Sell/Buy difference?
-- Store item list from DataTable or Store Blueprint object
+Box UI?
+- With PopupMenu for details
 
-Crafting
-- Widget. With list of requirement next to it. Number: Required/Current
-- Datatable: Item <-> List<Item>
-- Datatable: Which item crafting available
-- Local/Store crafting
-
-Inventory
-- Tabs [All][Equipment][Consumables][Craft][Quest][...]
+Item UI
+- Small (Single line for fast scrolling)
+- Medium (With Icon + Rarity border color)
+- Large  (With tooltip)
 - Rarity color
 - Sorting?
+- Tabs [All][Equipment][Consumables][Craft][Quest][...]
+
+
+Player overlap. Press buton to open/close store/craft
+
+Store
+- Large Item UI?
+- Items limited/unlimited?
+- Sold Item List? Re-buy?
+- Sell/Buy percent overhead?
+- UDataTable for ItemList or FRItemDataHandle?
+
+
+Craft
+- A static location or in game menu?
+- Horizontal Scrolling?
+- Under Item, vertical list of Items required. Required / Current Amount
+
 
 ===========================
    Character
