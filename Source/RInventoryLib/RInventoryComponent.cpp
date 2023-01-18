@@ -129,6 +129,24 @@ bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems)
    return requiredItems.Num () == 0;
 }
 
+int URInventoryComponent::GetCountItem (const FRItemData &CheckItem) const
+{
+   return GetCountItem_Name (CheckItem.Name);
+}
+int URInventoryComponent::GetCountItem_Name (const FString &CheckItemName) const
+{
+   int Count = 0;
+   // --- Find same kind of item
+   for (const FRItemData &ItItem : Items) {
+      // Not same item type
+      if (ItItem.Name != CheckItemName) continue;
+      Count += ItItem.Count;
+   }
+
+   return Count;
+}
+
+
 
 bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 {

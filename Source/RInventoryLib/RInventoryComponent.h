@@ -77,15 +77,19 @@ public:
    //                 Check if contains
    //=============================================================================
 
-
-
    // --- Check if Inventory contains.
    //     Convenience functions
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       bool HasItem (const FRItemDataHandle &CheckItem) const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       bool HasItems (const TArray<FRItemDataHandle> &CheckItems) const;
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      int GetCountItem (const FRItemData &CheckItem) const;
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      int GetCountItem_Name (const FString &CheckItemname) const;
 
    //=============================================================================
    //                 Add/Remove to/from Inventory
