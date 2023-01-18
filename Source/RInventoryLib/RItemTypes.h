@@ -80,7 +80,7 @@ enum class ERItemRarity : uint8
 };
 
 // ============================================================================
-//          Minimal data contained in row
+//          Minimal data for Item Descrption
 // ============================================================================
 USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRItemData : public FTableRowBase

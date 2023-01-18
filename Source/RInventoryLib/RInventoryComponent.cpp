@@ -88,21 +88,25 @@ void URInventoryComponent::OnRep_Items ()
 //                 Check if contains
 //=============================================================================
 
-bool URInventoryComponent::HasItem (const FRItemDataHandle &CheckItem) const
+bool URInventoryComponent::HasItem_Arch (const FRItemDataHandle &CheckItem) const
 {
    // --- Create required item info
    FRItemData requireItem;
    if (!CheckItem.ToItem (requireItem)) return false;
+   return HasItem_Data (requireItem);
+}
 
+bool URInventoryComponent::HasItem_Data (FRItemData requireItem) const
+{
    // --- Iterate over inventory items
    for (const FRItemData &itItem : Items) {
       if (itItem.Name != requireItem.Name) continue;
       requireItem.Count -= itItem.Count;
       if (requireItem.Count <= 0) break;
    }
-
    return (requireItem.Count <= 0);
 }
+
 
 bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems) const
 {
@@ -165,14 +169,14 @@ bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
    return AddItem (newItem);
 }
 
-void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *DstInventory,
+void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                           FRItemData NewItem) const
 {
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
       return;
    }
-   DstInventory->AddItem (NewItem);
+   SrcInventory->AddItem (NewItem);
 }
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
@@ -243,19 +247,19 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 }
 
 //=============================================================================
-//                 Remove item
+//                 Remove Item index
 //=============================================================================
 
-void URInventoryComponent::RemoveItem_Server_Implementation (URInventoryComponent *DstInventory,
-                                                             int32 ItemIdx, int32 Count) const
+void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                                   int32 ItemIdx, int32 Count) const
 {
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
       return;
    }
-   DstInventory->RemoveItem (ItemIdx, Count);
+   SrcInventory->RemoveItem_Index (ItemIdx, Count);
 }
-bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
+bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
@@ -273,9 +277,72 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
       Items.RemoveAt (ItemIdx);
    }
 
+   CalcWeight ();
    OnInventoryUpdated.Broadcast ();
    return true;
 }
+
+//=============================================================================
+//                 Remove Item Arch
+//=============================================================================
+
+void URInventoryComponent::RemoveItem_Arch_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                                  const FRItemDataHandle &RmItemHandle) const
+{
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
+      return;
+   }
+   SrcInventory->RemoveItem_Arch (RmItemHandle);
+}
+bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle)
+{
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return false;
+   }
+   FRItemData RmItemData;
+   if (!RmItemHandle.ToItem (RmItemData)) return false;
+   return RemoveItem_Data (RmItemData);
+}
+
+//=============================================================================
+//                 Remove Item Data
+//=============================================================================
+
+void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                                  FRItemData RmItemData) const
+{
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
+      return;
+   }
+   SrcInventory->RemoveItem_Data (RmItemData);
+}
+
+bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
+{
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return false;
+   }
+   // Last check that user has required item
+   if (!HasItem_Data (RmItemData)) return false;
+
+   // Remove until finished
+   while (RmItemData.Count > 0) {
+      for (int i = 0; i < Items.Num (); i++) {
+         if (Items[i].Name != RmItemData.Name) continue;
+
+         int Count = FMath::Min (Items[i].Count, RmItemData.Count);
+         if (!RemoveItem_Index (i, Count)) return false;
+         RmItemData.Count -= Count;
+      }
+   }
+
+   return (RmItemData.Count == 0);
+}
+
 
 //=============================================================================
 //                 Transfer
@@ -349,7 +416,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
    if (!DstInventory->AddItem (ItemData)) return false;
 
    // Cleanup
-   return RemoveItem (SrcItemIdx, SrcItemCount);
+   return RemoveItem_Index (SrcItemIdx, SrcItemCount);
 }
 
 void URInventoryComponent::CalcWeight ()
@@ -405,7 +472,7 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
    BP_Used (ItemIdx);
 
    // Consumable
-   if (ItemData.DestroyOnAction) return RemoveItem (ItemIdx, 1);
+   if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
    return true;
 }
 
@@ -442,7 +509,7 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
    ItemData.Count = Count;
 
    // Error will be logged.
-   if (!RemoveItem (ItemIdx, Count)) return nullptr;
+   if (!RemoveItem_Index (ItemIdx, Count)) return nullptr;
 
    AActor *Player = GetOwner ();
 

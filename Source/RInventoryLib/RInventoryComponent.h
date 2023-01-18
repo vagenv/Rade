@@ -79,11 +79,19 @@ public:
 
    // --- Check if Inventory contains.
    //     Convenience functions
+
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      bool HasItem (const FRItemDataHandle &CheckItem) const;
+      bool HasItem_Arch (const FRItemDataHandle &CheckItem) const;
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      bool HasItem_Data (FRItemData CheckItem) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       bool HasItems (const TArray<FRItemDataHandle> &CheckItems) const;
+
+   //==========================================================================
+   //                 Get item count
+   //==========================================================================
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       int GetCountItem (const FRItemData &CheckItem) const;
@@ -114,12 +122,31 @@ public:
 
    // --- Remove item index
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void RemoveItem_Server                (URInventoryComponent *DstInventory,
-                                             int32 ItemIdx, int32 Count = 1) const;
-      void RemoveItem_Server_Implementation (URInventoryComponent *DstInventory,
-                                             int32 ItemIdx, int32 Count = 1) const;
+      void RemoveItem_Index_Server                (URInventoryComponent *SrcInventory,
+                                                   int32 ItemIdx, int32 Count = 1) const;
+      void RemoveItem_Index_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                   int32 ItemIdx, int32 Count = 1) const;
    UFUNCTION(                 BlueprintCallable, Category = "Rade|Inventory")
-      bool RemoveItem                       (int32 ItemIdx, int32 Count = 1);
+      bool RemoveItem_Index                       (int32 ItemIdx, int32 Count = 1);
+
+   // --- Remove item arch
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void RemoveItem_Arch_Server                (URInventoryComponent *SrcInventory,
+                                                  const FRItemDataHandle &ItemHandle) const;
+      void RemoveItem_Arch_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                  const FRItemDataHandle &ItemHandle) const;
+   UFUNCTION(                 BlueprintCallable, Category = "Rade|Inventory")
+      bool RemoveItem_Arch                       (const FRItemDataHandle &ItemHandle);
+
+
+   // --- Remove item arch
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void RemoveItem_Data_Server                (URInventoryComponent *SrcInventory,
+                                                  FRItemData ItemData) const;
+      void RemoveItem_Data_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                  FRItemData ItemData) const;
+   UFUNCTION(                 BlueprintCallable, Category = "Rade|Inventory")
+      bool RemoveItem_Data                       (FRItemData ItemData);
 
    //==========================================================================
    //                 Transfer between Inventories
