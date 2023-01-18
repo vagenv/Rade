@@ -28,9 +28,9 @@ private:
       bool bIsServer = false;
 public:
 
-   //=============================================================================
+      //==========================================================================
    //                 Inventory info
-   //=============================================================================
+      //==========================================================================
 
    // Maximum number
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
@@ -44,9 +44,9 @@ public:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightMax = 25;
 
-   //=============================================================================
+      //==========================================================================
    //                 Item list
-   //=============================================================================
+      //==========================================================================
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       TArray<FRItemData> GetItems () const;
@@ -73,9 +73,9 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnInventoryUpdated;
 
-   //=============================================================================
+   //==========================================================================
    //                 Check if contains
-   //=============================================================================
+   //==========================================================================
 
    // --- Check if Inventory contains.
    //     Convenience functions
@@ -91,9 +91,9 @@ public:
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       int GetCountItem_Name (const FString &CheckItemname) const;
 
-   //=============================================================================
-   //                 Add/Remove to/from Inventory
-   //=============================================================================
+   //==========================================================================
+   //                 Add to Inventory
+   //==========================================================================
 
    // --- Add Default item
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
@@ -108,7 +108,11 @@ public:
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       bool AddItem                       (FRItemData ItemData);
 
-   // --- Remove item
+   //==========================================================================
+   //                 Remove from Inventory
+   //==========================================================================
+
+   // --- Remove item index
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void RemoveItem_Server                (URInventoryComponent *DstInventory,
                                              int32 ItemIdx, int32 Count = 1) const;
@@ -116,6 +120,10 @@ public:
                                              int32 ItemIdx, int32 Count = 1) const;
    UFUNCTION(                 BlueprintCallable, Category = "Rade|Inventory")
       bool RemoveItem                       (int32 ItemIdx, int32 Count = 1);
+
+   //==========================================================================
+   //                 Transfer between Inventories
+   //==========================================================================
 
    // --- Transfer everything
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
@@ -141,9 +149,9 @@ public:
                                                 int32 SrcItemIdx,
                                                 int32 SrcItemCount);
 
-   //=============================================================================
+   //==========================================================================
    //                 Item use / drop events
-   //=============================================================================
+   //==========================================================================
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void UseItem_Server                (URInventoryComponent *SrcInventory,
@@ -161,9 +169,9 @@ public:
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
       class ARItemPickup* DropItem        (int32 ItemIdx, int32 Count = 0);
 
-   //=============================================================================
+   //==========================================================================
    //                 Events
-   //=============================================================================
+   //==========================================================================
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
       void BP_Used (int32 ItemIdx);
@@ -171,9 +179,9 @@ public:
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
       void BP_Droped (int32 ItemIdx, ARItemPickup *Pickup);
 
-   //=============================================================================
+   //==========================================================================
    //                 Pickups
-   //=============================================================================
+   //==========================================================================
 
 protected:
    // List of currently available pickup
@@ -218,9 +226,9 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       float CheckClosestDelay = 0.5f;
 
-   //=============================================================================
+   //==========================================================================
    //                 Save / Load
-   //=============================================================================
+   //==========================================================================
 
 public:
    // Inventory Saved / Loaded between sessions.

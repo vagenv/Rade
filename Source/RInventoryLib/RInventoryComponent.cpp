@@ -84,6 +84,10 @@ void URInventoryComponent::OnRep_Items ()
    OnInventoryUpdated.Broadcast ();
 }
 
+//=============================================================================
+//                 Check if contains
+//=============================================================================
+
 bool URInventoryComponent::HasItem (const FRItemDataHandle &CheckItem) const
 {
    // --- Create required item info
@@ -146,7 +150,9 @@ int URInventoryComponent::GetCountItem_Name (const FString &CheckItemName) const
    return Count;
 }
 
-
+//=============================================================================
+//                 Add item
+//=============================================================================
 
 bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 {
@@ -236,6 +242,10 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    return true;
 }
 
+//=============================================================================
+//                 Remove item
+//=============================================================================
+
 void URInventoryComponent::RemoveItem_Server_Implementation (URInventoryComponent *DstInventory,
                                                              int32 ItemIdx, int32 Count) const
 {
@@ -266,6 +276,10 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
    OnInventoryUpdated.Broadcast ();
    return true;
 }
+
+//=============================================================================
+//                 Transfer
+//=============================================================================
 
 void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *SrcInventory,
                                                               URInventoryComponent *DstInventory) const
