@@ -42,23 +42,15 @@ Box UI?
 - With PopupMenu for details
 
 Item UI
-- Small (Single line for fast scrolling)
-- Medium (With Icon + Rarity border color)
-- Large  (With tooltip)
-- Rarity color
 - Sorting?
 - Tabs [All][Equipment][Consumables][Craft][Quest][...]
 
-
-Player overlap. Press buton to open/close store/craft
+Gold as separate inventory value?
 
 Store
-- Large Item UI?
-- Items limited/unlimited?
 - Sold Item List? Re-buy?
 - Sell/Buy percent overhead?
 - UDataTable for ItemList or FRItemDataHandle?
-
 
 Craft
 - A static location or in game menu?
@@ -202,6 +194,11 @@ Blend animation. Upper + Lower body
 ===========================
    Other
 ===========================
+
+Action Popup UI
+- Short Press/Long Press
+- With Animation
+- Button to action
 
 Database
 - Local Mysql?
