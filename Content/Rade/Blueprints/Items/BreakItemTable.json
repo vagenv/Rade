@@ -1,11 +1,24 @@
 [
 	{
-		"Name": "NewRow",
+		"Name": "Hat",
 		"CreateItem":
 		{
-			"DataTable": "None",
-			"RowName": "None"
+			"Arch":
+			{
+				"DataTable": "None",
+				"RowName": "None"
+			},
+			"Count": 1
 		},
-		"RequiredItems": []
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "Leather"
+				},
+				"Count": 2
+			}
+		]
 	}
 ]

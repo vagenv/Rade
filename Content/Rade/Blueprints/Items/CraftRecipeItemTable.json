@@ -3,8 +3,12 @@
 		"Name": "Pistol",
 		"CreateItem":
 		{
-			"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-			"RowName": "Pistol"
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/EquipmentTable.EquipmentTable'",
+				"RowName": "Pistol"
+			},
+			"Count": 1
 		},
 		"RequiredItems": [
 			{
@@ -30,6 +34,104 @@
 					"RowName": "Glass"
 				},
 				"Count": 1
+			}
+		]
+	},
+	{
+		"Name": "IronIngot",
+		"CreateItem":
+		{
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+				"RowName": "IronIngot"
+			},
+			"Count": 1
+		},
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "RawIron"
+				},
+				"Count": 5
+			},
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Gold"
+				},
+				"Count": 10
+			}
+		]
+	},
+	{
+		"Name": "SteelIngot",
+		"CreateItem":
+		{
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+				"RowName": "SteelIngot"
+			},
+			"Count": 1
+		},
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "RawIron"
+				},
+				"Count": 5
+			},
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Gold"
+				},
+				"Count": 10
+			},
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "Bone"
+				},
+				"Count": 2
+			}
+		]
+	},
+	{
+		"Name": "SilverIngot",
+		"CreateItem":
+		{
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+				"RowName": "SilverIngot"
+			},
+			"Count": 1
+		},
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "RawSilver"
+				},
+				"Count": 5
+			},
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Gold"
+				},
+				"Count": 10
 			}
 		]
 	}

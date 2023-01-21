@@ -46,7 +46,7 @@ struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
    GENERATED_BODY()
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
-      FDataTableRowHandle CreateItem;
+      FRItemDataHandle CreateItem;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TArray<FRItemDataHandle> RequiredItems;

@@ -2,6 +2,8 @@
 	{
 		"Name": "Hat",
 		"AttachSocket": "Head",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "C",
@@ -18,6 +20,8 @@
 	{
 		"Name": "Sword",
 		"AttachSocket": "Hand",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "E",
@@ -34,6 +38,8 @@
 	{
 		"Name": "Pistol",
 		"AttachSocket": "Hand",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "E",
@@ -50,6 +56,8 @@
 	{
 		"Name": "WoodenShield",
 		"AttachSocket": "Hand",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "D",

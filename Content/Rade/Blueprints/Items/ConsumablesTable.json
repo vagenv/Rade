@@ -5,7 +5,7 @@
 		"DestroyOnAction": true,
 		"Rarity": "E",
 		"Tooltip": "An item to heal user",
-		"Icon": "/Game/Rade/Sprites/Icons/heart-plus.heart-plus",
+		"Icon": "/Game/Rade/Sprites/Icons/alert-triangle.alert-triangle",
 		"Count": 1,
 		"MaxCount": 10,
 		"Weight": 0.1,
