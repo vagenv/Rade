@@ -34,11 +34,18 @@ Battles
 - Persistent Audio Settings
 - Input
 
+
 ===========================
    Inventory
 ===========================
 
-Box UI?
+Break Items into craft components
+
+===========================
+   Inventory (Nice to have)
+===========================
+
+Box UI
 - With PopupMenu for details
 
 Item UI
@@ -50,13 +57,9 @@ Gold as separate inventory value?
 Store
 - Sold Item List? Re-buy?
 - Sell/Buy percent overhead?
-- UDataTable for ItemList or FRItemDataHandle?
 
-Craft
-- A static location or in game menu?
-- Horizontal Scrolling?
-- Under Item, vertical list of Items required. Required / Current Amount
-
+Craft in game menu
+- Personal list of crafting
 
 ===========================
    Character
