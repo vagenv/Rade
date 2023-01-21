@@ -5,8 +5,8 @@
 		{
 			"Arch":
 			{
-				"DataTable": "None",
-				"RowName": "None"
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/EquipmentTable.EquipmentTable'",
+				"RowName": "Hat"
 			},
 			"Count": 1
 		},
@@ -18,6 +18,28 @@
 					"RowName": "Leather"
 				},
 				"Count": 2
+			}
+		]
+	},
+	{
+		"Name": "NewRow",
+		"CreateItem":
+		{
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+				"RowName": "HeavyRocks"
+			},
+			"Count": 1
+		},
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Rock"
+				},
+				"Count": 5
 			}
 		]
 	}
