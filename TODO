@@ -27,41 +27,6 @@ Battles
 
 
 ===========================
-   UI
-===========================
-
-- Audio channels
-- Persistent Audio Settings
-- Input
-
-
-===========================
-   Inventory
-===========================
-
-Break Items into craft components
-
-===========================
-   Inventory (Nice to have)
-===========================
-
-Box UI
-- With PopupMenu for details
-
-Item UI
-- Sorting?
-- Tabs [All][Equipment][Consumables][Craft][Quest][...]
-
-Gold as separate inventory value?
-
-Store
-- Sold Item List? Re-buy?
-- Sell/Buy percent overhead?
-
-Craft in game menu
-- Personal list of crafting
-
-===========================
    Character
 ===========================
 
@@ -193,6 +158,34 @@ Blend animation. Upper + Lower body
 - Smoke
 - GPU particles
 - Niagara
+
+===========================
+   UI (Nice to have)
+===========================
+
+- Audio channels
+- Persistent Audio Settings
+- Input
+
+===========================
+   Inventory (Nice to have)
+===========================
+
+Box UI
+- With PopupMenu for details
+
+Item UI
+- Sorting?
+- Tabs [All][Equipment][Consumables][Craft][Quest][...]
+
+Gold as separate inventory value?
+
+Store
+- Sold Item List? Re-buy?
+- Sell/Buy percent overhead?
+
+Craft in game menu
+- Personal list of crafting
 
 ===========================
    Other
