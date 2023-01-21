@@ -1,0 +1,17 @@
+[
+	{
+		"Name": "HealthPack",
+		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/Heal_BP.Heal_BP_C'",
+		"DestroyOnAction": true,
+		"Rarity": "E",
+		"Tooltip": "An item to heal user",
+		"Icon": "/Game/Rade/Sprites/Icons/alert-triangle.alert-triangle",
+		"Count": 1,
+		"MaxCount": 10,
+		"Weight": 0.1,
+		"Price": 20,
+		"PickupMesh": "None",
+		"Pickup": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C'",
+		"JsonData": ""
+	}
+]

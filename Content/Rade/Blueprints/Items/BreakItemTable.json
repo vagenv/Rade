@@ -1,10 +1,36 @@
 [
 	{
-		"Name": "Pistol",
+		"Name": "Hat",
 		"CreateItem":
 		{
-			"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-			"RowName": "Pistol"
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/EquipmentTable.EquipmentTable'",
+				"RowName": "Hat"
+			},
+			"Count": 1
+		},
+		"RequiredItems": [
+			{
+				"Arch":
+				{
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/CraftMaterialTable.CraftMaterialTable'",
+					"RowName": "Leather"
+				},
+				"Count": 2
+			}
+		]
+	},
+	{
+		"Name": "NewRow",
+		"CreateItem":
+		{
+			"Arch":
+			{
+				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+				"RowName": "HeavyRocks"
+			},
+			"Count": 1
 		},
 		"RequiredItems": [
 			{
@@ -13,15 +39,7 @@
 					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
 					"RowName": "Rock"
 				},
-				"Count": 2
-			},
-			{
-				"Arch":
-				{
-					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
-					"RowName": "Stick"
-				},
-				"Count": 1
+				"Count": 5
 			}
 		]
 	}

@@ -1,19 +1,5 @@
 [
 	{
-		"Name": "Stick",
-		"Rarity": "E",
-		"Tooltip": "A simple stick.",
-		"Icon": "/Game/Rade/Sprites/Icons/360.360",
-		"Count": 1,
-		"MaxCount": 10,
-		"Weight": 0.2,
-		"Cost": 2,
-		"Action": "None",
-		"PickupMesh": "None",
-		"Pickup": "None",
-		"RuntimeData": ""
-	},
-	{
 		"Name": "Rock",
 		"Rarity": "E",
 		"Tooltip": "A shiny Rockt to sell",
@@ -21,11 +7,10 @@
 		"Count": 1,
 		"MaxCount": 5,
 		"Weight": 0.1,
-		"Cost": 10,
-		"Action": "None",
+		"Price": 10,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "MusicNotes",
@@ -35,11 +20,10 @@
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 0.01,
-		"Cost": 0,
-		"Action": "None",
+		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "HeavyRocks",
@@ -49,11 +33,10 @@
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 20,
-		"Cost": 0,
-		"Action": "None",
+		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",
-		"RuntimeData": ""
+		"JsonData": ""
 	},
 	{
 		"Name": "Gold",
@@ -63,24 +46,9 @@
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 0.01,
-		"Cost": 1,
-		"Action": "None",
+		"Price": 1,
 		"PickupMesh": "/Script/Engine.StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'",
 		"Pickup": "None",
-		"RuntimeData": ""
-	},
-	{
-		"Name": "HealthPack",
-		"Rarity": "E",
-		"Tooltip": "An item to heal user",
-		"Icon": "/Game/Rade/Sprites/Icons/heart-plus.heart-plus",
-		"Count": 1,
-		"MaxCount": 10,
-		"Weight": 0.1,
-		"Cost": 20,
-		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/Heal_BP.Heal_BP_C'",
-		"PickupMesh": "None",
-		"Pickup": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C'",
-		"RuntimeData": ""
+		"JsonData": ""
 	}
 ]

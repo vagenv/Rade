@@ -84,31 +84,37 @@ void URInventoryComponent::OnRep_Items ()
    OnInventoryUpdated.Broadcast ();
 }
 
-bool URInventoryComponent::HasItem (const FRDefaultItem &CheckItem) const
+//=============================================================================
+//                 Check if contains
+//=============================================================================
+
+bool URInventoryComponent::HasItem_Arch (const FRItemDataHandle &CheckItem) const
 {
    // --- Create required item info
    FRItemData requireItem;
-   if (!FRItemData::FromRow (CheckItem.Arch, requireItem)) return false;
-   requireItem.Count = CheckItem.Count;
+   if (!CheckItem.ToItem (requireItem)) return false;
+   return HasItem_Data (requireItem);
+}
 
+bool URInventoryComponent::HasItem_Data (FRItemData requireItem) const
+{
    // --- Iterate over inventory items
    for (const FRItemData &itItem : Items) {
       if (itItem.Name != requireItem.Name) continue;
       requireItem.Count -= itItem.Count;
       if (requireItem.Count <= 0) break;
    }
-
    return (requireItem.Count <= 0);
 }
 
-bool URInventoryComponent::HasItems (const TArray<FRDefaultItem> &CheckItems) const
+
+bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems) const
 {
    // --- Create list of required item infos
    TArray<FRItemData> requiredItems;
-   for (const FRDefaultItem &itItem : CheckItems) {
+   for (const FRItemDataHandle &itItem : CheckItems) {
       FRItemData requireItem;
-      if (!FRItemData::FromRow (itItem.Arch, requireItem)) return false;
-      requireItem.Count = itItem.Count;
+      if (!itItem.ToItem (requireItem)) return false;
       requiredItems.Add (requireItem);
    }
 
@@ -131,28 +137,46 @@ bool URInventoryComponent::HasItems (const TArray<FRDefaultItem> &CheckItems) co
    return requiredItems.Num () == 0;
 }
 
+int URInventoryComponent::GetCountItem (const FRItemData &CheckItem) const
+{
+   return GetCountItem_Name (CheckItem.Name);
+}
+int URInventoryComponent::GetCountItem_Name (const FString &CheckItemName) const
+{
+   int Count = 0;
+   // --- Find same kind of item
+   for (const FRItemData &ItItem : Items) {
+      // Not same item type
+      if (ItItem.Name != CheckItemName) continue;
+      Count += ItItem.Count;
+   }
 
-bool URInventoryComponent::AddItem_Arch (const FRDefaultItem &ItemData)
+   return Count;
+}
+
+//=============================================================================
+//                 Add item
+//=============================================================================
+
+bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
       return false;
    }
-
    FRItemData newItem;
-   if (!FRItemData::FromRow (ItemData.Arch, newItem)) return false;
-   newItem.Count = ItemData.Count;
+   if (!ItemHandle.ToItem (newItem)) return false;
    return AddItem (newItem);
 }
 
-void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *DstInventory,
+void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                           FRItemData NewItem) const
 {
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
       return;
    }
-   DstInventory->AddItem (NewItem);
+   SrcInventory->AddItem (NewItem);
 }
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
@@ -222,16 +246,20 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    return true;
 }
 
-void URInventoryComponent::RemoveItem_Server_Implementation (URInventoryComponent *DstInventory,
-                                                             int32 ItemIdx, int32 Count) const
+//=============================================================================
+//                 Remove Item index
+//=============================================================================
+
+void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                                   int32 ItemIdx, int32 Count) const
 {
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
       return;
    }
-   DstInventory->RemoveItem (ItemIdx, Count);
+   SrcInventory->RemoveItem_Index (ItemIdx, Count);
 }
-bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
+bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
@@ -249,9 +277,76 @@ bool URInventoryComponent::RemoveItem (int32 ItemIdx, int32 Count)
       Items.RemoveAt (ItemIdx);
    }
 
+   CalcWeight ();
    OnInventoryUpdated.Broadcast ();
    return true;
 }
+
+//=============================================================================
+//                 Remove Item Arch
+//=============================================================================
+
+void URInventoryComponent::RemoveItem_Arch_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                                  const FRItemDataHandle &RmItemHandle) const
+{
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
+      return;
+   }
+   SrcInventory->RemoveItem_Arch (RmItemHandle);
+}
+bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle)
+{
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return false;
+   }
+   FRItemData RmItemData;
+   if (!RmItemHandle.ToItem (RmItemData)) return false;
+   return RemoveItem_Data (RmItemData);
+}
+
+//=============================================================================
+//                 Remove Item Data
+//=============================================================================
+
+void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryComponent *SrcInventory,
+                                                                  FRItemData RmItemData) const
+{
+   if (!SrcInventory) {
+      R_LOG ("Invalid Inventory pointer");
+      return;
+   }
+   SrcInventory->RemoveItem_Data (RmItemData);
+}
+
+bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
+{
+   if (!bIsServer) {
+      R_LOG ("Client has no authority to perform this action.");
+      return false;
+   }
+   // Last check that user has required item
+   if (!HasItem_Data (RmItemData)) return false;
+
+   // Remove until finished
+   while (RmItemData.Count > 0) {
+      for (int i = 0; i < Items.Num (); i++) {
+         if (Items[i].Name != RmItemData.Name) continue;
+
+         int Count = FMath::Min (Items[i].Count, RmItemData.Count);
+         if (!RemoveItem_Index (i, Count)) return false;
+         RmItemData.Count -= Count;
+      }
+   }
+
+   return (RmItemData.Count == 0);
+}
+
+
+//=============================================================================
+//                 Transfer
+//=============================================================================
 
 void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *SrcInventory,
                                                               URInventoryComponent *DstInventory) const
@@ -321,7 +416,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
    if (!DstInventory->AddItem (ItemData)) return false;
 
    // Cleanup
-   return RemoveItem (SrcItemIdx, SrcItemCount);
+   return RemoveItem_Index (SrcItemIdx, SrcItemCount);
 }
 
 void URInventoryComponent::CalcWeight ()
@@ -362,11 +457,13 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
       return nullptr;
    }
 
-   FRItemData ItemData = Items[ItemIdx];
+   FRActionItemData ItemData;
+   if (!FRActionItemData::Cast (Items[ItemIdx], ItemData)) {
+      return false;
+   }
 
    // valid archetype
    if (!ItemData.Action) return false;
-
 
    URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
 
@@ -375,7 +472,8 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
    BP_Used (ItemIdx);
 
    // Consumable
-   return RemoveItem (ItemIdx, 1);
+   if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
+   return true;
 }
 
 void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent *SrcInventory,
@@ -411,7 +509,7 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
    ItemData.Count = Count;
 
    // Error will be logged.
-   if (!RemoveItem (ItemIdx, Count)) return nullptr;
+   if (!RemoveItem_Index (ItemIdx, Count)) return nullptr;
 
    AActor *Player = GetOwner ();
 
@@ -512,24 +610,28 @@ void URInventoryComponent::OnSave ()
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
+      return;
    }
 
    // --- Save player Inventory
 
    // Convert ItemData to array to JSON strings
-   TArray<FString> ItemData;
-   for (const FRItemData &item : Items) {
-      FString res;
-      if (FRItemData::ToJSON (item, res)) {
-         ItemData.Add (res);
-      } else {
-         R_LOG_PRINTF ("Failed to save %s", *item.Name);
-      }
+   TArray<FString> ItemDataRaw;
+
+   for (FRItemData item : Items) {
+
+      ItemDataRaw.Add (item.GetJSON ());
+      // FString res;
+      // if (FRItemData::ToJSON (item, res)) {
+      //    ItemData.Add (res);
+      // } else {
+      //    R_LOG_PRINTF ("Failed to save %s", *item.Name);
+      // }
    }
 
    // Convert array into buffer
    FBufferArchive ToBinary;
-   ToBinary << ItemData;
+   ToBinary << ItemDataRaw;
 
    FString InventoryUniqueId = GetOwner ()->GetName ();
 
@@ -543,9 +645,10 @@ void URInventoryComponent::OnLoad ()
 {
    if (!bIsServer) {
       R_LOG ("Client has no authority to perform this action.");
+      return;
    }
-   // --- Load player Inventory
 
+   // --- Load player Inventory
    FString InventoryUniqueId = GetOwner ()->GetName ();
 
    // Get binary data from save file
@@ -556,20 +659,22 @@ void URInventoryComponent::OnLoad ()
    }
 
    // Convert Binary to array of JSON strings
-   TArray<FString> ItemsData;
+   TArray<FString> ItemDataRaw;
    FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
    FromBinary.Seek(0);
-   FromBinary << ItemsData;
+   FromBinary << ItemDataRaw;
 
    // Convert JSON strings to ItemData
    TArray<FRItemData> loadedItems;
-   for (const FString &ItemData : ItemsData) {
+   for (const FString &ItemRaw : ItemDataRaw) {
+
       FRItemData Item;
-      if (FRItemData::FromJSON (ItemData, Item)) {
-         loadedItems.Add (Item);
-      } else {
-         R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemData);
+      Item.SetJSON (ItemRaw);
+      if (!Item.ReadJSON ()) {
+         R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemRaw);
+         continue;
       }
+      loadedItems.Add (Item);
    }
 
    // Update inventory
@@ -579,7 +684,6 @@ void URInventoryComponent::OnLoad ()
 
 
 /*
-
 // Throw out all Items
 void URInventoryComponent::ThrowOutAllItems()
 {

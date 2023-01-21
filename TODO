@@ -2,139 +2,50 @@
    Game Design
 ===========================
 
-3rd/1st Person Shooter/Slasher
+Style:
+- 3rd/1st Person Shooter/Slasher
 
-Jump
+Movement:
+- Jump
+- Roll + Sprint
 
-Roll + Sprint
+Attack types
+- Melee / Ranged
+- Guns
+- Spells. Instant + Casting
+- Environment
+- Turrents / Towers
+- Ally NPCs
 
-Attack / Alt Attack
+Battles
+- Many enemies
+- Spawn in waves
+- Defend checkpoint
+- Buy upgrades
+- Change terrain?
+- Hire more NPCs and upgrade them.
+
 
 ===========================
-   Reset
+   Character
 ===========================
 
-=== UI
+Player Status Widget
 
-Options
-- Redesign Inventory Item widget
-- Player Status Widget
-- Audio channels
-- Persistent Audio Settings
-- Input
-Inventory
-- Tabs [All][Equipment][Consumables][Craft][Quest][...]
-- Rarity color
-Status
-- Inventory
-- Equipment slots
-- Character stats
-- Info? Health
-
-=== Inventory
-ItemData
--Rarity
--Name
--Tooltip
--Icon
--Count
--MaxCount
--Weight
--Cost
--PickupMesh
--Pickup
-
-CraftItem : ItemData
-- List<Item>
-
-ActionItem : ItemData
-- TSubclass<Action>
-
-ConsumableItem : ActionItem
-- Duration
-- ItemData.Action will apply the effect and manage video/audio effects
-
-===  Should be moved to subclass of RInventory?
-
-EquipmentItem : ActionData
-- AttachSocket
-
-WeaponItem : EquipmentItem
-- CurrenAmmo
-- MaxAmmo
-- MagSize
-
-
-=== Other
-
-Store to exchange
-- Widget
-- Data taken from "Price". Item <-> Gold. Sell/Buy difference?
-- Store item list from DataTable or Store Blueprint object
-
-Crafting
-- Widget. With list of requirement next to it. Number: Required/Current
-- Datatable: Item <-> List<Item>
-- Datatable: Which item crafting available
-- Local/Store crafting
-
-Chat
-- Update Widget
-- Independent component like USaveMgr?
-- A new module?
-- Audio messages?
-
-Equipment Manager
+Equipment Manager. Subclass of Inventory?
 - Widget next to item?
 - Extends InventoryComponent?
 - Slots.
 
-Status components
-- Add widget
+StatusManager Component.
+- UI
 - Health
-- Stats
-- Temporary Auras/Effects
-- Skills
-- Resistance against damage type
-
-Equipment effects:
-- Affects Status component
-- Item quality affects strength of effects
-- Random effects?
-
-Session
-- Deep dive / Analysis / Simplification
-- Persistent session widget
-- Real time data. (Latency, Player count)
-- Return to main screen
-- Persistent data between sessions
-
-Animation
-- Look around
-- Run/Sprint
-- Ragdoll death
-- Melee fight
-- Network
-- Partial body blend
-- IK to weapon attach socket
-
-AI
-- pathfinding
-- patrol
-- Melee and ranged
-- React if attacked
-
-Database
-- Local Mysql?
-
-External Network API
-- For optional data.
-- Authenticate
-- Get User info
-- Stream picture/content on demand
-
-VCPP
-- Link against and build with CMAKE
+- Energy
+- List of Stats (Base)
+- List of Resistance against damage type
+- List of Abilities
+- List of Auras/Effects
+- List of Skills
 
 Equipment
 - Head
@@ -151,13 +62,86 @@ Weapons (with damage type)
 - Shield
 - Attack combo?
 
+Equipment effects:
+- Affects Status component
+- Item quality affects strength of effects
+- Random effects?
+
 Damage based on:
 - What component hit
 - Armor for that component
 - Current stats and rotection
 - Resistance
 
-Sound
+
+=== Should be moved to subclass of RCharacter
+
+ConsumableItem : ActionItem
+- Duration
+- ItemData.Action will apply the effect and manage video/audio effects
+- Effect?
+
+EquipmentItem : ActionData
+- AttachSocket
+
+WeaponItem : EquipmentItem
+- CurrenAmmo
+- MaxAmmo
+- MagSize
+
+===========================
+   Network
+===========================
+
+Select spawn point
+See status. Smooth start
+
+Session
+- Deep dive / Analysis / Simplification
+- Persistent session widget
+- Real time data. (Latency, Player count)
+- Return to main screen
+- Persistent data between sessions
+
+===========================
+   Chat
+===========================
+
+Chat
+- Update Widget
+- Independent component like USaveMgr?
+- A new module?
+- Audio messages?
+
+===========================
+   Animation
+===========================
+
+Animation Blueprint
+
+Blend animation. Upper + Lower body
+
+- Look around
+- Run/Sprint
+- Ragdoll death
+- Melee fight
+- Network
+- Partial body blend
+- IK to weapon attach socket
+
+===========================
+   AI
+===========================
+
+- pathfinding
+- patrol
+- Melee and ranged
+- React if attacked
+
+===========================
+   Sound
+===========================
+
 - Jump / Land
 - Running
 - Weapon Attack / Reloading
@@ -165,10 +149,64 @@ Sound
 - Explosion
 - Environment
 
-VFX
+===========================
+   VFX
+===========================
+
 - Blood
 - Explosion
 - Smoke
+- GPU particles
+- Niagara
+
+===========================
+   UI (Nice to have)
+===========================
+
+- Audio channels
+- Persistent Audio Settings
+- Input
+
+===========================
+   Inventory (Nice to have)
+===========================
+
+Box UI
+- With PopupMenu for details
+
+Item UI
+- Sorting?
+- Tabs [All][Equipment][Consumables][Craft][Quest][...]
+
+Gold as separate inventory value?
+
+Store
+- Sold Item List? Re-buy?
+- Sell/Buy percent overhead?
+
+Craft in game menu
+- Personal list of crafting
+
+===========================
+   Other
+===========================
+
+Action Popup UI
+- Short Press/Long Press
+- With Animation
+- Button to action
+
+Database
+- Local Mysql?
+
+External Network API
+- For optional data.
+- Authenticate
+- Get User info
+- Stream picture/content on demand
+
+VCPP
+- Link against and build with CMAKE
 
 Epic network services
 - Register to API
