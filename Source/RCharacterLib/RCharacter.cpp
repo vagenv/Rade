@@ -1,11 +1,10 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RCharacter.h"
-//#include "RadeAnimInstance.h"
-//#include "../Weapon/RadeWeapon.h"
-#include "Net/UnrealNetwork.h"
-#include "RInventoryLib/RInventoryComponent.h"
 #include "RUtilLib/RLog.h"
+#include "RStatusMgrComponent.h"
+#include "RInventoryLib/RInventoryComponent.h"
+#include "Net/UnrealNetwork.h"
 
 class AController;
 
@@ -23,6 +22,10 @@ ARCharacter::ARCharacter ()
 
    Inventory = CreateDefaultSubobject<URInventoryComponent> (TEXT("Inventory"));
    Inventory->SetIsReplicated (true);
+
+   StatusMgr = CreateDefaultSubobject<URStatusMgrComponent> (TEXT("StatusManager"));
+   StatusMgr->SetIsReplicated (true);
+
    bReplicates  = true;
 }
 

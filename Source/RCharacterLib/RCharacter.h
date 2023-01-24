@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRCharacterEvent);
 
 class URAnimInstance;
 class URInventoryComponent;
+class URStatusMgrComponent;
 
 UCLASS(Blueprintable)
 class RCHARACTERLIB_API ARCharacter : public ACharacter
@@ -36,6 +37,10 @@ public:
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
       TObjectPtr<URInventoryComponent> Inventory;
+
+   //  Inventory Component
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
+      TObjectPtr<URStatusMgrComponent> StatusMgr;
 
    //==========================================================================
    //                     Status and Basic Data
