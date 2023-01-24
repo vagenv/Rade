@@ -5,16 +5,15 @@
 #include "RUtilLib/RLog.h"
 #include "RInventoryLib/RInventoryComponent.h"
 #include "RSaveLib/RSaveMgr.h"
-#include "RCharacterLib/RAnimInstance.h"
+// #include "RCharacterLib/RAnimInstance.h"
+#include "RJetpackComponent.h"
+#include "RCharacterLib/RStatusMgrComponent.h"
 
 #include "Engine.h"
-
-#include "RJetpackComponent.h"
 
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
 
 #include "Net/UnrealNetwork.h"
 
@@ -77,27 +76,12 @@ ARPlayer::ARPlayer()
 void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, FirstPersonCameraComponent);
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraBoom);
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, ThirdPersonCameraComponent);
    // DISABLE_REPLICATED_PROPERTY (ARPlayer, MoveSpeed);
-
-   // DOREPLIFETIME(ARPlayer, BodyAnimInstance);
-
-   // DOREPLIFETIME(ARPlayer, bInventoryOpen);
-   //DOREPLIFETIME(ARPlayer, CurrentItemSelectIndex);
-   //DOREPLIFETIME(ARPlayer, CurrentCameraState);
-   //DOREPLIFETIME(ARPlayer, currentPickup);
 }
-
-
 
 void ARPlayer::BeginPlay ()
 {
    Super::BeginPlay ();
-
-   // --- Gather references
 
    // Get Player Controller
    if (GetController() && Cast<APlayerController>(GetController())) {
@@ -110,15 +94,9 @@ void ARPlayer::BeginPlay ()
 		}
    }
 
-   // Get First Person Anim Instance
-   if (Mesh1P && Mesh1P->GetAnimInstance() && Cast<URAnimInstance>(Mesh1P->GetAnimInstance()))
-      ArmsAnimInstance = Cast<URAnimInstance>(Mesh1P->GetAnimInstance());
-
-   // Set Player Ref in Anim Instance
-   //if (ArmsAnimInstance)ArmsAnimInstance->TheCharacter = this;
-
-   // Set Default Anim State
-   //Global_SetAnimID_Implementation(EAnimState::Idle_Run);
+   // // Get First Person Anim Instance
+   // if (Mesh1P && Mesh1P->GetAnimInstance() && Cast<URAnimInstance>(Mesh1P->GetAnimInstance()))
+   //    ArmsAnimInstance = Cast<URAnimInstance>(Mesh1P->GetAnimInstance());
 
    // --- Setup Camera
    // Set Current Camera to Default State
@@ -136,7 +114,6 @@ void ARPlayer::BeginPlay ()
       LoadedDelegate.AddDynamic (this, &ARPlayer::OnLoad);
       URSaveMgr::OnLoad (GetWorld (), LoadedDelegate);
    }
-
 
    // --- Seed out Spawn Location a bit
    //FVector RandomLoc = FVector(FMath::RandRange(-100, 100), FMath::RandRange(-100, 100), 0);
@@ -220,8 +197,7 @@ void ARPlayer::OnLoad ()
 // Bind input to events
 void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 {
-   // set up gameplay key bindings
-   check (PlayerInputComponent);
+   if (!ensure (PlayerInputComponent)) return;
 
    // Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -249,7 +225,7 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 
 void ARPlayer::Input_Move (const FInputActionValue& Value)
 {
-   if (bDead) return;
+   if (StatusMgr->bDead) return;
 
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -273,7 +249,7 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 
 void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
-   if (bDead) return;
+   if (StatusMgr->bDead) return;
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr) {
@@ -297,15 +273,15 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
-   if (bDead)   return;
-   if (Jetpack) Jetpack->Use ();
+   if (StatusMgr->bDead) return;
+   Jetpack->Use ();
    Super::Jump ();
 }
 
 // Player Pressed CameraChange
 void ARPlayer::Input_ChangeCamera ()
 {
-   if (bDead) return;
+   if (StatusMgr->bDead) return;
 
    // Change Camera
    if (DefaultCameraState == ECameraState::FP_Camera) {
@@ -335,7 +311,6 @@ void ARPlayer::Input_AltAction ()
 //=============================================================================
 
 /*
-
 // Checking if player can shoot
 bool ARPlayer::CanShoot()
 {
@@ -359,17 +334,6 @@ bool ARPlayer::CanSprint()
 
    return bReturnCanShoot;
 }
-
-
-// Player landed on ground
-void ARPlayer::Landed(const FHitResult& Hit)
-{
-   Super::Landed(Hit);
-
-   if (ArmsAnimInstance || BodyAnimInstance)
-      ServerSetAnimID(EAnimState::Idle_Run);
-}
-
 */
 
 // Update First Person and Third Person Components visibility

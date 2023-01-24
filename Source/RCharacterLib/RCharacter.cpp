@@ -33,87 +33,32 @@ ARCharacter::ARCharacter ()
 void ARCharacter::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-   DOREPLIFETIME (ARCharacter, BodyAnimInstance);
    DOREPLIFETIME (ARCharacter, Inventory);
-   DOREPLIFETIME (ARCharacter, HealthMax);
-   DOREPLIFETIME (ARCharacter, Health);
-   DOREPLIFETIME (ARCharacter, bDead);
+   DOREPLIFETIME (ARCharacter, StatusMgr);
 }
-
 
 // Called when the game starts or when spawned
 void ARCharacter::BeginPlay()
 {
    Super::BeginPlay ();
-   bDead = false;
+
    if (GetMesh ()) {
       Mesh_DefaultRelativeLoc = GetMesh ()->GetRelativeLocation ();
       Mesh_DefaultRelativeRot = GetMesh ()->GetRelativeRotation ();
    }
-
-   /*
-   // Get Third Person Anim Instance
-   if (GetMesh() && GetMesh()->GetAnimInstance() && Cast<URAnimInstance>(GetMesh()->GetAnimInstance())) {
-      BodyAnimInstance = Cast<URAnimInstance>(GetMesh()->GetAnimInstance());
-      BodyAnimInstance->TheCharacter = this;
-   }
-   */
 }
 
-/*
-//             Called to equip new Weapon
-void ARCharacter::EquipWeapon(ARadeWeapon* NewWeaponClass)
-{
-   if (!NewWeaponClass)return;
-
-   // If player has a weapon, Un-equip it
-   if (TheWeapon) TheWeapon->Destroy();
-
-   Global_SetAnimArchtype(NewWeaponClass->AnimArchetype);
-
-   // Set Animation state
-   ServerSetAnimID(ERAnimState::Equip);
-
-   // Spawn new weapon
-   TheWeapon = GetWorld()->SpawnActor<ARadeWeapon>(NewWeaponClass->GetClass());
-
-   if (TheWeapon) {
-      TheWeapon->SetOwner(this);
-      TheWeapon->Mesh3P->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket"));
-   }
-}
-
-void ARCharacter::CurrentWeaponUpdated ()
-{
-}
-
-*/
 //=============================================================================
 //                       Take Damage, Death
 //=============================================================================
-
 
 //         Server Death
 void ARCharacter::Die_Server_Implementation (AActor *DeathCauser, AController* EventInstigator)
 {
    if (!HasAuthority ()) return;
 
-   if (bDead) return;
-
-   bDead = true;
-
    Die_Client (DeathCauser, EventInstigator);
    Die        (DeathCauser, EventInstigator);
-
-   /*
-   if (TheWeapon) {
-      TheWeapon->Destroy();
-      TheWeapon = nullptr;
-   }
-   // Throw out Inventory Items on Death
-   if (TheInventory && TheInventory->bDropItemsOnDeath)
-      TheInventory->ThrowOutAllItems();
-   */
 
    // If character should be automatically revived, revive after a delay
    if (bAutoRevive)  {
@@ -127,6 +72,7 @@ void ARCharacter::Die_Client_Implementation (AActor *DeathCauser, AController* E
    if (HasAuthority ()) return;
    Die (DeathCauser, EventInstigator);
 }
+
 void ARCharacter::Die (AActor *DeathCauser, AController* EventInstigator)
 {
    OnDeath.Broadcast ();
@@ -134,7 +80,7 @@ void ARCharacter::Die (AActor *DeathCauser, AController* EventInstigator)
    BP_Died (DeathCauser, EventInstigator);
 }
 
-void ARCharacter::ForceRagdoll()
+void ARCharacter::ForceRagdoll ()
 {
    USkeletalMeshComponent *skelMesh = Cast<USkeletalMeshComponent>(GetMesh());
    if (skelMesh) {
@@ -148,11 +94,6 @@ void ARCharacter::ForceRagdoll()
 void ARCharacter::Revive_Server_Implementation ()
 {
    if (!HasAuthority ()) return;
-
-   if (!bDead) return;
-
-   bDead  = false;
-   Health = HealthMax / 2;
 
    GetRootComponent ()->SetWorldLocation (GetActorLocation() + FVector (0, 0, 30));
 
@@ -179,24 +120,14 @@ void ARCharacter::Revive ()
    }
 }
 
-
-
 // Take Damage
 float ARCharacter::TakeDamage (float DamageAmount,
-                               struct FDamageEvent const& DamageEvent,
+                               FDamageEvent const& DamageEvent,
                                AController* EventInstigator,
                                AActor* DamageCauser)
 {
    float ActualDamage = Super::TakeDamage (DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-   if (ActualDamage != .0f && !bDead) {
-      Health -= ActualDamage;
-
-      if (Health < 0) Health = 0;
-      if (Health == 0) {
-         Die_Server (DamageCauser, EventInstigator);
-      }
-   }
-   return ActualDamage;
+   return StatusMgr->TakeDamage (ActualDamage, DamageEvent, EventInstigator, DamageCauser);
 }
 
 // Character Landed on Ground

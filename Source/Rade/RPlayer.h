@@ -15,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInputEventFloat, float, scrollVal
 
 class APlayerController;
 class URJetpackComponent;
-class URAnimInstance;
+// class URAnimInstance;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -74,9 +74,9 @@ public:
    //            1st person Mesh and animation
    //==========================================================================
 
-   // First Person Mesh Anim Instance
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Rade|Player")
-      TObjectPtr<URAnimInstance> ArmsAnimInstance;
+   // // First Person Mesh Anim Instance
+   //  UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Rade|Player")
+   //    TObjectPtr<URAnimInstance> ArmsAnimInstance;
 
    //  First Person Mesh
    UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Rade|Player")

@@ -3,6 +3,8 @@
 #include "RStatusMgrComponent.h"
 #include "RUtilLib/RLog.h"
 #include "RSaveLib/RSaveMgr.h"
+#include "RCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 //=============================================================================
 //                 Core
@@ -17,6 +19,7 @@ URStatusMgrComponent::URStatusMgrComponent ()
 void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
+   DOREPLIFETIME (URStatusMgrComponent, bDead);
 }
 
 void URStatusMgrComponent::BeginPlay()
@@ -27,6 +30,10 @@ void URStatusMgrComponent::BeginPlay()
 
    bIsServer = GetOwner ()->HasAuthority ();
    // if (GetLocalRole() >= ROLE_Authority)
+
+   if (bIsServer) {
+      bDead = false;
+   }
 
    // Save/Load inventory
    if (bSaveLoadStatus && bIsServer) {
@@ -43,6 +50,32 @@ void URStatusMgrComponent::BeginPlay()
 void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
+}
+
+
+//=============================================================================
+//                 RCharacter events
+//=============================================================================
+
+float URStatusMgrComponent::TakeDamage (float DamageAmount,
+                                        FDamageEvent const& DamageEvent,
+                                        AController* EventInstigator,
+                                        AActor* DamageCauser)
+{
+   ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
+
+   if (DamageAmount != .0f && !bDead) {
+      Health.ValueCurrent -= DamageAmount;
+
+      if (Health.ValueCurrent < 0) Health.ValueCurrent = 0;
+
+      if (  Health.ValueCurrent == 0
+         && RCharacter)
+      {
+         RCharacter->Die_Server (DamageCauser, EventInstigator);
+      }
+   }
+   return DamageAmount;
 }
 
 //=============================================================================
@@ -76,7 +109,7 @@ void URStatusMgrComponent::OnSave ()
    // FBufferArchive ToBinary;
    // ToBinary << ItemDataRaw;
 
-   // FString InventoryUniqueId = GetOwner ()->GetName ();
+   // FString StatusUniqueId = GetOwner ()->GetName ();
 
    // // Set binary data to save file
    // if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {

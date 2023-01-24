@@ -7,7 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRCharacterEvent);
 
-class URAnimInstance;
+// class URAnimInstance;
 class URInventoryComponent;
 class URStatusMgrComponent;
 
@@ -30,9 +30,9 @@ public:
    //              Components and Important References
    //==========================================================================
 
-   // Third Person Anim Instance
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      TObjectPtr<URAnimInstance> BodyAnimInstance;
+   // // Third Person Anim Instance
+   // UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
+   //    TObjectPtr<URAnimInstance> BodyAnimInstance;
 
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
@@ -45,18 +45,6 @@ public:
    //==========================================================================
    //                     Status and Basic Data
    //==========================================================================
-
-   // Character Maximum Health
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      float HealthMax = 100;
-
-   // Character Current Health
-   UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      float Health = 90;
-
-   // Is The Character Dead?
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      bool bDead = false;
 
    //==========================================================================
    //                        Take Damage

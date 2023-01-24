@@ -5,6 +5,23 @@
 #include "RStatusMgrComponent.generated.h"
 
 
+USTRUCT(BlueprintType)
+struct RCHARACTERLIB_API FRStatusValue
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float ValueCurrent = 50;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float ValueMax = 100;
+
+   // Per second
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float ValueRegen = 0;
+};
+
+
 // Status Manager Component. Player Health, Stats,
 UCLASS(Blueprintable, BlueprintType)
 class RCHARACTERLIB_API URStatusMgrComponent : public UActorComponent
@@ -23,7 +40,26 @@ private:
       bool bIsServer = false;
 public:
 
+   // --- Core Status
 
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
+      bool bDead = false;
+
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRStatusValue Health;
+
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRStatusValue Mana;
+
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRStatusValue Stamina;
+
+
+   // Calls from RCharacter
+   float TakeDamage (float DamageAmount,
+                     FDamageEvent const& DamageEvent,
+                     AController* EventInstigator,
+                     AActor* DamageCauser);
 
 
 public:
