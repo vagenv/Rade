@@ -11,14 +11,14 @@ struct RCHARACTERLIB_API FRStatusValue
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float ValueCurrent = 50;
+      float Current = 50;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float ValueMax = 100;
+      float Max = 100;
 
    // Per second
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float ValueRegen = 0;
+      float Regen = 0;
 };
 
 

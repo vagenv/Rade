@@ -29,21 +29,19 @@ void URStatusMgrComponent::BeginPlay()
    if (!ensure (world)) return;
 
    bIsServer = GetOwner ()->HasAuthority ();
-   // if (GetLocalRole() >= ROLE_Authority)
-
    if (bIsServer) {
       bDead = false;
-   }
 
-   // Save/Load inventory
-   if (bSaveLoadStatus && bIsServer) {
-      FRSaveEvent SavedDelegate;
-      SavedDelegate.AddDynamic (this, &URStatusMgrComponent::OnSave);
-      URSaveMgr::OnSave (world, SavedDelegate);
+      // Save/Load Current Status
+      if (bSaveLoadStatus) {
+         FRSaveEvent SavedDelegate;
+         SavedDelegate.AddDynamic (this, &URStatusMgrComponent::OnSave);
+         URSaveMgr::OnSave (world, SavedDelegate);
 
-      FRSaveEvent LoadedDelegate;
-      LoadedDelegate.AddDynamic (this, &URStatusMgrComponent::OnLoad);
-      URSaveMgr::OnLoad (world, LoadedDelegate);
+         FRSaveEvent LoadedDelegate;
+         LoadedDelegate.AddDynamic (this, &URStatusMgrComponent::OnLoad);
+         URSaveMgr::OnLoad (world, LoadedDelegate);
+      }
    }
 }
 
@@ -51,7 +49,6 @@ void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
 }
-
 
 //=============================================================================
 //                 RCharacter events
@@ -65,11 +62,11 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
    ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
 
    if (DamageAmount != .0f && !bDead) {
-      Health.ValueCurrent -= DamageAmount;
+      Health.Current -= DamageAmount;
 
-      if (Health.ValueCurrent < 0) Health.ValueCurrent = 0;
+      if (Health.Current < 0) Health.Current = 0;
 
-      if (  Health.ValueCurrent == 0
+      if (  Health.Current == 0
          && RCharacter)
       {
          RCharacter->Die_Server (DamageCauser, EventInstigator);
