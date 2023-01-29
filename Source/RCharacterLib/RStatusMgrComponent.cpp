@@ -5,6 +5,8 @@
 #include "RSaveLib/RSaveMgr.h"
 #include "RCharacter.h"
 #include "Net/UnrealNetwork.h"
+#include "Json.h"
+#include "JsonObjectConverter.h"
 
 //=============================================================================
 //                 Core
@@ -87,31 +89,15 @@ void URStatusMgrComponent::OnSave ()
    }
 
    // --- Save player status
+   FBufferArchive ToBinary;
+   ToBinary << Health << Mana << Stamina;
 
-   // // Convert Stastus to array to JSON strings
-   // TArray<FString> ItemDataRaw;
+   FString SaveUniqueId = GetOwner ()->GetName () + "_StatusMgr";
 
-   // for (FRItemData item : Items) {
-
-   //    ItemDataRaw.Add (item.GetJSON ());
-   //    // FString res;
-   //    // if (FRItemData::ToJSON (item, res)) {
-   //    //    ItemData.Add (res);
-   //    // } else {
-   //    //    R_LOG_PRINTF ("Failed to save %s", *item.Name);
-   //    // }
-   // }
-
-   // // Convert array into buffer
-   // FBufferArchive ToBinary;
-   // ToBinary << ItemDataRaw;
-
-   // FString StatusUniqueId = GetOwner ()->GetName ();
-
-   // // Set binary data to save file
-   // if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
-   //    R_LOG_PRINTF ("Failed to save [%s] Inventory.", *InventoryUniqueId);
-   // }
+   // Set binary data to save file
+   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
+      R_LOG_PRINTF ("Failed to save [%s] Status.", *SaveUniqueId);
+   }
 }
 
 void URStatusMgrComponent::OnLoad ()
@@ -122,36 +108,17 @@ void URStatusMgrComponent::OnLoad ()
    }
 
    // --- Load player status
-   FString StatusUniqueId = GetOwner ()->GetName ();
+   FString SaveUniqueId = GetOwner ()->GetName () + "_StatusMgr";
 
    // Get binary data from save file
    TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), StatusUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Status.", *StatusUniqueId);
+   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
+      R_LOG_PRINTF ("Failed to load [%s] Status.", *SaveUniqueId);
       return;
    }
 
-   // // Convert Binary to array of JSON strings
-   // TArray<FString> ItemDataRaw;
-   // FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   // FromBinary.Seek(0);
-   // FromBinary << ItemDataRaw;
-
-   // // Convert JSON strings to ItemData
-   // TArray<FRItemData> loadedItems;
-   // for (const FString &ItemRaw : ItemDataRaw) {
-
-   //    FRItemData Item;
-   //    Item.SetJSON (ItemRaw);
-   //    if (!Item.ReadJSON ()) {
-   //       R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemRaw);
-   //       continue;
-   //    }
-   //    loadedItems.Add (Item);
-   // }
-
-   // // Update inventory
-   // Items = loadedItems;
-   // OnInventoryUpdated.Broadcast ();
+   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
+   FromBinary.Seek (0);
+   FromBinary << Health << Mana << Stamina;
 }
 
