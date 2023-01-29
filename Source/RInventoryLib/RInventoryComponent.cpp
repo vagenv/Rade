@@ -617,27 +617,19 @@ void URInventoryComponent::OnSave ()
 
    // Convert ItemData to array to JSON strings
    TArray<FString> ItemDataRaw;
-
    for (FRItemData item : Items) {
-
       ItemDataRaw.Add (item.GetJSON ());
-      // FString res;
-      // if (FRItemData::ToJSON (item, res)) {
-      //    ItemData.Add (res);
-      // } else {
-      //    R_LOG_PRINTF ("Failed to save %s", *item.Name);
-      // }
    }
 
    // Convert array into buffer
    FBufferArchive ToBinary;
    ToBinary << ItemDataRaw;
 
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";
 
    // Set binary data to save file
-   if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
-      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *InventoryUniqueId);
+   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
+      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *SaveUniqueId);
    }
 }
 
@@ -649,12 +641,12 @@ void URInventoryComponent::OnLoad ()
    }
 
    // --- Load player Inventory
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";
 
    // Get binary data from save file
    TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *InventoryUniqueId);
+   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
+      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *SaveUniqueId);
       return;
    }
 

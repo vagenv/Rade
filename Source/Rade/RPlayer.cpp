@@ -150,31 +150,26 @@ void ARPlayer::Input_LoadGame ()
 
 void ARPlayer::OnSave ()
 {
+   FString SaveUniqueId = GetOwner ()->GetName () + "_Player";
    // --- Save player location
-   R_LOG ("Saving game. Set data to save file");
    FVector  loc = GetActorLocation ();
    FRotator rot = GetActorRotation ();
 
    FBufferArchive ToBinary;
    ToBinary << loc << rot;
-
-   bool res = URSaveMgr::Set (GetWorld (), FString ("PlayerLocation"), ToBinary);
-
-   if (!res) {
-      R_LOG ("Set failed");
-      return;
+   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
+      R_LOG_PRINTF ("Failed to save [%s] Location.", *SaveUniqueId);
    }
 }
 
 void ARPlayer::OnLoad ()
 {
-   // --- Load player location
-   R_LOG ("Load finished. Get data from save file");
+   FString SaveUniqueId = GetOwner ()->GetName () + "_Player";
 
+   // Get binary data from save file
    TArray<uint8> BinaryArray;
-   bool res = URSaveMgr::Get (GetWorld (), FString ("PlayerLocation"), BinaryArray);
-   if (!res) {
-      R_LOG ("Get failed");
+   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
+      R_LOG_PRINTF ("Failed to load [%s] Location.", *SaveUniqueId);
       return;
    }
 
@@ -182,8 +177,7 @@ void ARPlayer::OnLoad ()
    FRotator rot;
    FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
    FromBinary.Seek (0);
-   FromBinary << loc;
-   FromBinary << rot;
+   FromBinary << loc << rot;
 
    SetActorLocation (loc);
    SetActorRotation (rot);
