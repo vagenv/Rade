@@ -6,7 +6,6 @@
 #include "RCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/DamageEvents.h"
-#include "RDamageType.h"
 
 //=============================================================================
 //                 Core

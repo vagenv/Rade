@@ -9,3 +9,4 @@ FArchive& operator << (FArchive& Ar, FRStatusValue &Value) {
    Ar << Value.Regen;
    return Ar;
 }
+

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RStatusTypes.h"
+#include "RDamageType.h"
 #include "RStatusMgrComponent.generated.h"
 
 // Status Manager Component.
@@ -37,6 +38,11 @@ public:
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Stamina;
 
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRCharacterStats BaseStats;
+
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRResistanceStats BaseResistence;
 
    // Calls from RCharacter
    float TakeDamage (float DamageAmount,
@@ -44,8 +50,6 @@ public:
                      AController* EventInstigator,
                      AActor* DamageCauser);
 
-
-public:
    // Status Saved / Loaded between sessions.
    // Should be used only for Player.
    // Careful with collision of 'PlayerUniqueId'

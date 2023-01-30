@@ -51,3 +51,4 @@ float URDamageType_Fall::CalcDamage (float Velocity, float Resistance)
          * FallDamageCurveData->Eval (Velocity)
          / 100;
 }
+
