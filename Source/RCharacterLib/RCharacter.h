@@ -30,10 +30,6 @@ public:
    //              Components and Important References
    //==========================================================================
 
-   // // Third Person Anim Instance
-   // UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-   //    TObjectPtr<URAnimInstance> BodyAnimInstance;
-
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
       TObjectPtr<URInventoryComponent> Inventory;
@@ -41,10 +37,6 @@ public:
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
       TObjectPtr<URStatusMgrComponent> StatusMgr;
-
-   //==========================================================================
-   //                     Status and Basic Data
-   //==========================================================================
 
    //==========================================================================
    //                        Take Damage
@@ -58,7 +50,6 @@ public:
 
    // Override Land Event
    virtual void Landed (const FHitResult& Hit) override;
-
 
    //==========================================================================
    //                        Death and Revive

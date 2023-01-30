@@ -60,8 +60,6 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
                                         AController* EventInstigator,
                                         AActor* DamageCauser)
 {
-
-
    URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
    if (DamageType) {
 
