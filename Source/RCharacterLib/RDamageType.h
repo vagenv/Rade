@@ -5,54 +5,16 @@
 #include "GameFramework/DamageType.h"
 #include "RDamageType.generated.h"
 
-UENUM(BlueprintType)
-enum class ERDamageType : uint8
-{
-   FALL      UMETA (DisplayName = "FALL"     ),
-
-   BLUNT     UMETA (DisplayName = "BLUNT"    ),
-   PIERCE    UMETA (DisplayName = "PIERCE"   ),
-   SLASH     UMETA (DisplayName = "SLASH"    ),
-
-   MAGIC     UMETA (DisplayName = "MAGIC"    ),
-   FIRE      UMETA (DisplayName = "FIRE"     ),
-   LIGHTNING UMETA (DisplayName = "LIGHTNING"),
-
-   DARK      UMETA (DisplayName = "DARK"     ),
-   LIGHT     UMETA (DisplayName = "LIGHT"    ),
-};
-
 USTRUCT(BlueprintType)
-struct RCHARACTERLIB_API FRResistanceStats
+struct RCHARACTERLIB_API FRResistanceStat
 {
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Fall = 0;
+      TSubclassOf<URDamageType> DamageType;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Blunt = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Pierce = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Slash = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Magic = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Fire = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Lighting = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Dark = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Light = 0;
+      float Resistance = 0;
 };
 
 UCLASS(Blueprintable, BlueprintType)

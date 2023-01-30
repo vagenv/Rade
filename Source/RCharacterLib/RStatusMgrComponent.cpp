@@ -13,6 +13,8 @@
 
 URStatusMgrComponent::URStatusMgrComponent ()
 {
+   PrimaryComponentTick.bCanEverTick = true;
+   PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
 }
 
@@ -51,6 +53,31 @@ void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
+void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+   Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
+   StatusRegen (DeltaTime);
+}
+
+void URStatusMgrComponent::StatusRegen (float DeltaTime)
+{
+   if (Health.Current < Health.Max && Health.Regen) {
+      Health.Current = Health.Current + Health.Regen * DeltaTime;
+      Health.Current = FMath::Clamp (Health.Current, 0, Health.Max);
+   }
+
+   if (Mana.Current < Mana.Max && Mana.Regen) {
+      Mana.Current = Mana.Current + Mana.Regen * DeltaTime;
+      Mana.Current = FMath::Clamp (Mana.Current, 0, Mana.Max);
+   }
+
+   if (Stamina.Current < Stamina.Max && Stamina.Regen) {
+      Stamina.Current = Stamina.Current + Stamina.Regen * DeltaTime;
+      Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
+   }
+}
+
+
 //=============================================================================
 //                 RCharacter events
 //=============================================================================
@@ -64,9 +91,14 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
    if (DamageType) {
 
       float Resistance = 0;
-      // TODO: Calc Resistance.
-      // Calc damage with resistance and scaling
-      //R_LOG_PRINTF ("Damage type [%s]", *DamageEvent.DamageTypeClass->GetDefaultObject()->GetName ());
+
+      // TODO: Replace with total calculated Resistance
+      for (const FRResistanceStat &stat : BaseResistence) {
+         if (stat.DamageType == DamageEvent.DamageTypeClass) {
+            Resistance = stat.Resistance;
+            break;
+         }
+      }
 
       DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
       //R_LOG_PRINTF ("Final Damage [%.1f]", DamageAmount);
