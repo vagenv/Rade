@@ -60,26 +60,27 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
                                         AController* EventInstigator,
                                         AActor* DamageCauser)
 {
-   ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
-
-   // Calc damage with resistance and scaling
-   //R_LOG_PRINTF ("Damage type [%s]", *DamageEvent.DamageTypeClass->GetDefaultObject()->GetName ());
-
-   URDamageType *DamageType = DamageEvent.DamageTypeClass->GetDefaultObject<URDamageType>();
-   if (!ensure (DamageType)) return 0;
 
 
-   // TODO: Get Resistance.
-   DamageAmount = DamageType->CalcDamage (DamageAmount, 0);
+   URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
+   if (DamageType) {
 
-   //R_LOG_PRINTF ("Final Damage [%f]", DamageAmount);
+      float Resistance = 0;
+      // TODO: Calc Resistance.
+      // Calc damage with resistance and scaling
+      //R_LOG_PRINTF ("Damage type [%s]", *DamageEvent.DamageTypeClass->GetDefaultObject()->GetName ());
 
+      DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
+      //R_LOG_PRINTF ("Final Damage [%.1f]", DamageAmount);
+   } else {
+      R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
+   }
 
    if (DamageAmount != .0f && !bDead) {
+
+      ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
       Health.Current -= DamageAmount;
-
       if (Health.Current < 0) Health.Current = 0;
-
       if (  Health.Current == 0
          && RCharacter)
       {
