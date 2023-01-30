@@ -4,6 +4,7 @@
 #include "RUtilLib/RLog.h"
 #include "RStatusMgrComponent.h"
 #include "RInventoryLib/RInventoryComponent.h"
+#include "RDamageType.h"
 #include "Net/UnrealNetwork.h"
 
 class AController;
@@ -14,12 +15,6 @@ class AController;
 
 ARCharacter::ARCharacter ()
 {
-   // Default fall damage Curve
-   FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
-   FallDamageCurveData->AddKey (1000, 0); // Minimum
-   FallDamageCurveData->AddKey (1500, 40);
-   FallDamageCurveData->AddKey (2000, 100);
-
    Inventory = CreateDefaultSubobject<URInventoryComponent> (TEXT("Inventory"));
    Inventory->SetIsReplicated (true);
 
@@ -133,14 +128,9 @@ float ARCharacter::TakeDamage (float DamageAmount,
 // Character Landed on Ground
 void ARCharacter::Landed (const FHitResult& Hit)
 {
-   const FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
-   if (FallDamageCurveData) {
-      // Horizontal velocity is ignored
-      float FallVelocityZ = GetCharacterMovement()->Velocity.GetAbs ().Z;
-      float dmg = FallDamageCurveData->Eval (FallVelocityZ);
-      dmg = UGameplayStatics::ApplyDamage (this, dmg, GetController (), Hit.GetActor (), UDamageType::StaticClass ());
-   }
-
+   // Take only vertical velocity
+   float FallVelocityZ = GetCharacterMovement ()->Velocity.GetAbs ().Z;
+   UGameplayStatics::ApplyDamage (this, FallVelocityZ, GetController (), Hit.GetActor (), URDamageType_Fall::StaticClass ());
    Super::Landed (Hit);
 }
 

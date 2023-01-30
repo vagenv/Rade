@@ -50,10 +50,6 @@ public:
    //                        Take Damage
    //==========================================================================
 
-   // Fall Velocity To Damage Curve
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
-      FRuntimeFloatCurve FallDamageCurve;
-
    // Something hit
    virtual float TakeDamage (float DamageAmount,
                              struct FDamageEvent const& DamageEvent,

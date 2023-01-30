@@ -5,8 +5,8 @@
 #include "RSaveLib/RSaveMgr.h"
 #include "RCharacter.h"
 #include "Net/UnrealNetwork.h"
-#include "Json.h"
-#include "JsonObjectConverter.h"
+#include "Engine/DamageEvents.h"
+#include "RDamageType.h"
 
 //=============================================================================
 //                 Core
@@ -62,6 +62,19 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
                                         AActor* DamageCauser)
 {
    ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
+
+   // Calc damage with resistance and scaling
+   //R_LOG_PRINTF ("Damage type [%s]", *DamageEvent.DamageTypeClass->GetDefaultObject()->GetName ());
+
+   URDamageType *DamageType = DamageEvent.DamageTypeClass->GetDefaultObject<URDamageType>();
+   if (!ensure (DamageType)) return 0;
+
+
+   // TODO: Get Resistance.
+   DamageAmount = DamageType->CalcDamage (DamageAmount, 0);
+
+   //R_LOG_PRINTF ("Final Damage [%f]", DamageAmount);
+
 
    if (DamageAmount != .0f && !bDead) {
       Health.Current -= DamageAmount;
