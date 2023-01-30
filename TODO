@@ -30,28 +30,36 @@ Battles
    Character
 ===========================
 
-Animation blueprint
-Animations blend.
-IK for hands
 
+Global Blueprint for Resistances?
+Global Blueprint for Damage types?
 
+Blueprint function for Damage events.
 
-Player Status Widget
+Random Chance to apply StatusEffect
+RStatusEffect
+- Time
+- Frequency
+- Event to apply action. (Causer + Victim)
+
+RDamageType
+- Status Effect List
+- Random chance of effect
+
+AbilityManager or add to StatusMgr?
+- Experience points
+- Levels
+- Skills
+- Abilities/Skills
+- Passive StatusEffects
+
+UI Player Status Widget
+- StatusMgr
+- EquipmentMgr
 
 Equipment Manager. Subclass of Inventory?
-- Widget next to item?
 - Extends InventoryComponent?
-- Slots.
-
-StatusManager Component.
-- UI
-- Health
-- Energy
-- List of Stats (Base)
-- List of Resistance against damage type
-- List of Abilities
-- List of Auras/Effects
-- List of Skills
+- Equipment slots.
 
 Equipment
 - Head
@@ -78,6 +86,10 @@ Damage based on:
 - Armor for that component
 - Current stats and rotection
 - Resistance
+
+Animation blueprint
+Animations blend.
+IK for hands
 
 
 === Should be moved to subclass of RCharacter
