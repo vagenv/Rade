@@ -8,6 +8,7 @@
 // #include "RCharacterLib/RAnimInstance.h"
 #include "RJetpackComponent.h"
 #include "RCharacterLib/RStatusMgrComponent.h"
+#include "RCharacterLib/REquipmentMgrComponent.h"
 
 #include "Engine.h"
 
@@ -66,8 +67,9 @@ ARPlayer::ARPlayer()
    Jetpack = CreateDefaultSubobject<URJetpackComponent> (TEXT("Jetpack"));
 
    // --- Inventory
-   Inventory->bSaveLoad = true;
-   Inventory->bCheckClosestPickup = true;
+   EquipmentMgr->bSaveLoad = true;
+   EquipmentMgr->bCheckClosestPickup = true;
+   StatusMgr->bSaveLoad = true;
 
    bAutoRevive = true;
 }

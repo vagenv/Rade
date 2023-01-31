@@ -58,7 +58,6 @@ public:
    //                   Components and Important References
    //==========================================================================
 
-   // Character Current Health
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       float MoveSpeed = 1.f;
 
@@ -73,11 +72,6 @@ public:
    //==========================================================================
    //            1st person Mesh and animation
    //==========================================================================
-
-   // // First Person Mesh Anim Instance
-   //  UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Rade|Player")
-   //    TObjectPtr<URAnimInstance> ArmsAnimInstance;
-
    //  First Person Mesh
    UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Rade|Player")
       TObjectPtr<USkeletalMeshComponent> Mesh1P;

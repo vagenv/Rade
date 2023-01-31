@@ -184,49 +184,6 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    static bool Cast (const FRItemData &src, FRActionItemData &dst);
 };
 
-// ============================================================================
-//          Move to RCharacter ?
-// ============================================================================
-
-USTRUCT(BlueprintType)
-struct RINVENTORYLIB_API FRConsumableItemData : public FRActionItemData
-{
-   GENERATED_BODY()
-
-   // 0 = Single instance effect
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float DurationSec = 0;
-
-   // ----
-   // List of applied effects.
-   // ----
-
-   static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
-};
-
-
-USTRUCT(BlueprintType)
-struct RINVENTORYLIB_API FREquipmentData : public FRActionItemData
-{
-   GENERATED_BODY()
-
-   // Socket to which item will be attached on spawn
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString AttachSocket;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float CurrentDurability = 100;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float MaxDurability = 100;
-
-   // ----
-   // List of applied stats
-   // List of applied abilities
-   // ----
-
-   static bool Cast (const FRItemData &src, FREquipmentData &dst);
-};
 
 
 // ============================================================================
@@ -253,13 +210,5 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_ActionItem (const FRItemData &src, FRActionItemData &ItemData,
                                       ERActionResult &Branches);
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
-      static void Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &ItemData,
-                                          ERActionResult &Branches);
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
-      static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
-                                         ERActionResult &Branches);
 };
 

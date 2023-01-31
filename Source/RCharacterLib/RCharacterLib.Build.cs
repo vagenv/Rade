@@ -11,6 +11,8 @@ public class RCharacterLib : ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
+         "Json",
+         "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
          "RInventoryLib"

@@ -4,6 +4,30 @@
 		"AttachSocket": "Head",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
+		"Resistence": [
+			{
+				"DamageType": "/Script/CoreUObject.Class'/Script/RCharacterLib.RDamageType_Fall'",
+				"Resistance": 5000
+			}
+		],
+		"Stats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "C",
@@ -22,6 +46,25 @@
 		"AttachSocket": "Hand",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
+		"Resistence": [],
+		"Stats":
+		{
+			"Strength": 50,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "E",
@@ -40,6 +83,25 @@
 		"AttachSocket": "Hand",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
+		"Resistence": [],
+		"Stats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "E",
@@ -58,6 +120,25 @@
 		"AttachSocket": "Hand",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
+		"Resistence": [],
+		"Stats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 100,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "D",
@@ -67,6 +148,43 @@
 		"MaxCount": 1,
 		"Weight": 3,
 		"Price": 10,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "ShoesOfSpeed",
+		"AttachSocket": "Head",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"Stats":
+		{
+			"Strength": 0,
+			"Dexterity": 100,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
 		"JsonData": ""

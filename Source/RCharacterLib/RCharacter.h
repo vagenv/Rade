@@ -7,8 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRCharacterEvent);
 
-// class URAnimInstance;
-class URInventoryComponent;
+class UREquipmentMgrComponent;
 class URStatusMgrComponent;
 
 UCLASS(Blueprintable)
@@ -30,9 +29,9 @@ public:
    //              Components and Important References
    //==========================================================================
 
-   //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      TObjectPtr<URInventoryComponent> Inventory;
+      TObjectPtr<UREquipmentMgrComponent> EquipmentMgr;
+
 
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")

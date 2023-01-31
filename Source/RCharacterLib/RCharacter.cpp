@@ -3,8 +3,8 @@
 #include "RCharacter.h"
 #include "RUtilLib/RLog.h"
 #include "RStatusMgrComponent.h"
-#include "RInventoryLib/RInventoryComponent.h"
 #include "RDamageType.h"
+#include "REquipmentMgrComponent.h"
 #include "Net/UnrealNetwork.h"
 
 class AController;
@@ -15,8 +15,8 @@ class AController;
 
 ARCharacter::ARCharacter ()
 {
-   Inventory = CreateDefaultSubobject<URInventoryComponent> (TEXT("Inventory"));
-   Inventory->SetIsReplicated (true);
+   EquipmentMgr = CreateDefaultSubobject<UREquipmentMgrComponent> (TEXT("EquipmentManager"));
+   EquipmentMgr->SetIsReplicated (true);
 
    StatusMgr = CreateDefaultSubobject<URStatusMgrComponent> (TEXT("StatusManager"));
    StatusMgr->SetIsReplicated (true);
@@ -28,7 +28,7 @@ ARCharacter::ARCharacter ()
 void ARCharacter::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-   DOREPLIFETIME (ARCharacter, Inventory);
+   DOREPLIFETIME (ARCharacter, EquipmentMgr);
    DOREPLIFETIME (ARCharacter, StatusMgr);
 }
 

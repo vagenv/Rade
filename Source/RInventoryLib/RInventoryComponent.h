@@ -186,7 +186,7 @@ public:
       void UseItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                           int32 ItemIdx) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
-      bool UseItem                       (int32 ItemIdx);
+      virtual bool UseItem               (int32 ItemIdx);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void DropItem_Server                (URInventoryComponent *SrcInventory,
