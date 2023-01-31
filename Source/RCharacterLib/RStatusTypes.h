@@ -9,23 +9,26 @@ struct RCHARACTERLIB_API FRCharacterStats
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Strength = 10;
+   FRCharacterStats ();
+   FRCharacterStats (float Value);
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Dexterity = 10;
+      float Strength = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Consitution = 10;
+      float Dexterity = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Intelligence = 10;
+      float Consitution = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Wisdom = 10;
+      float Intelligence = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Charisma = 10;
+      float Wisdom = 0;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float Charisma = 0;
 };
 
 USTRUCT(BlueprintType)

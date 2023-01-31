@@ -46,7 +46,6 @@ public:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats BaseStats;
 
-
    // --- Resistance
 
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
@@ -64,7 +63,7 @@ public:
    // Should be used only for Player.
    // Careful with collision of 'PlayerUniqueId'
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
-      bool bSaveLoadStatus = false;
+      bool bSaveLoad = false;
 
 protected:
    // Rade Save events

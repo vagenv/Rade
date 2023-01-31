@@ -16,6 +16,8 @@ URStatusMgrComponent::URStatusMgrComponent ()
    PrimaryComponentTick.bCanEverTick = true;
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
+
+   BaseStats = FRCharacterStats (10);
 }
 
 // Replication
@@ -36,7 +38,7 @@ void URStatusMgrComponent::BeginPlay()
       bDead = false;
 
       // Save/Load Current Status
-      if (bSaveLoadStatus) {
+      if (bSaveLoad) {
          FRSaveEvent SavedDelegate;
          SavedDelegate.AddDynamic (this, &URStatusMgrComponent::OnSave);
          URSaveMgr::OnSave (world, SavedDelegate);

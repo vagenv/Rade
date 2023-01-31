@@ -37,7 +37,7 @@ void URInventoryComponent::BeginPlay()
    // if (GetLocalRole() >= ROLE_Authority)
 
    // Save/Load inventory
-   if (bSaveLoadInventory && bIsServer) {
+   if (bSaveLoad && bIsServer) {
       FRSaveEvent SavedDelegate;
       SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
       URSaveMgr::OnSave (world, SavedDelegate);
@@ -452,9 +452,9 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
          ItemIdx, Items.Num ());
-      return nullptr;
+      return false;
    }
 
    FRActionItemData ItemData;
@@ -673,61 +673,4 @@ void URInventoryComponent::OnLoad ()
    Items = loadedItems;
    OnInventoryUpdated.Broadcast ();
 }
-
-
-/*
-// Throw out all Items
-void URInventoryComponent::ThrowOutAllItems()
-{
-   UWorld* const World = TheCharacter->GetWorld();
-   for (int32 ItemIndex = 0; ItemIndex < Items.Num(); ItemIndex++) {
-      // Inside the list of items
-      if (Items.IsValidIndex(ItemIndex) && TheCharacter) {
-
-         if (  World
-            && Items[ItemIndex].Archetype
-            && Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
-         {
-
-            // Get Player Rotation
-            FRotator rot      = TheCharacter->GetActorRotation();
-            FVector  spawnLoc = TheCharacter->GetActorLocation()
-                              + rot.Vector() * 200 + FVector(FMath::RandRange(-200, 200), FMath::RandRange(-200, 200), 50);
-
-            AItemPickup* newPickup;
-            AItem* newItem = Items[ItemIndex].Archetype->GetDefaultObject<AItem>();
-
-            // Spawn Item Pickup archetype
-            if (newItem && newItem->ItemPickupArchetype)
-                 newPickup = World->SpawnActor<AItemPickup>(newItem->ItemPickupArchetype, spawnLoc, rot);
-
-            // Spawn Default pickup
-            else newPickup = World->SpawnActor<AItemPickup>(AItemPickup::StaticClass(), spawnLoc, rot);
-
-            if (newPickup) {
-               newPickup->SetReplicates(true);
-               if (newItem) {
-                  //printr("Death Item "+newItem->ItemName);
-                  newItem->BP_ItemDroped(newPickup);
-                  newItem->ItemCount = Items[ItemIndex].ItemCount;
-                  newPickup->Item = newItem->GetClass();
-
-                  if      (newItem->PickupMesh)     newPickup->Mesh->SetStaticMesh(newItem->PickupMesh);
-                  else if (newItem->PickupSkelMesh) newPickup->SkeletalMesh->SetSkeletalMesh(newItem->PickupSkelMesh);
-               }
-
-               newPickup->bAutoPickup = true;
-               newPickup->ActivatePickupPhysics();
-               if (newPickup->Mesh && newPickup->Mesh->IsSimulatingPhysics())
-                  newPickup->Mesh->AddImpulse(rot.Vector() * 120, NAME_None, true);
-
-               if (newPickup->SkeletalMesh && newPickup->SkeletalMesh->IsSimulatingPhysics())
-                  newPickup->SkeletalMesh->AddForce(rot.Vector() * 12000, NAME_None, true);
-            }
-         }
-      }
-   }
-   Items.Empty();
-}
-*/
 

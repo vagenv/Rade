@@ -23,7 +23,7 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-private:
+protected:
       // Has authority to change inventory
       bool bIsServer = false;
 public:
@@ -262,7 +262,7 @@ public:
    // Should be used only for Player.
    // Careful with collision of 'InventoryUniqueId'
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
-      bool bSaveLoadInventory = false;
+      bool bSaveLoad = false;
 
 protected:
    // Rade Save events

@@ -66,7 +66,7 @@ ARPlayer::ARPlayer()
    Jetpack = CreateDefaultSubobject<URJetpackComponent> (TEXT("Jetpack"));
 
    // --- Inventory
-   Inventory->bSaveLoadInventory = true;
+   Inventory->bSaveLoad = true;
    Inventory->bCheckClosestPickup = true;
 
    bAutoRevive = true;

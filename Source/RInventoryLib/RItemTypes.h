@@ -9,7 +9,6 @@
 //                   Item description
 //=============================================================================
 
-
 class  ARItemPickup;
 class  URItemAction;
 class  URInventoryComponent;
