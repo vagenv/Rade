@@ -5,6 +5,10 @@
 #include "GameFramework/DamageType.h"
 #include "RDamageType.generated.h"
 
+struct FDamageEvent;
+class AController;
+class AActor;
+
 USTRUCT(BlueprintType)
 struct RCHARACTERLIB_API FRResistanceStat
 {
@@ -26,10 +30,18 @@ public:
    URDamageType();
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
-   FRuntimeFloatCurve ResistanceToDamage;
+      FRuntimeFloatCurve ResistanceToDamage;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Character")
-   virtual float CalcDamage (float Damage, float Resistance);
+      virtual float CalcDamage (float Damage, float Resistance) const;
+
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Character")
+      void TakeDamage (AActor* DamageVictim,
+                       float Resistance,
+                       float DamageAmount,
+                       FDamageEvent const& DamageEvent,
+                       AController* EventInstigator,
+                       AActor* DamageCauser) const;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -42,6 +54,6 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
       FRuntimeFloatCurve FallDamageCurve;
 
-   virtual float CalcDamage (float Velocity, float Resistance) override;
+   virtual float CalcDamage (float Velocity, float Resistance) const override;
 };
 

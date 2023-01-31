@@ -89,7 +89,6 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 {
    URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
    if (DamageType) {
-
       float Resistance = 0;
 
       // TODO: Replace with total calculated Resistance
@@ -101,6 +100,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
       }
 
       DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
+      DamageType->TakeDamage (GetOwner(), Resistance, DamageAmount, DamageEvent, EventInstigator, DamageCauser);
       //R_LOG_PRINTF ("Final Damage [%.1f]", DamageAmount);
    } else {
       R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);

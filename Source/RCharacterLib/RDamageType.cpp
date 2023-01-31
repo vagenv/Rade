@@ -22,9 +22,9 @@ URDamageType::URDamageType ()
    ResistanceToDamageCurveData->AddKey (5120, 90);
 }
 
-float URDamageType::CalcDamage (float Damage, float Resistance)
+float URDamageType::CalcDamage (float Damage, float Resistance) const
 {
-   const FRichCurve* ResistanceToDamageCurveData = ResistanceToDamage.GetRichCurve ();
+   const FRichCurve* ResistanceToDamageCurveData = ResistanceToDamage.GetRichCurveConst ();
    if (!ensure (ResistanceToDamageCurveData)) return Damage;
    return (100 - ResistanceToDamageCurveData->Eval (Resistance)) * Damage / 100;
 }
@@ -39,12 +39,12 @@ URDamageType_Fall::URDamageType_Fall ()
    FallDamageCurveData->AddKey (2000, 100);
 }
 
-float URDamageType_Fall::CalcDamage (float Velocity, float Resistance)
+float URDamageType_Fall::CalcDamage (float Velocity, float Resistance) const
 {
-   const FRichCurve* ResistanceToDamageCurveData = ResistanceToDamage.GetRichCurve ();
+   const FRichCurve* ResistanceToDamageCurveData = ResistanceToDamage.GetRichCurveConst ();
    if (!ensure (ResistanceToDamageCurveData)) return 0;
 
-   const FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
+   const FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurveConst ();
    if (!ensure (FallDamageCurveData)) return 0;
 
    return (100 - ResistanceToDamageCurveData->Eval (Resistance))
