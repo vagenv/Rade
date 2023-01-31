@@ -461,39 +461,6 @@ void ARPlayer::GlobalRevive_Implementation()
 */
 
 //=============================================================================
-//             Animation
-//=============================================================================
-
-/*
-
-void ARPlayer::Global_SetAnimID_Implementation(EAnimState AnimID)
-{
-   Super::Global_SetAnimID_Implementation(AnimID);
-
-   // Set The Value in anim instances
-   if (ArmsAnimInstance) ArmsAnimInstance->RecieveGlobalAnimID(AnimID);
-
-}
-// Check Anim State on body or arms
-bool ARPlayer::IsAnimState(EAnimState TheAnimState)
-{
-   if (ArmsAnimInstance) {
-      if (ArmsAnimInstance->IsAnimState(TheAnimState)) return true;
-      else                                              return false;
-   } else return Super::IsAnimState(TheAnimState);
-}
-
-void ARPlayer::Global_SetAnimArchtype_Implementation(EAnimArchetype newAnimArchetype)
-{
-   Super::Global_SetAnimArchtype_Implementation(newAnimArchetype);
-   if (ArmsAnimInstance) ArmsAnimInstance->AnimArchetype = newAnimArchetype;
-}
-*/
-
-
-
-
-//=============================================================================
 //             Network Chat, Props and Replication
 //=============================================================================
 

@@ -226,20 +226,6 @@ public:
    virtual void SetCharacterStats_Implementation(const FString & newName, FLinearColor newColor);
    */
 
-   //==========================================================================
-   //               Animation State
-   //==========================================================================
-
-   /*
-   // Set Animation ID
-   virtual void Global_SetAnimID_Implementation(enum class EAnimState AnimID)override;
-
-   // Set Animation Archetype
-   virtual void Global_SetAnimArchtype_Implementation(enum class EAnimArchetype newAnimArchetype)override;
-
-   // Is Player in Anim State
-   virtual bool IsAnimState(enum class  EAnimState TheAnimState)override;
-   */
 
    //==========================================================================
    //         Damage, Death and Revive
@@ -297,39 +283,6 @@ public:
    // Player Landed
    virtual void Landed(const FHitResult& Hit)override;
    */
-
-protected:
-
-   //==========================================================================
-   //         Network  :  Client Action Input -> Server Action Input
-   //==========================================================================
-
-   /*
-   // Player Pressed Fire, Called on Server
-   UFUNCTION(Reliable, Server, WithValidation)
-      void FireStart();
-   virtual bool FireStart_Validate();
-   virtual void FireStart_Implementation();
-
-   // Player Released Fire, Called on Server
-   UFUNCTION(Reliable, Server, WithValidation)
-      void FireEnd();
-   virtual bool FireEnd_Validate();
-   virtual void FireEnd_Implementation();
-
-   // Player Pressed AltFire, Called on Server
-   UFUNCTION(Reliable, Server, WithValidation)
-      void AltFireStart();
-   virtual bool AltFireStart_Validate();
-   virtual void AltFireStart_Implementation();
-
-   // Player Released AltFire, Called on Server
-   UFUNCTION(Reliable, Server, WithValidation)
-      void AltFireEnd();
-   virtual bool AltFireEnd_Validate();
-   virtual void AltFireEnd_Implementation();
-   */
-
 
 public:
    //==========================================================================
