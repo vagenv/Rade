@@ -31,10 +31,37 @@ Battles
 ===========================
 
 
-Global Blueprint for Resistances?
-Global Blueprint for Damage types?
+Equipment Manager. Subclass of Inventory?
+- Extends InventoryComponent?
+- Equipment slots.
 
-Blueprint function for Damage events.
+Equipment
+- Head
+- Chest / Shoulder + Torso
+- Arms
+- Grieves
+- Legs
+
+Weapons (with damage type)
+- Rifle
+- Shotgun
+- Launcher
+- Sword
+- Magic Staff/Wand
+- Shield
+- Attack combo?
+
+
+Equipment effects:
+- Affects Status component
+- Item quality affects strength of effects
+- Random effects?
+
+Damage based on:
+- What part of body was hit
+- Armor for that component
+- Current stats / Resistance
+
 
 Random Chance to apply StatusEffect
 RStatusEffect
@@ -57,35 +84,6 @@ UI Player Status Widget
 - StatusMgr
 - EquipmentMgr
 
-Equipment Manager. Subclass of Inventory?
-- Extends InventoryComponent?
-- Equipment slots.
-
-Equipment
-- Head
-- Chest / Shoulder + Torso
-- Arms
-- Grieves
-- Legs
-
-Weapons (with damage type)
-- Rifle
-- Shotgun
-- Launcher
-- Sword
-- Shield
-- Attack combo?
-
-Equipment effects:
-- Affects Status component
-- Item quality affects strength of effects
-- Random effects?
-
-Damage based on:
-- What component hit
-- Armor for that component
-- Current stats and rotection
-- Resistance
 
 Animation blueprint
 Animations blend.
