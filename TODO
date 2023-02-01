@@ -31,9 +31,9 @@ Battles
 ===========================
 
 
-Equipment Manager. Subclass of Inventory?
-- Extends InventoryComponent?
+Equipment Manager
 - Equipment slots.
+- Use -> Equip
 
 Equipment
 - Head
@@ -83,6 +83,10 @@ AbilityManager or add to StatusMgr?
 UI Player Status Widget
 - StatusMgr
 - EquipmentMgr
+
+
+
+Save/Load as a Interface class with blueprint event?
 
 
 Animation blueprint
