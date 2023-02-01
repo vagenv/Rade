@@ -58,9 +58,6 @@ public:
    //                   Components and Important References
    //==========================================================================
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
-      float MoveSpeed = 1.f;
-
    // Rade Player Controller
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       TObjectPtr<APlayerController> PlayerController;

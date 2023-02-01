@@ -78,7 +78,6 @@ ARPlayer::ARPlayer()
 void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-   // DISABLE_REPLICATED_PROPERTY (ARPlayer, MoveSpeed);
 }
 
 void ARPlayer::BeginPlay ()
