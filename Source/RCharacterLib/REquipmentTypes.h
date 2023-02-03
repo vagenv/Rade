@@ -7,6 +7,8 @@
 #include "RDamageType.h"
 #include "REquipmentTypes.generated.h"
 
+class AActor;
+
 // ============================================================================
 //          Move to RCharacter ?
 // ============================================================================
@@ -33,9 +35,9 @@ struct RCHARACTERLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
 
-   // Socket to which item will be attached on spawn
+   // Slot to which item will be attached on spawn
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString AttachSocket;
+      TSubclassOf<UREquipmentSlot> EquipmentSlot;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float CurrentDurability = 100;
@@ -68,5 +70,28 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Character", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
                                          ERActionResult &Branches);
+};
+
+UCLASS(Abstract, Blueprintable, BlueprintType)
+class RCHARACTERLIB_API UREquipmentSlot : public UObject
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status")
+      bool EquipItem (const FREquipmentData &ItemData);
+
+protected:
+
+   // --- Runtime Data
+
+   // Data set from Inventory
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FREquipmentData Data;
+
+   // Pointer to Level Actor
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      TObjectPtr<AActor> Instance;
+
 };
 

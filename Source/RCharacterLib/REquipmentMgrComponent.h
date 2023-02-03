@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "REquipmentTypes.h"
 #include "RInventoryLib/RInventoryComponent.h"
 #include "REquipmentMgrComponent.generated.h"
 
@@ -17,6 +18,9 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+      TArray<TSubclassOf<UREquipmentSlot> > EquipmentSlots;
 
 
    // Check if item equip

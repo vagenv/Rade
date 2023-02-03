@@ -1,7 +1,7 @@
 [
 	{
 		"Name": "Hat",
-		"AttachSocket": "Head",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [
@@ -43,7 +43,7 @@
 	},
 	{
 		"Name": "Sword",
-		"AttachSocket": "Hand",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_RHand_BP.EquipmentSlot_RHand_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -80,7 +80,7 @@
 	},
 	{
 		"Name": "Pistol",
-		"AttachSocket": "Hand",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_RHand_BP.EquipmentSlot_RHand_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -117,7 +117,7 @@
 	},
 	{
 		"Name": "WoodenShield",
-		"AttachSocket": "Hand",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_LHand_BP.EquipmentSlot_LHand_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -154,7 +154,7 @@
 	},
 	{
 		"Name": "ShoesOfSpeed",
-		"AttachSocket": "Head",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Legs_BP.EquipmentSlot_Legs_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -179,12 +179,49 @@
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "C",
-		"Tooltip": "A funny hat",
+		"Tooltip": "Gotta go fast",
 		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 0.5,
 		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "ClothArmor",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Torso_BP.EquipmentSlot_Torso_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"Stats":
+		{
+			"Strength": 0,
+			"Dexterity": 100,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Dexterity": 0,
+			"Consitution": 0,
+			"Intelligence": 0,
+			"Wisdom": 0,
+			"Charisma": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "Better than naked",
+		"Icon": "/Game/Rade/Sprites/Icons/ball-football.ball-football",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 2,
+		"Price": 12,
 		"PickupMesh": "None",
 		"Pickup": "None",
 		"JsonData": ""

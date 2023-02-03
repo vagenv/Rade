@@ -48,7 +48,24 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return Super::UseItem (ItemIdx);
    }
 
-   R_LOG_PRINTF ("Equipment item used. Item: %s Socket : [%s]", *ItemData.Name, *ItemData.AttachSocket);
+   R_LOG_PRINTF ("Equipment item [%s] used.", *ItemData.Name);
+
+   // Find equip slot
+   if (ItemData.EquipmentSlot.Get ()) {
+      for (auto &EquipmentSlot : EquipmentSlots) {
+         if (!EquipmentSlot.Get ()) continue;
+         if (EquipmentSlot == ItemData.EquipmentSlot) {
+            // Equip
+            R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *EquipmentSlot->GetPathName ());
+            break;
+         }
+      }
+   } else {
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid slot.", *ItemData.Name);
+   }
+
+
+
 
    // ---
    // Try equip item

@@ -43,3 +43,12 @@ void UREquipmentUtilLibrary::Item_To_EquipmentItem (const FRItemData &src, FREqu
    if (res) Branches = ERActionResult::Success;
    else     Branches = ERActionResult::Failure;
 }
+
+// ============================================================================
+//                      UREquipmentSlot
+// ============================================================================
+
+bool UREquipmentSlot::EquipItem (const FREquipmentData &ItemData)
+{
+   return false;
+}
