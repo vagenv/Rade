@@ -1,46 +1,152 @@
-===========================
-   Game Design
-===========================
 
-Style:
-- 3rd/1st Person Shooter/Slasher
+=================================================
+   Character -> RPGLib / RStatLib?
+=================================================
 
-Movement:
-- Jump
-- Roll + Sprint
-
-Attack types
-- Melee / Ranged
-- Guns
-- Spells. Instant + Casting
-- Environment
-- Turrents / Towers
-- Ally NPCs
-
-Battles
-- Many enemies
-- Spawn in waves
-- Defend checkpoint
-- Buy upgrades
-- Change terrain?
-- Hire more NPCs and upgrade them.
-
+Move RCharacter to Rade?
 
 ===========================
-   Character
+   EquipmentMgr Design
 ===========================
 
+EquipmentSlot struct/class
+Subclasses with events.
+- SlotName (Optional?)
+- [Runtime] FREquipmentData
+- [Runtime] Instance (Pointer to Level Actor)
 
 Equipment Manager
-- Equipment slots.
-- Use -> Equip
+Array<SubclassOf<EquipmentSlot> > EquipmentSlots
+Several instances of same subclass possible
+- Use Item -> Equip
 
-Equipment
+Equip Action
+- Copy FREquipmentData from Item to Slot
+- Create LevelActor
+
+Get/Calc
+- Stats
+- Status
+- Effects
+
+Equipment effects:
+- Affects Status component
+- Item quality affects strength of effects
+- Random effects?
+
+===========================
+   StatusMgr
+===========================
+
+UpdateStats (Calculates and stores values)
+- Get Base Stats
+- Read stats from EquipmentMgr slots
+- Get Effects
+
+===========================
+   Stamina
+===========================
+
+- Roll and jump use stamina
+- Stop Restoring until a few seconds later.
+
+===========================
+   TakeDamage/ Status Effect
+===========================
+
+TakeDamage final value based on:
+- What part of body was hit (bone name? Headshot? Cripple status?)
+- Armor for that component
+- Current stats / Resistance
+
+Random Chance to apply StatusEffect
+
+RStatusEffect
+- Time
+- Frequency
+- Event to apply action. (Causer + Victim)
+
+RDamageType
+- Status Effect List
+- Random chance of effect
+
+===========================
+   FRCharacterStats
+===========================
+
+Effects on:
+- Health
+- Stamina
+- Mana
+- MoveSpeed
+- Jump Strength
+- AttackSpeed
+- AttackPower
+
+===========================
+   Remove Jetpack?
+===========================
+
+- Use
+
+===========================
+   Skills / Magic
+===========================
+
+AbilityManager or add to StatusMgr?
+- Experience points
+- Levels
+- Skills
+- Abilities/Skills
+- Passive StatusEffects
+
+
+===========================
+   Consuable with Effects
+===========================
+
+ConsumableItem : ActionItem
+- Duration
+- ItemData.Action will apply the effect and manage video/audio effects
+- Effect?
+
+===========================
+   Equipment Blueprints
+===========================
+
+Equipment slots
 - Head
 - Chest / Shoulder + Torso
 - Arms
 - Grieves
 - Legs
+- Necklace
+- Rings?
+
+===========================
+   UI
+===========================
+
+Player Status Widget
+- StatusMgr
+- EquipmentMgr
+
+===========================
+   Weapons
+===========================
+
+Weapons slots?
+Single/double hand?
+
+WeaponItem : EquipmentItem
+- AttackSpeed
+
+MeleeWeaponItem : WeaponItem
+
+RangedWeaponItem : WeaponItem
+- CurrenAmmo
+- MaxAmmo ?
+- MagSize ?
 
 Weapons (with damage type)
 - Rifle
@@ -52,80 +158,38 @@ Weapons (with damage type)
 - Attack combo?
 
 
-Equipment effects:
-- Affects Status component
-- Item quality affects strength of effects
-- Random effects?
-
-Damage based on:
-- What part of body was hit
-- Armor for that component
-- Current stats / Resistance
-
-
-Random Chance to apply StatusEffect
-RStatusEffect
-- Time
-- Frequency
-- Event to apply action. (Causer + Victim)
-
-RDamageType
-- Status Effect List
-- Random chance of effect
-
-AbilityManager or add to StatusMgr?
-- Experience points
-- Levels
-- Skills
-- Abilities/Skills
-- Passive StatusEffects
-
-UI Player Status Widget
-- StatusMgr
-- EquipmentMgr
-
-
+=================================================
+   Save/Load Simplification
+=================================================
 
 Save/Load as a Interface class with blueprint event?
 
+=================================================
+   Session History
+=================================================
 
-Animation blueprint
-Animations blend.
-IK for hands
+DamageMgrComponent to GameMode
+- Tracks Damage/Death/Revive/
+- Callbacks on death/revive
+- Array of damages
 
-
-=== Should be moved to subclass of RCharacter
-
-ConsumableItem : ActionItem
-- Duration
-- ItemData.Action will apply the effect and manage video/audio effects
-- Effect?
-
-EquipmentItem : ActionData
-- AttachSocket
-
-WeaponItem : EquipmentItem
-- CurrenAmmo
-- MaxAmmo
-- MagSize
-
-===========================
+=================================================
    Network
-===========================
+=================================================
 
 Select spawn point
 See status. Smooth start
 
-Session
+Network Session
 - Deep dive / Analysis / Simplification
 - Persistent session widget
 - Real time data. (Latency, Player count)
 - Return to main screen
 - Persistent data between sessions
 
-===========================
+=================================================
    Chat
-===========================
+=================================================
 
 Chat
 - Update Widget
@@ -133,34 +197,42 @@ Chat
 - A new module?
 - Audio messages?
 
-===========================
+=================================================
    Animation
-===========================
+=================================================
 
-Animation Blueprint
+Animation Blueprint (Network)
 
-Blend animation. Upper + Lower body
+Partial body blend.
+- Overlaps
+- Lower body
+- Upper body
+- Head Movement with camera
+- IK for hands to weapons attach sockets
 
+Smooth animations
+
+Animations:
 - Look around
 - Run/Sprint
 - Ragdoll death
 - Melee fight
-- Network
-- Partial body blend
-- IK to weapon attach socket
+- Roll
 
-===========================
+=================================================
    AI
-===========================
+=================================================
 
 - pathfinding
 - patrol
 - Melee and ranged
 - React if attacked
+- Attack together
+- Hide
 
-===========================
+=================================================
    Sound
-===========================
+=================================================
 
 - Jump / Land
 - Running
@@ -169,9 +241,9 @@ Blend animation. Upper + Lower body
 - Explosion
 - Environment
 
-===========================
+=================================================
    VFX
-===========================
+=================================================
 
 - Blood
 - Explosion
@@ -179,17 +251,17 @@ Blend animation. Upper + Lower body
 - GPU particles
 - Niagara
 
-===========================
+=================================================
    UI (Nice to have)
-===========================
+=================================================
 
 - Audio channels
 - Persistent Audio Settings
 - Input
 
-===========================
+=================================================
    Inventory (Nice to have)
-===========================
+=================================================
 
 Box UI
 - With PopupMenu for details
@@ -207,9 +279,9 @@ Store
 Craft in game menu
 - Personal list of crafting
 
-===========================
+=================================================
    Other
-===========================
+=================================================
 
 Action Popup UI
 - Short Press/Long Press
@@ -250,4 +322,31 @@ Custom plugin
 Nanite and lumen
 - Load high detail models on demand
 - Analyse budget, resource usage and disk read pattern
+
+=================================================
+   Game Design
+=================================================
+
+Style:
+- 3rd/1st Person Shooter/Slasher
+
+Movement:
+- Jump
+- Roll + Sprint
+
+Attack types
+- Melee / Ranged
+- Guns
+- Spells. Instant + Casting
+- Environment
+- Turrents / Towers
+- Ally NPCs
+
+Battles
+- Many enemies
+- Spawn in waves
+- Defend checkpoint
+- Buy upgrades
+- Change terrain?
+- Hire more NPCs and upgrade them.
 
