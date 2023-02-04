@@ -9,30 +9,29 @@ Move RCharacter to Rade?
    EquipmentMgr Design
 ===========================
 
-EquipmentSlot struct/class
-Subclasses with events.
-- SlotName (Optional?)
-- [Runtime] FREquipmentData
-- [Runtime] Instance (Pointer to Level Actor)
-
 Equipment Manager
-Array<SubclassOf<EquipmentSlot> > EquipmentSlots
-Several instances of same subclass possible
 - Use Item -> Equip
 
 Equip Action
-- Copy FREquipmentData from Item to Slot
-- Create LevelActor
-
-Get/Calc
-- Stats
-- Status
-- Effects
+- Several instances of same subclass possible
+- Search for slots of same class.
+- If no slot is free take unequip the first one
+- Set slot busy. Set values from FREquipmentData.
+- Slot Equip/Unequip event. [Owner, Component, Item, Slot and more]
+- Slot will atomatically determine what to do with data. Add/Destroy Actor. Or set texture
+- Create instances of subclass? or call class as static object
+- Copy FREquipmentData from Item to Slot?
+- Who decides what to do during equip
 
 Equipment effects:
 - Affects Status component
 - Item quality affects strength of effects
 - Random effects?
+
+Get/Calc
+- Stats
+- Status
+- Effects
 
 ===========================
    StatusMgr
@@ -40,7 +39,7 @@ Equipment effects:
 
 UpdateStats (Calculates and stores values)
 - Get Base Stats
-- Read stats from EquipmentMgr slots
+- Read stats from EquipmentMgr slots? Or SetStats?
 - Get Effects
 
 ===========================
@@ -110,18 +109,6 @@ ConsumableItem : ActionItem
 - ItemData.Action will apply the effect and manage video/audio effects
 - Effect?
 
-===========================
-   Equipment Blueprints
-===========================
-
-Equipment slots
-- Head
-- Chest / Shoulder + Torso
-- Arms
-- Grieves
-- Legs
-- Necklace
-- Rings?
 
 ===========================
    UI
@@ -279,9 +266,23 @@ Store
 Craft in game menu
 - Personal list of crafting
 
+
+Random Item data.
+- Price/Rarity/Effect/Color
+
+=================================================
+   Camera
+=================================================
+
+Smoother Turns
+Behind back right
+Focus actor
+Restore to move direction after a few seconds
+
 =================================================
    Other
 =================================================
+
 
 Action Popup UI
 - Short Press/Long Press
