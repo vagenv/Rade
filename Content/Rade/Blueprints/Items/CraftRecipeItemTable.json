@@ -14,10 +14,10 @@
 			{
 				"Arch":
 				{
-					"DataTable": "None",
-					"RowName": "None"
+					"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/ItemTable.ItemTable'",
+					"RowName": "Gold"
 				},
-				"Count": 1
+				"Count": 20
 			},
 			{
 				"Arch":

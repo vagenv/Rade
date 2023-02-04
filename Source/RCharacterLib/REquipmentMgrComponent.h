@@ -19,8 +19,13 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       TArray<TSubclassOf<UREquipmentSlot> > EquipmentSlots;
+
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
+      TArray<bool> EquipmentSlotsTaken;
+
+
 
 
    // Check if item equip
