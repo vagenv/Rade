@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "REquipmentTypes.h"
 #include "RInventoryLib/RInventoryComponent.h"
 #include "REquipmentMgrComponent.generated.h"
+
+class UREquipmentSlot;
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
@@ -22,11 +23,8 @@ public:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       TArray<TSubclassOf<UREquipmentSlot> > EquipmentSlots;
 
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
-      TArray<bool> EquipmentSlotsTaken;
-
-
-
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
+      TArray<TObjectPtr<UREquipmentSlot> > EquipmentSlotsRuntime;
 
    // Check if item equip
    virtual bool UseItem (int32 ItemIdx) override;

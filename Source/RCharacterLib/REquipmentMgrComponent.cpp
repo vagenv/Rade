@@ -22,6 +22,12 @@ void UREquipmentMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProper
 void UREquipmentMgrComponent::BeginPlay()
 {
    Super::BeginPlay();
+
+   // --- Create Equipment Slots
+   EquipmentSlotsRuntime.Empty ();
+   for (auto const& SlotInfo : EquipmentSlots) {
+      EquipmentSlotsRuntime.Add (NewObject<UREquipmentSlot> (this, SlotInfo));
+   }
 }
 
 void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -52,19 +58,17 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 
    // Find equip slot
    if (ItemData.EquipmentSlot.Get ()) {
-      for (auto &EquipmentSlot : EquipmentSlots) {
-         if (!EquipmentSlot.Get ()) continue;
-         if (EquipmentSlot == ItemData.EquipmentSlot) {
+      for (auto &EquipmentSlot : EquipmentSlotsRuntime) {
+         if (EquipmentSlot->GetClass () == ItemData.EquipmentSlot) {
             // Equip
             R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *EquipmentSlot->GetPathName ());
+            EquipmentSlot->EquipItem (GetOwner (), this, ItemData);
             break;
          }
       }
    } else {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid slot.", *ItemData.Name);
    }
-
-
 
 
    // ---

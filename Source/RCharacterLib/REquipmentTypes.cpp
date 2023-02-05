@@ -47,8 +47,3 @@ void UREquipmentUtilLibrary::Item_To_EquipmentItem (const FRItemData &src, FREqu
 // ============================================================================
 //                      UREquipmentSlot
 // ============================================================================
-
-bool UREquipmentSlot::EquipItem (const FREquipmentData &ItemData)
-{
-   return false;
-}

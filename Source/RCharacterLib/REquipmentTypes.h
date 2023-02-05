@@ -8,6 +8,7 @@
 #include "REquipmentTypes.generated.h"
 
 class AActor;
+class UREquipmentMgrComponent;
 
 // ============================================================================
 //          Move to RCharacter ?
@@ -78,20 +79,9 @@ class RCHARACTERLIB_API UREquipmentSlot : public UObject
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintPure, Category = "Rade|Status")
-      bool EquipItem (const FREquipmentData &ItemData);
-
-protected:
-
-   // --- Runtime Data
-
-   // Data set from Inventory
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FREquipmentData Data;
-
-   // Pointer to Level Actor
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TObjectPtr<AActor> Instance;
-
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
+      void EquipItem (const AActor *Owner,
+                      const UREquipmentMgrComponent *EquipmentMgr,
+                      const FREquipmentData &ItemData);
 };
 
