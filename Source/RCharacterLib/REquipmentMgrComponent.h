@@ -5,7 +5,7 @@
 #include "RInventoryLib/RInventoryComponent.h"
 #include "REquipmentMgrComponent.generated.h"
 
-class UREquipmentSlot;
+class UREquipmentSlotComponent;
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
@@ -21,10 +21,7 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
-      TArray<TSubclassOf<UREquipmentSlot> > EquipmentSlots;
-
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
-      TArray<TObjectPtr<UREquipmentSlot> > EquipmentSlotsRuntime;
+      TArray<TSubclassOf<UREquipmentSlotComponent> > DefaultEquipmentSlots;
 
    // Check if item equip
    virtual bool UseItem (int32 ItemIdx) override;

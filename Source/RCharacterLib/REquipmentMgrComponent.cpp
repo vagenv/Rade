@@ -3,6 +3,7 @@
 #include "REquipmentMgrComponent.h"
 #include "RUtilLib/Rlog.h"
 #include "REquipmentTypes.h"
+#include "REquipmentSlotComponent.h"
 #include "RInventoryLib/RItemAction.h"
 
 //=============================================================================
@@ -24,14 +25,10 @@ void UREquipmentMgrComponent::BeginPlay()
 {
    Super::BeginPlay();
 
-   // --- Create Equipment Slots
-   EquipmentSlotsRuntime.Empty ();
-   for (auto const& SlotInfo : EquipmentSlots) {
-      TObjectPtr<UREquipmentSlot> NewSlot = NewObject<UREquipmentSlot> (this, SlotInfo);
-      NewSlot->Owner = GetOwner ();
-      NewSlot->EquipmentMgr = this;
-      NewSlot->World = GetWorld ();
-      EquipmentSlotsRuntime.Add (NewSlot);
+   // --- Create Equipment Slots Components
+   for (auto const& SlotInfo : DefaultEquipmentSlots) {
+      UREquipmentSlotComponent* NewSlot = NewObject<UREquipmentSlotComponent>(GetOwner (), SlotInfo);
+      if (NewSlot) NewSlot->RegisterComponent ();
    }
 }
 
@@ -65,10 +62,13 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-   UREquipmentSlot *SupportedSlot = nullptr;
+   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
+   GetOwner ()->GetComponents (CurrentEquipmentSlots);
+
+   UREquipmentSlotComponent *SupportedSlot = nullptr;
 
    // --- Find equip slot
-   for (auto &EquipmentSlot : EquipmentSlotsRuntime) {
+   for (auto &EquipmentSlot : CurrentEquipmentSlots) {
       if (EquipmentSlot->GetClass () == ItemData.EquipmentSlot) {
 
          // First slot available
@@ -88,23 +88,22 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-
-   // Equip
-   R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *SupportedSlot->GetPathName ());
-
    // TODO: Check equip required stats
 
    if (SupportedSlot->Busy) {
       // TODO: Remove stats and effects
       SupportedSlot->Busy = false;
       SupportedSlot->Updated ();
+
+      // TODO: Replace with actual unequip call
+      if (SupportedSlot->EquipmentData.Name == ItemData.Name) {
+         SupportedSlot->EquipmentData = FREquipmentData();
+         R_LOG_PRINTF ("Unequiping item [%s] to slot [%s].", *ItemData.Name, *SupportedSlot->GetPathName ());
+         return true;
+      }
    }
 
-   // TODO: Replace with actual unequip
-   if (SupportedSlot->EquipmentData.Name == ItemData.Name) {
-      SupportedSlot->EquipmentData = FREquipmentData();
-      return true;
-   }
+   R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *SupportedSlot->GetPathName ());
 
    // --- Update slot data
    SupportedSlot->EquipmentData = ItemData;

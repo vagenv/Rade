@@ -43,7 +43,7 @@
 	},
 	{
 		"Name": "Sword",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_RHand_BP.EquipmentSlot_RHand_BP_C'",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -80,7 +80,7 @@
 	},
 	{
 		"Name": "Pistol",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_RHand_BP.EquipmentSlot_RHand_BP_C'",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -117,7 +117,7 @@
 	},
 	{
 		"Name": "WoodenShield",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_LHand_BP.EquipmentSlot_LHand_BP_C'",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_L_BP.EquipmentSlot_Hand_L_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],

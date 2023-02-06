@@ -8,6 +8,7 @@
 #include "REquipmentTypes.generated.h"
 
 class AActor;
+class UREquipmentSlotComponent;
 class UREquipmentMgrComponent;
 class UWorld;
 
@@ -39,7 +40,7 @@ struct RCHARACTERLIB_API FREquipmentData : public FRActionItemData
 
    // Slot to which item will be attached on spawn
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TSubclassOf<UREquipmentSlot> EquipmentSlot;
+      TSubclassOf<UREquipmentSlotComponent> EquipmentSlot;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float CurrentDurability = 100;
@@ -72,30 +73,5 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Character", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
                                          ERActionResult &Branches);
-};
-
-UCLASS(Abstract, Blueprintable, BlueprintType)
-class RCHARACTERLIB_API UREquipmentSlot : public UObject
-{
-   GENERATED_BODY()
-public:
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
-      const UWorld *World = nullptr;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
-      const AActor *Owner = nullptr;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
-      const UREquipmentMgrComponent *EquipmentMgr = nullptr;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      bool Busy = false;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      FREquipmentData EquipmentData;
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
-      void Updated ();
 };
 
