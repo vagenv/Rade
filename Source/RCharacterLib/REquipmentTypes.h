@@ -9,6 +9,7 @@
 
 class AActor;
 class UREquipmentMgrComponent;
+class UWorld;
 
 // ============================================================================
 //          Move to RCharacter ?
@@ -79,9 +80,22 @@ class RCHARACTERLIB_API UREquipmentSlot : public UObject
    GENERATED_BODY()
 public:
 
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
+      const UWorld *World = nullptr;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
+      const AActor *Owner = nullptr;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
+      const UREquipmentMgrComponent *EquipmentMgr = nullptr;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      bool Busy = false;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      FREquipmentData EquipmentData;
+
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
-      void EquipItem (const AActor *Owner,
-                      const UREquipmentMgrComponent *EquipmentMgr,
-                      const FREquipmentData &ItemData);
+      void Updated ();
 };
 

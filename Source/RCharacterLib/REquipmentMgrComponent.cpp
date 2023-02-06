@@ -3,6 +3,7 @@
 #include "REquipmentMgrComponent.h"
 #include "RUtilLib/Rlog.h"
 #include "REquipmentTypes.h"
+#include "RInventoryLib/RItemAction.h"
 
 //=============================================================================
 //                 Core
@@ -26,7 +27,11 @@ void UREquipmentMgrComponent::BeginPlay()
    // --- Create Equipment Slots
    EquipmentSlotsRuntime.Empty ();
    for (auto const& SlotInfo : EquipmentSlots) {
-      EquipmentSlotsRuntime.Add (NewObject<UREquipmentSlot> (this, SlotInfo));
+      TObjectPtr<UREquipmentSlot> NewSlot = NewObject<UREquipmentSlot> (this, SlotInfo);
+      NewSlot->Owner = GetOwner ();
+      NewSlot->EquipmentMgr = this;
+      NewSlot->World = GetWorld ();
+      EquipmentSlotsRuntime.Add (NewSlot);
    }
 }
 
@@ -49,43 +54,74 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
+   // --- Not an equipment item. Pass management to Inventory.
    FREquipmentData ItemData;
    if (!FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
       return Super::UseItem (ItemIdx);
    }
 
-   R_LOG_PRINTF ("Equipment item [%s] used.", *ItemData.Name);
+   if (!ItemData.EquipmentSlot.Get ()) {
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *ItemData.Name);
+      return false;
+   }
 
-   // Find equip slot
-   if (ItemData.EquipmentSlot.Get ()) {
-      for (auto &EquipmentSlot : EquipmentSlotsRuntime) {
-         if (EquipmentSlot->GetClass () == ItemData.EquipmentSlot) {
-            // Equip
-            R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *EquipmentSlot->GetPathName ());
-            EquipmentSlot->EquipItem (GetOwner (), this, ItemData);
+   UREquipmentSlot *SupportedSlot = nullptr;
+
+   // --- Find equip slot
+   for (auto &EquipmentSlot : EquipmentSlotsRuntime) {
+      if (EquipmentSlot->GetClass () == ItemData.EquipmentSlot) {
+
+         // First slot available
+         if (!SupportedSlot) SupportedSlot = EquipmentSlot;
+
+         // Empty Slot found
+         if (!EquipmentSlot->Busy) {
+            SupportedSlot = EquipmentSlot;
             break;
          }
       }
-   } else {
-      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid slot.", *ItemData.Name);
+   }
+
+   if (!SupportedSlot) {
+      R_LOG_PRINTF ("Equipment item [%s] required slot [%s] not found on character",
+         *ItemData.Name, *ItemData.EquipmentSlot->GetName ());
+      return false;
    }
 
 
-   // ---
-   // Try equip item
-   // Check required stats
-   // Add addition stats and effects
-   // ---
+   // Equip
+   R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *SupportedSlot->GetPathName ());
 
+   // TODO: Check equip required stats
 
-   // --- Item Action
-   // URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
-   // if (!ensure (ItemBP)) return false;
-   // ItemBP->Used (this, ItemData, ItemIdx);
-   // BP_Used (ItemIdx);
+   if (SupportedSlot->Busy) {
+      // TODO: Remove stats and effects
+      SupportedSlot->Busy = false;
+      SupportedSlot->Updated ();
+   }
 
+   // TODO: Replace with actual unequip
+   if (SupportedSlot->EquipmentData.Name == ItemData.Name) {
+      SupportedSlot->EquipmentData = FREquipmentData();
+      return true;
+   }
 
+   // --- Update slot data
+   SupportedSlot->EquipmentData = ItemData;
+   SupportedSlot->Busy = true;
+   SupportedSlot->Updated ();
 
-   return false;
+   // TODO: Add addition stats and effects
+
+   // --- Equipment Action if defined
+   if (ItemData.Action) {
+      URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
+      if (ItemBP) {
+         ItemBP->Used (this, ItemData, ItemIdx);
+         BP_Used (ItemIdx);
+      }
+   }
+
+   return true;
 }
 
