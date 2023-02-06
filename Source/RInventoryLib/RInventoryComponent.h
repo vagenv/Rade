@@ -60,7 +60,6 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
 
-
    void CalcWeight ();
 
 public:
@@ -232,10 +231,6 @@ protected:
       void CheckClosestPickup ();
 
 public:
-
-   // // Network call when Item list has been updated
-   // UFUNCTION()
-   //    void OnRep_CurrentPickups ();
 
    // Owner overlaps pickup
    bool Pickup_Add (const ARItemPickup* Pickup);

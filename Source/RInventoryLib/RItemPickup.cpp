@@ -137,23 +137,11 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
    BP_PlayerLeft (OtherActor);
 }
 
-// The Actual event of pickup
-void ARItemPickup::PickedUp (AActor *InventoryOwner)
-{
-   // if (!InventoryOwner) return;
-   // URInventoryComponent *PlayerInventory = InventoryOwner->FindComponentByClass<URInventoryComponent> ();
-   // if (!Inventory) return;
-
-   // if (bAutoDestroy) PlayerInventory->CurrentPickups.RemoveSingle (this);
-   // PlayerInventory->OnPickupsUpdated.Broadcast ();
-   // BP_PickedUp (InventoryOwner);
-   // if (bAutoDestroy) Destroy ();
-}
-
 void ARItemPickup::OnInventoryUpdate ()
 {
-   if (bAutoDestroy && Inventory->GetItems ().Num () == 0) {
-      Destroy ();
+   if (Inventory->GetItems ().Num () == 0) {
+      BP_InventoryEmptied ();
+      if (bAutoDestroy) Destroy ();
    }
 }
 

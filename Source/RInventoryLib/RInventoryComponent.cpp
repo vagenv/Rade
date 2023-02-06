@@ -66,7 +66,7 @@ void URInventoryComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 
 	// Ensure the fuze timer is cleared by using the timer handle
-	GetWorld()->GetTimerManager ().ClearTimer (TimerClosestPickup);
+	GetWorld ()->GetTimerManager ().ClearTimer (TimerClosestPickup);
 }
 
 //=============================================================================

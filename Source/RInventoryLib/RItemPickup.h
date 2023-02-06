@@ -59,12 +59,12 @@ public:
    //          Events
    //==========================================================================
 
-   // Item was picked up by player
-   void PickedUp (AActor* InventoryOwner);
+   // Activate Pickup Overlap Tracking
+   void ActivatePickupOverlap ();
 
-   // BP Event that item Was Picked Up
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_PickedUp (AActor* InventoryOwner);
+   //==========================================================================
+   //          Blueprint Events
+   //==========================================================================
 
    // BP Event that Player Entered Pickup Area
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
@@ -74,11 +74,9 @@ public:
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
       void BP_PlayerLeft (AActor* InventoryOwner);
 
-   // Activate Pickup Overlap Tracking
-   void ActivatePickupOverlap ();
-
-   // Activate Pickup Physics
-   void ActivatePickupPhysics ();
+   // BP Event that all items have been removed
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
+      void BP_InventoryEmptied ();
 
 protected:
 
@@ -101,6 +99,5 @@ protected:
    // Inventory updated
    UFUNCTION()
       void OnInventoryUpdate ();
-
 };
 

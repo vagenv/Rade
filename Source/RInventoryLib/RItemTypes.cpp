@@ -40,7 +40,6 @@ bool FRItemDataHandle::ToItem (FRItemData &dst) const
    if (!ensure (res)) return false;
 
    // Set RAW data
-   // Item.JsonData = JsonData;
    Item.SetJSON (JsonData);
    dst = Item;
    return true;

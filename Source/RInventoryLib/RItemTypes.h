@@ -153,10 +153,6 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
 protected:
 
-   // For subclass runtime data serialization
-   // UPROPERTY()
-   //    FDataTableRowHandle Arch;
-
    // This data will be serialized. Subclasses must write data into here
    UPROPERTY()
       FString JsonData;
