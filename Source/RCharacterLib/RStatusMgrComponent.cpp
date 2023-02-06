@@ -110,6 +110,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 
    if (DamageAmount != .0f && !bDead) {
 
+      // TODO: Report death, rather than doing it manually here.
       ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
       Health.Current -= DamageAmount;
       if (Health.Current < 0) Health.Current = 0;

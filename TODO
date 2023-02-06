@@ -33,6 +33,10 @@ Get/Calc
 - Status
 - Effects
 
+
+Blueprint Data validation
+
+
 ===========================
    StatusMgr
 ===========================
@@ -350,4 +354,9 @@ Battles
 - Buy upgrades
 - Change terrain?
 - Hire more NPCs and upgrade them.
+
+
+Random Content
+- Items stats
+- Weapon stats/effects
 
