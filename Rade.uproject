@@ -20,7 +20,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RSaveLib",
+			"Name": "RStatusLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},

@@ -5,9 +5,8 @@
 #include "RUtilLib/RLog.h"
 #include "RInventoryLib/RInventoryComponent.h"
 #include "RSaveLib/RSaveMgr.h"
-// #include "RCharacterLib/RAnimInstance.h"
 #include "RJetpackComponent.h"
-#include "RCharacterLib/RStatusMgrComponent.h"
+#include "RStatusLib/RStatusMgrComponent.h"
 #include "RCharacterLib/REquipmentMgrComponent.h"
 
 #include "Engine.h"

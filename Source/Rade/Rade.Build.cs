@@ -18,6 +18,7 @@ public class Rade : ModuleRules
          "RSaveLib",
          "ROptionsLib",
          "RInventoryLib",
+         "RStatusLib",
          "RCharacterLib",
       });
    }

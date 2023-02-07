@@ -5,7 +5,7 @@
 #include "RStatusTypes.generated.h"
 
 USTRUCT(BlueprintType)
-struct RCHARACTERLIB_API FRCharacterStats
+struct RSTATUSLIB_API FRCharacterStats
 {
    GENERATED_BODY()
 
@@ -43,7 +43,7 @@ struct RCHARACTERLIB_API FRCharacterStats
 };
 
 USTRUCT(BlueprintType)
-struct RCHARACTERLIB_API FRStatusValue
+struct RSTATUSLIB_API FRStatusValue
 {
    GENERATED_BODY()
 

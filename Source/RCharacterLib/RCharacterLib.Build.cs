@@ -15,7 +15,8 @@ public class RCharacterLib : ModuleRules
          "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
-         "RInventoryLib"
+         "RInventoryLib",
+         "RStatusLib"
       });
    }
 }

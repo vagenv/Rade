@@ -8,7 +8,7 @@
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
-class RCHARACTERLIB_API URStatusMgrComponent : public UActorComponent
+class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent
 {
    GENERATED_BODY()
 public:

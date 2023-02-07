@@ -2,8 +2,8 @@
 
 #include "RCharacter.h"
 #include "RUtilLib/RLog.h"
-#include "RStatusMgrComponent.h"
-#include "RDamageType.h"
+#include "RStatusLib/RDamageType.h"
+#include "RStatusLib/RStatusMgrComponent.h"
 #include "REquipmentMgrComponent.h"
 #include "Net/UnrealNetwork.h"
 

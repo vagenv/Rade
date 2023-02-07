@@ -10,7 +10,7 @@ class AController;
 class AActor;
 
 USTRUCT(BlueprintType)
-struct RCHARACTERLIB_API FRResistanceStat
+struct RSTATUSLIB_API FRResistanceStat
 {
    GENERATED_BODY()
 
@@ -22,7 +22,7 @@ struct RCHARACTERLIB_API FRResistanceStat
 };
 
 UCLASS(Blueprintable, BlueprintType)
-class RCHARACTERLIB_API URDamageType : public UDamageType
+class RSTATUSLIB_API URDamageType : public UDamageType
 {
    GENERATED_BODY()
 public:
@@ -45,7 +45,7 @@ public:
 };
 
 UCLASS(Blueprintable, BlueprintType)
-class RCHARACTERLIB_API URDamageType_Fall : public URDamageType
+class RSTATUSLIB_API URDamageType_Fall : public URDamageType
 {
    GENERATED_BODY()
 public:

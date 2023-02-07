@@ -5,7 +5,7 @@
 #include "RStatusEffect.generated.h"
 
 UCLASS(Blueprintable, BlueprintType)
-class RCHARACTERLIB_API URStatusEffect : public UObject
+class RSTATUSLIB_API URStatusEffect : public UObject
 {
    GENERATED_BODY()
 public:

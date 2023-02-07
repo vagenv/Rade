@@ -3,8 +3,8 @@
 #pragma once
 
 #include "RInventoryLib/RItemTypes.h"
-#include "RStatusTypes.h"
-#include "RDamageType.h"
+#include "RStatusLib/RDamageType.h"
+#include "RStatusLib/RStatusTypes.h"
 #include "REquipmentTypes.generated.h"
 
 class AActor;

@@ -3,7 +3,6 @@
 #include "RStatusMgrComponent.h"
 #include "RUtilLib/RLog.h"
 #include "RSaveLib/RSaveMgr.h"
-#include "RCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/DamageEvents.h"
 
@@ -110,6 +109,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 
    if (DamageAmount != .0f && !bDead) {
 
+      /*
       // TODO: Report death, rather than doing it manually here.
       ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
       Health.Current -= DamageAmount;
@@ -119,6 +119,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
       {
          RCharacter->Die_Server (DamageCauser, EventInstigator);
       }
+      */
    }
    return DamageAmount;
 }
