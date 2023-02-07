@@ -1,6 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RCharacterLib.h"
+#include "REquipmentLib.h"
 
-IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, RCharacterLib);
+IMPLEMENT_GAME_MODULE ( FDefaultGameModuleImpl, REquipmentLib);
 

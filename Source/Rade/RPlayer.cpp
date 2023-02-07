@@ -3,11 +3,11 @@
 #include "RPlayer.h"
 
 #include "RUtilLib/RLog.h"
-#include "RInventoryLib/RInventoryComponent.h"
 #include "RSaveLib/RSaveMgr.h"
-#include "RJetpackComponent.h"
+#include "REquipmentLib/REquipmentMgrComponent.h"
 #include "RStatusLib/RStatusMgrComponent.h"
-#include "RCharacterLib/REquipmentMgrComponent.h"
+
+#include "RJetpackComponent.h"
 
 #include "Engine.h"
 

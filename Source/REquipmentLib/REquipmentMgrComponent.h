@@ -9,7 +9,7 @@ class UREquipmentSlotComponent;
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
-class RCHARACTERLIB_API UREquipmentMgrComponent : public URInventoryComponent
+class REQUIPMENTLIB_API UREquipmentMgrComponent : public URInventoryComponent
 {
    GENERATED_BODY()
 public:

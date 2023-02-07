@@ -9,7 +9,7 @@
 
 // Status Manager Component.
 UCLASS(Abstract, Blueprintable, BlueprintType)
-class RCHARACTERLIB_API UREquipmentSlotComponent : public UActorComponent
+class REQUIPMENTLIB_API UREquipmentSlotComponent : public UActorComponent
 {
    GENERATED_BODY()
 public:

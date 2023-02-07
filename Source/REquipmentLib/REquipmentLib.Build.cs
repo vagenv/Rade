@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class RCharacterLib : ModuleRules
+public class REquipmentLib : ModuleRules
 {
-   public RCharacterLib (ReadOnlyTargetRules Target) : base (Target)
+   public REquipmentLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {

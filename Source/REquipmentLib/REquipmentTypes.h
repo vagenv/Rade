@@ -17,7 +17,7 @@ class UWorld;
 // ============================================================================
 
 USTRUCT(BlueprintType)
-struct RCHARACTERLIB_API FRConsumableItemData : public FRActionItemData
+struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
 
@@ -34,7 +34,7 @@ struct RCHARACTERLIB_API FRConsumableItemData : public FRActionItemData
 
 
 USTRUCT(BlueprintType)
-struct RCHARACTERLIB_API FREquipmentData : public FRActionItemData
+struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
 
@@ -61,7 +61,7 @@ struct RCHARACTERLIB_API FREquipmentData : public FRActionItemData
 };
 
 UCLASS()
-class RCHARACTERLIB_API UREquipmentUtilLibrary : public UBlueprintFunctionLibrary
+class REQUIPMENTLIB_API UREquipmentUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
 public:

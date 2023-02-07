@@ -11,7 +11,7 @@ class UREquipmentMgrComponent;
 class URStatusMgrComponent;
 
 UCLASS(Blueprintable)
-class RCHARACTERLIB_API ARCharacter : public ACharacter
+class RADE_API ARCharacter : public ACharacter
 {
    GENERATED_BODY()
 

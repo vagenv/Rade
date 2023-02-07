@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "RCharacterLib/RCharacter.h"
+#include "RCharacter.h"
 #include "InputActionValue.h"
 #include "RPlayer.generated.h"
 

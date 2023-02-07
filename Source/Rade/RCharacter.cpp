@@ -4,7 +4,7 @@
 #include "RUtilLib/RLog.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusMgrComponent.h"
-#include "REquipmentMgrComponent.h"
+#include "REquipmentLib/REquipmentMgrComponent.h"
 #include "Net/UnrealNetwork.h"
 
 class AController;
