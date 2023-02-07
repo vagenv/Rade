@@ -20,9 +20,6 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
-      TArray<TSubclassOf<UREquipmentSlotComponent> > DefaultEquipmentSlots;
-
    // Check if item equip
    virtual bool UseItem (int32 ItemIdx) override;
 };

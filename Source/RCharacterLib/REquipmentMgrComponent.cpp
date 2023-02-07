@@ -24,12 +24,6 @@ void UREquipmentMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProper
 void UREquipmentMgrComponent::BeginPlay()
 {
    Super::BeginPlay();
-
-   // --- Create Equipment Slots Components
-   for (auto const& SlotInfo : DefaultEquipmentSlots) {
-      UREquipmentSlotComponent* NewSlot = NewObject<UREquipmentSlotComponent>(GetOwner (), SlotInfo);
-      if (NewSlot) NewSlot->RegisterComponent ();
-   }
 }
 
 void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -64,6 +58,11 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
+
+   if (!CurrentEquipmentSlots.Num ()) {
+      R_LOG ("Character doesn't have UREquipmentSlotComponent. Please add them.");
+      return false;
+   }
 
    UREquipmentSlotComponent *SupportedSlot = nullptr;
 
