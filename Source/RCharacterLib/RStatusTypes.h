@@ -29,6 +29,17 @@ struct RCHARACTERLIB_API FRCharacterStats
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float Charisma = 0;
+
+   FRCharacterStats operator + (FRCharacterStats const &obj) {
+      FRCharacterStats res;
+      res.Strength     = Strength     + obj.Strength    ;
+      res.Dexterity    = Dexterity    + obj.Dexterity   ;
+      res.Consitution  = Consitution  + obj.Consitution ;
+      res.Intelligence = Intelligence + obj.Intelligence;
+      res.Wisdom       = Wisdom       + obj.Wisdom      ;
+      res.Charisma     = Charisma     + obj.Charisma    ;
+      return res;
+   }
 };
 
 USTRUCT(BlueprintType)
