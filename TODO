@@ -1,41 +1,19 @@
 
-=================================================
-   Character -> RPGLib / RStatLib?
-=================================================
-
-Move RCharacter to Rade?
-
 ===========================
-   EquipmentMgr Design
+   EquipmentMgr
 ===========================
 
-Equipment Manager
-- Use Item -> Equip
+Item/Equipment marked as used/busy
 
-Equip Action
-- Several instances of same subclass possible
-- Search for slots of same class.
-- If no slot is free take unequip the first one
-- Set slot busy. Set values from FREquipmentData.
-- Slot Equip/Unequip event. [Owner, Component, Item, Slot and more]
-- Slot will atomatically determine what to do with data. Add/Destroy Actor. Or set texture
-- Create instances of subclass? or call class as static object
-- Copy FREquipmentData from Item to Slot?
-- Who decides what to do during equip
+Subscribe to Equipment change?
 
 Equipment effects:
 - Affects Status component
-- Item quality affects strength of effects
-- Random effects?
 
 Get/Calc
 - Stats
 - Status
 - Effects
-
-
-Blueprint Data validation
-
 
 ===========================
    StatusMgr
@@ -54,7 +32,7 @@ UpdateStats (Calculates and stores values)
 - Stop Restoring until a few seconds later.
 
 ===========================
-   TakeDamage/ Status Effect
+   TakeDamage / Status Effect
 ===========================
 
 TakeDamage final value based on:
@@ -90,7 +68,7 @@ Effects on:
    Remove Jetpack?
 ===========================
 
-- Use
+- Double jump as ability?
 
 ===========================
    Skills / Magic
@@ -287,6 +265,10 @@ Restore to move direction after a few seconds
    Other
 =================================================
 
+Blueprint Data validation
+
+Gameplay Ability System
+
 
 Action Popup UI
 - Short Press/Long Press
@@ -357,6 +339,7 @@ Battles
 
 
 Random Content
-- Items stats
+- Item quality affects strength of effects?
+- Equipment stats/effect
 - Weapon stats/effects
 
