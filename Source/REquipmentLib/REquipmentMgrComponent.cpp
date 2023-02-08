@@ -93,14 +93,11 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 
       // If equip has been called on same item -> Only unequip.
       if (EquipmentSlot->EquipmentData.Name == EquipmentData.Name) {
-         R_LOG_PRINTF ("Unequiping item [%s] to slot [%s].", *EquipmentData.Name, *EquipmentSlot->GetPathName ());
          return UnEquip (EquipmentSlot);
       }
 
       if (!UnEquip (EquipmentSlot)) return false;
    }
-
-   R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *EquipmentData.Name, *EquipmentSlot->GetPathName ());
 
    // --- Add Stats and Effects
    if (StatusMgr) {
@@ -112,7 +109,7 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
    EquipmentSlot->EquipmentData = EquipmentData;
    EquipmentSlot->Busy = true;
    EquipmentSlot->Updated ();
-
+   OnEquipmentUpdated.Broadcast ();
    return true;
 }
 
@@ -129,6 +126,7 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
    EquipmentSlot->Updated ();
+   OnEquipmentUpdated.Broadcast ();
    return true;
 }
 

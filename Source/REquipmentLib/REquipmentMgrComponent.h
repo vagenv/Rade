@@ -5,6 +5,8 @@
 #include "RInventoryLib/RInventoryComponent.h"
 #include "REquipmentMgrComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentEvent);
+
 class URStatusMgrComponent;
 class UREquipmentSlotComponent;
 struct FREquipmentData;
@@ -30,5 +32,9 @@ public:
 
    inline URStatusMgrComponent*      GetStatusMgr     () const;
    inline UREquipmentSlotComponent * GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
+
+   // Delegate when equipment updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
+      FREquipmentEvent OnEquipmentUpdated;
 };
 
