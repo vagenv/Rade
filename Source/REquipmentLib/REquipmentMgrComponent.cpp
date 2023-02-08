@@ -5,6 +5,7 @@
 #include "REquipmentTypes.h"
 #include "REquipmentSlotComponent.h"
 #include "RInventoryLib/RItemAction.h"
+#include "RStatusLib/RStatusMgrComponent.h"
 
 //=============================================================================
 //                 Core
@@ -51,75 +52,117 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return Super::UseItem (ItemIdx);
    }
 
-   if (!ItemData.EquipmentSlot.Get ()) {
-      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *ItemData.Name);
-      return false;
-   }
+   bool success = Equip (ItemData);
 
-   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
-   GetOwner ()->GetComponents (CurrentEquipmentSlots);
-
-   if (!CurrentEquipmentSlots.Num ()) {
-      R_LOG ("Character doesn't have UREquipmentSlotComponent. Please add them.");
-      return false;
-   }
-
-   UREquipmentSlotComponent *SupportedSlot = nullptr;
-
-   // --- Find equip slot
-   for (auto &EquipmentSlot : CurrentEquipmentSlots) {
-      if (EquipmentSlot->GetClass () == ItemData.EquipmentSlot) {
-
-         // First slot available
-         if (!SupportedSlot) SupportedSlot = EquipmentSlot;
-
-         // Empty Slot found
-         if (!EquipmentSlot->Busy) {
-            SupportedSlot = EquipmentSlot;
-            break;
-         }
-      }
-   }
-
-   if (!SupportedSlot) {
-      R_LOG_PRINTF ("Equipment item [%s] required slot [%s] not found on character",
-         *ItemData.Name, *ItemData.EquipmentSlot->GetName ());
-      return false;
-   }
-
-   // TODO: Check equip required stats
-
-   if (SupportedSlot->Busy) {
-      // TODO: Remove stats and effects
-      SupportedSlot->Busy = false;
-      SupportedSlot->Updated ();
-
-      // TODO: Replace with actual unequip call
-      if (SupportedSlot->EquipmentData.Name == ItemData.Name) {
-         SupportedSlot->EquipmentData = FREquipmentData();
-         R_LOG_PRINTF ("Unequiping item [%s] to slot [%s].", *ItemData.Name, *SupportedSlot->GetPathName ());
-         return true;
-      }
-   }
-
-   R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *ItemData.Name, *SupportedSlot->GetPathName ());
-
-   // --- Update slot data
-   SupportedSlot->EquipmentData = ItemData;
-   SupportedSlot->Busy = true;
-   SupportedSlot->Updated ();
-
-   // TODO: Add addition stats and effects
-
-   // --- Equipment Action if defined
-   if (ItemData.Action) {
+   // --- If Custom Action is defined
+   if (success && ItemData.Action) {
       URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
       if (ItemBP) {
          ItemBP->Used (this, ItemData, ItemIdx);
          BP_Used (ItemIdx);
       }
    }
+   return success;
+}
+
+bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
+{
+   if (!EquipmentData.EquipmentSlot.Get ()) {
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
+      return false;
+   }
+
+   UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (EquipmentData.EquipmentSlot);
+   if (!EquipmentSlot) {
+      R_LOG_PRINTF ("Equipment item [%s] required slot [%s] not found on character",
+         *EquipmentData.Name, *EquipmentData.EquipmentSlot->GetName ());
+      return false;
+   }
+
+   URStatusMgrComponent* StatusMgr = GetStatusMgr ();
+   if (!EquipmentData.RequiredStats.Empty ()) {
+      if (!StatusMgr) {
+         R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.Name);
+         return false;
+      }
+      if (!StatusMgr->BaseStats.MoreThan (EquipmentData.RequiredStats)) return false;
+   }
+
+   // --- Unequip if busy
+   if (EquipmentSlot->Busy) {
+
+      // If equip has been called on same item -> Only unequip.
+      if (EquipmentSlot->EquipmentData.Name == EquipmentData.Name) {
+         R_LOG_PRINTF ("Unequiping item [%s] to slot [%s].", *EquipmentData.Name, *EquipmentSlot->GetPathName ());
+         return UnEquip (EquipmentSlot);
+      }
+
+      if (!UnEquip (EquipmentSlot)) return false;
+   }
+
+   R_LOG_PRINTF ("Equiping item [%s] to slot [%s].", *EquipmentData.Name, *EquipmentSlot->GetPathName ());
+
+   // --- Add Stats and Effects
+   if (StatusMgr) {
+      StatusMgr->BaseStats = StatusMgr->BaseStats + EquipmentData.Stats;
+      // TODO: Add addition stats and effects
+   }
+
+   // --- Update slot data
+   EquipmentSlot->EquipmentData = EquipmentData;
+   EquipmentSlot->Busy = true;
+   EquipmentSlot->Updated ();
 
    return true;
+}
+
+bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
+{
+   if (!EquipmentSlot)       return false;
+   if (!EquipmentSlot->Busy) return false;
+
+   URStatusMgrComponent* StatusMgr = GetStatusMgr ();
+   if (StatusMgr) {
+      StatusMgr->BaseStats = StatusMgr->BaseStats - EquipmentSlot->EquipmentData.Stats;
+      // TODO: Remove effects
+   }
+   EquipmentSlot->Busy = false;
+   EquipmentSlot->EquipmentData = FREquipmentData();
+   EquipmentSlot->Updated ();
+   return true;
+}
+
+// --- Get Components
+
+URStatusMgrComponent* UREquipmentMgrComponent::GetStatusMgr () const
+{
+   TArray<URStatusMgrComponent*> StatusMgrList;
+   GetOwner ()->GetComponents (StatusMgrList);
+   if (StatusMgrList.Num ()) return StatusMgrList[0];
+   else                      return nullptr;
+}
+
+UREquipmentSlotComponent * UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &SlotClass) const
+{
+   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
+   GetOwner ()->GetComponents (CurrentEquipmentSlots);
+
+   UREquipmentSlotComponent *EquipmentSlot = nullptr;
+
+   // --- Find equip slot
+   for (auto &itSlot : CurrentEquipmentSlots) {
+      if (itSlot->GetClass () == SlotClass) {
+
+         // First slot available
+         if (!EquipmentSlot) EquipmentSlot = itSlot;
+
+         // Empty Slot found
+         if (!itSlot->Busy) {
+            EquipmentSlot = itSlot;
+            break;
+         }
+      }
+   }
+   return EquipmentSlot;
 }
 

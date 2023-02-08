@@ -30,7 +30,19 @@ struct RSTATUSLIB_API FRCharacterStats
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float Charisma = 0;
 
-   FRCharacterStats operator + (FRCharacterStats const &obj) {
+   // Are any values set
+   bool Empty () const {
+      return (
+            Strength     == 0.
+         && Dexterity    == 0.
+         && Consitution  == 0.
+         && Intelligence == 0.
+         && Wisdom       == 0.
+         && Charisma     == 0.
+      );
+   }
+
+   inline FRCharacterStats operator + (const FRCharacterStats &obj) const {
       FRCharacterStats res;
       res.Strength     = Strength     + obj.Strength    ;
       res.Dexterity    = Dexterity    + obj.Dexterity   ;
@@ -39,6 +51,28 @@ struct RSTATUSLIB_API FRCharacterStats
       res.Wisdom       = Wisdom       + obj.Wisdom      ;
       res.Charisma     = Charisma     + obj.Charisma    ;
       return res;
+   }
+
+   inline FRCharacterStats operator - (const FRCharacterStats &obj) const {
+      FRCharacterStats res;
+      res.Strength     = Strength     - obj.Strength    ;
+      res.Dexterity    = Dexterity    - obj.Dexterity   ;
+      res.Consitution  = Consitution  - obj.Consitution ;
+      res.Intelligence = Intelligence - obj.Intelligence;
+      res.Wisdom       = Wisdom       - obj.Wisdom      ;
+      res.Charisma     = Charisma     - obj.Charisma    ;
+      return res;
+   }
+
+   inline bool MoreThan (const FRCharacterStats &obj) const {
+      return (
+            Strength     >= obj.Strength
+         && Dexterity    >= obj.Dexterity
+         && Consitution  >= obj.Consitution
+         && Intelligence >= obj.Intelligence
+         && Wisdom       >= obj.Wisdom
+         && Charisma     >= obj.Charisma
+      );
    }
 };
 
@@ -58,5 +92,18 @@ struct RSTATUSLIB_API FRStatusValue
       float Regen = 0;
 
    friend FArchive& operator<< (FArchive& Ar, FRStatusValue &Value);
+};
+
+UCLASS()
+class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   // UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status",
+   //    meta = (DisplayName = "<", CompactNodeTitle = "<"))
+   //    static bool FRCharacterStats_Less (const FRCharacterStats &a, const FRCharacterStats &b) {
+   //       return (a < b);
+   //    }
 };
 
