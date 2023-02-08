@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "REquipmentSlotComponent.h"
-#include "RUtilLib/Rlog.h"
+#include "RUtilLib/RLog.h"
 
 //=============================================================================
 //                 Core

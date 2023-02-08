@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "REquipmentMgrComponent.h"
-#include "RUtilLib/Rlog.h"
+#include "RUtilLib/RLog.h"
 #include "REquipmentTypes.h"
 #include "REquipmentSlotComponent.h"
 #include "RInventoryLib/RItemAction.h"

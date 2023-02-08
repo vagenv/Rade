@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RDamageType.h"
-#include "RUtilLib/Rlog.h"
+#include "RUtilLib/RLog.h"
 
 URDamageType::URDamageType ()
 {

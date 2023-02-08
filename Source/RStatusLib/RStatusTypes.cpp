@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RStatusTypes.h"
-#include "RUtilLib/Rlog.h"
+#include "RUtilLib/RLog.h"
 
 FRCharacterStats::FRCharacterStats ()
 {
