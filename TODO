@@ -1,33 +1,52 @@
+===========================
+   UI
+===========================
+
+Player Status Widget
+- StatusMgr
+- EquipmentMgr
+
+- Health with values.
 
 ===========================
-   EquipmentMgr
+   EquipmentMgr/StatusMgr
 ===========================
 
 Item/Equipment marked as used/busy
 
-Subscribe to Equipment change?
+Effect containers (List/Array) [Where?]
 
-Equipment effects:
-- Affects Status component
+Resistance container.
 
-Get/Calc
-- Stats
-- Status
-- Effects
+Base stats hidden.
+Add/Rm Stats?
+
+List of added stats?
+
+Update/Calc
+
+Stats affect values?
 
 ===========================
-   StatusMgr
+   Stats
 ===========================
 
-UpdateStats (Calculates and stores values)
-- Get Base Stats
-- Read stats from EquipmentMgr slots? Or SetStats?
-- Get Effects
+Effects on:
+- Health
+- Stamina
+- Mana
+- MoveSpeed
+- Jump Strength
+- AttackSpeed
+- AttackPower
+
+MaxHealth from stats?
 
 ===========================
    Stamina
 ===========================
 
+Stamina
 - Roll and jump use stamina
 - Stop Restoring until a few seconds later.
 
@@ -40,7 +59,7 @@ TakeDamage final value based on:
 - Armor for that component
 - Current stats / Resistance
 
-Random Chance to apply StatusEffect
+Random Chance to apply StatusEffect?
 
 RStatusEffect
 - Time
@@ -52,26 +71,7 @@ RDamageType
 - Random chance of effect
 
 ===========================
-   FRCharacterStats
-===========================
-
-Effects on:
-- Health
-- Stamina
-- Mana
-- MoveSpeed
-- Jump Strength
-- AttackSpeed
-- AttackPower
-
-===========================
-   Remove Jetpack?
-===========================
-
-- Double jump as ability?
-
-===========================
-   Skills / Magic
+   Abilities / Skills / Magic
 ===========================
 
 AbilityManager or add to StatusMgr?
@@ -81,6 +81,10 @@ AbilityManager or add to StatusMgr?
 - Abilities/Skills
 - Passive StatusEffects
 
+- Double jump as ability [Remove Jetpack]
+
+bool CanUse ();
+void Use ();
 
 ===========================
    Consuable with Effects
@@ -90,15 +94,6 @@ ConsumableItem : ActionItem
 - Duration
 - ItemData.Action will apply the effect and manage video/audio effects
 - Effect?
-
-
-===========================
-   UI
-===========================
-
-Player Status Widget
-- StatusMgr
-- EquipmentMgr
 
 ===========================
    Weapons
@@ -126,11 +121,11 @@ Weapons (with damage type)
 - Shield
 - Attack combo?
 
-
 =================================================
    Save/Load Simplification
 =================================================
 
+Redesign as a singleton?
 Save/Load as a Interface class with blueprint event?
 
 =================================================
@@ -138,9 +133,9 @@ Save/Load as a Interface class with blueprint event?
 =================================================
 
 DamageMgrComponent to GameMode
-- Tracks Damage/Death/Revive/
+- Tracks Events of Abilities/Damage/Death/Revive
 - Callbacks on death/revive
-- Array of damages
+- History: Array of Events
 
 =================================================
    Network
