@@ -107,19 +107,15 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
       R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
    }
 
+   // TODO: Report damage
+
    if (DamageAmount != .0f && !bDead) {
 
-      /*
-      // TODO: Report death, rather than doing it manually here.
-      ARCharacter* RCharacter = CastChecked<ARCharacter>(GetOwner ());
       Health.Current -= DamageAmount;
       if (Health.Current < 0) Health.Current = 0;
-      if (  Health.Current == 0
-         && RCharacter)
-      {
-         RCharacter->Die_Server (DamageCauser, EventInstigator);
+      if (Health.Current == 0) {
+         // TODO: Report death
       }
-      */
    }
    return DamageAmount;
 }
