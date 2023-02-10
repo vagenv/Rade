@@ -108,7 +108,7 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
    // --- Update slot data
    EquipmentSlot->EquipmentData = EquipmentData;
    EquipmentSlot->Busy = true;
-   EquipmentSlot->Updated ();
+   EquipmentSlot->OnSlotUpdated.Broadcast ();
    OnEquipmentUpdated.Broadcast ();
    return true;
 }
@@ -125,7 +125,7 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
-   EquipmentSlot->Updated ();
+   EquipmentSlot->OnSlotUpdated.Broadcast ();
    OnEquipmentUpdated.Broadcast ();
    return true;
 }

@@ -6,6 +6,7 @@
 #include "REquipmentTypes.h"
 #include "REquipmentSlotComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentSlotEvent);
 
 // Status Manager Component.
 UCLASS(Abstract, Blueprintable, BlueprintType)
@@ -26,7 +27,8 @@ public:
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       FREquipmentData EquipmentData;
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
-      void Updated ();
+   // Delegate when slot updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
+      FREquipmentSlotEvent OnSlotUpdated;
 };
 

@@ -30,8 +30,11 @@ public:
    virtual bool Equip   (const FREquipmentData    &EquipmentData);
    virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
 
-   inline URStatusMgrComponent*      GetStatusMgr     () const;
-   inline UREquipmentSlotComponent * GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
+      URStatusMgrComponent*      GetStatusMgr     () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
+      UREquipmentSlotComponent * GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
 
    // Delegate when equipment updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
