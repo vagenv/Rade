@@ -28,9 +28,9 @@ protected:
       bool bIsServer = false;
 public:
 
-      //==========================================================================
+   //==========================================================================
    //                 Inventory info
-      //==========================================================================
+   //==========================================================================
 
    // Maximum number
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
@@ -44,9 +44,9 @@ public:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightMax = 25;
 
-      //==========================================================================
+   //==========================================================================
    //                 Item list
-      //==========================================================================
+   //==========================================================================
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       TArray<FRItemData> GetItems () const;
