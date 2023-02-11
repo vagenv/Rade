@@ -1,17 +1,6 @@
 ===========================
-   UI
+   Status
 ===========================
-
-Slot
-- Name / Rarity?
-- Current Weight / Max Weight
-
-===========================
-   EquipmentMgr/StatusMgr
-===========================
-
-Item/Equipment marked as used/busy?
-ItemData uniqueID?
 
 Strength     = Damage
 Dexterity    = Evasion;
@@ -20,19 +9,23 @@ Intelligence = Max Mana;
 Wisdom       = Mana Regen;
 Charisma     = Prices;
 
+Damage Evasion
+
 Effect containers (List/Array) [Where?]
 
-Effects:
+RStatusEffect:
 - Start
 - Tick
 - End
 - Duration
+- Event to apply action. (Causer + Victim)
 
 Effects on:
 - Health
 - Stamina
 - Mana
 - MoveSpeed
+- Evasion
 - Jump Strength
 - AttackSpeed
 - AttackPower
@@ -46,23 +39,16 @@ Stamina
 - Stop Restoring until a few seconds later.
 
 ===========================
-   TakeDamage / Status Effect
+   TakeDamage
 ===========================
 
-TakeDamage final value based on:
-- What part of body was hit (bone name? Headshot? Cripple status?)
-- Armor for that component
-
-Random Chance to apply StatusEffect?
-
-RStatusEffect
-- Time
-- Frequency
-- Event to apply action. (Causer + Victim)
+TakeDamage (based on what body part was hit) (bone name?):
+- Headshot
+- Protected by armor
 
 RDamageType
 - Status Effect List
-- Random chance of effect
+- Random chance to apply RStatusEffect
 
 ===========================
    Abilities / Skills / Magic
@@ -80,6 +66,11 @@ AbilityManager or add to StatusMgr?
 bool CanUse ();
 void Use ();
 
+UI
+- Select Skill
+- Upgrade
+- Requirnments
+
 ===========================
    Consuable with Effects
 ===========================
@@ -93,7 +84,13 @@ ConsumableItem : ActionItem
    Weapons
 ===========================
 
-Weapons slots?
+===========================
+
+ItemData uniqueID?
+- Differentiate Dublicates
+- Equiped/busy?
+
+Reuse equipment slot or subclass of equipment slot?
 Single/double hand?
 
 WeaponItem : EquipmentItem
@@ -114,6 +111,11 @@ Weapons (with damage type)
 - Magic Staff/Wand
 - Shield
 - Attack combo?
+
+Damage Dummy
+
+UI
+- Damage
 
 =================================================
    Save/Load Simplification
