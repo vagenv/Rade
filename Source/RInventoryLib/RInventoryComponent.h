@@ -23,14 +23,9 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-private:
-      // Has authority to change inventory
-      bool bIsServer = false;
-public:
-
-      //==========================================================================
+   //==========================================================================
    //                 Inventory info
-      //==========================================================================
+   //==========================================================================
 
    // Maximum number
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
@@ -44,9 +39,9 @@ public:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightMax = 25;
 
-      //==========================================================================
+   //==========================================================================
    //                 Item list
-      //==========================================================================
+   //==========================================================================
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       TArray<FRItemData> GetItems () const;
@@ -59,7 +54,6 @@ protected:
 
    UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
-
 
    void CalcWeight ();
 
@@ -186,7 +180,7 @@ public:
       void UseItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                           int32 ItemIdx) const;
    UFUNCTION(                  BlueprintCallable, Category = "Rade|Inventory")
-      bool UseItem                       (int32 ItemIdx);
+      virtual bool UseItem               (int32 ItemIdx);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void DropItem_Server                (URInventoryComponent *SrcInventory,
@@ -233,10 +227,6 @@ protected:
 
 public:
 
-   // // Network call when Item list has been updated
-   // UFUNCTION()
-   //    void OnRep_CurrentPickups ();
-
    // Owner overlaps pickup
    bool Pickup_Add (const ARItemPickup* Pickup);
 
@@ -262,7 +252,7 @@ public:
    // Should be used only for Player.
    // Careful with collision of 'InventoryUniqueId'
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
-      bool bSaveLoadInventory = false;
+      bool bSaveLoad = false;
 
 protected:
    // Rade Save events

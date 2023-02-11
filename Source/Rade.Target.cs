@@ -15,7 +15,8 @@ public class RadeTarget : TargetRules
       ExtraModuleNames.Add ("ROptionsLib");
       ExtraModuleNames.Add ("RInventoryLib");
       ExtraModuleNames.Add ("RSessionManagerLib");
-      ExtraModuleNames.Add ("RCharacterLib");
+      ExtraModuleNames.Add ("RStatusLib");
+      ExtraModuleNames.Add ("REquipmentLib");
       ExtraModuleNames.Add ("Rade");
    }
 }

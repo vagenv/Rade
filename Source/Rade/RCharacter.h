@@ -7,11 +7,11 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRCharacterEvent);
 
-class URAnimInstance;
-class URInventoryComponent;
+class UREquipmentMgrComponent;
+class URStatusMgrComponent;
 
 UCLASS(Blueprintable)
-class RCHARACTERLIB_API ARCharacter : public ACharacter
+class RADE_API ARCharacter : public ACharacter
 {
    GENERATED_BODY()
 
@@ -29,37 +29,17 @@ public:
    //              Components and Important References
    //==========================================================================
 
-   // Third Person Anim Instance
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      TObjectPtr<URAnimInstance> BodyAnimInstance;
+      TObjectPtr<UREquipmentMgrComponent> EquipmentMgr;
+
 
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      TObjectPtr<URInventoryComponent> Inventory;
-
-   //==========================================================================
-   //                     Status and Basic Data
-   //==========================================================================
-
-   // Character Maximum Health
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      float HealthMax = 100;
-
-   // Character Current Health
-   UPROPERTY(Replicated,VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      float Health = 90;
-
-   // Is The Character Dead?
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
-      bool bDead = false;
+      TObjectPtr<URStatusMgrComponent> StatusMgr;
 
    //==========================================================================
    //                        Take Damage
    //==========================================================================
-
-   // Fall Velocity To Damage Curve
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
-      FRuntimeFloatCurve FallDamageCurve;
 
    // Something hit
    virtual float TakeDamage (float DamageAmount,
@@ -69,7 +49,6 @@ public:
 
    // Override Land Event
    virtual void Landed (const FHitResult& Hit) override;
-
 
    //==========================================================================
    //                        Death and Revive

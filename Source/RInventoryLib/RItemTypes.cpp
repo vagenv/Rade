@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RItemTypes.h"
-#include "RUtilLib/Rlog.h"
+#include "RUtilLib/RLog.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
@@ -40,7 +40,6 @@ bool FRItemDataHandle::ToItem (FRItemData &dst) const
    if (!ensure (res)) return false;
 
    // Set RAW data
-   // Item.JsonData = JsonData;
    Item.SetJSON (JsonData);
    dst = Item;
    return true;
@@ -54,7 +53,7 @@ bool FRItemData::ReadJSON ()
 {
    // Destination of data to be read
    FRItemData dst;
-   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0)) return false;
+   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0, true)) return false;
 
    // Create reference for direct assignment
    FRItemData &obj = *this;
@@ -102,7 +101,7 @@ bool FRActionItemData::ReadJSON ()
 {
    // Destination of data to be read
    FRActionItemData dst;
-   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0)) return false;
+   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0, true)) return false;
 
    // Create reference for direct assignment
    FRActionItemData &obj = *this;
@@ -129,25 +128,7 @@ bool FRActionItemData::WriteJSON ()
 
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
-   return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0);
-}
-
-// ============================================================================
-//                      FRConsumableItemData
-// ============================================================================
-
-bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
-{
-   return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0);
-}
-
-// ============================================================================
-//                      FREquipmentData
-// ============================================================================
-
-bool FREquipmentData::Cast (const FRItemData &src, FREquipmentData &dst)
-{
-   return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0);
+   return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0, true);
 }
 
 // ============================================================================
@@ -170,19 +151,4 @@ void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src, FRActionItemD
    else     Branches = ERActionResult::Failure;
 }
 
-void URItemUtilLibrary::Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &dst,
-                                                ERActionResult &Branches)
-{
-   bool res = FRConsumableItemData::Cast (src, dst);
-   if (res) Branches = ERActionResult::Success;
-   else     Branches = ERActionResult::Failure;
-}
-
-void URItemUtilLibrary::Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &dst,
-                                               ERActionResult &Branches)
-{
-   bool res = FREquipmentData::Cast (src, dst);
-   if (res) Branches = ERActionResult::Success;
-   else     Branches = ERActionResult::Failure;
-}
 

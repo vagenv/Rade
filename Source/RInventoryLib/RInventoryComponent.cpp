@@ -2,6 +2,7 @@
 
 #include "RInventoryComponent.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 
 #include "RItemAction.h"
@@ -33,21 +34,21 @@ void URInventoryComponent::BeginPlay()
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
-   bIsServer = GetOwner ()->HasAuthority ();
-   // if (GetLocalRole() >= ROLE_Authority)
 
-   // Save/Load inventory
-   if (bSaveLoadInventory && bIsServer) {
-      FRSaveEvent SavedDelegate;
-      SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
-      URSaveMgr::OnSave (world, SavedDelegate);
+   if (R_IS_NET_ADMIN) {
 
-      FRSaveEvent LoadedDelegate;
-      LoadedDelegate.AddDynamic (this, &URInventoryComponent::OnLoad);
-      URSaveMgr::OnLoad (world, LoadedDelegate);
-   }
 
-   if (bIsServer) {
+      // Save/Load inventory
+      if (bSaveLoad) {
+         FRSaveEvent SavedDelegate;
+         SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
+         URSaveMgr::OnSave (world, SavedDelegate);
+
+         FRSaveEvent LoadedDelegate;
+         LoadedDelegate.AddDynamic (this, &URInventoryComponent::OnLoad);
+         URSaveMgr::OnLoad (world, LoadedDelegate);
+      }
+
       for (const auto &itItem : DefaultItems) {
          if (!AddItem_Arch (itItem))
             R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
@@ -66,7 +67,7 @@ void URInventoryComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 
 	// Ensure the fuze timer is cleared by using the timer handle
-	GetWorld()->GetTimerManager ().ClearTimer (TimerClosestPickup);
+	GetWorld ()->GetTimerManager ().ClearTimer (TimerClosestPickup);
 }
 
 //=============================================================================
@@ -160,10 +161,7 @@ int URInventoryComponent::GetCountItem_Name (const FString &CheckItemName) const
 
 bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    FRItemData newItem;
    if (!ItemHandle.ToItem (newItem)) return false;
    return AddItem (newItem);
@@ -180,10 +178,7 @@ void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *
 }
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // --- Limit weight being used
    float WeightAdd = NewItem.Count * NewItem.Weight;
@@ -261,10 +256,7 @@ void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryCo
 }
 bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    if (!Items.IsValidIndex (ItemIdx)) {
       R_LOG ("Invalid Item index");
@@ -297,10 +289,7 @@ void URInventoryComponent::RemoveItem_Arch_Server_Implementation (URInventoryCom
 }
 bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    FRItemData RmItemData;
    if (!RmItemHandle.ToItem (RmItemData)) return false;
    return RemoveItem_Data (RmItemData);
@@ -322,10 +311,7 @@ void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryCom
 
 bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    // Last check that user has required item
    if (!HasItem_Data (RmItemData)) return false;
 
@@ -445,16 +431,12 @@ void URInventoryComponent::UseItem_Server_Implementation (URInventoryComponent *
 }
 bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
-
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
          ItemIdx, Items.Num ());
-      return nullptr;
+      return false;
    }
 
    FRActionItemData ItemData;
@@ -487,10 +469,7 @@ void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent 
 }
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return nullptr;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -608,53 +587,39 @@ void URInventoryComponent::CheckClosestPickup ()
 
 void URInventoryComponent::OnSave ()
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return;
-   }
+   R_RETURN_IF_NOT_ADMIN;
 
    // --- Save player Inventory
 
    // Convert ItemData to array to JSON strings
    TArray<FString> ItemDataRaw;
-
    for (FRItemData item : Items) {
-
       ItemDataRaw.Add (item.GetJSON ());
-      // FString res;
-      // if (FRItemData::ToJSON (item, res)) {
-      //    ItemData.Add (res);
-      // } else {
-      //    R_LOG_PRINTF ("Failed to save %s", *item.Name);
-      // }
    }
 
    // Convert array into buffer
    FBufferArchive ToBinary;
    ToBinary << ItemDataRaw;
 
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";
 
    // Set binary data to save file
-   if (!URSaveMgr::Set (GetWorld (), InventoryUniqueId, ToBinary)) {
-      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *InventoryUniqueId);
+   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
+      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *SaveUniqueId);
    }
 }
 
 void URInventoryComponent::OnLoad ()
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return;
-   }
+   R_RETURN_IF_NOT_ADMIN;
 
    // --- Load player Inventory
-   FString InventoryUniqueId = GetOwner ()->GetName ();
+   FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";
 
    // Get binary data from save file
    TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), InventoryUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *InventoryUniqueId);
+   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
+      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *SaveUniqueId);
       return;
    }
 
@@ -681,61 +646,4 @@ void URInventoryComponent::OnLoad ()
    Items = loadedItems;
    OnInventoryUpdated.Broadcast ();
 }
-
-
-/*
-// Throw out all Items
-void URInventoryComponent::ThrowOutAllItems()
-{
-   UWorld* const World = TheCharacter->GetWorld();
-   for (int32 ItemIndex = 0; ItemIndex < Items.Num(); ItemIndex++) {
-      // Inside the list of items
-      if (Items.IsValidIndex(ItemIndex) && TheCharacter) {
-
-         if (  World
-            && Items[ItemIndex].Archetype
-            && Items[ItemIndex].Archetype->GetDefaultObject<AItem>())
-         {
-
-            // Get Player Rotation
-            FRotator rot      = TheCharacter->GetActorRotation();
-            FVector  spawnLoc = TheCharacter->GetActorLocation()
-                              + rot.Vector() * 200 + FVector(FMath::RandRange(-200, 200), FMath::RandRange(-200, 200), 50);
-
-            AItemPickup* newPickup;
-            AItem* newItem = Items[ItemIndex].Archetype->GetDefaultObject<AItem>();
-
-            // Spawn Item Pickup archetype
-            if (newItem && newItem->ItemPickupArchetype)
-                 newPickup = World->SpawnActor<AItemPickup>(newItem->ItemPickupArchetype, spawnLoc, rot);
-
-            // Spawn Default pickup
-            else newPickup = World->SpawnActor<AItemPickup>(AItemPickup::StaticClass(), spawnLoc, rot);
-
-            if (newPickup) {
-               newPickup->SetReplicates(true);
-               if (newItem) {
-                  //printr("Death Item "+newItem->ItemName);
-                  newItem->BP_ItemDroped(newPickup);
-                  newItem->ItemCount = Items[ItemIndex].ItemCount;
-                  newPickup->Item = newItem->GetClass();
-
-                  if      (newItem->PickupMesh)     newPickup->Mesh->SetStaticMesh(newItem->PickupMesh);
-                  else if (newItem->PickupSkelMesh) newPickup->SkeletalMesh->SetSkeletalMesh(newItem->PickupSkelMesh);
-               }
-
-               newPickup->bAutoPickup = true;
-               newPickup->ActivatePickupPhysics();
-               if (newPickup->Mesh && newPickup->Mesh->IsSimulatingPhysics())
-                  newPickup->Mesh->AddImpulse(rot.Vector() * 120, NAME_None, true);
-
-               if (newPickup->SkeletalMesh && newPickup->SkeletalMesh->IsSimulatingPhysics())
-                  newPickup->SkeletalMesh->AddForce(rot.Vector() * 12000, NAME_None, true);
-            }
-         }
-      }
-   }
-   Items.Empty();
-}
-*/
 

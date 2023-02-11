@@ -47,6 +47,7 @@
 *.VC.opendb
 *.code-workspace
 .ignore
+Makefile
 
 # Precompiled Assets
 SourceArt/**/*.png

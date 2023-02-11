@@ -14,11 +14,12 @@ public class Rade : ModuleRules
          "InputCore",
          "EnhancedInput",
          "RUtilLib",
+         "ROptionsLib",
          "RSessionManagerLib",
          "RSaveLib",
-         "ROptionsLib",
          "RInventoryLib",
-         "RCharacterLib",
+         "RStatusLib",
+         "REquipmentLib",
       });
    }
 }

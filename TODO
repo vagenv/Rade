@@ -1,111 +1,155 @@
 ===========================
-   Game Design
+   Status
 ===========================
 
-Style:
-- 3rd/1st Person Shooter/Slasher
+Strength     = Damage
+Dexterity    = Evasion;
+Consitution  = Max Health;
+Intelligence = Max Mana;
+Wisdom       = Mana Regen;
+Charisma     = Prices;
 
-Movement:
-- Jump
-- Roll + Sprint
+Damage Evasion
 
-Attack types
-- Melee / Ranged
-- Guns
-- Spells. Instant + Casting
-- Environment
-- Turrents / Towers
-- Ally NPCs
+Effect containers (List/Array) [Where?]
 
-Battles
-- Many enemies
-- Spawn in waves
-- Defend checkpoint
-- Buy upgrades
-- Change terrain?
-- Hire more NPCs and upgrade them.
+RStatusEffect:
+- Start
+- Tick
+- End
+- Duration
+- Event to apply action. (Causer + Victim)
 
-
-===========================
-   Character
-===========================
-
-Player Status Widget
-
-Equipment Manager. Subclass of Inventory?
-- Widget next to item?
-- Extends InventoryComponent?
-- Slots.
-
-StatusManager Component.
-- UI
+Effects on:
 - Health
-- Energy
-- List of Stats (Base)
-- List of Resistance against damage type
-- List of Abilities
-- List of Auras/Effects
-- List of Skills
+- Stamina
+- Mana
+- MoveSpeed
+- Evasion
+- Jump Strength
+- AttackSpeed
+- AttackPower
 
-Equipment
-- Head
-- Chest / Shoulder + Torso
-- Arms
-- Grieves
-- Legs
+===========================
+   Stamina
+===========================
 
-Weapons (with damage type)
-- Rifle
-- Shotgun
-- Launcher
-- Sword
-- Shield
-- Attack combo?
+Stamina
+- Roll and jump use stamina
+- Stop Restoring until a few seconds later.
 
-Equipment effects:
-- Affects Status component
-- Item quality affects strength of effects
-- Random effects?
+===========================
+   TakeDamage
+===========================
 
-Damage based on:
-- What component hit
-- Armor for that component
-- Current stats and rotection
-- Resistance
+TakeDamage (based on what body part was hit) (bone name?):
+- Headshot
+- Protected by armor
 
+RDamageType
+- Status Effect List
+- Random chance to apply RStatusEffect
 
-=== Should be moved to subclass of RCharacter
+===========================
+   Abilities / Skills / Magic
+===========================
+
+AbilityManager or add to StatusMgr?
+- Experience points
+- Levels
+- Skills
+- Abilities/Skills
+- Passive StatusEffects
+
+- Double jump as ability [Remove Jetpack]
+
+bool CanUse ();
+void Use ();
+
+UI
+- Select Skill
+- Upgrade
+- Requirnments
+
+===========================
+   Consuable with Effects
+===========================
 
 ConsumableItem : ActionItem
 - Duration
 - ItemData.Action will apply the effect and manage video/audio effects
 - Effect?
 
-EquipmentItem : ActionData
-- AttachSocket
+===========================
+   Weapons
+===========================
+
+===========================
+
+ItemData uniqueID?
+- Differentiate Dublicates
+- Equiped/busy?
+
+Reuse equipment slot or subclass of equipment slot?
+Single/double hand?
 
 WeaponItem : EquipmentItem
-- CurrenAmmo
-- MaxAmmo
-- MagSize
+- AttackSpeed
 
-===========================
+MeleeWeaponItem : WeaponItem
+
+RangedWeaponItem : WeaponItem
+- CurrenAmmo
+- MaxAmmo ?
+- MagSize ?
+
+Weapons (with damage type)
+- Rifle
+- Shotgun
+- Launcher
+- Sword
+- Magic Staff/Wand
+- Shield
+- Attack combo?
+
+Damage Dummy
+
+UI
+- Damage
+
+=================================================
+   Save/Load Simplification
+=================================================
+
+Redesign as a singleton?
+Save/Load as a Interface class with blueprint event?
+
+=================================================
+   Session History
+=================================================
+
+DamageMgrComponent to GameMode
+- Tracks Events of Abilities/Damage/Death/Revive
+- Callbacks on death/revive
+- History: Array of Events
+
+=================================================
    Network
-===========================
+=================================================
 
 Select spawn point
 See status. Smooth start
 
-Session
+Network Session
 - Deep dive / Analysis / Simplification
 - Persistent session widget
 - Real time data. (Latency, Player count)
 - Return to main screen
 - Persistent data between sessions
 
-===========================
+=================================================
    Chat
-===========================
+=================================================
 
 Chat
 - Update Widget
@@ -113,34 +157,42 @@ Chat
 - A new module?
 - Audio messages?
 
-===========================
+=================================================
    Animation
-===========================
+=================================================
 
-Animation Blueprint
+Animation Blueprint (Network)
 
-Blend animation. Upper + Lower body
+Partial body blend.
+- Overlaps
+- Lower body
+- Upper body
+- Head Movement with camera
+- IK for hands to weapons attach sockets
 
+Smooth animations
+
+Animations:
 - Look around
 - Run/Sprint
 - Ragdoll death
 - Melee fight
-- Network
-- Partial body blend
-- IK to weapon attach socket
+- Roll
 
-===========================
+=================================================
    AI
-===========================
+=================================================
 
 - pathfinding
 - patrol
 - Melee and ranged
 - React if attacked
+- Attack together
+- Hide
 
-===========================
+=================================================
    Sound
-===========================
+=================================================
 
 - Jump / Land
 - Running
@@ -149,9 +201,9 @@ Blend animation. Upper + Lower body
 - Explosion
 - Environment
 
-===========================
+=================================================
    VFX
-===========================
+=================================================
 
 - Blood
 - Explosion
@@ -159,17 +211,17 @@ Blend animation. Upper + Lower body
 - GPU particles
 - Niagara
 
-===========================
+=================================================
    UI (Nice to have)
-===========================
+=================================================
 
 - Audio channels
 - Persistent Audio Settings
 - Input
 
-===========================
+=================================================
    Inventory (Nice to have)
-===========================
+=================================================
 
 Box UI
 - With PopupMenu for details
@@ -187,9 +239,27 @@ Store
 Craft in game menu
 - Personal list of crafting
 
-===========================
+
+Random Item data.
+- Price/Rarity/Effect/Color
+
+=================================================
+   Camera
+=================================================
+
+Smoother Turns
+Behind back right
+Focus actor
+Restore to move direction after a few seconds
+
+=================================================
    Other
-===========================
+=================================================
+
+Blueprint Data validation
+
+Gameplay Ability System
+
 
 Action Popup UI
 - Short Press/Long Press
@@ -230,4 +300,37 @@ Custom plugin
 Nanite and lumen
 - Load high detail models on demand
 - Analyse budget, resource usage and disk read pattern
+
+=================================================
+   Game Design
+=================================================
+
+Style:
+- 3rd/1st Person Shooter/Slasher
+
+Movement:
+- Jump
+- Roll + Sprint
+
+Attack types
+- Melee / Ranged
+- Guns
+- Spells. Instant + Casting
+- Environment
+- Turrents / Towers
+- Ally NPCs
+
+Battles
+- Many enemies
+- Spawn in waves
+- Defend checkpoint
+- Buy upgrades
+- Change terrain?
+- Hire more NPCs and upgrade them.
+
+
+Random Content
+- Item quality affects strength of effects?
+- Equipment stats/effect
+- Weapon stats/effects
 

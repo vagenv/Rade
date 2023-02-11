@@ -10,6 +10,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "ROptionsLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "RSessionManagerLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
@@ -20,22 +25,17 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RSaveLib",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "ROptionsLib",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
 			"Name": "RInventoryLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RCharacterLib",
+			"Name": "RStatusLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "REquipmentLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},

@@ -2,18 +2,19 @@
 
 using UnrealBuildTool;
 
-public class RCharacterLib : ModuleRules
+public class RStatusLib : ModuleRules
 {
-   public RCharacterLib (ReadOnlyTargetRules Target) : base (Target)
+   public RStatusLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
          "Engine",
+         "Json",
+         "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
-         "RInventoryLib"
       });
    }
 }
