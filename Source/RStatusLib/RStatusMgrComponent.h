@@ -6,6 +6,8 @@
 #include "RDamageType.h"
 #include "RStatusMgrComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
+
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
 class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent
@@ -43,13 +45,42 @@ public:
 
    // --- Stats
 
+protected:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats BaseStats;
+public:
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void AddStat (const FRCharacterStats &AddValue);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void RmStat (const FRCharacterStats &RmValue);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      FRCharacterStats GetStats () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      bool HasStats (const FRCharacterStats &RequiredStats) const;
 
    // --- Resistance
-
+protected:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<FRResistanceStat> BaseResistence;
+public:
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void AddResistance (const TArray<FRResistanceStat> &AddValue);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void RmResistance (const TArray<FRResistanceStat> &RmValue);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      TArray<FRResistanceStat> GetResistance () const;
+
+   // --- Events
+public:
+   // Delegate when status updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnStatusUpdated;
+
 
    // Calls from RCharacter
    float TakeDamage (float DamageAmount,

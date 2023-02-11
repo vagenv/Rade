@@ -24,6 +24,11 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
    DOREPLIFETIME (URStatusMgrComponent, bDead);
+   DOREPLIFETIME (URStatusMgrComponent, Health);
+   DOREPLIFETIME (URStatusMgrComponent, Mana);
+   DOREPLIFETIME (URStatusMgrComponent, Stamina);
+   DOREPLIFETIME (URStatusMgrComponent, BaseStats);
+   DOREPLIFETIME (URStatusMgrComponent, BaseResistence);
 }
 
 void URStatusMgrComponent::BeginPlay()
@@ -76,6 +81,85 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
       Stamina.Current = Stamina.Current + Stamina.Regen * DeltaTime;
       Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
    }
+}
+
+
+//=============================================================================
+//                 Stats Calls
+//=============================================================================
+
+FRCharacterStats URStatusMgrComponent::GetStats () const
+{
+   return BaseStats;
+}
+
+void URStatusMgrComponent::AddStat (const FRCharacterStats &AddValue)
+{
+   BaseStats = BaseStats + AddValue;
+   OnStatusUpdated.Broadcast ();
+}
+
+void URStatusMgrComponent::RmStat (const FRCharacterStats &RmValue)
+{
+   BaseStats = BaseStats - RmValue;
+   OnStatusUpdated.Broadcast ();
+}
+
+bool URStatusMgrComponent::HasStats (const FRCharacterStats &RequiredStats) const
+{
+   return BaseStats.MoreThan (RequiredStats);
+}
+
+//=============================================================================
+//                 Resistance Calls
+//=============================================================================
+
+
+TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
+{
+   return BaseResistence;
+}
+
+void URStatusMgrComponent::AddResistance (const TArray<FRResistanceStat> &AddValue)
+{
+   for (const FRResistanceStat& ItAddValue : AddValue) {
+      bool found = false;
+      for (FRResistanceStat &ItCurrentValue : BaseResistence) {
+         if (ItCurrentValue.DamageType == ItAddValue.DamageType) {
+            found = true;
+            ItCurrentValue.Resistance += ItAddValue.Resistance;
+            break;
+         }
+      }
+      if (!found) {
+         BaseResistence.Add (ItAddValue);
+      }
+   }
+
+   OnStatusUpdated.Broadcast ();
+}
+
+void URStatusMgrComponent::RmResistance (const TArray<FRResistanceStat> &RmValue)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   for (const FRResistanceStat& ItRmValue : RmValue) {
+      bool found = false;
+      for (FRResistanceStat &ItCurrentValue : BaseResistence) {
+         if (ItCurrentValue.DamageType == ItRmValue.DamageType) {
+            found = true;
+            ItCurrentValue.Resistance -= ItRmValue.Resistance;
+            break;
+         }
+      }
+      if (!found) {
+         // Add as negative resistance
+         FRResistanceStat newValue = ItRmValue;
+         newValue.Resistance *= -1;
+         BaseResistence.Add (newValue);
+      }
+   }
+
+   OnStatusUpdated.Broadcast ();
 }
 
 

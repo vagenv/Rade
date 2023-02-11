@@ -85,7 +85,7 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
          R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.Name);
          return false;
       }
-      if (!StatusMgr->BaseStats.MoreThan (EquipmentData.RequiredStats)) return false;
+      if (!StatusMgr->HasStats (EquipmentData.RequiredStats)) return false;
    }
 
    // --- Unequip if busy
@@ -101,7 +101,8 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->BaseStats = StatusMgr->BaseStats + EquipmentData.Stats;
+      StatusMgr->AddStat (EquipmentData.Stats);
+      StatusMgr->AddResistance (EquipmentData.Resistence);
       // TODO: Add addition stats and effects
    }
 
@@ -120,7 +121,8 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
    URStatusMgrComponent* StatusMgr = GetStatusMgr ();
    if (StatusMgr) {
-      StatusMgr->BaseStats = StatusMgr->BaseStats - EquipmentSlot->EquipmentData.Stats;
+      StatusMgr->RmStat (EquipmentSlot->EquipmentData.Stats);
+      StatusMgr->RmResistance (EquipmentSlot->EquipmentData.Resistence);
       // TODO: Remove effects
    }
    EquipmentSlot->Busy = false;
