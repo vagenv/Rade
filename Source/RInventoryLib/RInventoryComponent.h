@@ -23,11 +23,6 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-protected:
-      // Has authority to change inventory
-      bool bIsServer = false;
-public:
-
    //==========================================================================
    //                 Inventory info
    //==========================================================================

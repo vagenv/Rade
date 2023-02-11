@@ -3,6 +3,7 @@
 #include "RPlayer.h"
 
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
 #include "RStatusLib/RStatusMgrComponent.h"
@@ -150,6 +151,7 @@ void ARPlayer::Input_LoadGame ()
 
 void ARPlayer::OnSave ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    FString SaveUniqueId = GetOwner ()->GetName () + "_Player";
    // --- Save player location
    FVector  loc = GetActorLocation ();
@@ -164,6 +166,7 @@ void ARPlayer::OnSave ()
 
 void ARPlayer::OnLoad ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    FString SaveUniqueId = GetOwner ()->GetName () + "_Player";
 
    // Get binary data from save file

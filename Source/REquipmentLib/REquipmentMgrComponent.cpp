@@ -6,6 +6,7 @@
 #include "REquipmentSlotComponent.h"
 #include "RInventoryLib/RItemAction.h"
 #include "RStatusLib/RStatusMgrComponent.h"
+#include "RUtilLib/RCheck.h"
 
 //=============================================================================
 //                 Core
@@ -34,10 +35,7 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -67,6 +65,7 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 
 bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!EquipmentData.EquipmentSlot.Get ()) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
       return false;
@@ -116,6 +115,7 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 
 bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!EquipmentSlot)       return false;
    if (!EquipmentSlot->Busy) return false;
 

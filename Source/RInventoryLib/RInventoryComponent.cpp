@@ -2,6 +2,7 @@
 
 #include "RInventoryComponent.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 
 #include "RItemAction.h"
@@ -33,21 +34,21 @@ void URInventoryComponent::BeginPlay()
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
-   bIsServer = GetOwner ()->HasAuthority ();
-   // if (GetLocalRole() >= ROLE_Authority)
 
-   // Save/Load inventory
-   if (bSaveLoad && bIsServer) {
-      FRSaveEvent SavedDelegate;
-      SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
-      URSaveMgr::OnSave (world, SavedDelegate);
+   if (R_IS_NET_ADMIN) {
 
-      FRSaveEvent LoadedDelegate;
-      LoadedDelegate.AddDynamic (this, &URInventoryComponent::OnLoad);
-      URSaveMgr::OnLoad (world, LoadedDelegate);
-   }
 
-   if (bIsServer) {
+      // Save/Load inventory
+      if (bSaveLoad) {
+         FRSaveEvent SavedDelegate;
+         SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
+         URSaveMgr::OnSave (world, SavedDelegate);
+
+         FRSaveEvent LoadedDelegate;
+         LoadedDelegate.AddDynamic (this, &URInventoryComponent::OnLoad);
+         URSaveMgr::OnLoad (world, LoadedDelegate);
+      }
+
       for (const auto &itItem : DefaultItems) {
          if (!AddItem_Arch (itItem))
             R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
@@ -160,10 +161,7 @@ int URInventoryComponent::GetCountItem_Name (const FString &CheckItemName) const
 
 bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    FRItemData newItem;
    if (!ItemHandle.ToItem (newItem)) return false;
    return AddItem (newItem);
@@ -180,10 +178,7 @@ void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *
 }
 bool URInventoryComponent::AddItem (FRItemData NewItem)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // --- Limit weight being used
    float WeightAdd = NewItem.Count * NewItem.Weight;
@@ -261,10 +256,7 @@ void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryCo
 }
 bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    if (!Items.IsValidIndex (ItemIdx)) {
       R_LOG ("Invalid Item index");
@@ -297,10 +289,7 @@ void URInventoryComponent::RemoveItem_Arch_Server_Implementation (URInventoryCom
 }
 bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    FRItemData RmItemData;
    if (!RmItemHandle.ToItem (RmItemData)) return false;
    return RemoveItem_Data (RmItemData);
@@ -322,10 +311,7 @@ void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryCom
 
 bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    // Last check that user has required item
    if (!HasItem_Data (RmItemData)) return false;
 
@@ -445,11 +431,7 @@ void URInventoryComponent::UseItem_Server_Implementation (URInventoryComponent *
 }
 bool URInventoryComponent::UseItem (int32 ItemIdx)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return false;
-   }
-
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
       R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
@@ -487,10 +469,7 @@ void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent 
 }
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return nullptr;
-   }
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -608,10 +587,7 @@ void URInventoryComponent::CheckClosestPickup ()
 
 void URInventoryComponent::OnSave ()
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return;
-   }
+   R_RETURN_IF_NOT_ADMIN;
 
    // --- Save player Inventory
 
@@ -635,10 +611,7 @@ void URInventoryComponent::OnSave ()
 
 void URInventoryComponent::OnLoad ()
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return;
-   }
+   R_RETURN_IF_NOT_ADMIN;
 
    // --- Load player Inventory
    FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";

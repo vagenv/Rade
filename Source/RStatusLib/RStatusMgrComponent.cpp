@@ -2,6 +2,7 @@
 
 #include "RStatusMgrComponent.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/DamageEvents.h"
@@ -37,8 +38,7 @@ void URStatusMgrComponent::BeginPlay()
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
-   bIsServer = GetOwner ()->HasAuthority ();
-   if (bIsServer) {
+   if (R_IS_NET_ADMIN) {
       bDead = false;
 
       // Save/Load Current Status
@@ -172,6 +172,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
                                         AController* EventInstigator,
                                         AActor* DamageCauser)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
    if (DamageType) {
       float Resistance = 0;
@@ -210,10 +211,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 
 void URStatusMgrComponent::OnSave ()
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return;
-   }
+   R_RETURN_IF_NOT_ADMIN;
 
    // --- Save player status
    FBufferArchive ToBinary;
@@ -229,10 +227,7 @@ void URStatusMgrComponent::OnSave ()
 
 void URStatusMgrComponent::OnLoad ()
 {
-   if (!bIsServer) {
-      R_LOG ("Client has no authority to perform this action.");
-      return;
-   }
+   R_RETURN_IF_NOT_ADMIN;
 
    // --- Load player status
    FString SaveUniqueId = GetOwner ()->GetName () + "_StatusMgr";
