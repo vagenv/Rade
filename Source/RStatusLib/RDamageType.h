@@ -29,6 +29,9 @@ public:
 
    URDamageType();
 
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FString UIName;
+
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
       FRuntimeFloatCurve ResistanceToDamage;
 

@@ -31,6 +31,9 @@ float URDamageType::CalcDamage (float Damage, float Resistance) const
 
 URDamageType_Fall::URDamageType_Fall ()
 {
+
+   UIName = "Fall";
+
    // Exception transform velocity to damage
    FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
    FallDamageCurveData->Reset ();
