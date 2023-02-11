@@ -2,34 +2,31 @@
    UI
 ===========================
 
-Player Status Widget
-- StatusMgr
-- EquipmentMgr
-
-- Health with values.
+Slot
+- Name / Rarity?
+- Current Weight / Max Weight
 
 ===========================
    EquipmentMgr/StatusMgr
 ===========================
 
-Item/Equipment marked as used/busy
+Item/Equipment marked as used/busy?
+ItemData uniqueID?
+
+Strength     = Damage
+Dexterity    = Evasion;
+Consitution  = Max Health;
+Intelligence = Max Mana;
+Wisdom       = Mana Regen;
+Charisma     = Prices;
 
 Effect containers (List/Array) [Where?]
 
-Resistance container.
-
-Base stats hidden.
-Add/Rm Stats?
-
-List of added stats?
-
-Update/Calc
-
-Stats affect values?
-
-===========================
-   Stats
-===========================
+Effects:
+- Start
+- Tick
+- End
+- Duration
 
 Effects on:
 - Health
@@ -39,8 +36,6 @@ Effects on:
 - Jump Strength
 - AttackSpeed
 - AttackPower
-
-MaxHealth from stats?
 
 ===========================
    Stamina
@@ -57,7 +52,6 @@ Stamina
 TakeDamage final value based on:
 - What part of body was hit (bone name? Headshot? Cripple status?)
 - Armor for that component
-- Current stats / Resistance
 
 Random Chance to apply StatusEffect?
 
