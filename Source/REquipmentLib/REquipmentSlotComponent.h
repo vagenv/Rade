@@ -21,10 +21,14 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   // Called when variables replicated
+   UFUNCTION()
+      void OnRep_Slot ();
+
+   UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly)
       bool Busy = false;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly)
       FREquipmentData EquipmentData;
 
    // Delegate when slot updated

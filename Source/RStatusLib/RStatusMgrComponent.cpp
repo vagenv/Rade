@@ -32,6 +32,11 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URStatusMgrComponent, BaseResistence);
 }
 
+void URStatusMgrComponent::OnRep_Status ()
+{
+   OnStatusUpdated.Broadcast ();
+}
+
 void URStatusMgrComponent::BeginPlay()
 {
    Super::BeginPlay();
