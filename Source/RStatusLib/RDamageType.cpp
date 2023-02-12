@@ -35,7 +35,6 @@ URDamageType_Fall::URDamageType_Fall ()
 
    // Transform velocity to damage
    FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
-   FallDamageCurveData->Reset ();
    FallDamageCurveData->AddKey (1000,    0); // Minimum
    FallDamageCurveData->AddKey (1500,   40);
    FallDamageCurveData->AddKey (2000,  100);
