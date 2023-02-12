@@ -18,6 +18,61 @@ URStatusMgrComponent::URStatusMgrComponent ()
    SetIsReplicatedByDefault (true);
 
    Stats_Base = FRCharacterStats (10);
+
+   // --- Character stats scaling
+   // Health MAX
+   FRichCurve* StrToHealthMaxData = StrToHealthMax.GetRichCurve ();
+   StrToHealthMaxData->AddKey (   0,  200); // Minimum
+   StrToHealthMaxData->AddKey (   1,  210);
+   StrToHealthMaxData->AddKey (  10,  300);
+   StrToHealthMaxData->AddKey ( 100, 1000);
+   StrToHealthMaxData->AddKey (1000, 5000);
+   StrToHealthMaxData->AddKey (5000, 9999);
+
+   // Health Regen
+   FRichCurve* StrToHealthRegenData = StrToHealthRegen.GetRichCurve ();
+   StrToHealthRegenData->AddKey (   0,   1); // Minimum
+   StrToHealthRegenData->AddKey (   1, 1.1);
+   StrToHealthRegenData->AddKey (  10,   2);
+   StrToHealthRegenData->AddKey ( 100,  10);
+   StrToHealthRegenData->AddKey (1000,  50);
+   StrToHealthRegenData->AddKey (5000, 100);
+
+   // Stamina MAX
+   FRichCurve* AgiToStaminaMaxData = AgiToStaminaMax.GetRichCurve ();
+   AgiToStaminaMaxData->AddKey (   0, 100); // Minimum
+   AgiToStaminaMaxData->AddKey (   1, 102);
+   AgiToStaminaMaxData->AddKey (  10, 120);
+   AgiToStaminaMaxData->AddKey ( 100, 200);
+   AgiToStaminaMaxData->AddKey (1000, 400);
+   AgiToStaminaMaxData->AddKey (5000, 500);
+
+   // Stamina Regen
+   FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurve ();
+   AgiToStaminaRegenData->AddKey (   0,   10); // Minimum
+   AgiToStaminaRegenData->AddKey (   1, 10.2);
+   AgiToStaminaRegenData->AddKey (  10,   12);
+   AgiToStaminaRegenData->AddKey ( 100,   20);
+   AgiToStaminaRegenData->AddKey (1000,   40);
+   AgiToStaminaRegenData->AddKey (5000,   50);
+
+   // Mana MAX
+   FRichCurve* IntToManaMaxData = IntToManaMax.GetRichCurve ();
+   IntToManaMaxData->AddKey (   0,   50); // Minimum
+   IntToManaMaxData->AddKey (   1,   60);
+   IntToManaMaxData->AddKey (  10,  150);
+   IntToManaMaxData->AddKey ( 100, 1000);
+   IntToManaMaxData->AddKey (1000, 5000);
+   IntToManaMaxData->AddKey (5000, 9999);
+
+   // Mana Regen
+   FRichCurve* IntToManaRegenData = IntToManaRegen.GetRichCurve ();
+   IntToManaRegenData->AddKey (   0,   0); // Minimum
+   IntToManaRegenData->AddKey (   1, 0.1);
+   IntToManaRegenData->AddKey (  10,   1);
+   IntToManaRegenData->AddKey ( 100,  10);
+   IntToManaRegenData->AddKey (1000,  50);
+   IntToManaRegenData->AddKey (5000, 100);
 }
 
 // Replication
@@ -84,14 +139,26 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 void URStatusMgrComponent::Calc_Status ()
 {
    FRCharacterStats StatsTotal = GetStatsTotal ();
-   Health.Max   = 200  + StatsTotal.Strength * 10;
-   Health.Regen = 0    + StatsTotal.Strength * 0.1;
 
-   Stamina.Max   = 100 + StatsTotal.Agility * 2;
-   Stamina.Regen = 20  + StatsTotal.Agility * 0.15;
+   const FRichCurve* StrToHealthMaxData    = StrToHealthMax.GetRichCurveConst ();
+   const FRichCurve* StrToHealthRegenData  = StrToHealthRegen.GetRichCurveConst ();
+   const FRichCurve* AgiToStaminaMaxData   = AgiToStaminaMax.GetRichCurveConst ();
+   const FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurveConst ();
+   const FRichCurve* IntToManaMaxData      = IntToManaMax.GetRichCurveConst ();
+   const FRichCurve* IntToManaRegenData    = IntToManaRegen.GetRichCurveConst ();
+   if (!ensure (StrToHealthMaxData))    return;
+   if (!ensure (StrToHealthRegenData))  return;
+   if (!ensure (AgiToStaminaMaxData))   return;
+   if (!ensure (AgiToStaminaRegenData)) return;
+   if (!ensure (IntToManaMaxData))      return;
+   if (!ensure (IntToManaRegenData))    return;
 
-   Mana.Max   = 50 + StatsTotal.Intelligence * 10;
-   Mana.Regen = 0  + StatsTotal.Intelligence * 0.1;
+   Health.Max    = StrToHealthMaxData->Eval (StatsTotal.Strength);
+   Health.Regen  = StrToHealthRegenData->Eval (StatsTotal.Strength);
+   Stamina.Max   = AgiToStaminaMaxData->Eval (StatsTotal.Agility);
+   Stamina.Regen = AgiToStaminaRegenData->Eval (StatsTotal.Agility);
+   Mana.Max      = IntToManaMaxData->Eval (StatsTotal.Intelligence);
+   Mana.Regen    = IntToManaRegenData->Eval (StatsTotal.Intelligence);
 }
 
 //=============================================================================

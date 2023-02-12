@@ -61,6 +61,24 @@ protected:
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats Stats_Add;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve StrToHealthMax;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve StrToHealthRegen;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToStaminaMax;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToStaminaRegen;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve IntToManaMax;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve IntToManaRegen;
 public:
 
    // --- Get Stats
