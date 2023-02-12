@@ -16,64 +16,19 @@ struct RSTATUSLIB_API FRCharacterStats
       float Strength = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Dexterity = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Consitution = 0;
+      float Agility = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float Intelligence = 0;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Wisdom = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Charisma = 0;
-
    // Are any values set
-   bool Empty () const {
-      return (
-            Strength     == 0.
-         && Dexterity    == 0.
-         && Consitution  == 0.
-         && Intelligence == 0.
-         && Wisdom       == 0.
-         && Charisma     == 0.
-      );
-   }
+   bool Empty () const;
 
-   inline FRCharacterStats operator + (const FRCharacterStats &obj) const {
-      FRCharacterStats res;
-      res.Strength     = Strength     + obj.Strength    ;
-      res.Dexterity    = Dexterity    + obj.Dexterity   ;
-      res.Consitution  = Consitution  + obj.Consitution ;
-      res.Intelligence = Intelligence + obj.Intelligence;
-      res.Wisdom       = Wisdom       + obj.Wisdom      ;
-      res.Charisma     = Charisma     + obj.Charisma    ;
-      return res;
-   }
+   // All values are higher than
+   inline bool MoreThan (const FRCharacterStats &obj) const;
 
-   inline FRCharacterStats operator - (const FRCharacterStats &obj) const {
-      FRCharacterStats res;
-      res.Strength     = Strength     - obj.Strength    ;
-      res.Dexterity    = Dexterity    - obj.Dexterity   ;
-      res.Consitution  = Consitution  - obj.Consitution ;
-      res.Intelligence = Intelligence - obj.Intelligence;
-      res.Wisdom       = Wisdom       - obj.Wisdom      ;
-      res.Charisma     = Charisma     - obj.Charisma    ;
-      return res;
-   }
-
-   inline bool MoreThan (const FRCharacterStats &obj) const {
-      return (
-            Strength     >= obj.Strength
-         && Dexterity    >= obj.Dexterity
-         && Consitution  >= obj.Consitution
-         && Intelligence >= obj.Intelligence
-         && Wisdom       >= obj.Wisdom
-         && Charisma     >= obj.Charisma
-      );
-   }
+   inline FRCharacterStats operator + (const FRCharacterStats &obj) const;
+   inline FRCharacterStats operator - (const FRCharacterStats &obj) const;
 };
 
 USTRUCT(BlueprintType)
@@ -90,6 +45,8 @@ struct RSTATUSLIB_API FRStatusValue
    // Per second
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float Regen = 0;
+
+   void Tick (float DeltaTime);
 
    friend FArchive& operator<< (FArchive& Ar, FRStatusValue &Value);
 };

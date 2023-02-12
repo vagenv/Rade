@@ -26,7 +26,14 @@ public:
    UFUNCTION()
       void OnRep_Status ();
 
+   UFUNCTION()
+      void Calc_Status ();
+
    // --- Status
+
+   // Get Funcs
+
+   void StatusRegen (float DeltaTime);
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       bool bDead = false;
@@ -40,10 +47,8 @@ public:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Stamina;
 
-   void StatusRegen (float DeltaTime);
 
    // --- Stats
-
 protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats BaseStats;

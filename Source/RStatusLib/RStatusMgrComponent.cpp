@@ -37,14 +37,20 @@ void URStatusMgrComponent::OnRep_Status ()
    OnStatusUpdated.Broadcast ();
 }
 
-void URStatusMgrComponent::BeginPlay()
+//=============================================================================
+//                 Core
+//=============================================================================
+
+void URStatusMgrComponent::BeginPlay ()
 {
-   Super::BeginPlay();
+   Super::BeginPlay ();
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
    if (R_IS_NET_ADMIN) {
       bDead = false;
+
+      Calc_Status ();
 
       // Save/Load Current Status
       if (bSaveLoad) {
@@ -70,24 +76,28 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
    StatusRegen (DeltaTime);
 }
 
-void URStatusMgrComponent::StatusRegen (float DeltaTime)
+void URStatusMgrComponent::Calc_Status ()
 {
-   if (Health.Current < Health.Max && Health.Regen) {
-      Health.Current = Health.Current + Health.Regen * DeltaTime;
-      Health.Current = FMath::Clamp (Health.Current, 0, Health.Max);
-   }
+   Health.Max   = 50  + BaseStats.Strength * 10;
+   Health.Regen = 1   + BaseStats.Strength * 0.05;
 
-   if (Mana.Current < Mana.Max && Mana.Regen) {
-      Mana.Current = Mana.Current + Mana.Regen * DeltaTime;
-      Mana.Current = FMath::Clamp (Mana.Current, 0, Mana.Max);
-   }
+   Stamina.Max   = 100 + BaseStats.Agility * 2;
+   Stamina.Regen = 20  + BaseStats.Agility * 0.05;
 
-   if (Stamina.Current < Stamina.Max && Stamina.Regen) {
-      Stamina.Current = Stamina.Current + Stamina.Regen * DeltaTime;
-      Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
-   }
+   Mana.Max   = 20  + BaseStats.Intelligence * 10;
+   Mana.Regen = 2   + BaseStats.Intelligence * 0.15;
 }
 
+//=============================================================================
+//                 Status Calls
+//=============================================================================
+
+void URStatusMgrComponent::StatusRegen (float DeltaTime)
+{
+   Health.Tick (DeltaTime);
+   Mana.Tick (DeltaTime);
+   Stamina.Tick (DeltaTime);
+}
 
 //=============================================================================
 //                 Stats Calls
@@ -101,12 +111,14 @@ FRCharacterStats URStatusMgrComponent::GetStats () const
 void URStatusMgrComponent::AddStat (const FRCharacterStats &AddValue)
 {
    BaseStats = BaseStats + AddValue;
+   Calc_Status ();
    OnStatusUpdated.Broadcast ();
 }
 
 void URStatusMgrComponent::RmStat (const FRCharacterStats &RmValue)
 {
    BaseStats = BaseStats - RmValue;
+   Calc_Status ();
    OnStatusUpdated.Broadcast ();
 }
 
