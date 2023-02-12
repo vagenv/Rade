@@ -13,25 +13,39 @@ Smart Replication of FRStatusValue
 =======
 Stat effects
 =======
+
+Renaming?
+Attribute/Stat/Status/Perks/Abilities
+
 FRuntimeFloatCurve
 - StrToHealthMax
 - StrToHealthRegen
+- StrToStagger?
+- StrToEquipLoad
+- StrToBaseResistance
 
-- AgiToEvasion
-- AgiToStaminaMax
-- AgiToStaminaRegen
+Dex/Agi
+- DexToStaminaMax
+- DexToStaminaRegen
+- DexToEvasion
+- DexToCritical
 
 - IntToManaMax
 - IntToManaRegen
-- ??
+- IntToMagicDefense?
+- IntToSpellSlots?
+
 
 Strength    = MaxHealth, Health Regen, Stagger?
-Agility     = Evasion, Stamina Regen, Move Speed, Critical Chance
+Dexterity   = Evasion, Stamina Regen, Move Speed, Critical Chance
 Intellience = MaxMana, Mana Regen, Mana Critical,
 
 TakeDamage checks evasion chance
 
+MoveSpeed affected by equip load
 
+
+Mono Font
 
 ===========================
    RStatusEffect
@@ -80,8 +94,10 @@ RDamageType
 - Status Effect List
 - Random chance to apply RStatusEffect
 
+
+
 ===========================
-   Abilities / Skills / Magic
+   Abilities / Skills / Magic / Talents
 ===========================
 
 AbilityManager or add to StatusMgr?
@@ -254,6 +270,21 @@ Animations:
    Inventory (Nice to have)
 =================================================
 
+Random Item data.
+- Price/Rarity/Effect/Color
+
+Store
+- Sold Item List? Re-buy?
+
+=======
+   UI
+=======
+
+Select slot
+- List of Items for it
+
+Items by groups
+
 Box UI
 - With PopupMenu for details
 
@@ -263,16 +294,9 @@ Item UI
 
 Gold as separate inventory value?
 
-Store
-- Sold Item List? Re-buy?
-- Sell/Buy percent overhead?
-
 Craft in game menu
 - Personal list of crafting
 
-
-Random Item data.
-- Price/Rarity/Effect/Color
 
 =================================================
    Camera
@@ -367,6 +391,7 @@ Battles
 - Buy upgrades
 - Change terrain?
 - Hire more NPCs and upgrade them.
+- Select team
 
 =======
 Random Content
@@ -382,6 +407,10 @@ Roll Invincible
 =======
 Classes
 =======
+
+Class tree reqirnment?
+- Stats?
+- Levels?
 
 Warrior (StrongBoi)
 - Berserk (AngryBoi/BonkBoi) (big weapon)
