@@ -2,14 +2,40 @@
    Status
 ===========================
 
-Strength     = Damage
-Dexterity    = Evasion;
-Consitution  = Max Health;
-Intelligence = Max Mana;
-Wisdom       = Mana Regen;
-Charisma     = Prices;
+=======
+Replication
+=======
 
-Damage Evasion
+Smart Replication of FRStatusValue
+- Once every few seconds
+- Local updates and adjusts to new values on rep
+
+=======
+Stat effects
+=======
+FRuntimeFloatCurve
+- StrToHealthMax
+- StrToHealthRegen
+
+- AgiToEvasion
+- AgiToStaminaMax
+- AgiToStaminaRegen
+
+- IntToManaMax
+- IntToManaRegen
+- ??
+
+Strength    = MaxHealth, Health Regen, Stagger?
+Agility     = Evasion, Stamina Regen, Move Speed, Critical Chance
+Intellience = MaxMana, Mana Regen, Mana Critical,
+
+TakeDamage checks evasion chance
+
+
+
+===========================
+   RStatusEffect
+===========================
 
 Effect containers (List/Array) [Where?]
 
@@ -25,10 +51,14 @@ Effects on:
 - Stamina
 - Mana
 - MoveSpeed
+- Stun
+- Attack Speed
+- Stats
 - Evasion
 - Jump Strength
 - AttackSpeed
 - AttackPower
+
 
 ===========================
    Stamina
@@ -111,6 +141,7 @@ Weapons (with damage type)
 - Magic Staff/Wand
 - Shield
 - Attack combo?
+- Stat Scaling
 
 Damage Dummy
 
@@ -305,14 +336,21 @@ Nanite and lumen
    Game Design
 =================================================
 
-Style:
+=======
+Style
+=======
 - 3rd/1st Person Shooter/Slasher
 
-Movement:
+=======
+Movement
+=======
 - Jump
 - Roll + Sprint
+DarkSouls vs Sekiro vs DMC
 
+=======
 Attack types
+=======
 - Melee / Ranged
 - Guns
 - Spells. Instant + Casting
@@ -320,7 +358,9 @@ Attack types
 - Turrents / Towers
 - Ally NPCs
 
+=======
 Battles
+=======
 - Many enemies
 - Spawn in waves
 - Defend checkpoint
@@ -328,9 +368,34 @@ Battles
 - Change terrain?
 - Hire more NPCs and upgrade them.
 
-
+=======
 Random Content
+=======
 - Item quality affects strength of effects?
 - Equipment stats/effect
 - Weapon stats/effects
+- Level?
 
+Attack counter
+Roll Invincible
+
+=======
+Classes
+=======
+
+Warrior (StrongBoi)
+- Berserk (AngryBoi/BonkBoi) (big weapon)
+- BladeMaster (FightBoi) (Dual Weapons)
+- Guardian/Tank (ThiccBoi) (Shield, Pusher, Absorb dmg then return)
+
+Rougue (FastBoi)
+- Assassin (KnifeBoi) (daggers)
+- Ranger (FarBoi) (bows, crossbows, slings)
+- Gunslinger (GunBoi) (Pistols, Shotguns, Rockets)
+
+Mage (SmartBoi)
+- Wizard (MagicBoi) (Spells)
+- Warlock (PainBoi) (Curses)
+- Summoner (PartyBoi/ClubBoi) (Skeletons / Ghosts)
+
+=======
