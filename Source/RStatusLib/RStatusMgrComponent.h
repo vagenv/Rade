@@ -57,16 +57,26 @@ public:
    // --- Stats
 protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRCharacterStats BaseStats;
+      FRCharacterStats Stats_Base;
+
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRCharacterStats Stats_Add;
 public:
+
+   // --- Get Stats
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      inline FRCharacterStats GetStatsBase () const;
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      inline FRCharacterStats GetStatsAdd () const;
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      inline FRCharacterStats GetStatsTotal () const;
+
+   // --- Add/Rm/Has Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void AddStat (const FRCharacterStats &AddValue);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void RmStat (const FRCharacterStats &RmValue);
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCharacterStats GetStats () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       bool HasStats (const FRCharacterStats &RequiredStats) const;

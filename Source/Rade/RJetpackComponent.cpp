@@ -55,7 +55,7 @@ void URJetpackComponent::Use_Implementation ()
 
    float CurrentChargePercent = StatusMgr->Stamina.Current / StatusMgr->Stamina.Max;
    // Apply power
-   float JumpVelocity = AgiToJumpPowerData->Eval (StatusMgr->GetStats ().Agility) * CurrentChargePercent;
+   float JumpVelocity = AgiToJumpPowerData->Eval (StatusMgr->GetStatsTotal ().Agility) * CurrentChargePercent;
 
    R_LOG_PRINTF ("Jump power : %f", JumpVelocity);
    MovementComponent->Velocity.Z += JumpVelocity;

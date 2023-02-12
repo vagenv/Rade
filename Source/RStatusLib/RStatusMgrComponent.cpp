@@ -17,7 +17,7 @@ URStatusMgrComponent::URStatusMgrComponent ()
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
 
-   BaseStats = FRCharacterStats (10);
+   Stats_Base = FRCharacterStats (10);
 }
 
 // Replication
@@ -28,7 +28,8 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URStatusMgrComponent, Health);
    DOREPLIFETIME (URStatusMgrComponent, Mana);
    DOREPLIFETIME (URStatusMgrComponent, Stamina);
-   DOREPLIFETIME (URStatusMgrComponent, BaseStats);
+   DOREPLIFETIME (URStatusMgrComponent, Stats_Base);
+   DOREPLIFETIME (URStatusMgrComponent, Stats_Add);
    DOREPLIFETIME (URStatusMgrComponent, BaseResistence);
 }
 
@@ -82,14 +83,15 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 
 void URStatusMgrComponent::Calc_Status ()
 {
-   Health.Max   = 200  + BaseStats.Strength * 10;
-   Health.Regen = 0    + BaseStats.Strength * 0.1;
+   FRCharacterStats StatsTotal = GetStatsTotal ();
+   Health.Max   = 200  + StatsTotal.Strength * 10;
+   Health.Regen = 0    + StatsTotal.Strength * 0.1;
 
-   Stamina.Max   = 100 + BaseStats.Agility * 2;
-   Stamina.Regen = 20  + BaseStats.Agility * 0.15;
+   Stamina.Max   = 100 + StatsTotal.Agility * 2;
+   Stamina.Regen = 20  + StatsTotal.Agility * 0.15;
 
-   Mana.Max   = 50 + BaseStats.Intelligence * 10;
-   Mana.Regen = 0  + BaseStats.Intelligence * 0.1;
+   Mana.Max   = 50 + StatsTotal.Intelligence * 10;
+   Mana.Regen = 0  + StatsTotal.Intelligence * 0.1;
 }
 
 //=============================================================================
@@ -108,34 +110,43 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
 //                 Stats Calls
 //=============================================================================
 
-FRCharacterStats URStatusMgrComponent::GetStats () const
+FRCharacterStats URStatusMgrComponent::GetStatsBase () const
 {
-   return BaseStats;
+   return Stats_Base;
+}
+
+FRCharacterStats URStatusMgrComponent::GetStatsAdd () const
+{
+   return Stats_Add;
+}
+
+FRCharacterStats URStatusMgrComponent::GetStatsTotal () const
+{
+   return Stats_Base + Stats_Add;
 }
 
 void URStatusMgrComponent::AddStat (const FRCharacterStats &AddValue)
 {
-   BaseStats = BaseStats + AddValue;
+   Stats_Add = Stats_Add + AddValue;
    Calc_Status ();
    OnStatusUpdated.Broadcast ();
 }
 
 void URStatusMgrComponent::RmStat (const FRCharacterStats &RmValue)
 {
-   BaseStats = BaseStats - RmValue;
+   Stats_Add = Stats_Add - RmValue;
    Calc_Status ();
    OnStatusUpdated.Broadcast ();
 }
 
 bool URStatusMgrComponent::HasStats (const FRCharacterStats &RequiredStats) const
 {
-   return BaseStats.MoreThan (RequiredStats);
+   return GetStatsTotal ().MoreThan (RequiredStats);
 }
 
 //=============================================================================
 //                 Resistance Calls
 //=============================================================================
-
 
 TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
 {
