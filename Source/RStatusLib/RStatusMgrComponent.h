@@ -91,7 +91,6 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnStatusUpdated;
 
-
    // Calls from RCharacter
    float TakeDamage (float DamageAmount,
                      FDamageEvent const& DamageEvent,

@@ -82,14 +82,14 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 
 void URStatusMgrComponent::Calc_Status ()
 {
-   Health.Max   = 50  + BaseStats.Strength * 10;
-   Health.Regen = 1   + BaseStats.Strength * 0.05;
+   Health.Max   = 200  + BaseStats.Strength * 10;
+   Health.Regen = 0    + BaseStats.Strength * 0.1;
 
    Stamina.Max   = 100 + BaseStats.Agility * 2;
-   Stamina.Regen = 20  + BaseStats.Agility * 0.05;
+   Stamina.Regen = 20  + BaseStats.Agility * 0.15;
 
-   Mana.Max   = 20  + BaseStats.Intelligence * 10;
-   Mana.Regen = 2   + BaseStats.Intelligence * 0.15;
+   Mana.Max   = 50 + BaseStats.Intelligence * 10;
+   Mana.Regen = 0  + BaseStats.Intelligence * 0.1;
 }
 
 //=============================================================================
