@@ -30,14 +30,21 @@ public:
    virtual bool Equip   (const FREquipmentData    &EquipmentData);
    virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      URStatusMgrComponent*      GetStatusMgr     () const;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve StrToWeightMax;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      UREquipmentSlotComponent * GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
+      URStatusMgrComponent* GetStatusMgr () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
+      UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
 
    // Delegate when equipment updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
       FREquipmentMgrEvent OnEquipmentUpdated;
+
+protected:
+   UFUNCTION()
+      void OnStatusUpdated ();
 };
 

@@ -15,6 +15,15 @@
 UREquipmentMgrComponent::UREquipmentMgrComponent ()
 {
    SetIsReplicatedByDefault (true);
+
+   // Equip Load
+   FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurve ();
+   StrToWeightMaxData->AddKey (   0,   10); // Minimum
+   StrToWeightMaxData->AddKey (   1, 10.5);
+   StrToWeightMaxData->AddKey (  10,   15);
+   StrToWeightMaxData->AddKey ( 100,   50);
+   StrToWeightMaxData->AddKey (1000,  100);
+   StrToWeightMaxData->AddKey (5000,  150);
 }
 
 // Replication
@@ -25,12 +34,30 @@ void UREquipmentMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProper
 
 void UREquipmentMgrComponent::BeginPlay()
 {
-   Super::BeginPlay();
+   Super::BeginPlay ();
+
+   if (R_IS_NET_ADMIN) {
+      if (URStatusMgrComponent *StatusMgr = GetStatusMgr ()) {
+         StatusMgr->OnStatusUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatusUpdated);
+      }
+   }
 }
 
 void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
+}
+
+void UREquipmentMgrComponent::OnStatusUpdated ()
+{
+   const FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurveConst ();
+   if (!ensure (StrToWeightMaxData)) return;
+
+   URStatusMgrComponent *StatusMgr = GetStatusMgr ();
+   if (StatusMgr) {
+      FRCharacterStats StatsTotal = StatusMgr->GetStatsTotal ();
+      WeightMax = StrToWeightMaxData->Eval (StatsTotal.Strength);
+   }
 }
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
@@ -142,7 +169,7 @@ URStatusMgrComponent* UREquipmentMgrComponent::GetStatusMgr () const
    else                      return nullptr;
 }
 
-UREquipmentSlotComponent * UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &SlotClass) const
+UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &SlotClass) const
 {
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
