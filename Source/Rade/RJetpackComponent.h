@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "RJetpackComponent.generated.h"
 
+class URStatusMgrComponent;
 class UCharacterMovementComponent;
 
 UCLASS(BlueprintType)
@@ -21,32 +22,26 @@ public:
    URJetpackComponent ();
    virtual void BeginPlay () override;
 
-   // Owners Movement Component
-protected:
-   UCharacterMovementComponent *MovementComponent = nullptr;
-public:
+   UFUNCTION()
+      virtual bool CanUse () const;
 
-   //==========================================================================
-   //                         Params
-   //==========================================================================
-
-   // Minimal Usable Charge
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float MinUseablePercent = 40;
-
-   // Push Multiplier
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float PushPower = 7;
+      FRuntimeFloatCurve AgiToJumpPower;
 
    //==========================================================================
    //                         Calls
    //==========================================================================
 
    UFUNCTION(Reliable, Server)
-      void Use ();
+      virtual void Use ();
       void Use_Implementation ();
 
    protected:
-      void FillUp (float DeltaTime);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Jetpack")
+      URStatusMgrComponent* GetStatusMgr () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Jetpack")
+      UCharacterMovementComponent* GetMovementComponent () const;
 };
 

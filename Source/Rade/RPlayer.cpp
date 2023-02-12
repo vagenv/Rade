@@ -271,7 +271,7 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 void ARPlayer::Input_Jump ()
 {
    if (StatusMgr->bDead) return;
-   Jetpack->Use ();
+   if (Jetpack->CanUse ()) Jetpack->Use ();
    Super::Jump ();
 }
 
