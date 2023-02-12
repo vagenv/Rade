@@ -47,6 +47,10 @@ void URStatusMgrComponent::BeginPlay ()
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
+   if (ACharacter *Character = Cast<ACharacter> (GetOwner ())) {
+      MovementComponent = Character->GetCharacterMovement ();
+   }
+
    if (R_IS_NET_ADMIN) {
       bDead = false;
 
@@ -96,7 +100,8 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
 {
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
-   Stamina.Tick (DeltaTime);
+
+   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
 //=============================================================================

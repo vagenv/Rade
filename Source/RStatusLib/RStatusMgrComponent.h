@@ -8,6 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
 
+class UCharacterMovementComponent;
+
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
 class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent
@@ -47,6 +49,10 @@ public:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Stamina;
 
+   // Owners Movement Component. For stamina Regen
+protected:
+      UCharacterMovementComponent *MovementComponent = nullptr;
+public:
 
    // --- Stats
 protected:

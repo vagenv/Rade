@@ -20,7 +20,6 @@ public:
    // Base events
    URJetpackComponent ();
    virtual void BeginPlay () override;
-   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
    // Owners Movement Component
 protected:
@@ -31,17 +30,9 @@ public:
    //                         Params
    //==========================================================================
 
-   // Current Charge Percent
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float CurrentChargePercent = 50;
-
    // Minimal Usable Charge
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
       float MinUseablePercent = 40;
-
-   // Restore Value
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float RestorePower = 20;
 
    // Push Multiplier
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
