@@ -266,5 +266,41 @@
 		"PickupMesh": "None",
 		"Pickup": "None",
 		"JsonData": ""
+	},
+	{
+		"Name": "HatOfBadBoi",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [
+			{
+				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
+				"Resistance": 50
+			}
+		],
+		"Stats":
+		{
+			"Strength": -20,
+			"Agility": -20,
+			"Intelligence": -20
+		},
+		"RequiredStats":
+		{
+			"Strength": 0,
+			"Agility": 0,
+			"Intelligence": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
 	}
 ]
