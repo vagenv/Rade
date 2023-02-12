@@ -12,4 +12,3 @@ UE_EDITOR_CMD=$UE_DIR/Engine/Binaries/Linux/./UnrealEditor-cmd
 UE_BUILD_TOOL=$UE_DIR/Engine/Binaries/DotNET/AutomationTool/UnrealBuildTool
 UE_BUILD_BAT=$UE_DIR/Engine/Build/BatchFiles/Linux/Build.sh
 
-
