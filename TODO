@@ -3,49 +3,21 @@
 ===========================
 
 =======
-Replication
-=======
-
-Smart Replication of FRStatusValue
-- Once every few seconds
-- Local updates and adjusts to new values on rep
-
-=======
 Stat effects
 =======
 
 Renaming?
-Attribute/Stat/Status/Perks/Abilities
+- Attribute/Stat/Status/Perks/Abilities
 
-FRuntimeFloatCurve
-- StrToHealthMax
-- StrToHealthRegen
-- StrToStagger?
-- StrToEquipLoad
+Str?
 - StrToBaseResistance
 
-Dex/Agi
-- DexToStaminaMax
-- DexToStaminaRegen
-- DexToEvasion
-- DexToCritical
+Agi?
+- AgiToMoveSpeed
 
-- IntToManaMax
-- IntToManaRegen
-- IntToMagicDefense?
-- IntToSpellSlots?
-
-
-Strength    = MaxHealth, Health Regen, Stagger?
-Dexterity   = Evasion, Stamina Regen, Move Speed, Critical Chance
-Intellience = MaxMana, Mana Regen, Mana Critical,
-
-TakeDamage checks evasion chance
-
-MoveSpeed affected by equip load
-
-
-Mono Font
+EquipLoad %
+- MoveSpeed
+- Evasion
 
 ===========================
    RStatusEffect
@@ -73,7 +45,6 @@ Effects on:
 - AttackSpeed
 - AttackPower
 
-
 ===========================
    Stamina
 ===========================
@@ -93,8 +64,6 @@ TakeDamage (based on what body part was hit) (bone name?):
 RDamageType
 - Status Effect List
 - Random chance to apply RStatusEffect
-
-
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -128,8 +97,6 @@ ConsumableItem : ActionItem
 
 ===========================
    Weapons
-===========================
-
 ===========================
 
 ItemData uniqueID?
@@ -184,9 +151,22 @@ DamageMgrComponent to GameMode
    Network
 =================================================
 
+=======
+Replication
+=======
+Smart Replication of FRStatusValue
+- Once every few seconds
+- Local updates and adjusts to new values on rep
+
+=======
+Spawn Menu
+=======
 Select spawn point
 See status. Smooth start
 
+=======
+Session
+=======
 Network Session
 - Deep dive / Analysis / Simplification
 - Persistent session widget
@@ -262,9 +242,40 @@ Animations:
    UI (Nice to have)
 =================================================
 
+- Mono Font
 - Audio channels
 - Persistent Audio Settings
 - Input
+
+- Smooth bars movement.
+
+===========================
+   Status (Nice to have)
+===========================
+
+=======
+Resistance from stats?
+=======
+
+Physical(Str)
+-Blunt
+-Pierce
+-Slash
+
+??? (Agi)
+-Bleed
+-Poison
+-Rot
+
+??? (Int)
+-Magic
+-Lightining
+-Fire
+
+???
+-Light
+-Dark
+-Heal
 
 =================================================
    Inventory (Nice to have)
@@ -315,6 +326,9 @@ Blueprint Data validation
 
 Gameplay Ability System
 
+Determine bottlenecks. (240+ FPS)
+- CPU
+- GPU
 
 Action Popup UI
 - Short Press/Long Press
