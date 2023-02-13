@@ -41,6 +41,7 @@ public:
    //                 Status
    //==========================================================================
 
+public:
    // Called by Tick
    void StatusRegen (float DeltaTime);
 
@@ -66,6 +67,20 @@ protected:
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats Stats_Add;
+
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      float CriticalChance = 0;
+
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      float EvasionChance = 0;
+
+public:
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      inline bool RollCritical () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      inline bool RollEvasion () const;
+
 public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve StrToHealthMax;
@@ -80,16 +95,22 @@ public:
       FRuntimeFloatCurve AgiToStaminaRegen;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToCritical;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToEvasion;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve IntToManaMax;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve IntToManaRegen;
-public:
 
    //==========================================================================
    //                 Stats Funcs
    //==========================================================================
 
+public:
    // --- Get Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       inline FRCharacterStats GetStatsBase () const;
@@ -111,6 +132,7 @@ public:
    //==========================================================================
    //                 Resistance
    //==========================================================================
+
 protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<FRResistanceStat> BaseResistence;
@@ -127,6 +149,7 @@ public:
    //==========================================================================
    //                 Events
    //==========================================================================
+
 public:
    // Delegate when status updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")

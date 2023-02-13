@@ -56,6 +56,24 @@ URStatusMgrComponent::URStatusMgrComponent ()
    AgiToStaminaRegenData->AddKey (1000,   40);
    AgiToStaminaRegenData->AddKey (5000,   50);
 
+   // Critical
+   FRichCurve* AgiToCriticalData = AgiToCritical.GetRichCurve ();
+   AgiToCriticalData->AddKey (   0,   0); // Minimum
+   AgiToCriticalData->AddKey (   1,   1);
+   AgiToCriticalData->AddKey (  10,   5);
+   AgiToCriticalData->AddKey ( 100,  20);
+   AgiToCriticalData->AddKey (1000,  30);
+   AgiToCriticalData->AddKey (5000,  40);
+
+   // Evasion
+   FRichCurve* AgiToEvasionData = AgiToEvasion.GetRichCurve ();
+   AgiToEvasionData->AddKey (   0,    0); // Minimum
+   AgiToEvasionData->AddKey (   1,    1);
+   AgiToEvasionData->AddKey (  10,    5);
+   AgiToEvasionData->AddKey ( 100,   20);
+   AgiToEvasionData->AddKey (1000,   35);
+   AgiToEvasionData->AddKey (5000,   40);
+
    // Mana MAX
    FRichCurve* IntToManaMaxData = IntToManaMax.GetRichCurve ();
    IntToManaMaxData->AddKey (   0,   50); // Minimum
@@ -144,21 +162,36 @@ void URStatusMgrComponent::Calc_Status ()
    const FRichCurve* StrToHealthRegenData  = StrToHealthRegen.GetRichCurveConst ();
    const FRichCurve* AgiToStaminaMaxData   = AgiToStaminaMax.GetRichCurveConst ();
    const FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurveConst ();
+   const FRichCurve* AgiToEvasionData      = AgiToEvasion.GetRichCurveConst ();
+   const FRichCurve* AgiToCriticalData     = AgiToCritical.GetRichCurveConst ();
    const FRichCurve* IntToManaMaxData      = IntToManaMax.GetRichCurveConst ();
    const FRichCurve* IntToManaRegenData    = IntToManaRegen.GetRichCurveConst ();
    if (!ensure (StrToHealthMaxData))    return;
    if (!ensure (StrToHealthRegenData))  return;
    if (!ensure (AgiToStaminaMaxData))   return;
    if (!ensure (AgiToStaminaRegenData)) return;
+   if (!ensure (AgiToEvasionData))      return;
+   if (!ensure (AgiToCriticalData))     return;
    if (!ensure (IntToManaMaxData))      return;
    if (!ensure (IntToManaRegenData))    return;
 
-   Health.Max    = StrToHealthMaxData->Eval (StatsTotal.Strength);
-   Health.Regen  = StrToHealthRegenData->Eval (StatsTotal.Strength);
-   Stamina.Max   = AgiToStaminaMaxData->Eval (StatsTotal.Agility);
-   Stamina.Regen = AgiToStaminaRegenData->Eval (StatsTotal.Agility);
-   Mana.Max      = IntToManaMaxData->Eval (StatsTotal.Intelligence);
-   Mana.Regen    = IntToManaRegenData->Eval (StatsTotal.Intelligence);
+   Health.Max     = StrToHealthMaxData->Eval (StatsTotal.Strength);
+   Health.Regen   = StrToHealthRegenData->Eval (StatsTotal.Strength);
+   Stamina.Max    = AgiToStaminaMaxData->Eval (StatsTotal.Agility);
+   Stamina.Regen  = AgiToStaminaRegenData->Eval (StatsTotal.Agility);
+   EvasionChance  = AgiToEvasionData->Eval (StatsTotal.Agility);
+   CriticalChance = AgiToCriticalData->Eval (StatsTotal.Agility);
+   Mana.Max       = IntToManaMaxData->Eval (StatsTotal.Intelligence);
+   Mana.Regen     = IntToManaRegenData->Eval (StatsTotal.Intelligence);
+}
+
+bool URStatusMgrComponent::RollCritical () const
+{
+   return ((FMath::Rand () % 100) >= CriticalChance);
+}
+bool URStatusMgrComponent::RollEvasion () const
+{
+   return ((FMath::Rand () % 100) >= EvasionChance);
 }
 
 //=============================================================================
@@ -274,6 +307,12 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
+
+   if (RollEvasion ()) {
+      // Report Evasion
+      return 0;
+   }
+
    if (DamageType) {
       float Resistance = 0;
 
@@ -293,7 +332,6 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
    }
 
    // TODO: Report damage
-
    if (DamageAmount != .0f && !bDead) {
 
       Health.Current -= DamageAmount;
