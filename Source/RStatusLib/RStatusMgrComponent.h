@@ -31,10 +31,17 @@ public:
    UFUNCTION()
       void Calc_Status ();
 
-   // --- Status
+   // Owners Movement Component. For stamina Regen.
+protected:
+      UCharacterMovementComponent *MovementComponent = nullptr;
+public:
 
-   // Get Funcs
 
+   //==========================================================================
+   //                 Status
+   //==========================================================================
+
+   // Called by Tick
    void StatusRegen (float DeltaTime);
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
@@ -49,19 +56,17 @@ public:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Stamina;
 
-   // Owners Movement Component. For stamina Regen
-protected:
-      UCharacterMovementComponent *MovementComponent = nullptr;
-public:
+   //==========================================================================
+   //                 Stats Data
+   //==========================================================================
 
-   // --- Stats
 protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats Stats_Base;
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats Stats_Add;
-
+public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve StrToHealthMax;
 
@@ -81,6 +86,10 @@ protected:
       FRuntimeFloatCurve IntToManaRegen;
 public:
 
+   //==========================================================================
+   //                 Stats Funcs
+   //==========================================================================
+
    // --- Get Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       inline FRCharacterStats GetStatsBase () const;
@@ -99,7 +108,9 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       bool HasStats (const FRCharacterStats &RequiredStats) const;
 
-   // --- Resistance
+   //==========================================================================
+   //                 Resistance
+   //==========================================================================
 protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<FRResistanceStat> BaseResistence;
@@ -113,7 +124,9 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       TArray<FRResistanceStat> GetResistance () const;
 
-   // --- Events
+   //==========================================================================
+   //                 Events
+   //==========================================================================
 public:
    // Delegate when status updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
@@ -125,11 +138,12 @@ public:
                      AController* EventInstigator,
                      AActor* DamageCauser);
 
-   // --- Save/Load
+   //==========================================================================
+   //                 Save/Load
+   //==========================================================================
 
    // Status Saved / Loaded between sessions.
-   // Should be used only for Player.
-   // Careful with collision of 'PlayerUniqueId'
+   // Careful with collision of 'SaveUniqueId'
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       bool bSaveLoad = false;
 
