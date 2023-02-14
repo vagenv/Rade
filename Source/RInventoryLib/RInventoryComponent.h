@@ -55,7 +55,7 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemData> Items;
 
-   void CalcWeight ();
+   virtual void CalcWeight ();
 
 public:
 

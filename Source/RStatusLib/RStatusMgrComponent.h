@@ -29,11 +29,6 @@ public:
    UFUNCTION()
       void OnRep_Status ();
 
-protected:
-
-   UFUNCTION()
-      void OnInventoryUpdated ();
-
    UFUNCTION()
       void RecalcStatus ();
 
@@ -70,8 +65,9 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCharacterStats Stats_Base;
 
+   // Should be Map, Bit for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRCharacterStats Stats_Add;
+      TArray<FRExtraStat> Stats_Extra;
 
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       float CriticalChance = 0;
@@ -79,18 +75,12 @@ protected:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       float EvasionChance = 0;
 
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      float MoveSpeedFactor = 1;
-
 public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       inline bool RollCritical () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       inline bool RollEvasion () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      inline float GetMoveSpeedFactor () const;
 
 public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
@@ -117,12 +107,6 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve IntToManaRegen;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
-      FRuntimeFloatCurve EquipToEvasion;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
-      FRuntimeFloatCurve EquipToMoveSpeed;
-
    //==========================================================================
    //                 Stats Funcs
    //==========================================================================
@@ -130,18 +114,19 @@ public:
 public:
    // --- Get Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      inline FRCharacterStats GetStatsBase () const;
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      inline FRCharacterStats GetStatsAdd () const;
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      inline FRCharacterStats GetStatsTotal () const;
-
-   // --- Add/Rm/Has Stats
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void AddStat (const FRCharacterStats &AddValue);
+      FRCharacterStats GetStatsBase () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void RmStat (const FRCharacterStats &RmValue);
+      FRCharacterStats GetStatsAdd () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      FRCharacterStats GetStatsTotal () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      bool SetExtraStat (const FString &Tag, const FRCharacterStats &ExtraValue);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      bool RmExtraStat (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       bool HasStats (const FRCharacterStats &RequiredStats) const;
@@ -177,9 +162,6 @@ public:
                      FDamageEvent const& DamageEvent,
                      AController* EventInstigator,
                      AActor* DamageCauser);
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      URInventoryComponent* GetInventory () const;
 
    //==========================================================================
    //                 Save/Load

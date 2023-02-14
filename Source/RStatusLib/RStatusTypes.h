@@ -32,6 +32,20 @@ struct RSTATUSLIB_API FRCharacterStats
 };
 
 USTRUCT(BlueprintType)
+struct RSTATUSLIB_API FRExtraStat
+{
+   GENERATED_BODY()
+
+   // Who or What is applying stat
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FString Tag;
+
+   // What value is added
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FRCharacterStats Stat;
+};
+
+USTRUCT(BlueprintType)
 struct RSTATUSLIB_API FRStatusValue
 {
    GENERATED_BODY()
@@ -46,7 +60,7 @@ struct RSTATUSLIB_API FRStatusValue
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float Regen = 0;
 
-   void Tick (float DeltaTime);
+   inline void Tick (float DeltaTime);
 
    friend FArchive& operator<< (FArchive& Ar, FRStatusValue &Value);
 };

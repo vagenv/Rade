@@ -24,6 +24,26 @@ UREquipmentMgrComponent::UREquipmentMgrComponent ()
    StrToWeightMaxData->AddKey ( 100,   50);
    StrToWeightMaxData->AddKey (1000,  100);
    StrToWeightMaxData->AddKey (5000,  150);
+
+   // Weight To Evasion
+   FRichCurve* WeightToEvasionData = WeightToEvasion.GetRichCurve ();
+   WeightToEvasionData->AddKey ( 40, 100); // Minimum
+   WeightToEvasionData->AddKey ( 50,  95);
+   WeightToEvasionData->AddKey ( 60,  90);
+   WeightToEvasionData->AddKey ( 70,  80);
+   WeightToEvasionData->AddKey ( 80,  70);
+   WeightToEvasionData->AddKey ( 90,  55);
+   WeightToEvasionData->AddKey (100,  40);
+
+   // Weight to Move speed
+   FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurve ();
+   WeightToMoveSpeedData->AddKey ( 40, 100); // Minimum
+   WeightToMoveSpeedData->AddKey ( 50,  95);
+   WeightToMoveSpeedData->AddKey ( 60,  90);
+   WeightToMoveSpeedData->AddKey ( 70,  85);
+   WeightToMoveSpeedData->AddKey ( 80,  80);
+   WeightToMoveSpeedData->AddKey ( 90,  70);
+   WeightToMoveSpeedData->AddKey (100,  60);
 }
 
 // Replication
@@ -47,6 +67,24 @@ void UREquipmentMgrComponent::BeginPlay ()
 void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
+}
+
+void UREquipmentMgrComponent::CalcWeight ()
+{
+   Super::CalcWeight ();
+   const FRichCurve* WeightToEvasionData   = WeightToEvasion.GetRichCurveConst ();
+   const FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurveConst ();
+
+   if (!ensure (WeightToEvasionData))    return;
+   if (!ensure (WeightToMoveSpeedData))  return;
+
+   float EquipLoad = WeightCurrent * 100. / WeightMax;
+   float EquipEvasionFactor = WeightToEvasionData->Eval (EquipLoad);
+
+   // TODO : Add Effect to Player
+
+   //EvasionChance *= (EquipEvasionFactor / 100.);
+   //MoveSpeedFactor = EquipToMoveSpeedData->Eval (EquipLoad) / 100.;
 }
 
 void UREquipmentMgrComponent::OnStatusUpdated ()
@@ -105,6 +143,26 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
          *EquipmentData.Name, *EquipmentData.EquipmentSlot->GetName ());
       return false;
    }
+   return Equip (EquipmentSlot, EquipmentData);
+}
+
+bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!EquipmentSlot) {
+      R_LOG ("Invalid Equipment Slot pointer");
+      return false;
+   }
+   if (!EquipmentData.EquipmentSlot.Get ()) {
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
+      return false;
+   }
+   if (EquipmentSlot->GetClass () != EquipmentData.EquipmentSlot) {
+      R_LOG_PRINTF ("Inconsistent Slot Class: Item [%s] Slot []",
+         *EquipmentSlot->GetClass ()->GetName (),
+         *EquipmentData.EquipmentSlot->GetName ()
+         );
+   }
 
    URStatusMgrComponent* StatusMgr = GetStatusMgr ();
    if (!EquipmentData.RequiredStats.Empty ()) {
@@ -128,7 +186,7 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->AddStat (EquipmentData.Stats);
+      StatusMgr->SetExtraStat (EquipmentData.Name, EquipmentData.Stats);
       StatusMgr->AddResistance (EquipmentData.Resistence);
       // TODO: Add addition stats and effects
    }
@@ -149,7 +207,7 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
    URStatusMgrComponent* StatusMgr = GetStatusMgr ();
    if (StatusMgr) {
-      StatusMgr->RmStat (EquipmentSlot->EquipmentData.Stats);
+      StatusMgr->RmExtraStat (EquipmentSlot->EquipmentData.Name);
       StatusMgr->RmResistance (EquipmentSlot->EquipmentData.Resistence);
       // TODO: Remove effects
    }

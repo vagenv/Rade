@@ -28,11 +28,20 @@ public:
    virtual bool UseItem (int32 ItemIdx) override;
 
    virtual bool Equip   (const FREquipmentData    &EquipmentData);
+   virtual bool Equip   (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData);
    virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
+
+   virtual void CalcWeight ();
 
 protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Equipment")
       FRuntimeFloatCurve StrToWeightMax;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve WeightToEvasion;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve WeightToMoveSpeed;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
       URStatusMgrComponent* GetStatusMgr () const;
