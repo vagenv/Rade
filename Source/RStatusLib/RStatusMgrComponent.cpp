@@ -4,6 +4,8 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
+#include "RInventoryLib/RInventoryComponent.h"
+
 #include "Net/UnrealNetwork.h"
 #include "Engine/DamageEvents.h"
 
@@ -91,6 +93,26 @@ URStatusMgrComponent::URStatusMgrComponent ()
    IntToManaRegenData->AddKey ( 100,  10);
    IntToManaRegenData->AddKey (1000,  50);
    IntToManaRegenData->AddKey (5000, 100);
+
+   // Equip load
+   FRichCurve* EquipToEvasionData = EquipToEvasion.GetRichCurve ();
+   EquipToEvasionData->AddKey ( 40, 100); // Minimum
+   EquipToEvasionData->AddKey ( 50,  95);
+   EquipToEvasionData->AddKey ( 60,  90);
+   EquipToEvasionData->AddKey ( 70,  80);
+   EquipToEvasionData->AddKey ( 80,  70);
+   EquipToEvasionData->AddKey ( 90,  55);
+   EquipToEvasionData->AddKey (100,  40);
+
+   // Equip to Move speed
+   FRichCurve* EquipToMoveSpeedData = EquipToMoveSpeed.GetRichCurve ();
+   EquipToMoveSpeedData->AddKey ( 40, 100); // Minimum
+   EquipToMoveSpeedData->AddKey ( 50,  95);
+   EquipToMoveSpeedData->AddKey ( 60,  90);
+   EquipToMoveSpeedData->AddKey ( 70,  85);
+   EquipToMoveSpeedData->AddKey ( 80,  80);
+   EquipToMoveSpeedData->AddKey ( 90,  70);
+   EquipToMoveSpeedData->AddKey (100,  60);
 }
 
 // Replication
@@ -128,7 +150,12 @@ void URStatusMgrComponent::BeginPlay ()
    if (R_IS_NET_ADMIN) {
       bDead = false;
 
-      Calc_Status ();
+      RecalcStatus ();
+
+      URInventoryComponent* Inventory = GetInventory ();
+      if (Inventory) {
+         Inventory->OnInventoryUpdated.AddDynamic (this, &URStatusMgrComponent::OnInventoryUpdated);
+      }
 
       // Save/Load Current Status
       if (bSaveLoad) {
@@ -154,7 +181,12 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
    StatusRegen (DeltaTime);
 }
 
-void URStatusMgrComponent::Calc_Status ()
+void URStatusMgrComponent::OnInventoryUpdated ()
+{
+   RecalcStatus ();
+}
+
+void URStatusMgrComponent::RecalcStatus ()
 {
    FRCharacterStats StatsTotal = GetStatsTotal ();
 
@@ -166,6 +198,9 @@ void URStatusMgrComponent::Calc_Status ()
    const FRichCurve* AgiToCriticalData     = AgiToCritical.GetRichCurveConst ();
    const FRichCurve* IntToManaMaxData      = IntToManaMax.GetRichCurveConst ();
    const FRichCurve* IntToManaRegenData    = IntToManaRegen.GetRichCurveConst ();
+   const FRichCurve* EquipToEvasionData    = EquipToEvasion.GetRichCurveConst ();
+   const FRichCurve* EquipToMoveSpeedData  = EquipToMoveSpeed.GetRichCurveConst ();
+
    if (!ensure (StrToHealthMaxData))    return;
    if (!ensure (StrToHealthRegenData))  return;
    if (!ensure (AgiToStaminaMaxData))   return;
@@ -174,6 +209,8 @@ void URStatusMgrComponent::Calc_Status ()
    if (!ensure (AgiToCriticalData))     return;
    if (!ensure (IntToManaMaxData))      return;
    if (!ensure (IntToManaRegenData))    return;
+   if (!ensure (EquipToEvasionData))    return;
+   if (!ensure (EquipToMoveSpeedData))  return;
 
    Health.Max     = StrToHealthMaxData->Eval (StatsTotal.Strength);
    Health.Regen   = StrToHealthRegenData->Eval (StatsTotal.Strength);
@@ -183,15 +220,34 @@ void URStatusMgrComponent::Calc_Status ()
    CriticalChance = AgiToCriticalData->Eval (StatsTotal.Agility);
    Mana.Max       = IntToManaMaxData->Eval (StatsTotal.Intelligence);
    Mana.Regen     = IntToManaRegenData->Eval (StatsTotal.Intelligence);
+
+
+   URInventoryComponent* Inventory = GetInventory ();
+   if (Inventory) {
+      float EquipLoad = Inventory->WeightCurrent * 100. / Inventory->WeightMax;
+      float EquipEvasionFactor = EquipToEvasionData->Eval (EquipLoad);
+
+      R_LOG_PRINTF ("AGI:%.1f EquipLoad:%.1f EquipEvasionFactor:%1.f EvasionChance:%1.f",
+         StatsTotal.Agility, EquipLoad, EquipEvasionFactor, EvasionChance);
+      EvasionChance *= (EquipEvasionFactor / 100.);
+      MoveSpeedFactor = EquipToMoveSpeedData->Eval (EquipLoad) / 100.;
+   }
+   OnStatusUpdated.Broadcast ();
 }
 
 bool URStatusMgrComponent::RollCritical () const
 {
    return ((FMath::Rand () % 100) >= CriticalChance);
 }
+
 bool URStatusMgrComponent::RollEvasion () const
 {
    return ((FMath::Rand () % 100) >= EvasionChance);
+}
+
+float URStatusMgrComponent::GetMoveSpeedFactor () const
+{
+   return MoveSpeedFactor;
 }
 
 //=============================================================================
@@ -228,15 +284,13 @@ FRCharacterStats URStatusMgrComponent::GetStatsTotal () const
 void URStatusMgrComponent::AddStat (const FRCharacterStats &AddValue)
 {
    Stats_Add = Stats_Add + AddValue;
-   Calc_Status ();
-   OnStatusUpdated.Broadcast ();
+   RecalcStatus ();
 }
 
 void URStatusMgrComponent::RmStat (const FRCharacterStats &RmValue)
 {
    Stats_Add = Stats_Add - RmValue;
-   Calc_Status ();
-   OnStatusUpdated.Broadcast ();
+   RecalcStatus ();
 }
 
 bool URStatusMgrComponent::HasStats (const FRCharacterStats &RequiredStats) const
@@ -269,7 +323,7 @@ void URStatusMgrComponent::AddResistance (const TArray<FRResistanceStat> &AddVal
       }
    }
 
-   OnStatusUpdated.Broadcast ();
+   RecalcStatus ();
 }
 
 void URStatusMgrComponent::RmResistance (const TArray<FRResistanceStat> &RmValue)
@@ -292,7 +346,7 @@ void URStatusMgrComponent::RmResistance (const TArray<FRResistanceStat> &RmValue
       }
    }
 
-   OnStatusUpdated.Broadcast ();
+   RecalcStatus ();
 }
 
 
@@ -341,6 +395,14 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
       }
    }
    return DamageAmount;
+}
+
+URInventoryComponent* URStatusMgrComponent::GetInventory () const
+{
+   TArray<URInventoryComponent*> InventoryList;
+   GetOwner ()->GetComponents (InventoryList);
+   if (InventoryList.Num ()) return InventoryList[0];
+   else                      return nullptr;
 }
 
 //=============================================================================

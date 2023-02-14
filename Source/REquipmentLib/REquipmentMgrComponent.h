@@ -30,7 +30,8 @@ public:
    virtual bool Equip   (const FREquipmentData    &EquipmentData);
    virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+protected:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Equipment")
       FRuntimeFloatCurve StrToWeightMax;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
@@ -38,6 +39,7 @@ public:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
       UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
+public:
 
    // Delegate when equipment updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")

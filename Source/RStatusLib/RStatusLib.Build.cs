@@ -15,6 +15,7 @@ public class RStatusLib : ModuleRules
          "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
+         "RInventoryLib",
       });
    }
 }

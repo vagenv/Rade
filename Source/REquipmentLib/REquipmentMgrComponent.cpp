@@ -32,7 +32,7 @@ void UREquipmentMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProper
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 }
 
-void UREquipmentMgrComponent::BeginPlay()
+void UREquipmentMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
 
@@ -40,6 +40,7 @@ void UREquipmentMgrComponent::BeginPlay()
       if (URStatusMgrComponent *StatusMgr = GetStatusMgr ()) {
          StatusMgr->OnStatusUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatusUpdated);
       }
+      OnStatusUpdated ();
    }
 }
 

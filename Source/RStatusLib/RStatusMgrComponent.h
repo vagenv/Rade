@@ -9,6 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
 
 class UCharacterMovementComponent;
+class URInventoryComponent;
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
@@ -28,14 +29,18 @@ public:
    UFUNCTION()
       void OnRep_Status ();
 
+protected:
+
    UFUNCTION()
-      void Calc_Status ();
+      void OnInventoryUpdated ();
+
+   UFUNCTION()
+      void RecalcStatus ();
 
    // Owners Movement Component. For stamina Regen.
 protected:
       UCharacterMovementComponent *MovementComponent = nullptr;
 public:
-
 
    //==========================================================================
    //                 Status
@@ -74,12 +79,18 @@ protected:
    UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       float EvasionChance = 0;
 
+   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      float MoveSpeedFactor = 1;
+
 public:
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       inline bool RollCritical () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       inline bool RollEvasion () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      inline float GetMoveSpeedFactor () const;
 
 public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
@@ -105,6 +116,12 @@ public:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve IntToManaRegen;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve EquipToEvasion;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve EquipToMoveSpeed;
 
    //==========================================================================
    //                 Stats Funcs
@@ -160,6 +177,9 @@ public:
                      FDamageEvent const& DamageEvent,
                      AController* EventInstigator,
                      AActor* DamageCauser);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      URInventoryComponent* GetInventory () const;
 
    //==========================================================================
    //                 Save/Load
