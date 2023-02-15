@@ -122,10 +122,11 @@ protected:
       TArray<FRStatusEffectWithTag> ExtraEffects;
 
    //==========================================================================
-   //                 Stat curves
+   //                 Status Value Curves
    //==========================================================================
 
 protected:
+   // --- Status Values
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve StrToHealthMax;
 
@@ -139,16 +140,23 @@ protected:
       FRuntimeFloatCurve AgiToStaminaRegen;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve IntToManaMax;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+      FRuntimeFloatCurve IntToManaRegen;
+
+   //==========================================================================
+   //                 Extra Stat Curves
+   //==========================================================================
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve AgiToCritical;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve AgiToEvasion;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
-      FRuntimeFloatCurve IntToManaMax;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
-      FRuntimeFloatCurve IntToManaRegen;
+      FRuntimeFloatCurve AgiToAttackSpeed;
 
    //==========================================================================
    //                 Stats Funcs

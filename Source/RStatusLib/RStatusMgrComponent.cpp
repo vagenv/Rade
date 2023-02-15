@@ -23,7 +23,10 @@ URStatusMgrComponent::URStatusMgrComponent ()
    // Default
    CoreStats_Base = FRCoreStats (10);
 
-   // --- Character stats scaling
+   //==========================================================================
+   //                 Status Value Curves
+   //==========================================================================
+
    // Health MAX
    FRichCurve* StrToHealthMaxData = StrToHealthMax.GetRichCurve ();
    StrToHealthMaxData->AddKey (   0,  200); // Minimum
@@ -35,12 +38,12 @@ URStatusMgrComponent::URStatusMgrComponent ()
 
    // Health Regen
    FRichCurve* StrToHealthRegenData = StrToHealthRegen.GetRichCurve ();
-   StrToHealthRegenData->AddKey (   0,   1); // Minimum
-   StrToHealthRegenData->AddKey (   1, 1.1);
-   StrToHealthRegenData->AddKey (  10,   2);
-   StrToHealthRegenData->AddKey ( 100,  10);
-   StrToHealthRegenData->AddKey (1000,  50);
-   StrToHealthRegenData->AddKey (5000, 100);
+   StrToHealthRegenData->AddKey (   0,   1  ); // Minimum
+   StrToHealthRegenData->AddKey (   1,   1.1);
+   StrToHealthRegenData->AddKey (  10,   2  );
+   StrToHealthRegenData->AddKey ( 100,  10  );
+   StrToHealthRegenData->AddKey (1000,  50  );
+   StrToHealthRegenData->AddKey (5000, 100  );
 
    // Stamina MAX
    FRichCurve* AgiToStaminaMaxData = AgiToStaminaMax.GetRichCurve ();
@@ -53,12 +56,34 @@ URStatusMgrComponent::URStatusMgrComponent ()
 
    // Stamina Regen
    FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurve ();
-   AgiToStaminaRegenData->AddKey (   0,   10); // Minimum
-   AgiToStaminaRegenData->AddKey (   1, 10.2);
-   AgiToStaminaRegenData->AddKey (  10,   12);
-   AgiToStaminaRegenData->AddKey ( 100,   20);
-   AgiToStaminaRegenData->AddKey (1000,   40);
-   AgiToStaminaRegenData->AddKey (5000,   50);
+   AgiToStaminaRegenData->AddKey (   0,   10  ); // Minimum
+   AgiToStaminaRegenData->AddKey (   1,   10.2);
+   AgiToStaminaRegenData->AddKey (  10,   12  );
+   AgiToStaminaRegenData->AddKey ( 100,   20  );
+   AgiToStaminaRegenData->AddKey (1000,   40  );
+   AgiToStaminaRegenData->AddKey (5000,   50  );
+
+   // Mana MAX
+   FRichCurve* IntToManaMaxData = IntToManaMax.GetRichCurve ();
+   IntToManaMaxData->AddKey (   0,   50); // Minimum
+   IntToManaMaxData->AddKey (   1,   60);
+   IntToManaMaxData->AddKey (  10,  150);
+   IntToManaMaxData->AddKey ( 100, 1000);
+   IntToManaMaxData->AddKey (1000, 5000);
+   IntToManaMaxData->AddKey (5000, 9999);
+
+   // Mana Regen
+   FRichCurve* IntToManaRegenData = IntToManaRegen.GetRichCurve ();
+   IntToManaRegenData->AddKey (   0,   0  ); // Minimum
+   IntToManaRegenData->AddKey (   1,   0.1);
+   IntToManaRegenData->AddKey (  10,   1  );
+   IntToManaRegenData->AddKey ( 100,  10  );
+   IntToManaRegenData->AddKey (1000,  50  );
+   IntToManaRegenData->AddKey (5000, 100  );
+
+   //==========================================================================
+   //                 Extra Stat Curves
+   //==========================================================================
 
    // Critical
    FRichCurve* AgiToCriticalData = AgiToCritical.GetRichCurve ();
@@ -78,23 +103,12 @@ URStatusMgrComponent::URStatusMgrComponent ()
    AgiToEvasionData->AddKey (1000,   35);
    AgiToEvasionData->AddKey (5000,   40);
 
-   // Mana MAX
-   FRichCurve* IntToManaMaxData = IntToManaMax.GetRichCurve ();
-   IntToManaMaxData->AddKey (   0,   50); // Minimum
-   IntToManaMaxData->AddKey (   1,   60);
-   IntToManaMaxData->AddKey (  10,  150);
-   IntToManaMaxData->AddKey ( 100, 1000);
-   IntToManaMaxData->AddKey (1000, 5000);
-   IntToManaMaxData->AddKey (5000, 9999);
-
-   // Mana Regen
-   FRichCurve* IntToManaRegenData = IntToManaRegen.GetRichCurve ();
-   IntToManaRegenData->AddKey (   0,   0); // Minimum
-   IntToManaRegenData->AddKey (   1, 0.1);
-   IntToManaRegenData->AddKey (  10,   1);
-   IntToManaRegenData->AddKey ( 100,  10);
-   IntToManaRegenData->AddKey (1000,  50);
-   IntToManaRegenData->AddKey (5000, 100);
+   // Attack Speed.
+   // Per weapon curve for AttackSpeed -> AttacksPerSecond?
+   // Min/Max for each weapon.
+   FRichCurve* AgiToAttackSpeedData = AgiToAttackSpeed.GetRichCurve ();
+   AgiToAttackSpeedData->AddKey (0,       0); // Minimum
+   AgiToAttackSpeedData->AddKey (5000, 5000); // Maximum
 }
 
 // Replication
@@ -204,36 +218,42 @@ void URStatusMgrComponent::RecalcCoreStats ()
 
 void URStatusMgrComponent::RecalcExtraStats ()
 {
-   const FRichCurve* AgiToEvasionData  = AgiToEvasion.GetRichCurveConst ();
-   const FRichCurve* AgiToCriticalData = AgiToCritical.GetRichCurveConst ();
+   const FRichCurve* AgiToEvasionData     = AgiToEvasion.GetRichCurveConst ();
+   const FRichCurve* AgiToCriticalData    = AgiToCritical.GetRichCurveConst ();
+   const FRichCurve* AgiToAttackSpeedData = AgiToAttackSpeed.GetRichCurveConst ();
 
    if (!ensure (AgiToEvasionData))  return;
    if (!ensure (AgiToCriticalData)) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   float EvasionTotal  = AgiToEvasionData->Eval (StatsTotal.AGI);
-   float CriticalTotal = AgiToCriticalData->Eval (StatsTotal.AGI);
+   float EvasionTotal     = AgiToEvasionData->Eval (StatsTotal.AGI);
+   float CriticalTotal    = AgiToCriticalData->Eval (StatsTotal.AGI);
+   float AttackSpeedTotal = AgiToAttackSpeedData->Eval (StatsTotal.AGI);
 
    // Flat
    for (const FRStatusEffectWithTag &It : ExtraEffects) {
       if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
-         if (It.Effect.Target == ERStatusEffectTarget::Evasion)  EvasionTotal += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::Critical) CriticalTotal += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += It.Effect.Value;
       }
    }
    // Percentage
    for (const FRStatusEffectWithTag &It : ExtraEffects) {
       if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
-         if (It.Effect.Target == ERStatusEffectTarget::Evasion) EvasionTotal *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::Critical) CriticalTotal *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + It.Effect.Value) / 100.);
       }
    }
 
-   FRCoreStats StatsCurrent = GetCoreStats_Total ();
-   ExtraStats_Base.Evasion  = AgiToEvasionData->Eval (StatsCurrent.AGI);
-   ExtraStats_Added.Evasion = EvasionTotal - ExtraStats_Base.Evasion;
-   ExtraStats_Base.Critical = AgiToCriticalData->Eval (StatsCurrent.AGI);
-   ExtraStats_Added.Critical = CriticalTotal - ExtraStats_Base.Critical;
+   FRCoreStats StatsCurrent = GetCoreStats_Base ();
+   ExtraStats_Base.Evasion      = AgiToEvasionData->Eval (StatsCurrent.AGI);
+   ExtraStats_Added.Evasion     = EvasionTotal - ExtraStats_Base.Evasion;
+   ExtraStats_Base.Critical     = AgiToCriticalData->Eval (StatsCurrent.AGI);
+   ExtraStats_Added.Critical    = CriticalTotal - ExtraStats_Base.Critical;
+   ExtraStats_Base.AttackSpeed  = AgiToAttackSpeedData->Eval (StatsCurrent.AGI);
+   ExtraStats_Added.AttackSpeed = CriticalTotal - ExtraStats_Base.Critical;
 }
 
 void URStatusMgrComponent::RecalcStatusValues ()
@@ -276,12 +296,12 @@ void URStatusMgrComponent::RecalcStatusValues ()
    // Percentage
    for (const FRStatusEffectWithTag &It : ExtraEffects) {
       if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
-         if (It.Effect.Target == ERStatusEffectTarget::HealthMax)    Health.Max   *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + It.Effect.Value) / 100.);
          if (It.Effect.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + It.Effect.Value) / 100.);
          if (It.Effect.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::ManaMax)      Mana.Max   *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + It.Effect.Value) / 100.);
       }
    }
 }
