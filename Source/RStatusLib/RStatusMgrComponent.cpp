@@ -351,6 +351,43 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
+bool URStatusMgrComponent::IsDead () const
+{
+   return bDead;
+}
+
+FRStatusValue URStatusMgrComponent::GetHealth () const
+{
+   return Health;
+}
+
+void URStatusMgrComponent::UseHealth (float Amount)
+{
+   Health.Current = FMath::Clamp (Health.Current + Amount, 0, Health.Max);
+   if (!Health.Current) bDead = true;
+}
+
+FRStatusValue URStatusMgrComponent::GetStamina () const
+{
+   return Stamina;
+}
+
+void URStatusMgrComponent::UseStamina (float Amount)
+{
+   Stamina.Current = FMath::Clamp (Stamina.Current + Amount, 0, Stamina.Max);
+}
+
+FRStatusValue URStatusMgrComponent::GetMana () const
+{
+   return Mana;
+}
+
+void URStatusMgrComponent::UseMana (float Amount)
+{
+   Mana.Current = FMath::Clamp (Mana.Current + Amount, 0, Mana.Max);
+}
+
+
 //==========================================================================
 //                 Effect Funcs
 //==========================================================================

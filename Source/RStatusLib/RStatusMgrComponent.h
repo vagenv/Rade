@@ -45,15 +45,13 @@ public:
    // Owners Movement Component. For stamina Regen.
 protected:
       UCharacterMovementComponent *MovementComponent = nullptr;
-public:
 
    //==========================================================================
    //                 Status
    //==========================================================================
-
-public:
+protected:
    // Called by Tick
-   void StatusRegen (float DeltaTime);
+   virtual void StatusRegen (float DeltaTime);
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       bool bDead = false;
@@ -66,6 +64,33 @@ public:
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Stamina;
+
+   //==========================================================================
+   //                 Status Func
+   //==========================================================================
+
+public:
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      bool IsDead () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRStatusValue GetHealth () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void UseHealth (float Amount);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRStatusValue GetStamina () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void UseStamina (float Amount);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRStatusValue GetMana () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void UseMana (float Amount);
 
    //==========================================================================
    //                 Stats Data

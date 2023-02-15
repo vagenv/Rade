@@ -222,7 +222,7 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 
 void ARPlayer::Input_Move (const FInputActionValue& Value)
 {
-   if (StatusMgr->bDead) return;
+   if (StatusMgr->IsDead ()) return;
 
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -246,7 +246,7 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 
 void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
-   if (StatusMgr->bDead) return;
+   if (StatusMgr->IsDead ()) return;
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr) {
@@ -270,7 +270,7 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
-   if (StatusMgr->bDead) return;
+   if (StatusMgr->IsDead ()) return;
    if (Jetpack->CanUse ()) Jetpack->Use ();
    Super::Jump ();
 }
@@ -278,7 +278,7 @@ void ARPlayer::Input_Jump ()
 // Player Pressed CameraChange
 void ARPlayer::Input_ChangeCamera ()
 {
-   if (StatusMgr->bDead) return;
+   if (StatusMgr->IsDead ()) return;
 
    // Change Camera
    if (DefaultCameraState == ECameraState::FP_Camera) {

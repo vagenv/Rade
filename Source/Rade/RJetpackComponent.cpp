@@ -37,7 +37,8 @@ bool URJetpackComponent::CanUse () const
    if (!StatusMgr) return false;
 
    float MinUseablePercent = 40;
-   float CurrentChargePercent = StatusMgr->Stamina.Current * 100 / StatusMgr->Stamina.Max;
+   FRStatusValue Stamina = StatusMgr->GetStamina ();
+   float CurrentChargePercent = Stamina.Current * 100 / Stamina.Max;
 
    return (CurrentChargePercent > MinUseablePercent);
 }
@@ -53,13 +54,14 @@ void URJetpackComponent::Use_Implementation ()
    const FRichCurve* AgiToJumpPowerData = AgiToJumpPower.GetRichCurveConst ();
    if (!ensure (AgiToJumpPowerData)) return;
 
-   float CurrentChargePercent = StatusMgr->Stamina.Current / StatusMgr->Stamina.Max;
+   FRStatusValue Stamina = StatusMgr->GetStamina ();
+   float CurrentChargePercent = Stamina.Current / Stamina.Max;
    // Apply power
    float JumpVelocity = AgiToJumpPowerData->Eval (StatusMgr->GetCoreStats_Total ().AGI) * CurrentChargePercent;
 
    R_LOG_PRINTF ("Jump power : %f", JumpVelocity);
    MovementComponent->Velocity.Z += JumpVelocity;
-   StatusMgr->Stamina.Current = 0;
+   StatusMgr->UseStamina (Stamina.Max);
 }
 
 URStatusMgrComponent* URJetpackComponent::GetStatusMgr () const
