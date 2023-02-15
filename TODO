@@ -1,27 +1,8 @@
 ===========================
-   Status
-===========================
-
-=======
-Stat effects
-=======
-
-Renaming?
-- Attribute/Stat/Status/Perks/Abilities
-
-Str?
-- StrToBaseResistance
-
-Agi?
-- AgiToMoveSpeed
-
-EquipLoad %
-- MoveSpeed
-- Evasion
-
-===========================
    RStatusEffect
 ===========================
+
+Move All FRuntimeFloatCurve to blueprint subclass
 
 Effect containers (List/Array) [Where?]
 
@@ -31,19 +12,6 @@ RStatusEffect:
 - End
 - Duration
 - Event to apply action. (Causer + Victim)
-
-Effects on:
-- Health
-- Stamina
-- Mana
-- MoveSpeed
-- Stun
-- Attack Speed
-- Stats
-- Evasion
-- Jump Strength
-- AttackSpeed
-- AttackPower
 
 ===========================
    Stamina
