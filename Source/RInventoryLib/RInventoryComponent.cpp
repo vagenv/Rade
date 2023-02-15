@@ -469,7 +469,7 @@ void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent 
 }
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   R_RETURN_IF_NOT_ADMIN_BOOL;
+   R_RETURN_IF_NOT_ADMIN_NULL;
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {

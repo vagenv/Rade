@@ -28,10 +28,10 @@ struct RSTATUSLIB_API FRCoreStats
    bool Empty () const;
 
    // All values are higher than
-   inline bool MoreThan (const FRCoreStats &stat) const;
+   bool MoreThan (const FRCoreStats &stat) const;
 
-   inline FRCoreStats operator + (const FRCoreStats &stat) const;
-   inline FRCoreStats operator - (const FRCoreStats &stat) const;
+   FRCoreStats operator + (const FRCoreStats &stat) const;
+   FRCoreStats operator - (const FRCoreStats &stat) const;
 };
 
 // ============================================================================
@@ -58,8 +58,8 @@ struct RSTATUSLIB_API FRExtraStats
    UPROPERTY (EditAnywhere, BlueprintReadWrite)
       float AttackPower = 0;
 
-   inline FRExtraStats operator + (const FRExtraStats &stat) const;
-   inline FRExtraStats operator - (const FRExtraStats &stat) const;
+   FRExtraStats operator + (const FRExtraStats &stat) const;
+   FRExtraStats operator - (const FRExtraStats &stat) const;
 };
 
 // ============================================================================
@@ -81,7 +81,7 @@ struct RSTATUSLIB_API FRStatusValue
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float Regen = 0;
 
-   inline void Tick (float DeltaTime);
+   void Tick (float DeltaTime);
 
    friend FArchive& operator<< (FArchive& Ar, FRStatusValue &Value);
 };

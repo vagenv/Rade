@@ -178,13 +178,13 @@ public:
    // --- Stats functions
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      inline bool HasStats (const FRCoreStats &RequiredStats) const;
+      bool HasStats (const FRCoreStats &RequiredStats) const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      inline bool RollCritical () const;
+      bool RollCritical () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      inline bool RollEvasion () const;
+      bool RollEvasion () const;
 
    //==========================================================================
    //                 Effect Funcs
