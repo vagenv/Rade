@@ -33,7 +33,9 @@ public:
 
    virtual void CalcWeight ();
 private:
-      float LastWeightMax = 0;
+   // To evade endless when:
+   // OnStatusUpdated -> CalcWeight -> SetEffect -> OnStatusUpdated
+   float LastWeightMax = 0;
 
 protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Equipment")

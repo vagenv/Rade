@@ -14,7 +14,7 @@ class UREquipmentMgrComponent;
 class UWorld;
 
 // ============================================================================
-//          Move to RCharacter ?
+//          Consumable
 // ============================================================================
 
 USTRUCT(BlueprintType)
@@ -27,12 +27,15 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
       float DurationSec = 0;
 
    // ----
-   // List of applied effects.
+   // List of applied temporary effects.
    // ----
 
    static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
 };
 
+// ============================================================================
+//          Equipment
+// ============================================================================
 
 USTRUCT(BlueprintType)
 struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData

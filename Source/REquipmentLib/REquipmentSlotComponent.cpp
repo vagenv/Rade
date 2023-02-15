@@ -13,7 +13,6 @@ UREquipmentSlotComponent::UREquipmentSlotComponent ()
    SetIsReplicatedByDefault (true);
 }
 
-// Replication
 void UREquipmentSlotComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);

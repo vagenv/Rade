@@ -44,7 +44,7 @@ void ARCharacter::BeginPlay()
 }
 
 //=============================================================================
-//                       Take Damage, Death
+//                       Death / Revive
 //=============================================================================
 
 //         Server Death
@@ -114,6 +114,10 @@ void ARCharacter::Revive ()
       skelMesh->BodyInstance.SetCollisionProfileName ("Pawn");
    }
 }
+
+//=============================================================================
+//                       Take Damage
+//=============================================================================
 
 // Take Damage
 float ARCharacter::TakeDamage (float DamageAmount,

@@ -22,47 +22,47 @@
 //             Core
 //=============================================================================
 
-ARPlayer::ARPlayer()
+ARPlayer::ARPlayer ()
 {
 
    // Set size for collision capsule
-   GetCapsuleComponent()->InitCapsuleSize (42.f, 96.0f);
+   GetCapsuleComponent ()->InitCapsuleSize (42.f, 96.0f);
 
    // --- Camera
    // Create a CameraComponent
-   FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-   FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent(), NAME_None);
-   FirstPersonCameraComponent->SetRelativeLocation(FVector(0, 0, 64.f)); // Position the camera
+   FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent> (TEXT ("FirstPersonCamera"));
+   FirstPersonCameraComponent->SetupAttachment (GetCapsuleComponent (), NAME_None);
+   FirstPersonCameraComponent->SetRelativeLocation (FVector(0, 0, 64.f)); // Position the camera
 
    // Create a camera boom (pulls in towards the player if there is a collision)
-   ThirdPersonCameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-   ThirdPersonCameraBoom->SetupAttachment(RootComponent, NAME_None);
+   ThirdPersonCameraBoom = CreateDefaultSubobject<USpringArmComponent> (TEXT ("CameraBoom"));
+   ThirdPersonCameraBoom->SetupAttachment (RootComponent, NAME_None);
    ThirdPersonCameraBoom->TargetArmLength = 150;
    ThirdPersonCameraBoom->SetRelativeLocation (FVector(0,50,100));
    ThirdPersonCameraBoom->bUsePawnControlRotation = true;
 
    // Create a follow camera
-   ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
-   ThirdPersonCameraComponent->SetupAttachment(ThirdPersonCameraBoom, USpringArmComponent::SocketName);
+   ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent> (TEXT ("PlayerCamera"));
+   ThirdPersonCameraComponent->SetupAttachment (ThirdPersonCameraBoom, USpringArmComponent::SocketName);
 
    // --- Mesh
    // Set First Person Mesh
-   Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-   Mesh1P->SetOnlyOwnerSee(true);
-   Mesh1P->SetupAttachment(FirstPersonCameraComponent, NAME_None);
-   Mesh1P->SetRelativeLocation(FVector(0.f, 0.f, -150.f));
+   Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ("CharacterMesh1P"));
+   Mesh1P->SetOnlyOwnerSee (true);
+   Mesh1P->SetupAttachment (FirstPersonCameraComponent, NAME_None);
+   Mesh1P->SetRelativeLocation (FVector (0.f, 0.f, -150.f));
    Mesh1P->bCastDynamicShadow = false;
    Mesh1P->CastShadow = false;
    Mesh1P->bOnlyOwnerSee = true;
-   Mesh1P->SetIsReplicated(true);
+   Mesh1P->SetIsReplicated (true);
 
    // Set Third Person Mesh
-   GetMesh()->SetOwnerNoSee(true);
-   GetMesh()->SetupAttachment(RootComponent, NAME_None);
+   GetMesh()->SetOwnerNoSee (true);
+   GetMesh()->SetupAttachment (RootComponent, NAME_None);
    GetMesh()->bCastDynamicShadow = true;
    GetMesh()->CastShadow = true;
    GetMesh()->bOwnerNoSee = true;
-   GetMesh()->SetIsReplicated(true);
+   GetMesh()->SetIsReplicated (true);
 
    Jetpack = CreateDefaultSubobject<URJetpackComponent> (TEXT("Jetpack"));
 
@@ -85,8 +85,8 @@ void ARPlayer::BeginPlay ()
    Super::BeginPlay ();
 
    // Get Player Controller
-   if (GetController() && Cast<APlayerController>(GetController())) {
-      PlayerController = Cast<APlayerController>(GetController());
+   if (GetController() && Cast<APlayerController>(GetController ())) {
+      PlayerController = Cast<APlayerController>(GetController ());
 
       //Add Input Mapping Context
       if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -95,15 +95,10 @@ void ARPlayer::BeginPlay ()
 		}
    }
 
-   // // Get First Person Anim Instance
-   // if (Mesh1P && Mesh1P->GetAnimInstance() && Cast<URAnimInstance>(Mesh1P->GetAnimInstance()))
-   //    ArmsAnimInstance = Cast<URAnimInstance>(Mesh1P->GetAnimInstance());
-
    // --- Setup Camera
    // Set Current Camera to Default State
    CurrentCameraState = DefaultCameraState;
-   UpdateComponentsVisibility();
-
+   UpdateComponentsVisibility ();
 
    if (HasAuthority ()) {
       // --- Save / Load data
@@ -508,7 +503,4 @@ ARPlayer* ARPlayer::GetLocalRadePlayer (UObject* WorldContextObject)
    }
    return nullptr;
 }
-
-
-
 

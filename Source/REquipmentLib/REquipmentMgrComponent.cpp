@@ -69,6 +69,10 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
+//=============================================================================
+//           Weight penalty using Inventory and StatusMgr
+//=============================================================================
+
 void UREquipmentMgrComponent::CalcWeight ()
 {
    Super::CalcWeight ();
@@ -115,6 +119,10 @@ void UREquipmentMgrComponent::OnStatusUpdated ()
       }
    }
 }
+
+//=============================================================================
+//                 Equip/Unequip
+//=============================================================================
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 {

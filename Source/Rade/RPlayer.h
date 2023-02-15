@@ -12,10 +12,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInputEvent);
 // Directional input event
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInputEventFloat, float, scrollValue);
 
-
 class APlayerController;
 class URJetpackComponent;
-// class URAnimInstance;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
