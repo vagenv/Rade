@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RStatusTypes.h"
+#include "RStatusEffect.h"
 #include "RDamageType.h"
 #include "RStatusMgrComponent.generated.h"
 
@@ -31,6 +32,15 @@ public:
 
    UFUNCTION()
       void RecalcStatus ();
+
+   UFUNCTION()
+      void RecalcCoreStats ();
+
+   UFUNCTION()
+      void RecalcExtraStats ();
+
+   UFUNCTION()
+      void RecalcStatusValues ();
 
    // Owners Movement Component. For stamina Regen.
 protected:
@@ -62,27 +72,35 @@ public:
    //==========================================================================
 
 protected:
+   // --- Core Stats
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRCharacterStats Stats_Base;
+      FRCoreStats CoreStats_Base;
 
-   // Should be Map, Bit for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRExtraStat> Stats_Extra;
+      FRCoreStats CoreStats_Added;
 
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      float CriticalChance = 0;
+   // --- Extra Stats
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRExtraStats ExtraStats_Base;
 
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      float EvasionChance = 0;
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRExtraStats ExtraStats_Added;
 
-public:
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      inline bool RollCritical () const;
+   // --- Resistance
+   // Should be Map of FRResistanceStat, but for replication -> Array
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      TArray<FRResistanceStatWithTag> ExtraResistence;
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      inline bool RollEvasion () const;
+   // --- Effects
+   // Should be Map of FRExtraStats, but for replication -> Array
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      TArray<FRStatusEffectWithTag> ExtraEffects;
 
-public:
+   //==========================================================================
+   //                 Stat curves
+   //==========================================================================
+
+protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve StrToHealthMax;
 
@@ -112,38 +130,59 @@ public:
    //==========================================================================
 
 public:
-   // --- Get Stats
+   // --- Get Core Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCharacterStats GetStatsBase () const;
+      FRCoreStats GetCoreStats_Base () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCharacterStats GetStatsAdd () const;
+      FRCoreStats GetCoreStats_Added () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCharacterStats GetStatsTotal () const;
+      FRCoreStats GetCoreStats_Total () const;
+
+   // --- Get Extra Stats
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      FRExtraStats GetExtraStats_Base () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      bool SetExtraStat (const FString &Tag, const FRCharacterStats &ExtraValue);
+      FRExtraStats GetExtraStats_Added () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      bool RmExtraStat (const FString &Tag);
+      FRExtraStats GetExtraStats_Total () const;
+
+   // --- Stats functions
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      bool HasStats (const FRCharacterStats &RequiredStats) const;
+      inline bool HasStats (const FRCoreStats &RequiredStats) const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      inline bool RollCritical () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      inline bool RollEvasion () const;
 
    //==========================================================================
-   //                 Resistance
+   //                 Effect Funcs
    //==========================================================================
 
-protected:
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRResistanceStat> BaseResistence;
-public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void AddResistance (const TArray<FRResistanceStat> &AddValue);
+      void SetEffects (const FString &Tag, const TArray<FRStatusEffect> &AddValues);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void RmResistance (const TArray<FRResistanceStat> &RmValue);
+      void RmEffects (const FString &Tag);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      TArray<FRStatusEffect> GetEffects () const;
+
+   //==========================================================================
+   //                 Resistance Funcs
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void RmResistance (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       TArray<FRResistanceStat> GetResistance () const;

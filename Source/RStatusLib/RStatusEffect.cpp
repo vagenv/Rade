@@ -3,8 +3,12 @@
 #include "RStatusEffect.h"
 #include "RUtilLib/RLog.h"
 
-URStatusEffect::URStatusEffect ()
+FRStatusEffect FRStatusEffect::operator + (const FRStatusEffect &obj) const
 {
-
+   FRStatusEffect res;
+   res.Scale = Scale;
+   res.Target = Target;
+   res.Value = Value + obj.Value;
+   return res;
 }
 

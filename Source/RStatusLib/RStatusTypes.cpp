@@ -3,53 +3,78 @@
 #include "RStatusTypes.h"
 #include "RUtilLib/RLog.h"
 
-
 //=============================================================================
-//                 Character Stats
+//                 Core Stats
 //=============================================================================
 
-FRCharacterStats::FRCharacterStats ()
+FRCoreStats::FRCoreStats ()
 {
 }
-FRCharacterStats::FRCharacterStats (float Value)
+FRCoreStats::FRCoreStats (float Value)
 {
-   Strength     = Value;
-   Agility      = Value;
-   Intelligence = Value;
+   STR = Value;
+   AGI = Value;
+   INT = Value;
 }
 
-bool FRCharacterStats::Empty () const
+bool FRCoreStats::Empty () const
 {
    return (
-         Strength     == 0.
-      && Agility      == 0.
-      && Intelligence == 0.
+         STR == 0.
+      && AGI == 0.
+      && INT == 0.
    );
 }
 
-bool FRCharacterStats::MoreThan (const FRCharacterStats &obj) const {
+bool FRCoreStats::MoreThan (const FRCoreStats &stat) const {
    return (
-         Strength     >= obj.Strength
-      && Agility      >= obj.Agility
-      && Intelligence >= obj.Intelligence
+         STR >= stat.STR
+      && AGI >= stat.AGI
+      && INT >= stat.INT
    );
 }
 
-FRCharacterStats FRCharacterStats::operator + (const FRCharacterStats &obj) const
+FRCoreStats FRCoreStats::operator + (const FRCoreStats &stat) const
 {
-   FRCharacterStats res;
-   res.Strength     = Strength     + obj.Strength    ;
-   res.Agility      = Agility      + obj.Agility     ;
-   res.Intelligence = Intelligence + obj.Intelligence;
+   FRCoreStats res;
+   res.STR = STR + stat.STR;
+   res.AGI = AGI + stat.AGI;
+   res.INT = INT + stat.INT;
    return res;
 }
 
-FRCharacterStats FRCharacterStats::operator - (const FRCharacterStats &obj) const
+FRCoreStats FRCoreStats::operator - (const FRCoreStats &stat) const
 {
-   FRCharacterStats res;
-   res.Strength     = Strength     - obj.Strength    ;
-   res.Agility      = Agility      - obj.Agility     ;
-   res.Intelligence = Intelligence - obj.Intelligence;
+   FRCoreStats res;
+   res.STR = STR - stat.STR;
+   res.AGI = AGI - stat.AGI;
+   res.INT = INT - stat.INT;
+   return res;
+}
+
+//=============================================================================
+//                 Extra Stats
+//=============================================================================
+
+FRExtraStats FRExtraStats::operator + (const FRExtraStats &stat) const
+{
+   FRExtraStats res;
+   res.Evasion     = Evasion     + stat.Evasion    ;
+   res.Critical    = Critical    + stat.Critical   ;
+   res.MoveSpeed   = MoveSpeed   + stat.MoveSpeed  ;
+   res.AttackSpeed = AttackSpeed + stat.AttackSpeed;
+   res.AttackPower = AttackPower + stat.AttackPower;
+   return res;
+}
+
+FRExtraStats FRExtraStats::operator - (const FRExtraStats &stat) const
+{
+   FRExtraStats res;
+   res.Evasion     = Evasion     - stat.Evasion    ;
+   res.Critical    = Critical    - stat.Critical   ;
+   res.MoveSpeed   = MoveSpeed   - stat.MoveSpeed  ;
+   res.AttackSpeed = AttackSpeed - stat.AttackSpeed;
+   res.AttackPower = AttackPower - stat.AttackPower;
    return res;
 }
 

@@ -18,7 +18,21 @@ struct RSTATUSLIB_API FRResistanceStat
       TSubclassOf<URDamageType> DamageType;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Resistance = 0;
+      float Value = 0;
+};
+
+USTRUCT(BlueprintType)
+struct RSTATUSLIB_API FRResistanceStatWithTag
+{
+   GENERATED_BODY()
+
+   // Who or What is applying Resistance
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FString Tag;
+
+   // What value is added
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FRResistanceStat Resistance;
 };
 
 UCLASS(Blueprintable, BlueprintType)

@@ -7,20 +7,21 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Resistance": 50
+				"Value": 0
 			}
 		],
-		"Stats":
-		{
-			"Strength": 50,
-			"Agility": 0,
-			"Intelligence": 0
-		},
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "STR",
+				"Value": 20
+			}
+		],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -43,20 +44,31 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Pierce.RDamageType_Pierce_C'",
-				"Resistance": 200
+				"Value": 0
 			}
 		],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
-		},
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "AttackPower",
+				"Value": 40
+			},
+			{
+				"Scale": "None",
+				"Target": "None",
+				"Value": 0
+			},
+			{
+				"Scale": "None",
+				"Target": "None",
+				"Value": 0
+			}
+		],
 		"RequiredStats":
 		{
-			"Strength": 50,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -77,17 +89,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
-		},
+		"Effects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -108,17 +115,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
-		},
+		"Effects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -139,17 +141,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
-		},
+		"Effects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -170,17 +167,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
-		},
+		"Effects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -203,20 +195,21 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Resistance": 50
+				"Value": 0
 			}
 		],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 50,
-			"Intelligence": 0
-		},
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "AGI",
+				"Value": 20
+			}
+		],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -239,20 +232,21 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Resistance": 50
+				"Value": 0
 			}
 		],
-		"Stats":
-		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 50
-		},
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "INT",
+				"Value": 20
+			}
+		],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -275,20 +269,100 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Resistance": 50
+				"Value": 0
 			}
 		],
-		"Stats":
-		{
-			"Strength": -20,
-			"Agility": -20,
-			"Intelligence": -20
-		},
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "STR",
+				"Value": -10
+			},
+			{
+				"Scale": "FLAT",
+				"Target": "AGI",
+				"Value": -10
+			},
+			{
+				"Scale": "FLAT",
+				"Target": "INT",
+				"Value": -10
+			},
+			{
+				"Scale": "PERCENT",
+				"Target": "HealthRegen",
+				"Value": 500
+			}
+		],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Agility": 0,
-			"Intelligence": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfRegen",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "HealthRegen",
+				"Value": 5
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfEvasion",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"Effects": [
+			{
+				"Scale": "FLAT",
+				"Target": "Evasion",
+				"Value": 15
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,

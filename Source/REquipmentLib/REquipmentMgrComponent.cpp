@@ -81,8 +81,7 @@ void UREquipmentMgrComponent::CalcWeight ()
    float EquipLoad = WeightCurrent * 100. / WeightMax;
    float EquipEvasionFactor = WeightToEvasionData->Eval (EquipLoad);
 
-   // TODO : Add Effect to Player
-
+   // TODO : Add Effect to StatusMgr
    //EvasionChance *= (EquipEvasionFactor / 100.);
    //MoveSpeedFactor = EquipToMoveSpeedData->Eval (EquipLoad) / 100.;
 }
@@ -94,8 +93,8 @@ void UREquipmentMgrComponent::OnStatusUpdated ()
 
    URStatusMgrComponent *StatusMgr = GetStatusMgr ();
    if (StatusMgr) {
-      FRCharacterStats StatsTotal = StatusMgr->GetStatsTotal ();
-      WeightMax = StrToWeightMaxData->Eval (StatsTotal.Strength);
+      FRCoreStats StatsTotal = StatusMgr->GetCoreStats_Total ();
+      WeightMax = StrToWeightMaxData->Eval (StatsTotal.STR);
    }
 }
 
@@ -186,9 +185,8 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->SetExtraStat (EquipmentData.Name, EquipmentData.Stats);
-      StatusMgr->AddResistance (EquipmentData.Resistence);
-      // TODO: Add addition stats and effects
+      StatusMgr->SetEffects    (EquipmentData.Name, EquipmentData.Effects);
+      StatusMgr->AddResistance (EquipmentData.Name, EquipmentData.Resistence);
    }
 
    // --- Update slot data
@@ -207,9 +205,8 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
    URStatusMgrComponent* StatusMgr = GetStatusMgr ();
    if (StatusMgr) {
-      StatusMgr->RmExtraStat (EquipmentSlot->EquipmentData.Name);
-      StatusMgr->RmResistance (EquipmentSlot->EquipmentData.Resistence);
-      // TODO: Remove effects
+      StatusMgr->RmEffects    (EquipmentSlot->EquipmentData.Name);
+      StatusMgr->RmResistance (EquipmentSlot->EquipmentData.Name);
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
@@ -218,8 +215,9 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    return true;
 }
 
-// --- Get Components
-
+// ============================================================================
+//                      Get Components
+// ============================================================================
 URStatusMgrComponent* UREquipmentMgrComponent::GetStatusMgr () const
 {
    TArray<URStatusMgrComponent*> StatusMgrList;

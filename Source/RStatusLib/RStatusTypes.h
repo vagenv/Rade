@@ -4,46 +4,67 @@
 
 #include "RStatusTypes.generated.h"
 
+// ============================================================================
+//                   Core Stat
+// ============================================================================
 USTRUCT(BlueprintType)
-struct RSTATUSLIB_API FRCharacterStats
+struct RSTATUSLIB_API FRCoreStats
 {
    GENERATED_BODY()
 
-   FRCharacterStats ();
-   FRCharacterStats (float Value);
+   FRCoreStats ();
+   FRCoreStats (float Value);
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Strength = 0;
+      float STR = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Agility = 0;
+      float AGI = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Intelligence = 0;
+      float INT = 0;
 
    // Are any values set
    bool Empty () const;
 
    // All values are higher than
-   inline bool MoreThan (const FRCharacterStats &obj) const;
+   inline bool MoreThan (const FRCoreStats &stat) const;
 
-   inline FRCharacterStats operator + (const FRCharacterStats &obj) const;
-   inline FRCharacterStats operator - (const FRCharacterStats &obj) const;
+   inline FRCoreStats operator + (const FRCoreStats &stat) const;
+   inline FRCoreStats operator - (const FRCoreStats &stat) const;
 };
 
+// ============================================================================
+//                   Extra Stat
+// ============================================================================
+
 USTRUCT(BlueprintType)
-struct RSTATUSLIB_API FRExtraStat
+struct RSTATUSLIB_API FRExtraStats
 {
    GENERATED_BODY()
 
-   // Who or What is applying stat
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Tag;
+   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+      float Evasion = 0;
 
-   // What value is added
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRCharacterStats Stat;
+   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+      float Critical = 0;
+
+   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+      float MoveSpeed = 0;
+
+   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+      float AttackSpeed = 0;
+
+   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+      float AttackPower = 0;
+
+   inline FRExtraStats operator + (const FRExtraStats &stat) const;
+   inline FRExtraStats operator - (const FRExtraStats &stat) const;
 };
+
+// ============================================================================
+//                   Status Value (Health, Stamina, Mana)
+// ============================================================================
 
 USTRUCT(BlueprintType)
 struct RSTATUSLIB_API FRStatusValue
@@ -73,7 +94,7 @@ public:
 
    // UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status",
    //    meta = (DisplayName = "<", CompactNodeTitle = "<"))
-   //    static bool FRCharacterStats_Less (const FRCharacterStats &a, const FRCharacterStats &b) {
+   //    static bool FRCoreStats_Less (const FRCoreStats &a, const FRCoreStats &b) {
    //       return (a < b);
    //    }
 };

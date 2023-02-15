@@ -8,6 +8,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/DamageEvents.h"
 
+#include "RStatusEffect.h"
+
 //=============================================================================
 //                 Core
 //=============================================================================
@@ -18,7 +20,8 @@ URStatusMgrComponent::URStatusMgrComponent ()
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
 
-   Stats_Base = FRCharacterStats (10);
+   // Default
+   CoreStats_Base = FRCoreStats (10);
 
    // --- Character stats scaling
    // Health MAX
@@ -98,13 +101,20 @@ URStatusMgrComponent::URStatusMgrComponent ()
 void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
+
+   // --- Status
    DOREPLIFETIME (URStatusMgrComponent, bDead);
    DOREPLIFETIME (URStatusMgrComponent, Health);
    DOREPLIFETIME (URStatusMgrComponent, Mana);
    DOREPLIFETIME (URStatusMgrComponent, Stamina);
-   DOREPLIFETIME (URStatusMgrComponent, Stats_Base);
-   DOREPLIFETIME (URStatusMgrComponent, Stats_Extra);
-   DOREPLIFETIME (URStatusMgrComponent, BaseResistence);
+
+   DOREPLIFETIME (URStatusMgrComponent, CoreStats_Base);
+   DOREPLIFETIME (URStatusMgrComponent, CoreStats_Added);
+   DOREPLIFETIME (URStatusMgrComponent, ExtraStats_Base);
+   DOREPLIFETIME (URStatusMgrComponent, ExtraStats_Added);
+
+   DOREPLIFETIME (URStatusMgrComponent, ExtraResistence);
+   DOREPLIFETIME (URStatusMgrComponent, ExtraEffects);
 }
 
 void URStatusMgrComponent::OnRep_Status ()
@@ -155,16 +165,83 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
    StatusRegen (DeltaTime);
 }
 
+
+//=============================================================================
+//                 Recalc stats
+//=============================================================================
+
 void URStatusMgrComponent::RecalcStatus ()
 {
-   FRCharacterStats StatsTotal = GetStatsTotal ();
+   RecalcCoreStats ();
+   RecalcExtraStats ();
+   RecalcStatusValues ();
 
+   OnStatusUpdated.Broadcast ();
+}
+
+void URStatusMgrComponent::RecalcCoreStats ()
+{
+   FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
+
+   // Flat
+   for (const FRStatusEffectWithTag &It : ExtraEffects) {
+      if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
+         if (It.Effect.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += It.Effect.Value;
+      }
+   }
+   // Percentage
+   for (const FRStatusEffectWithTag &It : ExtraEffects) {
+      if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
+         if (It.Effect.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + It.Effect.Value) / 100.);
+      }
+   }
+   CoreStats_Added = CoreStats_Total_New - GetCoreStats_Base ();
+}
+
+void URStatusMgrComponent::RecalcExtraStats ()
+{
+   const FRichCurve* AgiToEvasionData  = AgiToEvasion.GetRichCurveConst ();
+   const FRichCurve* AgiToCriticalData = AgiToCritical.GetRichCurveConst ();
+
+   if (!ensure (AgiToEvasionData))  return;
+   if (!ensure (AgiToCriticalData)) return;
+
+   FRCoreStats StatsTotal = GetCoreStats_Total ();
+   float EvasionTotal  = AgiToEvasionData->Eval (StatsTotal.AGI);
+   float CriticalTotal = AgiToCriticalData->Eval (StatsTotal.AGI);
+
+   // Flat
+   for (const FRStatusEffectWithTag &It : ExtraEffects) {
+      if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
+         if (It.Effect.Target == ERStatusEffectTarget::Evasion)  EvasionTotal += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::Critical) CriticalTotal += It.Effect.Value;
+      }
+   }
+   // Percentage
+   for (const FRStatusEffectWithTag &It : ExtraEffects) {
+      if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
+         if (It.Effect.Target == ERStatusEffectTarget::Evasion) EvasionTotal *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::Critical) CriticalTotal *= ((100. + It.Effect.Value) / 100.);
+      }
+   }
+
+   FRCoreStats StatsCurrent = GetCoreStats_Total ();
+   ExtraStats_Base.Evasion  = AgiToEvasionData->Eval (StatsCurrent.AGI);
+   ExtraStats_Added.Evasion = EvasionTotal - ExtraStats_Base.Evasion;
+   ExtraStats_Base.Critical = AgiToCriticalData->Eval (StatsCurrent.AGI);
+   ExtraStats_Added.Critical = CriticalTotal - ExtraStats_Base.Critical;
+}
+
+void URStatusMgrComponent::RecalcStatusValues ()
+{
    const FRichCurve* StrToHealthMaxData    = StrToHealthMax.GetRichCurveConst ();
    const FRichCurve* StrToHealthRegenData  = StrToHealthRegen.GetRichCurveConst ();
    const FRichCurve* AgiToStaminaMaxData   = AgiToStaminaMax.GetRichCurveConst ();
    const FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurveConst ();
-   const FRichCurve* AgiToEvasionData      = AgiToEvasion.GetRichCurveConst ();
-   const FRichCurve* AgiToCriticalData     = AgiToCritical.GetRichCurveConst ();
    const FRichCurve* IntToManaMaxData      = IntToManaMax.GetRichCurveConst ();
    const FRichCurve* IntToManaRegenData    = IntToManaRegen.GetRichCurveConst ();
 
@@ -172,31 +249,94 @@ void URStatusMgrComponent::RecalcStatus ()
    if (!ensure (StrToHealthRegenData))  return;
    if (!ensure (AgiToStaminaMaxData))   return;
    if (!ensure (AgiToStaminaRegenData)) return;
-   if (!ensure (AgiToEvasionData))      return;
-   if (!ensure (AgiToCriticalData))     return;
    if (!ensure (IntToManaMaxData))      return;
    if (!ensure (IntToManaRegenData))    return;
 
-   Health.Max     = StrToHealthMaxData->Eval (StatsTotal.Strength);
-   Health.Regen   = StrToHealthRegenData->Eval (StatsTotal.Strength);
-   Stamina.Max    = AgiToStaminaMaxData->Eval (StatsTotal.Agility);
-   Stamina.Regen  = AgiToStaminaRegenData->Eval (StatsTotal.Agility);
-   EvasionChance  = AgiToEvasionData->Eval (StatsTotal.Agility);
-   CriticalChance = AgiToCriticalData->Eval (StatsTotal.Agility);
-   Mana.Max       = IntToManaMaxData->Eval (StatsTotal.Intelligence);
-   Mana.Regen     = IntToManaRegenData->Eval (StatsTotal.Intelligence);
+   // --- Status
+   FRCoreStats StatsTotal = GetCoreStats_Total ();
+   Health.Max     = StrToHealthMaxData->Eval    (StatsTotal.STR);
+   Health.Regen   = StrToHealthRegenData->Eval  (StatsTotal.STR);
+   Stamina.Max    = AgiToStaminaMaxData->Eval   (StatsTotal.AGI);
+   Stamina.Regen  = AgiToStaminaRegenData->Eval (StatsTotal.AGI);
+   Mana.Max       = IntToManaMaxData->Eval      (StatsTotal.INT);
+   Mana.Regen     = IntToManaRegenData->Eval    (StatsTotal.INT);
 
-   OnStatusUpdated.Broadcast ();
+   // Flat
+   for (const FRStatusEffectWithTag &It : ExtraEffects) {
+      if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
+         if (It.Effect.Target == ERStatusEffectTarget::HealthMax)    Health.Max    += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      += It.Effect.Value;
+         if (It.Effect.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += It.Effect.Value;
+
+      }
+   }
+   // Percentage
+   for (const FRStatusEffectWithTag &It : ExtraEffects) {
+      if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
+         if (It.Effect.Target == ERStatusEffectTarget::HealthMax)    Health.Max   *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::ManaMax)      Mana.Max   *= ((100. + It.Effect.Value) / 100.);
+         if (It.Effect.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen *= ((100. + It.Effect.Value) / 100.);
+      }
+   }
+}
+
+//=============================================================================
+//                 Get Core Stats
+//=============================================================================
+
+FRCoreStats URStatusMgrComponent::GetCoreStats_Base () const
+{
+   return CoreStats_Base;
+}
+FRCoreStats URStatusMgrComponent::GetCoreStats_Added () const
+{
+   return CoreStats_Added;
+}
+FRCoreStats URStatusMgrComponent::GetCoreStats_Total () const
+{
+   return GetCoreStats_Base () + GetCoreStats_Added ();
+}
+
+//=============================================================================
+//                 Get Extra Stats
+//=============================================================================
+
+FRExtraStats URStatusMgrComponent::GetExtraStats_Base () const
+{
+   return ExtraStats_Base;
+}
+FRExtraStats URStatusMgrComponent::GetExtraStats_Added () const
+{
+   return ExtraStats_Added;
+}
+FRExtraStats URStatusMgrComponent::GetExtraStats_Total () const
+{
+   return GetExtraStats_Base () + GetExtraStats_Added ();
+}
+
+//=============================================================================
+//                 Stat functions
+//=============================================================================
+
+bool URStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) const
+{
+   return GetCoreStats_Total ().MoreThan (RequiredStats);
 }
 
 bool URStatusMgrComponent::RollCritical () const
 {
-   return ((FMath::Rand () % 100) >= CriticalChance);
+   return ((FMath::Rand () % 100) >= GetExtraStats_Total ().Critical);
 }
 
 bool URStatusMgrComponent::RollEvasion () const
 {
-   return ((FMath::Rand () % 100) >= EvasionChance);
+   return ((FMath::Rand () % 100) >= GetExtraStats_Total ().Evasion);
 }
 
 //=============================================================================
@@ -211,124 +351,103 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
-//=============================================================================
-//                 Stats Calls
-//=============================================================================
+//==========================================================================
+//                 Effect Funcs
+//==========================================================================
 
-FRCharacterStats URStatusMgrComponent::GetStatsBase () const
+TArray<FRStatusEffect> URStatusMgrComponent::GetEffects () const
 {
-   return Stats_Base;
-}
-
-FRCharacterStats URStatusMgrComponent::GetStatsAdd () const
-{
-   FRCharacterStats result;
-   for (const FRExtraStat &It : Stats_Extra) {
-      result = result + It.Stat;
+   TArray<FRStatusEffect> res;
+   for (const FRStatusEffectWithTag& it : ExtraEffects) {
+      res.Add (it.Effect);
    }
-   return result;
+   return res;
 }
 
-FRCharacterStats URStatusMgrComponent::GetStatsTotal () const
+void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatusEffect> &AddValues)
 {
-   return GetStatsBase () + GetStatsAdd ();
-}
+   // Clean
+   RmEffects (Tag);
 
-bool URStatusMgrComponent::SetExtraStat (const FString &Tag, const FRCharacterStats &ExtraValue)
-{
-   bool found = false;
-   for (FRExtraStat &It : Stats_Extra) {
-      if (It.Tag == Tag) {
-         It.Stat = ExtraValue;
-         found = true;
-         break;
-      }
-   }
-   if (!found) {
-      FRExtraStat newStat;
-      newStat.Tag = Tag;
-      newStat.Stat = ExtraValue;
-      Stats_Extra.Add (newStat);
+   // Add again
+   for (const FRStatusEffect& it : AddValues) {
+      FRStatusEffectWithTag newRes;
+      newRes.Tag    = Tag;
+      newRes.Effect = it;
+      ExtraEffects.Add (newRes);
    }
 
    RecalcStatus ();
-   return true;
 }
 
-bool URStatusMgrComponent::RmExtraStat (const FString &Tag)
+void URStatusMgrComponent::RmEffects (const FString &Tag)
 {
-   bool found = false;
-   for (int i = 0; i < Stats_Extra.Num (); i++) {
-      if (Stats_Extra[i].Tag == Tag) {
-         Stats_Extra.RemoveAt (i);
-         found = true;
-         break;
-      }
+   TArray<int32> ToRemove;
+   for (int32 i = 0; i < ExtraEffects.Num (); i++) {
+      const FRStatusEffectWithTag& It = ExtraEffects[i];
+      if (It.Tag == Tag) ToRemove.Add (i);
    }
-   if (!found) return false;
-   RecalcStatus ();
-   return true;
-}
+   // Nothing to remove
+   if (!ToRemove.Num ()) return;
 
-bool URStatusMgrComponent::HasStats (const FRCharacterStats &RequiredStats) const
-{
-   return GetStatsTotal ().MoreThan (RequiredStats);
+   // Remove in reverse order;
+   for (int32 i = ToRemove.Num () - 1; i >= 0; i--) {
+      ExtraEffects.RemoveAt (ToRemove[i]);
+   }
+
+   RecalcStatus ();
 }
 
 //=============================================================================
-//                 Resistance Calls
+//                 Resistance Funcs
 //=============================================================================
 
 TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
 {
-   return BaseResistence;
+   TArray<FRResistanceStat> res;
+   for (const FRResistanceStatWithTag& it : ExtraResistence) {
+      res.Add (it.Resistance);
+   }
+   return res;
 }
 
-void URStatusMgrComponent::AddResistance (const TArray<FRResistanceStat> &AddValue)
+void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
 {
-   for (const FRResistanceStat& ItAddValue : AddValue) {
-      bool found = false;
-      for (FRResistanceStat &ItCurrentValue : BaseResistence) {
-         if (ItCurrentValue.DamageType == ItAddValue.DamageType) {
-            found = true;
-            ItCurrentValue.Resistance += ItAddValue.Resistance;
-            break;
-         }
-      }
-      if (!found) {
-         BaseResistence.Add (ItAddValue);
-      }
-   }
+   // Clean
+   RmResistance (Tag);
 
+   // Add again
+   for (const FRResistanceStat& it : AddValues) {
+      FRResistanceStatWithTag newRes;
+      newRes.Tag        = Tag;
+      newRes.Resistance = it;
+      ExtraResistence.Add (newRes);
+   }
    RecalcStatus ();
 }
 
-void URStatusMgrComponent::RmResistance (const TArray<FRResistanceStat> &RmValue)
+void URStatusMgrComponent::RmResistance (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN;
-   for (const FRResistanceStat& ItRmValue : RmValue) {
-      bool found = false;
-      for (FRResistanceStat &ItCurrentValue : BaseResistence) {
-         if (ItCurrentValue.DamageType == ItRmValue.DamageType) {
-            found = true;
-            ItCurrentValue.Resistance -= ItRmValue.Resistance;
-            break;
-         }
-      }
-      if (!found) {
-         // Add as negative resistance
-         FRResistanceStat newValue = ItRmValue;
-         newValue.Resistance *= -1;
-         BaseResistence.Add (newValue);
-      }
+
+   TArray<int32> ToRemove;
+   for (int32 i = 0; i < ExtraResistence.Num (); i++) {
+      const FRResistanceStatWithTag& It = ExtraResistence[i];
+      if (It.Tag == Tag) ToRemove.Add (i);
+   }
+   // Nothing to remove
+   if (!ToRemove.Num ()) return;
+
+   // Remove in reverse order;
+   for (int32 i = ToRemove.Num () - 1; i >= 0; i--) {
+      ExtraResistence.RemoveAt (ToRemove[i]);
    }
 
    RecalcStatus ();
 }
 
-
 //=============================================================================
-//                 RCharacter events
+//                 TakeDamage Events
 //=============================================================================
 
 float URStatusMgrComponent::TakeDamage (float DamageAmount,
@@ -348,9 +467,9 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
       float Resistance = 0;
 
       // TODO: Replace with total calculated Resistance
-      for (const FRResistanceStat &stat : BaseResistence) {
-         if (stat.DamageType == DamageEvent.DamageTypeClass) {
-            Resistance = stat.Resistance;
+      for (const FRResistanceStatWithTag &it : ExtraResistence) {
+         if (it.Resistance.DamageType == DamageEvent.DamageTypeClass) {
+            Resistance = it.Resistance.Value;
             break;
          }
       }

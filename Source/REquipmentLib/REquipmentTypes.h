@@ -5,6 +5,7 @@
 #include "RInventoryLib/RItemTypes.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusTypes.h"
+#include "RStatusLib/RStatusEffect.h"
 #include "REquipmentTypes.generated.h"
 
 class AActor;
@@ -52,10 +53,10 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
       TArray<FRResistanceStat> Resistence;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRCharacterStats Stats;
+      TArray<FRStatusEffect> Effects;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRCharacterStats RequiredStats;
+      FRCoreStats RequiredStats;
 
    static bool Cast (const FRItemData &src, FREquipmentData &dst);
 };
