@@ -27,23 +27,23 @@ UREquipmentMgrComponent::UREquipmentMgrComponent ()
 
    // Weight To Evasion
    FRichCurve* WeightToEvasionData = WeightToEvasion.GetRichCurve ();
-   WeightToEvasionData->AddKey ( 40, 100); // Minimum
-   WeightToEvasionData->AddKey ( 50,  95);
-   WeightToEvasionData->AddKey ( 60,  90);
-   WeightToEvasionData->AddKey ( 70,  80);
-   WeightToEvasionData->AddKey ( 80,  70);
-   WeightToEvasionData->AddKey ( 90,  55);
-   WeightToEvasionData->AddKey (100,  40);
+   WeightToEvasionData->AddKey ( 40,   0); // Minimum
+   WeightToEvasionData->AddKey ( 50,  -5);
+   WeightToEvasionData->AddKey ( 60, -10);
+   WeightToEvasionData->AddKey ( 70, -20);
+   WeightToEvasionData->AddKey ( 80, -30);
+   WeightToEvasionData->AddKey ( 90, -45);
+   WeightToEvasionData->AddKey (100, -60);
 
    // Weight to Move speed
    FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurve ();
-   WeightToMoveSpeedData->AddKey ( 40, 100); // Minimum
-   WeightToMoveSpeedData->AddKey ( 50,  95);
-   WeightToMoveSpeedData->AddKey ( 60,  90);
-   WeightToMoveSpeedData->AddKey ( 70,  85);
-   WeightToMoveSpeedData->AddKey ( 80,  80);
-   WeightToMoveSpeedData->AddKey ( 90,  70);
-   WeightToMoveSpeedData->AddKey (100,  60);
+   WeightToMoveSpeedData->AddKey ( 40,   0); // Minimum
+   WeightToMoveSpeedData->AddKey ( 50,  -5);
+   WeightToMoveSpeedData->AddKey ( 60, -10);
+   WeightToMoveSpeedData->AddKey ( 70, -15);
+   WeightToMoveSpeedData->AddKey ( 80, -20);
+   WeightToMoveSpeedData->AddKey ( 90, -30);
+   WeightToMoveSpeedData->AddKey (100, -40);
 }
 
 // Replication
@@ -72,6 +72,10 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void UREquipmentMgrComponent::CalcWeight ()
 {
    Super::CalcWeight ();
+
+   URStatusMgrComponent *StatusMgr = GetStatusMgr ();
+   if (!StatusMgr) return;
+
    const FRichCurve* WeightToEvasionData   = WeightToEvasion.GetRichCurveConst ();
    const FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurveConst ();
 
@@ -79,11 +83,21 @@ void UREquipmentMgrComponent::CalcWeight ()
    if (!ensure (WeightToMoveSpeedData))  return;
 
    float EquipLoad = WeightCurrent * 100. / WeightMax;
-   float EquipEvasionFactor = WeightToEvasionData->Eval (EquipLoad);
+   FRStatusEffect EvasionEffect;
+   EvasionEffect.Scale  = ERStatusEffectScale::PERCENT;
+   EvasionEffect.Target = ERStatusEffectTarget::Evasion;
+   EvasionEffect.Value  = WeightToEvasionData->Eval (EquipLoad);
 
-   // TODO : Add Effect to StatusMgr
-   //EvasionChance *= (EquipEvasionFactor / 100.);
-   //MoveSpeedFactor = EquipToMoveSpeedData->Eval (EquipLoad) / 100.;
+   FRStatusEffect MoveSpeedEffect;
+   MoveSpeedEffect.Scale  = ERStatusEffectScale::PERCENT;
+   MoveSpeedEffect.Target = ERStatusEffectTarget::MoveSpeed;
+   MoveSpeedEffect.Value  = WeightToMoveSpeedData->Eval (EquipLoad);
+
+   TArray<FRStatusEffect> Effects;
+   Effects.Add (EvasionEffect);
+   Effects.Add (MoveSpeedEffect);
+
+   StatusMgr->SetEffects ("Weight Penalty", Effects);
 }
 
 void UREquipmentMgrComponent::OnStatusUpdated ()
@@ -95,6 +109,10 @@ void UREquipmentMgrComponent::OnStatusUpdated ()
    if (StatusMgr) {
       FRCoreStats StatsTotal = StatusMgr->GetCoreStats_Total ();
       WeightMax = StrToWeightMaxData->Eval (StatsTotal.STR);
+      if (LastWeightMax != WeightMax) {
+         LastWeightMax = WeightMax;
+         CalcWeight ();
+      }
    }
 }
 

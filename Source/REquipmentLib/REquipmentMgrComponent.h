@@ -32,6 +32,8 @@ public:
    virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
 
    virtual void CalcWeight ();
+private:
+      float LastWeightMax = 0;
 
 protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Equipment")
