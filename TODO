@@ -1,25 +1,28 @@
 ===========================
+   Other
+===========================
+
+Bunny Hop Animation
+
+Move All FRuntimeFloatCurve to blueprint subclass
+Create Folder with Balance curves
+
+Roll Animation + Cost
+
+Stamina/Mana/Health
+- If used, stop restoring, and resume after N seconds.
+
+===========================
    RStatusEffect
 ===========================
 
-Move All FRuntimeFloatCurve to blueprint subclass
-
-Effect containers (List/Array) [Where?]
-
-RStatusEffect:
+Blueprint Temporary RStatusEffect:
+== Damage / Heal / MoveSpeed
 - Start
 - Tick
 - End
 - Duration
 - Event to apply action. (Causer + Victim)
-
-===========================
-   Stamina
-===========================
-
-Stamina
-- Roll and jump use stamina
-- Stop Restoring until a few seconds later.
 
 ===========================
    TakeDamage
@@ -31,7 +34,9 @@ TakeDamage (based on what body part was hit) (bone name?):
 
 RDamageType
 - Status Effect List
-- Random chance to apply RStatusEffect
+- Random chance to apply Temporary Status Effect
+
+ExtraStats actually used
 
 ===========================
    Abilities / Skills / Magic / Talents
