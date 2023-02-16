@@ -383,8 +383,11 @@ FRStatusValue URStatusMgrComponent::GetHealth () const
 
 void URStatusMgrComponent::UseHealth (float Amount)
 {
-   Health.Current = FMath::Clamp (Health.Current + Amount, 0, Health.Max);
-   if (!Health.Current) bDead = true;
+   Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
+   if (!Health.Current) {
+      bDead = true;
+      // TODO: Report Death
+   }
 }
 
 FRStatusValue URStatusMgrComponent::GetStamina () const
@@ -394,7 +397,7 @@ FRStatusValue URStatusMgrComponent::GetStamina () const
 
 void URStatusMgrComponent::UseStamina (float Amount)
 {
-   Stamina.Current = FMath::Clamp (Stamina.Current + Amount, 0, Stamina.Max);
+   Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
 }
 
 FRStatusValue URStatusMgrComponent::GetMana () const
@@ -404,9 +407,8 @@ FRStatusValue URStatusMgrComponent::GetMana () const
 
 void URStatusMgrComponent::UseMana (float Amount)
 {
-   Mana.Current = FMath::Clamp (Mana.Current + Amount, 0, Mana.Max);
+   Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
 }
-
 
 //==========================================================================
 //                 Effect Funcs
