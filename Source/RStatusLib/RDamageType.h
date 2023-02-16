@@ -9,6 +9,10 @@ struct FDamageEvent;
 class AController;
 class AActor;
 
+// ============================================================================
+//                   Resistance
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct RSTATUSLIB_API FRResistanceStat
 {
@@ -35,13 +39,17 @@ struct RSTATUSLIB_API FRResistanceStatWithTag
       FRResistanceStat Value;
 };
 
+// ============================================================================
+//                   RDamageType
+// ============================================================================
+
 UCLASS(Blueprintable, BlueprintType)
 class RSTATUSLIB_API URDamageType : public UDamageType
 {
    GENERATED_BODY()
 public:
 
-   URDamageType();
+   URDamageType ();
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString UIName;
@@ -60,6 +68,10 @@ public:
                        AController* EventInstigator,
                        AActor* DamageCauser) const;
 };
+
+// ============================================================================
+//                   Fall Damage
+// ============================================================================
 
 UCLASS(Blueprintable, BlueprintType)
 class RSTATUSLIB_API URDamageType_Fall : public URDamageType

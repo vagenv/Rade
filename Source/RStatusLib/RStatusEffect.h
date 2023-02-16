@@ -4,6 +4,10 @@
 
 #include "RStatusEffect.generated.h"
 
+// ============================================================================
+//                   Status Effect Scale (FLAT/PERCENT)
+// ============================================================================
+
 UENUM(BlueprintType)
 enum class ERStatusEffectScale : uint8
 {
@@ -12,6 +16,10 @@ enum class ERStatusEffectScale : uint8
    FLAT    UMETA (DisplayName = "Flat (plus)"),
    PERCENT UMETA (DisplayName = "Percent (multiply)")
 };
+
+// ============================================================================
+//                   Status Effect Target
+// ============================================================================
 
 UENUM(BlueprintType)
 enum class ERStatusEffectTarget : uint8
@@ -38,6 +46,10 @@ enum class ERStatusEffectTarget : uint8
    AttackSpeed UMETA (DisplayName = "Attack Speed"),
    AttackPower UMETA (DisplayName = "Attack Power")
 };
+
+// ============================================================================
+//                   Status Effect
+// ============================================================================
 
 USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRStatusEffect
