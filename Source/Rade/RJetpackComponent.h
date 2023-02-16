@@ -25,7 +25,10 @@ public:
    UFUNCTION()
       virtual bool CanUse () const;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Jetpack")
+      float UseCost = 40;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Jetpack")
       FRuntimeFloatCurve AgiToJumpPower;
 
    //==========================================================================
@@ -33,8 +36,8 @@ public:
    //==========================================================================
 
    UFUNCTION(Reliable, Server)
-      virtual void Use ();
-      void Use_Implementation ();
+      void Use ();
+      virtual void Use_Implementation ();
 
    protected:
 

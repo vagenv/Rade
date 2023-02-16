@@ -36,16 +36,14 @@ bool URJetpackComponent::CanUse () const
    URStatusMgrComponent* StatusMgr = GetStatusMgr ();
    if (!StatusMgr) return false;
 
-   float MinUseablePercent = 40;
-   FRStatusValue Stamina = StatusMgr->GetStamina ();
-   float CurrentChargePercent = Stamina.Current * 100 / Stamina.Max;
-
-   return (CurrentChargePercent > MinUseablePercent);
+   FRStatusValue Mana = StatusMgr->GetMana ();
+   return Mana.Current > UseCost;
 }
 
 void URJetpackComponent::Use_Implementation ()
 {
    if (!CanUse ()) return;
+
    UCharacterMovementComponent* MovementComponent = GetMovementComponent ();
    if (!MovementComponent) return;
    URStatusMgrComponent* StatusMgr = GetStatusMgr ();
@@ -54,14 +52,15 @@ void URJetpackComponent::Use_Implementation ()
    const FRichCurve* AgiToJumpPowerData = AgiToJumpPower.GetRichCurveConst ();
    if (!ensure (AgiToJumpPowerData)) return;
 
-   FRStatusValue Stamina = StatusMgr->GetStamina ();
-   float CurrentChargePercent = Stamina.Current / Stamina.Max;
+   FRStatusValue Mana = StatusMgr->GetMana ();
    // Apply power
-   float JumpVelocity = AgiToJumpPowerData->Eval (StatusMgr->GetCoreStats_Total ().AGI) * CurrentChargePercent;
+   float JumpVelocity = AgiToJumpPowerData->Eval (StatusMgr->GetCoreStats_Total ().AGI);
 
-   R_LOG_PRINTF ("Jump power : %f", JumpVelocity);
+   //R_LOG_PRINTF ("Jump power : %f", JumpVelocity);
+   // TODO: Get Move Vector, Normalize.
    MovementComponent->Velocity.Z += JumpVelocity;
-   StatusMgr->UseStamina (Stamina.Max);
+
+   StatusMgr->UseMana (UseCost);
 }
 
 URStatusMgrComponent* URJetpackComponent::GetStatusMgr () const
