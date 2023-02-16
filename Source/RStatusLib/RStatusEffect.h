@@ -4,6 +4,10 @@
 
 #include "RStatusEffect.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRActiveStatusEffectEvent);
+
+class AActor;
+
 // ============================================================================
 //                   Status Effect Scale (FLAT/PERCENT)
 // ============================================================================
@@ -80,5 +84,58 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
    // What value is added
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FRPassiveStatusEffect Value;
+};
+
+
+UCLASS(Blueprintable, BlueprintType)
+class RSTATUSLIB_API ARActiveStatusEffect : public AActor
+{
+   GENERATED_BODY()
+public:
+
+   ARActiveStatusEffect ();
+
+   // --- Values
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FString UIName;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      float Duration = 5;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      bool isRunning = false;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      AActor* Causer = nullptr;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      AActor* Target = nullptr;
+
+
+   // --- Events
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      virtual void Start (AActor* Causer_, AActor* Target_);
+
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+      void BP_Started ();
+
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnStart;
+
+
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+      void BP_Ended ();
+
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnEnd;
+
+protected:
+
+   virtual void Started ();
+   virtual void Ended ();
+
+   FTimerHandle TimerToEnd;
+
 };
 
