@@ -4,12 +4,7 @@
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
-		"Resistence": [
-			{
-				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Value": 0
-			}
-		],
+		"Resistence": [],
 		"Effects": [
 			{
 				"Scale": "FLAT",
@@ -44,7 +39,7 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Pierce.RDamageType_Pierce_C'",
-				"Value": 0
+				"Value": 30
 			}
 		],
 		"Effects": [
@@ -195,7 +190,7 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Value": 0
+				"Value": 20
 			}
 		],
 		"Effects": [
@@ -229,12 +224,7 @@
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
-		"Resistence": [
-			{
-				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Value": 0
-			}
-		],
+		"Resistence": [],
 		"Effects": [
 			{
 				"Scale": "FLAT",
@@ -266,12 +256,7 @@
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
-		"Resistence": [
-			{
-				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Value": 0
-			}
-		],
+		"Resistence": [],
 		"Effects": [
 			{
 				"Scale": "FLAT",
