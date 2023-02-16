@@ -229,6 +229,7 @@ void URStatusMgrComponent::RecalcExtraStats ()
    float EvasionTotal     = AgiToEvasionData->Eval (StatsTotal.AGI);
    float CriticalTotal    = AgiToCriticalData->Eval (StatsTotal.AGI);
    float AttackSpeedTotal = AgiToAttackSpeedData->Eval (StatsTotal.AGI);
+   float MoveSpeedTotal   = 0;
 
    // Flat
    for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
@@ -236,6 +237,7 @@ void URStatusMgrComponent::RecalcExtraStats ()
          if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Value;
          if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Value;
          if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   += ItEffect.Value.Value;
       }
    }
    // Percentage
@@ -244,6 +246,7 @@ void URStatusMgrComponent::RecalcExtraStats ()
          if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Value) / 100.);
          if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Value) / 100.);
          if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   *= ((100. + ItEffect.Value.Value) / 100.);
       }
    }
 
@@ -254,6 +257,8 @@ void URStatusMgrComponent::RecalcExtraStats ()
    ExtraStats_Added.Critical    = CriticalTotal - ExtraStats_Base.Critical;
    ExtraStats_Base.AttackSpeed  = AgiToAttackSpeedData->Eval (StatsCurrent.AGI);
    ExtraStats_Added.AttackSpeed = CriticalTotal - ExtraStats_Base.Critical;
+   ExtraStats_Base.MoveSpeed    = MoveSpeedTotal;
+   ExtraStats_Added.MoveSpeed   = 0;
 }
 
 void URStatusMgrComponent::RecalcStatusValues ()
