@@ -75,6 +75,7 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 void UREquipmentMgrComponent::CalcWeight ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    Super::CalcWeight ();
 
    URStatusMgrComponent *StatusMgr = GetStatusMgr ();

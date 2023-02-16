@@ -34,9 +34,7 @@ void URInventoryComponent::BeginPlay()
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
-
    if (R_IS_NET_ADMIN) {
-
 
       // Save/Load inventory
       if (bSaveLoad) {
@@ -81,7 +79,6 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 
 void URInventoryComponent::OnRep_Items ()
 {
-   CalcWeight ();
    OnInventoryUpdated.Broadcast ();
 }
 
@@ -349,6 +346,7 @@ void URInventoryComponent::TransferAll_Server_Implementation (URInventoryCompone
 }
 bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!DstInventory) {
       R_LOG ("Invalid Destination Inventory");
       return false;
@@ -381,6 +379,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
                                          int32 SrcItemIdx,
                                          int32 SrcItemCount)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!DstInventory) {
       R_LOG ("Invalid Destination Inventory");
       return false;
@@ -407,6 +406,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
 
 void URInventoryComponent::CalcWeight ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    float WeightNew = 0;
    // Find same kind of item
    for (const FRItemData &ItItem : Items) {

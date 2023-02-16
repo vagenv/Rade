@@ -267,13 +267,13 @@ void ARPlayer::Input_Jump ()
 {
    if (GetMovementComponent ()->IsMovingOnGround ()) {
       if (CanJump ()) {
-         StatusMgr->UseStamina (JumpCost);
+         // TODO: Call on server
+         // StatusMgr->UseStamina (JumpCost);
          Super::Jump ();
       }
    } else {
       if (Jetpack->CanUse ()) Jetpack->Use ();
    }
-
 }
 
 // Player Pressed CameraChange

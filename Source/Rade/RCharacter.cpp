@@ -2,6 +2,7 @@
 
 #include "RCharacter.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusMgrComponent.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
@@ -133,8 +134,10 @@ float ARCharacter::TakeDamage (float DamageAmount,
 void ARCharacter::Landed (const FHitResult& Hit)
 {
    // Take only vertical velocity
-   float FallVelocityZ = GetCharacterMovement ()->Velocity.GetAbs ().Z;
-   UGameplayStatics::ApplyDamage (this, FallVelocityZ, GetController (), Hit.GetActor (), URDamageType_Fall::StaticClass ());
+   if (R_IS_NET_ADMIN) {
+      float FallVelocityZ = GetCharacterMovement ()->Velocity.GetAbs ().Z;
+      UGameplayStatics::ApplyDamage (this, FallVelocityZ, GetController (), Hit.GetActor (), URDamageType_Fall::StaticClass ());
+   }
    Super::Landed (Hit);
 }
 

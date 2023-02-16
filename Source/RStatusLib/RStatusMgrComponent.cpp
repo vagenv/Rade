@@ -152,6 +152,7 @@ void URStatusMgrComponent::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
       bDead = false;
+      bIsAdmin = true;
 
       RecalcStatus ();
 
@@ -176,7 +177,7 @@ void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
-   StatusRegen (DeltaTime);
+   if (bIsAdmin) StatusRegen (DeltaTime);
 }
 
 
@@ -186,6 +187,7 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 
 void URStatusMgrComponent::RecalcStatus ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    RecalcCoreStats ();
    RecalcExtraStats ();
    RecalcStatusValues ();
@@ -195,6 +197,7 @@ void URStatusMgrComponent::RecalcStatus ()
 
 void URStatusMgrComponent::RecalcCoreStats ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
 
    // Flat
@@ -218,6 +221,7 @@ void URStatusMgrComponent::RecalcCoreStats ()
 
 void URStatusMgrComponent::RecalcExtraStats ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    const FRichCurve* AgiToEvasionData     = AgiToEvasion.GetRichCurveConst ();
    const FRichCurve* AgiToCriticalData    = AgiToCritical.GetRichCurveConst ();
    const FRichCurve* AgiToAttackSpeedData = AgiToAttackSpeed.GetRichCurveConst ();
@@ -263,6 +267,7 @@ void URStatusMgrComponent::RecalcExtraStats ()
 
 void URStatusMgrComponent::RecalcStatusValues ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    const FRichCurve* StrToHealthMaxData    = StrToHealthMax.GetRichCurveConst ();
    const FRichCurve* StrToHealthRegenData  = StrToHealthRegen.GetRichCurveConst ();
    const FRichCurve* AgiToStaminaMaxData   = AgiToStaminaMax.GetRichCurveConst ();
@@ -369,6 +374,7 @@ bool URStatusMgrComponent::RollEvasion () const
 
 void URStatusMgrComponent::StatusRegen (float DeltaTime)
 {
+   R_RETURN_IF_NOT_ADMIN;
    if (IsDead ()) return;
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
@@ -388,6 +394,7 @@ FRStatusValue URStatusMgrComponent::GetHealth () const
 
 void URStatusMgrComponent::UseHealth (float Amount)
 {
+   R_RETURN_IF_NOT_ADMIN;
    Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
    if (!Health.Current) {
       bDead = true;
@@ -402,6 +409,7 @@ FRStatusValue URStatusMgrComponent::GetStamina () const
 
 void URStatusMgrComponent::UseStamina (float Amount)
 {
+   R_RETURN_IF_NOT_ADMIN;
    Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
 }
 
@@ -412,6 +420,7 @@ FRStatusValue URStatusMgrComponent::GetMana () const
 
 void URStatusMgrComponent::UseMana (float Amount)
 {
+   R_RETURN_IF_NOT_ADMIN;
    Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
 }
 
@@ -447,6 +456,7 @@ TArray<FRStatusEffectWithTag> URStatusMgrComponent::GetEffectsWithTag () const
 
 void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatusEffect> &AddValues)
 {
+   R_RETURN_IF_NOT_ADMIN;
    // Clean
    RmEffects (Tag);
 
@@ -463,6 +473,7 @@ void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatus
 
 void URStatusMgrComponent::RmEffects (const FString &Tag)
 {
+   R_RETURN_IF_NOT_ADMIN;
    TArray<int32> ToRemove;
    for (int32 iEffect = 0; iEffect < Effects.Num (); iEffect++) {
       const FRStatusEffectWithTag& ItEffect = Effects[iEffect];
@@ -520,6 +531,7 @@ float URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const Dam
 
 void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
 {
+   R_RETURN_IF_NOT_ADMIN;
    // Clean
    RmResistance (Tag);
 

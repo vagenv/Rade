@@ -43,8 +43,9 @@ public:
       void RecalcStatusValues ();
 
    // Owners Movement Component. For stamina Regen.
-protected:
+private:
       UCharacterMovementComponent *MovementComponent = nullptr;
+      bool bIsAdmin = false;
 
    //==========================================================================
    //                 Status

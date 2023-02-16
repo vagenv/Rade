@@ -26,7 +26,7 @@ public:
       virtual bool CanUse () const;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float UseCost = 40;
+      float UseCost = 30;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Jetpack")
       FRuntimeFloatCurve AgiToJumpPower;
