@@ -265,9 +265,15 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
-   if (StatusMgr->IsDead ()) return;
-   if (Jetpack->CanUse ()) Jetpack->Use ();
-   Super::Jump ();
+   if (GetMovementComponent ()->IsMovingOnGround ()) {
+      if (CanJump ()) {
+         StatusMgr->UseStamina (JumpCost);
+         Super::Jump ();
+      }
+   } else {
+      if (Jetpack->CanUse ()) Jetpack->Use ();
+   }
+
 }
 
 // Player Pressed CameraChange
@@ -301,6 +307,16 @@ void ARPlayer::Input_AltAction ()
 //=============================================================================
 //                           State Checking
 //=============================================================================
+
+bool ARPlayer::CanJump () const
+{
+   if (StatusMgr->IsDead ()) return false;
+   if (!GetMovementComponent ()->IsMovingOnGround ()) return false;
+
+   FRStatusValue Stamina = StatusMgr->GetStamina ();
+   return (Stamina.Current > JumpCost);
+}
+
 
 /*
 // Checking if player can shoot
