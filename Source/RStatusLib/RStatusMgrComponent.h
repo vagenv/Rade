@@ -207,6 +207,9 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       TArray<FRStatusEffect> GetEffects () const;
 
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      TArray<FRStatusEffectWithTag> GetEffectsWithTag () const;
+
    //==========================================================================
    //                 Resistance Funcs
    //==========================================================================
@@ -219,6 +222,12 @@ public:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       TArray<FRResistanceStat> GetResistance () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      TArray<FRResistanceStatWithTag> GetResistanceWithTag () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      float GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const;
 
    //==========================================================================
    //                 Events

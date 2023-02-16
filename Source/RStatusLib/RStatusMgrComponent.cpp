@@ -416,10 +416,27 @@ void URStatusMgrComponent::UseMana (float Amount)
 
 TArray<FRStatusEffect> URStatusMgrComponent::GetEffects () const
 {
-   TArray<FRStatusEffect> res;
-   for (const FRStatusEffectWithTag& it : ExtraEffects) {
-      res.Add (it.Effect);
+   TArray<FRStatusEffect> Result;
+   for (const FRStatusEffectWithTag& ItEffects : Effects) {
+      bool found = false;
+      // Combine
+      for (FRStatusEffect& ItRes : Result) {
+         if (  ItRes.Target == ItEffects.Value.Target
+            && ItRes.Scale  == ItEffects.Value.Scale)
+         {
+            found = true;
+            ItRes.Value += ItEffects.Value.Value;
+            break;
+         }
+      }
+      // Add new entry
+      if (!found) Result.Add (ItEffects.Value);
    }
+   return Result;
+}
+
+TArray<FRStatusEffectWithTag> URStatusMgrComponent::GetEffectsWithTag () const
+{
    return Effects;
 }
 
@@ -463,11 +480,37 @@ void URStatusMgrComponent::RmEffects (const FString &Tag)
 
 TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
 {
-   TArray<FRResistanceStat> res;
-   for (const FRResistanceStatWithTag& it : ExtraResistence) {
-      res.Add (it.Resistance);
+   TArray<FRResistanceStat> Result;
+   for (const FRResistanceStatWithTag& ItResistance : Resistence) {
+      bool found = false;
+      // Combine
+      for (FRResistanceStat& ItRes : Result) {
+         if (ItRes.DamageType == ItResistance.Value.DamageType) {
+            found = true;
+            ItRes.Value += ItResistance.Value.Value;
+            break;
+         }
+      }
+      // Add new entry
+      if (!found) Result.Add (ItResistance.Value);
    }
+   return Result;
+}
+
+TArray<FRResistanceStatWithTag> URStatusMgrComponent::GetResistanceWithTag () const
+{
    return Resistence;
+}
+
+float URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
+{
+   float Result = 0;
+   for (const FRResistanceStatWithTag& ItResistance : Resistence) {
+      if (DamageType == ItResistance.Value.DamageType) {
+         Result += ItResistance.Value.Value;
+      }
+   }
+   return Result;
 }
 
 void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
