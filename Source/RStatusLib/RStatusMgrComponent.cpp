@@ -127,8 +127,8 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URStatusMgrComponent, ExtraStats_Base);
    DOREPLIFETIME (URStatusMgrComponent, ExtraStats_Added);
 
-   DOREPLIFETIME (URStatusMgrComponent, ExtraResistence);
-   DOREPLIFETIME (URStatusMgrComponent, ExtraEffects);
+   DOREPLIFETIME (URStatusMgrComponent, Effects);
+   DOREPLIFETIME (URStatusMgrComponent, Resistence);
 }
 
 void URStatusMgrComponent::OnRep_Status ()
@@ -198,19 +198,19 @@ void URStatusMgrComponent::RecalcCoreStats ()
    FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
 
    // Flat
-   for (const FRStatusEffectWithTag &It : ExtraEffects) {
-      if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
-         if (It.Effect.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += It.Effect.Value;
+   for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
+         if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += ItEffect.Value.Value;
       }
    }
    // Percentage
-   for (const FRStatusEffectWithTag &It : ExtraEffects) {
-      if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
-         if (It.Effect.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + It.Effect.Value) / 100.);
+   for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
+         if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + ItEffect.Value.Value) / 100.);
       }
    }
    CoreStats_Added = CoreStats_Total_New - GetCoreStats_Base ();
@@ -231,19 +231,19 @@ void URStatusMgrComponent::RecalcExtraStats ()
    float AttackSpeedTotal = AgiToAttackSpeedData->Eval (StatsTotal.AGI);
 
    // Flat
-   for (const FRStatusEffectWithTag &It : ExtraEffects) {
-      if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
-         if (It.Effect.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += It.Effect.Value;
+   for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
+         if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Value.Value;
       }
    }
    // Percentage
-   for (const FRStatusEffectWithTag &It : ExtraEffects) {
-      if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
-         if (It.Effect.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + It.Effect.Value) / 100.);
+   for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
+         if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Value.Value) / 100.);
       }
    }
 
@@ -282,26 +282,25 @@ void URStatusMgrComponent::RecalcStatusValues ()
    Mana.Regen     = IntToManaRegenData->Eval    (StatsTotal.INT);
 
    // Flat
-   for (const FRStatusEffectWithTag &It : ExtraEffects) {
-      if (It.Effect.Scale == ERStatusEffectScale::FLAT) {
-         if (It.Effect.Target == ERStatusEffectTarget::HealthMax)    Health.Max    += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      += It.Effect.Value;
-         if (It.Effect.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += It.Effect.Value;
-
+   for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
+         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Value;
+         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Value;
       }
    }
    // Percentage
-   for (const FRStatusEffectWithTag &It : ExtraEffects) {
-      if (It.Effect.Scale == ERStatusEffectScale::PERCENT) {
-         if (It.Effect.Target == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + It.Effect.Value) / 100.);
-         if (It.Effect.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + It.Effect.Value) / 100.);
+   for (const FRStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
+         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Value) / 100.);
+         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Value) / 100.);
       }
    }
 }
@@ -421,7 +420,7 @@ TArray<FRStatusEffect> URStatusMgrComponent::GetEffects () const
    for (const FRStatusEffectWithTag& it : ExtraEffects) {
       res.Add (it.Effect);
    }
-   return res;
+   return Effects;
 }
 
 void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatusEffect> &AddValues)
@@ -430,11 +429,11 @@ void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatus
    RmEffects (Tag);
 
    // Add again
-   for (const FRStatusEffect& it : AddValues) {
+   for (const FRStatusEffect& ItAddValue : AddValues) {
       FRStatusEffectWithTag newRes;
-      newRes.Tag    = Tag;
-      newRes.Effect = it;
-      ExtraEffects.Add (newRes);
+      newRes.Tag   = Tag;
+      newRes.Value = ItAddValue;
+      Effects.Add (newRes);
    }
 
    RecalcStatus ();
@@ -443,16 +442,16 @@ void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatus
 void URStatusMgrComponent::RmEffects (const FString &Tag)
 {
    TArray<int32> ToRemove;
-   for (int32 i = 0; i < ExtraEffects.Num (); i++) {
-      const FRStatusEffectWithTag& It = ExtraEffects[i];
-      if (It.Tag == Tag) ToRemove.Add (i);
+   for (int32 i = 0; i < Effects.Num (); i++) {
+      const FRStatusEffectWithTag& ItEffect = Effects[i];
+      if (ItEffect.Tag == Tag) ToRemove.Add (i);
    }
    // Nothing to remove
    if (!ToRemove.Num ()) return;
 
    // Remove in reverse order;
    for (int32 i = ToRemove.Num () - 1; i >= 0; i--) {
-      ExtraEffects.RemoveAt (ToRemove[i]);
+      Effects.RemoveAt (ToRemove[i]);
    }
 
    RecalcStatus ();
@@ -468,7 +467,7 @@ TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
    for (const FRResistanceStatWithTag& it : ExtraResistence) {
       res.Add (it.Resistance);
    }
-   return res;
+   return Resistence;
 }
 
 void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
@@ -477,11 +476,11 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRRes
    RmResistance (Tag);
 
    // Add again
-   for (const FRResistanceStat& it : AddValues) {
+   for (const FRResistanceStat& ItAddValue : AddValues) {
       FRResistanceStatWithTag newRes;
-      newRes.Tag        = Tag;
-      newRes.Resistance = it;
-      ExtraResistence.Add (newRes);
+      newRes.Tag   = Tag;
+      newRes.Value = ItAddValue;
+      Resistence.Add (newRes);
    }
    RecalcStatus ();
 }
@@ -491,16 +490,16 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
    R_RETURN_IF_NOT_ADMIN;
 
    TArray<int32> ToRemove;
-   for (int32 i = 0; i < ExtraResistence.Num (); i++) {
-      const FRResistanceStatWithTag& It = ExtraResistence[i];
-      if (It.Tag == Tag) ToRemove.Add (i);
+   for (int32 i = 0; i < Resistence.Num (); i++) {
+      const FRResistanceStatWithTag& ItResistance = Resistence[i];
+      if (ItResistance.Tag == Tag) ToRemove.Add (i);
    }
    // Nothing to remove
    if (!ToRemove.Num ()) return;
 
    // Remove in reverse order;
    for (int32 i = ToRemove.Num () - 1; i >= 0; i--) {
-      ExtraResistence.RemoveAt (ToRemove[i]);
+      Resistence.RemoveAt (ToRemove[i]);
    }
 
    RecalcStatus ();
@@ -518,38 +517,28 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
    R_RETURN_IF_NOT_ADMIN_BOOL;
    URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
 
-   if (RollEvasion ()) {
-      // Report Evasion
-      return 0;
-   }
+   if (!IsDead ()) {
 
-   if (DamageType) {
-      float Resistance = 0;
-
-      // TODO: Replace with total calculated Resistance
-      for (const FRResistanceStatWithTag &it : ExtraResistence) {
-         if (it.Resistance.DamageType == DamageEvent.DamageTypeClass) {
-            Resistance = it.Resistance.Value;
-            break;
-         }
+      if (RollEvasion () && DamageEvent.DamageTypeClass != URDamageType_Fall::StaticClass ()) {
+         R_LOG ("Evaded attack!");
+         // TODO: Report Evasion
+         return 0;
       }
 
-      DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
-      DamageType->TakeDamage (GetOwner(), Resistance, DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-      //R_LOG_PRINTF ("Final Damage [%.1f]", DamageAmount);
-   } else {
-      R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
-   }
+      if (DamageType) {
+         float Resistance = GetResistanceFor (DamageEvent.DamageTypeClass);
 
-   // TODO: Report damage
-   if (DamageAmount != .0f && !bDead) {
-
-      Health.Current -= DamageAmount;
-      if (Health.Current < 0) Health.Current = 0;
-      if (Health.Current == 0) {
-         // TODO: Report death
+         DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
+         DamageType->TakeDamage (GetOwner(), Resistance, DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+         R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", DamageAmount, Resistance);
+      } else {
+         R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
       }
+
+      UseHealth (DamageAmount);
    }
+   // TODO: Report Damage
+
    return DamageAmount;
 }
 

@@ -111,15 +111,15 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRExtraStats ExtraStats_Added;
 
-   // --- Resistance
-   // Should be Map of FRResistanceStat, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRResistanceStatWithTag> ExtraResistence;
-
    // --- Effects
    // Should be Map of FRExtraStats, but for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRStatusEffectWithTag> ExtraEffects;
+      TArray<FRStatusEffectWithTag> Effects;
+
+   // --- Resistance
+   // Should be Map of FRResistanceStat, but for replication -> Array
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, EditAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      TArray<FRResistanceStatWithTag> Resistence;
 
    //==========================================================================
    //                 Status Value Curves

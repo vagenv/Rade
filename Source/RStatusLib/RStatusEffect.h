@@ -67,6 +67,6 @@ struct RSTATUSLIB_API FRStatusEffectWithTag
 
    // What value is added
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRStatusEffect Effect;
+      FRStatusEffect Value;
 };
 

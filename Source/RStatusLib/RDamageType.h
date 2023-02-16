@@ -32,7 +32,7 @@ struct RSTATUSLIB_API FRResistanceStatWithTag
 
    // What value is added
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRResistanceStat Resistance;
+      FRResistanceStat Value;
 };
 
 UCLASS(Blueprintable, BlueprintType)
