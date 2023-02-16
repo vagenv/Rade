@@ -351,12 +351,12 @@ bool URStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) const
 
 bool URStatusMgrComponent::RollCritical () const
 {
-   return ((FMath::Rand () % 100) >= GetExtraStats_Total ().Critical);
+   return ((FMath::Rand () % 100) <= GetExtraStats_Total ().Critical);
 }
 
 bool URStatusMgrComponent::RollEvasion () const
 {
-   return ((FMath::Rand () % 100) >= GetExtraStats_Total ().Evasion);
+   return ((FMath::Rand () % 100) <= GetExtraStats_Total ().Evasion);
 }
 
 //=============================================================================
