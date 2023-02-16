@@ -83,7 +83,7 @@ struct RSTATUSLIB_API FRStatusValue
 
    void Tick (float DeltaTime);
 
-   friend FArchive& operator<< (FArchive& Ar, FRStatusValue &Value);
+   friend FArchive& operator << (FArchive& Ar, FRStatusValue &Value);
 };
 
 UCLASS()

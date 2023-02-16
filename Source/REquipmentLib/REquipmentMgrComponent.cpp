@@ -260,15 +260,15 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
    UREquipmentSlotComponent *EquipmentSlot = nullptr;
 
    // --- Find equip slot
-   for (auto &itSlot : CurrentEquipmentSlots) {
-      if (itSlot->GetClass () == SlotClass) {
+   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (ItSlot->GetClass () == SlotClass) {
 
          // First slot available
-         if (!EquipmentSlot) EquipmentSlot = itSlot;
+         if (!EquipmentSlot) EquipmentSlot = ItSlot;
 
          // Empty Slot found
-         if (!itSlot->Busy) {
-            EquipmentSlot = itSlot;
+         if (!ItSlot->Busy) {
+            EquipmentSlot = ItSlot;
             break;
          }
       }

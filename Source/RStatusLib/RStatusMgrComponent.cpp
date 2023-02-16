@@ -464,16 +464,16 @@ void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRStatus
 void URStatusMgrComponent::RmEffects (const FString &Tag)
 {
    TArray<int32> ToRemove;
-   for (int32 i = 0; i < Effects.Num (); i++) {
-      const FRStatusEffectWithTag& ItEffect = Effects[i];
-      if (ItEffect.Tag == Tag) ToRemove.Add (i);
+   for (int32 iEffect = 0; iEffect < Effects.Num (); iEffect++) {
+      const FRStatusEffectWithTag& ItEffect = Effects[iEffect];
+      if (ItEffect.Tag == Tag) ToRemove.Add (iEffect);
    }
    // Nothing to remove
    if (!ToRemove.Num ()) return;
 
    // Remove in reverse order;
-   for (int32 i = ToRemove.Num () - 1; i >= 0; i--) {
-      Effects.RemoveAt (ToRemove[i]);
+   for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
+      Effects.RemoveAt (ToRemove[iToRemove]);
    }
 
    RecalcStatus ();
@@ -538,16 +538,16 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
    R_RETURN_IF_NOT_ADMIN;
 
    TArray<int32> ToRemove;
-   for (int32 i = 0; i < Resistence.Num (); i++) {
-      const FRResistanceStatWithTag& ItResistance = Resistence[i];
-      if (ItResistance.Tag == Tag) ToRemove.Add (i);
+   for (int32 iResistance = 0; iResistance < Resistence.Num (); iResistance++) {
+      const FRResistanceStatWithTag& ItResistance = Resistence[iResistance];
+      if (ItResistance.Tag == Tag) ToRemove.Add (iResistance);
    }
    // Nothing to remove
    if (!ToRemove.Num ()) return;
 
    // Remove in reverse order;
-   for (int32 i = ToRemove.Num () - 1; i >= 0; i--) {
-      Resistence.RemoveAt (ToRemove[i]);
+   for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
+      Resistence.RemoveAt (ToRemove[iToRemove]);
    }
 
    RecalcStatus ();
@@ -578,7 +578,7 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 
          DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
          DamageType->TakeDamage (GetOwner(), Resistance, DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-         R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", DamageAmount, Resistance);
+         //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", DamageAmount, Resistance);
       } else {
          R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
       }
