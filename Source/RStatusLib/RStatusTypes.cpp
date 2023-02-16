@@ -56,9 +56,9 @@ FRCoreStats FRCoreStats::operator - (const FRCoreStats &stat) const
 //                 Extra Stats
 //=============================================================================
 
-FRExtraStats FRExtraStats::operator + (const FRExtraStats &stat) const
+FRSubStats FRSubStats::operator + (const FRSubStats &stat) const
 {
-   FRExtraStats res;
+   FRSubStats res;
    res.Evasion     = Evasion     + stat.Evasion    ;
    res.Critical    = Critical    + stat.Critical   ;
    res.MoveSpeed   = MoveSpeed   + stat.MoveSpeed  ;
@@ -67,9 +67,9 @@ FRExtraStats FRExtraStats::operator + (const FRExtraStats &stat) const
    return res;
 }
 
-FRExtraStats FRExtraStats::operator - (const FRExtraStats &stat) const
+FRSubStats FRSubStats::operator - (const FRSubStats &stat) const
 {
-   FRExtraStats res;
+   FRSubStats res;
    res.Evasion     = Evasion     - stat.Evasion    ;
    res.Critical    = Critical    - stat.Critical   ;
    res.MoveSpeed   = MoveSpeed   - stat.MoveSpeed  ;

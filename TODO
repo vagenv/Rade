@@ -4,17 +4,43 @@
 
 Bunny Hop Animation
 
-Move All FRuntimeFloatCurve to blueprint subclass
-Create Folder with Balance curves
+Enemy Dies (Bunny Explosion)
+- Puff
+- Bunny Left
+- Hops/Away
 
-Roll Animation + Cost
+Create Folder with Balance curves
+Move All FRuntimeFloatCurve to blueprint subclass
+
+Roll/Phase
+- Animation
+- Cost
+- Invincible Frame
 
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
 
+
+Health/Mana/Stamina
+- Stat / Character Status / StatusValue
+
+AGi/STR/INT
+- Attributes / CoreStats / Stats
+
+Evasion/Critical/MoveSpeed
+- SubStats / Properties / SubStats
+
+
+Buff / Bonus / PassiveEffects
+
+ActiveEffects
+
+
 ===========================
    RStatusEffect
 ===========================
+
+Consumable to Status Library
 
 Blueprint Temporary RStatusEffect:
 == Damage / Heal / MoveSpeed
@@ -25,18 +51,23 @@ Blueprint Temporary RStatusEffect:
 - Event to apply action. (Causer + Victim)
 
 ===========================
-   TakeDamage
+   Consuable with Effects
 ===========================
 
-TakeDamage (based on what body part was hit) (bone name?):
-- Headshot
-- Protected by armor
+ConsumableItem : ActionItem
+- Duration
+- ItemData.Action will apply the effect and manage video/audio effects
+- Effect?
+
+===========================
+   TakeDamage
+===========================
 
 RDamageType
 - Status Effect List
 - Random chance to apply Temporary Status Effect
 
-ExtraStats actually used
+SubStats actually used
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -60,17 +91,12 @@ UI
 - Requirnments
 
 ===========================
-   Consuable with Effects
+   Weapons/TakeDamage/Death/Revive
 ===========================
 
-ConsumableItem : ActionItem
-- Duration
-- ItemData.Action will apply the effect and manage video/audio effects
-- Effect?
-
-===========================
-   Weapons
-===========================
+TakeDamage (based on what body part was hit) (bone name?):
+- Headshot
+- Protected by armor
 
 ItemData uniqueID?
 - Differentiate Dublicates
@@ -103,6 +129,8 @@ Damage Dummy
 
 UI
 - Damage
+
+Death/Revive
 
 =================================================
    Save/Load Simplification

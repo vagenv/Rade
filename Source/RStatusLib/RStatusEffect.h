@@ -52,7 +52,7 @@ enum class ERStatusEffectTarget : uint8
 // ============================================================================
 
 USTRUCT(Blueprintable, BlueprintType)
-struct RSTATUSLIB_API FRStatusEffect
+struct RSTATUSLIB_API FRPassiveStatusEffect
 {
    GENERATED_BODY()
 
@@ -65,11 +65,11 @@ struct RSTATUSLIB_API FRStatusEffect
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
       float Value = 0.;
 
-   inline FRStatusEffect operator + (const FRStatusEffect &obj) const;
+   inline FRPassiveStatusEffect operator + (const FRPassiveStatusEffect &obj) const;
 };
 
 USTRUCT(BlueprintType)
-struct RSTATUSLIB_API FRStatusEffectWithTag
+struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
 {
    GENERATED_BODY()
 
@@ -79,6 +79,6 @@ struct RSTATUSLIB_API FRStatusEffectWithTag
 
    // What value is added
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRStatusEffect Value;
+      FRPassiveStatusEffect Value;
 };
 

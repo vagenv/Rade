@@ -40,7 +40,7 @@ struct RSTATUSLIB_API FRCoreStats
 // ============================================================================
 
 USTRUCT(BlueprintType)
-struct RSTATUSLIB_API FRExtraStats
+struct RSTATUSLIB_API FRSubStats
 {
    GENERATED_BODY()
 
@@ -59,8 +59,8 @@ struct RSTATUSLIB_API FRExtraStats
    UPROPERTY (EditAnywhere, BlueprintReadWrite)
       float AttackPower = 0;
 
-   FRExtraStats operator + (const FRExtraStats &stat) const;
-   FRExtraStats operator - (const FRExtraStats &stat) const;
+   FRSubStats operator + (const FRSubStats &stat) const;
+   FRSubStats operator - (const FRSubStats &stat) const;
 };
 
 // ============================================================================

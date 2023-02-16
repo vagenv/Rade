@@ -56,7 +56,7 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
       TArray<FRResistanceStat> Resistence;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TArray<FRStatusEffect> Effects;
+      TArray<FRPassiveStatusEffect> Effects;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FRCoreStats RequiredStats;

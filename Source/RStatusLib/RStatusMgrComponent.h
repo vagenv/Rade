@@ -37,7 +37,7 @@ public:
       void RecalcCoreStats ();
 
    UFUNCTION()
-      void RecalcExtraStats ();
+      void RecalcSubStats ();
 
    UFUNCTION()
       void RecalcStatusValues ();
@@ -107,15 +107,15 @@ protected:
 
    // --- Extra Stats
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRExtraStats ExtraStats_Base;
+      FRSubStats SubStats_Base;
 
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRExtraStats ExtraStats_Added;
+      FRSubStats SubStats_Added;
 
    // --- Effects
-   // Should be Map of FRExtraStats, but for replication -> Array
+   // Should be Map of FRSubStats, but for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRStatusEffectWithTag> Effects;
+      TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
 
    // --- Resistance
    // Should be Map of FRResistanceStat, but for replication -> Array
@@ -176,13 +176,13 @@ public:
 
    // --- Get Extra Stats
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRExtraStats GetExtraStats_Base () const;
+      FRSubStats GetSubStats_Base () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRExtraStats GetExtraStats_Added () const;
+      FRSubStats GetSubStats_Added () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRExtraStats GetExtraStats_Total () const;
+      FRSubStats GetSubStats_Total () const;
 
    // --- Stats functions
 
@@ -200,16 +200,16 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void SetEffects (const FString &Tag, const TArray<FRStatusEffect> &AddValues);
+      void SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void RmEffects (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      TArray<FRStatusEffect> GetEffects () const;
+      TArray<FRPassiveStatusEffect> GetEffects () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      TArray<FRStatusEffectWithTag> GetEffectsWithTag () const;
+      TArray<FRPassiveStatusEffectWithTag> GetEffectsWithTag () const;
 
    //==========================================================================
    //                 Resistance Funcs

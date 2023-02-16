@@ -3,9 +3,9 @@
 #include "RStatusEffect.h"
 #include "RUtilLib/RLog.h"
 
-FRStatusEffect FRStatusEffect::operator + (const FRStatusEffect &obj) const
+FRPassiveStatusEffect FRPassiveStatusEffect::operator + (const FRPassiveStatusEffect &obj) const
 {
-   FRStatusEffect res;
+   FRPassiveStatusEffect res;
    res.Scale = Scale;
    res.Target = Target;
    res.Value = Value + obj.Value;
