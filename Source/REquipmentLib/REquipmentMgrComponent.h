@@ -38,13 +38,13 @@ private:
    float LastWeightMax = 0;
 
 protected:
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Equipment")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRuntimeFloatCurve StrToWeightMax;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve WeightToEvasion;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve WeightToMoveSpeed;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")

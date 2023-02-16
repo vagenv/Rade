@@ -28,7 +28,7 @@ public:
    //==========================================================================
 
    // Maximum number
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       int32 SlotsMax = 10;
 
    // Current
@@ -36,7 +36,7 @@ public:
       float WeightCurrent = 0;
 
    // Maximum weight actor can carry
-   UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       float WeightMax = 25;
 
    //==========================================================================
@@ -60,7 +60,7 @@ protected:
 public:
 
    // Item to be added upon game start
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       TArray<FRItemDataHandle> DefaultItems;
 
    // Delegate when Item list updated
