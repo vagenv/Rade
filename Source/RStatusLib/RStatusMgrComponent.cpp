@@ -365,6 +365,7 @@ bool URStatusMgrComponent::RollEvasion () const
 
 void URStatusMgrComponent::StatusRegen (float DeltaTime)
 {
+   if (IsDead ()) return;
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
 
