@@ -52,7 +52,7 @@ enum class ERStatusEffectTarget : uint8
 };
 
 // ============================================================================
-//                   Status Effect
+//                   Passive Status Effect
 // ============================================================================
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -86,6 +86,9 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
       FRPassiveStatusEffect Value;
 };
 
+// ============================================================================
+//                   Active Status Effect
+// ============================================================================
 
 UCLASS(Blueprintable, BlueprintType)
 class RSTATUSLIB_API ARActiveStatusEffect : public AActor
@@ -123,7 +126,6 @@ public:
    UPROPERTY(BlueprintAssignable)
       FRActiveStatusEffectEvent OnStart;
 
-
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
       void BP_Ended ();
 
@@ -137,6 +139,11 @@ protected:
 
    FTimerHandle TimerToEnd;
 };
+
+
+// ============================================================================
+//                   Status Effect Library
+// ============================================================================
 
 UCLASS()
 class RSTATUSLIB_API URStatusEffectUtilLibrary : public UBlueprintFunctionLibrary

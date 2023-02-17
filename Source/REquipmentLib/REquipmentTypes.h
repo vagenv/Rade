@@ -14,7 +14,7 @@ class UREquipmentMgrComponent;
 class UWorld;
 
 // ============================================================================
-//          Consumable
+//                Consumable Items
 // ============================================================================
 
 USTRUCT(BlueprintType)
