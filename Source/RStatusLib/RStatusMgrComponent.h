@@ -200,10 +200,10 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
+      bool SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void RmEffects (const FString &Tag);
+      bool RmEffects (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       TArray<FRPassiveStatusEffect> GetEffects () const;

@@ -454,9 +454,9 @@ TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetEffectsWithTag () 
    return PassiveEffects;
 }
 
-void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
+bool URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
 {
-   R_RETURN_IF_NOT_ADMIN;
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    // Clean
    RmEffects (Tag);
 
@@ -469,18 +469,19 @@ void URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRPassiv
    }
 
    RecalcStatus ();
+   return true;
 }
 
-void URStatusMgrComponent::RmEffects (const FString &Tag)
+bool URStatusMgrComponent::RmEffects (const FString &Tag)
 {
-   R_RETURN_IF_NOT_ADMIN;
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    TArray<int32> ToRemove;
    for (int32 iEffect = 0; iEffect < PassiveEffects.Num (); iEffect++) {
       const FRPassiveStatusEffectWithTag& ItEffect = PassiveEffects[iEffect];
       if (ItEffect.Tag == Tag) ToRemove.Add (iEffect);
    }
    // Nothing to remove
-   if (!ToRemove.Num ()) return;
+   if (!ToRemove.Num ()) return false;
 
    // Remove in reverse order;
    for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
@@ -488,6 +489,7 @@ void URStatusMgrComponent::RmEffects (const FString &Tag)
    }
 
    RecalcStatus ();
+   return true;
 }
 
 //=============================================================================
