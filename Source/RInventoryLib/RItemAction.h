@@ -17,10 +17,10 @@ class RINVENTORYLIB_API URItemAction : public UBlueprintFunctionLibrary
 public:
 
    // C++
-   virtual void Used (URInventoryComponent *Inventory, FRItemData ItemData, int32 ItemIdx);
+   virtual void Used (AActor* Owner, URInventoryComponent *Inventory, const FRActionItemData &ItemData);
 
    // Blueprint event, will be called by C++ version
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_Used (URInventoryComponent *Inventory, FRItemData ItemData, int32 ItemIdx);
+      void BP_Used (AActor* Owner, URInventoryComponent *Inventory, const FRActionItemData &ItemData);
 };
 

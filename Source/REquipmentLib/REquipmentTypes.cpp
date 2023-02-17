@@ -2,6 +2,7 @@
 
 #include "REquipmentTypes.h"
 #include "RUtilLib/RLog.h"
+#include "RStatusLib/RStatusEffect.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
@@ -9,6 +10,16 @@
 // ============================================================================
 //                      FRConsumableItemData
 // ============================================================================
+
+bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
+{
+   for (const TSubclassOf<ARActiveStatusEffect> &ItEffect : Effects) {
+      if (!URStatusEffectUtilLibrary::ApplyStatusEffect_Active (Owner, Owner, ItEffect)) {
+         return false;
+      }
+   }
+   return Super::Used (Owner, Inventory);
+}
 
 bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
 {

@@ -9,6 +9,7 @@
 #include "REquipmentTypes.generated.h"
 
 class AActor;
+class URInventoryComponent;
 class UREquipmentSlotComponent;
 class UREquipmentMgrComponent;
 class UWorld;
@@ -22,13 +23,10 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
 
-   // 0 = Single instance effect
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float DurationSec = 0;
+   virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
-   // ----
-   // List of applied temporary effects.
-   // ----
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<TSubclassOf<ARActiveStatusEffect> > Effects;
 
    static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
 };

@@ -5,7 +5,6 @@
 #include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 
-#include "RItemAction.h"
 #include "RItemPickup.h"
 #include "Net/UnrealNetwork.h"
 
@@ -444,13 +443,8 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-   // valid archetype
-   if (!ItemData.Action) return false;
+   if (ItemData.Used (GetOwner (), this)) return false;
 
-   URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
-
-   if (!ensure (ItemBP)) return false;
-   ItemBP->Used (this, ItemData, ItemIdx);
    BP_Used (ItemIdx);
 
    // Consumable

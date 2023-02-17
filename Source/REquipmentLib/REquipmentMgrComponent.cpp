@@ -146,11 +146,8 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 
    // --- If Custom Action is defined
    if (success && ItemData.Action) {
-      URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
-      if (ItemBP) {
-         ItemBP->Used (this, ItemData, ItemIdx);
-         BP_Used (ItemIdx);
-      }
+      if (!ItemData.Used (GetOwner (), this)) return false;
+      BP_Used (ItemIdx);
    }
    return success;
 }
