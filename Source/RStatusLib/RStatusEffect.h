@@ -136,6 +136,21 @@ protected:
    virtual void Ended ();
 
    FTimerHandle TimerToEnd;
+};
 
+UCLASS()
+class RSTATUSLIB_API URStatusEffectUtilLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      static bool SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      static bool RmStatusEffect_Passive (AActor *Target, const FString &Tag);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      static bool ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<ARActiveStatusEffect> Effect);
 };
 
