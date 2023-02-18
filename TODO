@@ -20,54 +20,26 @@ Roll/Phase
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
 
+Cumulative Effects vs Single Instance
 
-Health/Mana/Stamina
-- Stat / Character Status / StatusValue
-
-AGi/STR/INT
-- Attributes / CoreStats / Stats
-
-Evasion/Critical/MoveSpeed
-- SubStats / Properties / SubStats
-
-
-Buff / Bonus / PassiveEffects
-
-ActiveEffects
-
+MoveSpeed and Critical Substat used
 
 ===========================
-   RStatusEffect
+   Inventory
 ===========================
 
-Consumable to Status Library
+Item Subclass cast/function call override.
+Cast error.
 
-Blueprint Temporary RStatusEffect:
-== Damage / Heal / MoveSpeed
-- Start
-- Tick
-- End
-- Duration
-- Event to apply action. (Causer + Victim)
+=================================================
+   Save/Load Simplification
+=================================================
 
-===========================
-   Consuable with Effects
-===========================
+Redesign as a singleton?
+Save/Load as a Interface class with blueprint event?
 
-ConsumableItem : ActionItem
-- Duration
-- ItemData.Action will apply the effect and manage video/audio effects
-- Effect?
-
-===========================
-   TakeDamage
-===========================
-
-RDamageType
-- Status Effect List
-- Random chance to apply Temporary Status Effect
-
-SubStats actually used
+EquipmentMgr
+StatusMgr
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -93,6 +65,10 @@ UI
 ===========================
    Weapons/TakeDamage/Death/Revive
 ===========================
+
+List of Struct:
+- Chances
+- Active status effect
 
 TakeDamage (based on what body part was hit) (bone name?):
 - Headshot
@@ -132,12 +108,7 @@ UI
 
 Death/Revive
 
-=================================================
-   Save/Load Simplification
-=================================================
 
-Redesign as a singleton?
-Save/Load as a Interface class with blueprint event?
 
 =================================================
    Session History
