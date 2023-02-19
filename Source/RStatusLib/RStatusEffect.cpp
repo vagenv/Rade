@@ -73,8 +73,8 @@ void ARActiveStatusEffect::Started ()
 {
    AttachToActor (Target, FAttachmentTransformRules::SnapToTargetIncludingScale);
    if (StatusMgr && Duration) {
-      StatusMgr->SetPassiveEffects (UIName, PassiveEffects);
       StatusMgr->AddActiveEffect (this);
+      StatusMgr->SetPassiveEffects (UIName, PassiveEffects);
    }
    BP_Started ();
    OnStart.Broadcast ();
