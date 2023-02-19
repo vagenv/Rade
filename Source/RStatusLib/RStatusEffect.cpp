@@ -59,7 +59,6 @@ bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
       return false;
    }
 
-
    // --- Set variables
    isRunning = true;
    Elapse    = FPlatformTime::Seconds () + Duration;
@@ -73,7 +72,10 @@ bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
 void ARActiveStatusEffect::Started ()
 {
    AttachToActor (Target, FAttachmentTransformRules::SnapToTargetIncludingScale);
-   if (StatusMgr && Duration) StatusMgr->AddActiveEffect (this);
+   if (StatusMgr && Duration) {
+      StatusMgr->SetPassiveEffects (UIName, PassiveEffects);
+      StatusMgr->AddActiveEffect (this);
+   }
    BP_Started ();
    OnStart.Broadcast ();
 
@@ -86,7 +88,10 @@ void ARActiveStatusEffect::Started ()
 
 void ARActiveStatusEffect::Ended ()
 {
-   if (StatusMgr && Duration) StatusMgr->RmActiveEffect (this);
+   if (StatusMgr && Duration) {
+      StatusMgr->RmActiveEffect (this);
+      StatusMgr->RmPassiveEffects (UIName);
+   }
    BP_Ended ();
    OnEnd.Broadcast ();
    Destroy ();

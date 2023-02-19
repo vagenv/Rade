@@ -515,7 +515,6 @@ bool URStatusMgrComponent::RmActiveEffect (ARActiveStatusEffect* Effect)
    R_RETURN_IF_NOT_ADMIN_BOOL;
    for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
       if (ActiveEffects[iEffect] == Effect) {
-         ActiveEffects[iEffect]->Destroy ();
          ActiveEffects.RemoveAt (iEffect);
          return true;
       }

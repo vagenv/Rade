@@ -106,6 +106,9 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Duration = 5;
 
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TArray<FRPassiveStatusEffect> PassiveEffects;
+
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       bool isRunning = false;
 
