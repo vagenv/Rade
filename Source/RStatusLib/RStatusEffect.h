@@ -7,6 +7,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRActiveStatusEffectEvent);
 
 class AActor;
+class URStatusMgrComponent;
 
 // ============================================================================
 //                   Status Effect Scale (FLAT/PERCENT)
@@ -90,7 +91,7 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
 //                   Active Status Effect
 // ============================================================================
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType)
 class RSTATUSLIB_API ARActiveStatusEffect : public AActor
 {
    GENERATED_BODY()
@@ -114,23 +115,32 @@ public:
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       AActor* Target = nullptr;
 
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      URStatusMgrComponent* StatusMgr = nullptr;
+
+   // Must be called right after construction
+   bool Apply (AActor* Causer_, AActor* Target_);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void Cancel ();
 
    // --- Events
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      virtual void Start (AActor* Causer_, AActor* Target_);
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
       void BP_Started ();
 
    UPROPERTY(BlueprintAssignable)
       FRActiveStatusEffectEvent OnStart;
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
+   UFUNCTION(BlueprintImplementableEvent, Category =  "Rade|Status")
       void BP_Ended ();
 
    UPROPERTY(BlueprintAssignable)
       FRActiveStatusEffectEvent OnEnd;
+
+   // Functions
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      double GetDurationLeft () const;
 
 protected:
 
@@ -138,6 +148,8 @@ protected:
    virtual void Ended ();
 
    FTimerHandle TimerToEnd;
+
+   double Elapse = 0;
 };
 
 

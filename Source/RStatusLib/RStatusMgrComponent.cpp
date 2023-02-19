@@ -128,6 +128,7 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URStatusMgrComponent, SubStats_Added);
 
    DOREPLIFETIME (URStatusMgrComponent, PassiveEffects);
+   DOREPLIFETIME (URStatusMgrComponent, ActiveEffects);
    DOREPLIFETIME (URStatusMgrComponent, Resistence);
 }
 
@@ -201,7 +202,7 @@ void URStatusMgrComponent::RecalcCoreStats ()
    FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
 
    // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
       if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
          if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Value.Value;
          if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Value.Value;
@@ -209,7 +210,7 @@ void URStatusMgrComponent::RecalcCoreStats ()
       }
    }
    // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
       if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
          if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Value.Value) / 100.);
          if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Value.Value) / 100.);
@@ -236,7 +237,7 @@ void URStatusMgrComponent::RecalcSubStats ()
    float MoveSpeedTotal   = 0;
 
    // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
       if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
          if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Value;
          if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Value;
@@ -245,7 +246,7 @@ void URStatusMgrComponent::RecalcSubStats ()
       }
    }
    // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
       if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
          if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Value) / 100.);
          if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Value) / 100.);
@@ -292,7 +293,7 @@ void URStatusMgrComponent::RecalcStatusValues ()
    Mana.Regen     = IntToManaRegenData->Eval    (StatsTotal.INT);
 
    // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
       if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
          if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Value;
          if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Value;
@@ -303,7 +304,7 @@ void URStatusMgrComponent::RecalcStatusValues ()
       }
    }
    // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetEffectsWithTag ()) {
+   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
       if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
          if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Value) / 100.);
          if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Value) / 100.);
@@ -425,10 +426,10 @@ void URStatusMgrComponent::UseMana (float Amount)
 }
 
 //==========================================================================
-//                 Effect Funcs
+//                 Passive Effect Funcs
 //==========================================================================
 
-TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetEffects () const
+TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects () const
 {
    TArray<FRPassiveStatusEffect> Result;
    for (const FRPassiveStatusEffectWithTag& ItEffects : PassiveEffects) {
@@ -449,16 +450,16 @@ TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetEffects () const
    return Result;
 }
 
-TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetEffectsWithTag () const
+TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffectsWithTag () const
 {
    return PassiveEffects;
 }
 
-bool URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
+bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    // Clean
-   RmEffects (Tag);
+   RmPassiveEffects (Tag);
 
    // Add again
    for (const FRPassiveStatusEffect& ItAddValue : AddValues) {
@@ -472,7 +473,7 @@ bool URStatusMgrComponent::SetEffects (const FString &Tag, const TArray<FRPassiv
    return true;
 }
 
-bool URStatusMgrComponent::RmEffects (const FString &Tag)
+bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    TArray<int32> ToRemove;
@@ -495,25 +496,21 @@ bool URStatusMgrComponent::RmEffects (const FString &Tag)
 //==========================================================================
 //                 Active Effect Funcs
 //==========================================================================
-bool URStatusMgrComponent::ApplyActiveEffect (AActor* Causer, const TSubclassOf<ARActiveStatusEffect> Effect)
+
+bool URStatusMgrComponent::AddActiveEffect (ARActiveStatusEffect* Effect)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (Causer == nullptr) return false;
-   if (Effect == nullptr) return false;
+   for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
+      if (ActiveEffects[iEffect] == Effect) {
+         return false;
+      }
+   }
 
-   UWorld* World = GetWorld ();
-   if (!World) return false;
-
-   FVector  Loc = GetOwner ()->GetActorLocation ();
-   FRotator Rot = GetOwner ()->GetActorRotation ();
-   ARActiveStatusEffect* NewEffect = World->SpawnActor<ARActiveStatusEffect>(Effect, Loc, Rot);
-   if (!NewEffect) return false;
-
-   NewEffect->Apply (Causer, GetOwner ());
+   ActiveEffects.Add (Effect);
    return true;
 }
 
-bool URStatusMgrComponent::StopActiveEffect (ARActiveStatusEffect* Effect)
+bool URStatusMgrComponent::RmActiveEffect (ARActiveStatusEffect* Effect)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
@@ -526,7 +523,7 @@ bool URStatusMgrComponent::StopActiveEffect (ARActiveStatusEffect* Effect)
    return false;
 }
 
-TArray<TObjectPtr<ARActiveStatusEffect> > URStatusMgrComponent::GetActiveEffects () const
+TArray<ARActiveStatusEffect* > URStatusMgrComponent::GetActiveEffects () const
 {
    return ActiveEffects;
 }

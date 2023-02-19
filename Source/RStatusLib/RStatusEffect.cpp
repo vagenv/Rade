@@ -24,32 +24,87 @@ FRPassiveStatusEffect FRPassiveStatusEffect::operator + (const FRPassiveStatusEf
 
 ARActiveStatusEffect::ARActiveStatusEffect ()
 {
-
 }
 
-void ARActiveStatusEffect::Start (AActor * Causer_, AActor* Target_)
+bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
 {
-   if (isRunning) return;
+   if (isRunning) {
+      R_LOG ("Already running")
+      return false;
+   }
 
+   // -- Check values
+   if (Causer_ == nullptr) {
+      R_LOG ("Invalid Causer");
+      return false;
+   }
+   if (Target_ == nullptr)  {
+      R_LOG ("Invalid Target");
+      return false;
+   }
+   if (!Target_->HasAuthority ())  {
+      R_LOG ("Has no authority");
+      return false;
+   }
+
+   UWorld* World = GetWorld ();
+   if (World == nullptr)  {
+      R_LOG ("No authority");
+      return false;
+   }
+
+   URStatusMgrComponent* StatusMgr_ = URStatusMgrComponent::Get (Target_);
+   if (StatusMgr_ == nullptr)   {
+      R_LOG ("No Status mgr");
+      return false;
+   }
+
+
+   // --- Set variables
    isRunning = true;
-   Causer = Causer_;
-   Target = Target_;
+   Elapse    = FPlatformTime::Seconds () + Duration;
+   Causer    = Causer_;
+   Target    = Target_;
+   StatusMgr = StatusMgr_;
    Started ();
+   return true;
 }
 
 void ARActiveStatusEffect::Started ()
 {
+   AttachToActor (Target, FAttachmentTransformRules::SnapToTargetIncludingScale);
+   if (StatusMgr && Duration) StatusMgr->AddActiveEffect (this);
    BP_Started ();
-   GetWorld ()->GetTimerManager ().SetTimer (TimerToEnd, this, &ARActiveStatusEffect::Ended, Duration, false);
    OnStart.Broadcast ();
+
+   if (Duration > 0) {
+      GetWorld ()->GetTimerManager ().SetTimer (TimerToEnd, this, &ARActiveStatusEffect::Ended, Duration, false);
+   } else {
+      Ended ();
+   }
 }
 
 void ARActiveStatusEffect::Ended ()
 {
+   if (StatusMgr && Duration) StatusMgr->RmActiveEffect (this);
    BP_Ended ();
    OnEnd.Broadcast ();
-
    Destroy ();
+}
+
+void ARActiveStatusEffect::Cancel ()
+{
+   TimerToEnd.Invalidate ();
+   Ended ();
+}
+
+double ARActiveStatusEffect::GetDurationLeft () const
+{
+   if (!Duration) return 0;
+   if (!Elapse)   return 0;
+   double dt = Elapse - FPlatformTime::Seconds ();
+   if (dt < 0) dt = 0;
+   return dt;
 }
 
 //=============================================================================
@@ -66,7 +121,7 @@ bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const F
    if (!StatusMgr) return false;
 
    // --- Action
-   return StatusMgr->SetEffects (Tag, Effects);
+   return StatusMgr->SetPassiveEffects (Tag, Effects);
 }
 
 bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FString &Tag)
@@ -79,7 +134,7 @@ bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FS
    if (!StatusMgr) return false;
 
    // --- Action
-   return StatusMgr->RmEffects (Tag);
+   return StatusMgr->RmPassiveEffects (Tag);
 }
 
 bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<ARActiveStatusEffect> Effect)
@@ -89,21 +144,12 @@ bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor
    if (Target == nullptr)        return false;
    if (Effect == nullptr)        return false;
    if (!Causer->HasAuthority ()) return false;
-
-   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
-   if (!StatusMgr) return false;
-
-   // --- Action
    UWorld* World = Target->GetWorld ();
    if (!World) return false;
 
-   FVector  Loc = Target->GetActorLocation ();
-   FRotator Rot = Target->GetActorRotation ();
-   ARActiveStatusEffect* NewEffect = World->SpawnActor<ARActiveStatusEffect>(Effect, Loc, Rot);
+   // --- Action
+   ARActiveStatusEffect* NewEffect = World->SpawnActor<ARActiveStatusEffect>(Effect);
    if (!NewEffect) return false;
-
-   NewEffect->AttachToActor (Target, FAttachmentTransformRules::SnapToTargetIncludingScale);
-   NewEffect->Start (Causer, Target);
-   return true;
+   return NewEffect->Apply (Causer, Target);
 }
 

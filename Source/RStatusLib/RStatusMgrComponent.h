@@ -117,6 +117,10 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
 
+   // Active instances running
+   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      TArray<ARActiveStatusEffect*> ActiveEffects;
+
    // --- Resistance
    // Should be Map of FRResistanceStat, but for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
@@ -196,20 +200,31 @@ public:
       bool RollEvasion () const;
 
    //==========================================================================
-   //                 Effect Funcs
+   //                 Passive Effect Funcs
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      bool SetEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
+      bool SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      bool RmEffects (const FString &Tag);
+      bool RmPassiveEffects (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffect> GetEffects () const;
+      TArray<FRPassiveStatusEffect> GetPassiveEffects () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffectWithTag> GetEffectsWithTag () const;
+      TArray<FRPassiveStatusEffectWithTag> GetPassiveEffectsWithTag () const;
+
+   //==========================================================================
+   //                 Active Effect Funcs
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      TArray<ARActiveStatusEffect*> GetActiveEffects () const;
+
+   // For internal use only
+   bool AddActiveEffect (ARActiveStatusEffect* Effect);
+   bool RmActiveEffect  (ARActiveStatusEffect* Effect);
 
    //==========================================================================
    //                 Resistance Funcs

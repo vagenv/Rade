@@ -102,7 +102,7 @@ void UREquipmentMgrComponent::CalcWeight ()
    Effects.Add (EvasionEffect);
    Effects.Add (MoveSpeedEffect);
 
-   StatusMgr->SetEffects ("Weight Penalty", Effects);
+   StatusMgr->SetPassiveEffects ("Weight Penalty", Effects);
 }
 
 void UREquipmentMgrComponent::OnStatusUpdated ()
@@ -209,8 +209,8 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->SetEffects    (EquipmentData.Name, EquipmentData.Effects);
-      StatusMgr->AddResistance (EquipmentData.Name, EquipmentData.Resistence);
+      StatusMgr->SetPassiveEffects (EquipmentData.Name, EquipmentData.Effects);
+      StatusMgr->AddResistance     (EquipmentData.Name, EquipmentData.Resistence);
    }
 
    // --- Update slot data
@@ -229,8 +229,8 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
    URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
    if (StatusMgr) {
-      StatusMgr->RmEffects    (EquipmentSlot->EquipmentData.Name);
-      StatusMgr->RmResistance (EquipmentSlot->EquipmentData.Name);
+      StatusMgr->RmPassiveEffects (EquipmentSlot->EquipmentData.Name);
+      StatusMgr->RmResistance     (EquipmentSlot->EquipmentData.Name);
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
