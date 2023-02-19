@@ -492,6 +492,45 @@ bool URStatusMgrComponent::RmEffects (const FString &Tag)
    return true;
 }
 
+//==========================================================================
+//                 Active Effect Funcs
+//==========================================================================
+bool URStatusMgrComponent::ApplyActiveEffect (AActor* Causer, const TSubclassOf<ARActiveStatusEffect> Effect)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (Causer == nullptr) return false;
+   if (Effect == nullptr) return false;
+
+   UWorld* World = GetWorld ();
+   if (!World) return false;
+
+   FVector  Loc = GetOwner ()->GetActorLocation ();
+   FRotator Rot = GetOwner ()->GetActorRotation ();
+   ARActiveStatusEffect* NewEffect = World->SpawnActor<ARActiveStatusEffect>(Effect, Loc, Rot);
+   if (!NewEffect) return false;
+
+   NewEffect->Apply (Causer, GetOwner ());
+   return true;
+}
+
+bool URStatusMgrComponent::StopActiveEffect (ARActiveStatusEffect* Effect)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
+      if (ActiveEffects[iEffect] == Effect) {
+         ActiveEffects[iEffect]->Destroy ();
+         ActiveEffects.RemoveAt (iEffect);
+         return true;
+      }
+   }
+   return false;
+}
+
+TArray<TObjectPtr<ARActiveStatusEffect> > URStatusMgrComponent::GetActiveEffects () const
+{
+   return ActiveEffects;
+}
+
 //=============================================================================
 //                 Resistance Funcs
 //=============================================================================
@@ -641,5 +680,28 @@ void URStatusMgrComponent::OnLoad ()
    FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
    FromBinary.Seek (0);
    FromBinary << Health << Mana << Stamina;
+}
+
+
+//=============================================================================
+//                 TUIL
+//=============================================================================
+URStatusMgrComponent* URStatusMgrComponent::Get (AActor* Target)
+{
+   if (Target == nullptr) {
+      R_LOG_STATIC ("Invalid Target object");
+      return false;
+   }
+   URStatusMgrComponent* StatusMgr = nullptr;
+   {
+      TArray<URStatusMgrComponent*> StatusMgrList;
+      Target->GetComponents (StatusMgrList);
+      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
+   }
+   if (!StatusMgr) {
+      R_LOG_STATIC_PRINTF ("Could not find StatusMgrComponent in [%s]", *Target->GetName ());
+      return false;
+   }
+   return StatusMgr;
 }
 

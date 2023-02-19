@@ -56,19 +56,13 @@ void ARActiveStatusEffect::Ended ()
 //                 Effect Library
 //=============================================================================
 
-
 bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects)
 {
    // --- Get Status Mgr
    if (Target == nullptr)        return false;
    if (!Target->HasAuthority ()) return false;
 
-   URStatusMgrComponent* StatusMgr = nullptr;
-   {
-      TArray<URStatusMgrComponent*> StatusMgrList;
-      Target->GetComponents (StatusMgrList);
-      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
-   }
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
    if (!StatusMgr) return false;
 
    // --- Action
@@ -81,12 +75,7 @@ bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FS
    if (Target == nullptr)        return false;
    if (!Target->HasAuthority ()) return false;
 
-   URStatusMgrComponent* StatusMgr = nullptr;
-   {
-      TArray<URStatusMgrComponent*> StatusMgrList;
-      Target->GetComponents (StatusMgrList);
-      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
-   }
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
    if (!StatusMgr) return false;
 
    // --- Action
@@ -101,12 +90,7 @@ bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor
    if (Effect == nullptr)        return false;
    if (!Causer->HasAuthority ()) return false;
 
-   URStatusMgrComponent* StatusMgr = nullptr;
-   {
-      TArray<URStatusMgrComponent*> StatusMgrList;
-      Target->GetComponents (StatusMgrList);
-      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
-   }
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
    if (!StatusMgr) return false;
 
    // --- Action

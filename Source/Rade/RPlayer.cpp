@@ -256,7 +256,7 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 {
    Super::FaceRotation (NewControlRotation,DeltaTime);
    if (FirstPersonCameraComponent) {
-      FRotator rot = FirstPersonCameraComponent->GetComponentRotation();
+      FRotator rot = FirstPersonCameraComponent->GetComponentRotation ();
       rot.Pitch = NewControlRotation.Pitch;
       FirstPersonCameraComponent->SetWorldRotation (rot);
    }

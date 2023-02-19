@@ -48,9 +48,6 @@ protected:
       FRuntimeFloatCurve WeightToMoveSpeed;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      URStatusMgrComponent* GetStatusMgr () const;
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
       UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> Type) const;
 public:
 

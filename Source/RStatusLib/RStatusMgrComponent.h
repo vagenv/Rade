@@ -260,5 +260,13 @@ protected:
       void OnSave ();
    UFUNCTION()
       void OnLoad ();
+
+
+   //==========================================================================
+   //                    UTIL
+   //==========================================================================
+
+public:
+   static URStatusMgrComponent* Get (AActor* Target);
 };
 

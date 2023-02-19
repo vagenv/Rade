@@ -39,10 +39,7 @@ public:
       void Use ();
       virtual void Use_Implementation ();
 
-   protected:
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Jetpack")
-      URStatusMgrComponent* GetStatusMgr () const;
+protected:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Jetpack")
       UCharacterMovementComponent* GetMovementComponent () const;

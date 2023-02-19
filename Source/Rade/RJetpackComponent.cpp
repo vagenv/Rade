@@ -33,7 +33,7 @@ bool URJetpackComponent::CanUse () const
    if (!MovementComponent) return false;
    if (MovementComponent->IsMovingOnGround ()) return false;
 
-   URStatusMgrComponent* StatusMgr = GetStatusMgr ();
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
    if (!StatusMgr) return false;
 
    FRStatusValue Mana = StatusMgr->GetMana ();
@@ -46,7 +46,7 @@ void URJetpackComponent::Use_Implementation ()
 
    UCharacterMovementComponent* MovementComponent = GetMovementComponent ();
    if (!MovementComponent) return;
-   URStatusMgrComponent* StatusMgr = GetStatusMgr ();
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
    if (!StatusMgr) return;
 
    const FRichCurve* AgiToJumpPowerData = AgiToJumpPower.GetRichCurveConst ();
@@ -63,16 +63,6 @@ void URJetpackComponent::Use_Implementation ()
    StatusMgr->UseMana (UseCost);
 }
 
-URStatusMgrComponent* URJetpackComponent::GetStatusMgr () const
-{
-   URStatusMgrComponent* StatusMgr = nullptr;
-   {
-      TArray<URStatusMgrComponent*> StatusMgrList;
-      GetOwner ()->GetComponents (StatusMgrList);
-      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
-   }
-   return StatusMgr;
-}
 
 UCharacterMovementComponent* URJetpackComponent::GetMovementComponent () const
 {
