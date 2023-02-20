@@ -458,6 +458,7 @@ TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffectsWith
 bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ensure (!Tag.IsEmpty ())) return false;
    // Clean
    RmPassiveEffects (Tag);
 
@@ -476,6 +477,7 @@ bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<F
 bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ensure (!Tag.IsEmpty ())) return false;
    TArray<int32> ToRemove;
    for (int32 iEffect = 0; iEffect < PassiveEffects.Num (); iEffect++) {
       const FRPassiveStatusEffectWithTag& ItEffect = PassiveEffects[iEffect];
@@ -500,6 +502,7 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 bool URStatusMgrComponent::AddActiveEffect (ARActiveStatusEffect* Effect)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ensure (Effect)) return false;
    for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
       if (ActiveEffects[iEffect] == Effect) {
          return false;
@@ -513,6 +516,7 @@ bool URStatusMgrComponent::AddActiveEffect (ARActiveStatusEffect* Effect)
 bool URStatusMgrComponent::RmActiveEffect (ARActiveStatusEffect* Effect)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ensure (Effect)) return false;
    for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
       if (ActiveEffects[iEffect] == Effect) {
          ActiveEffects.RemoveAt (iEffect);
@@ -557,6 +561,7 @@ TArray<FRResistanceStatWithTag> URStatusMgrComponent::GetResistanceWithTag () co
 
 float URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
 {
+   if (!ensure (DamageType)) return 0;
    float Result = 0;
    for (const FRResistanceStatWithTag& ItResistance : Resistence) {
       if (DamageType == ItResistance.Value.DamageType) {
@@ -569,6 +574,9 @@ float URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const Dam
 void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN;
+   if (!ensure (!Tag.IsEmpty ()))  return;
+   if (!ensure (AddValues.Num ())) return;
+
    // Clean
    RmResistance (Tag);
 
@@ -585,6 +593,7 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRRes
 void URStatusMgrComponent::RmResistance (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN;
+   if (!ensure (!Tag.IsEmpty ())) return;
 
    TArray<int32> ToRemove;
    for (int32 iResistance = 0; iResistance < Resistence.Num (); iResistance++) {
@@ -684,20 +693,14 @@ void URStatusMgrComponent::OnLoad ()
 //=============================================================================
 URStatusMgrComponent* URStatusMgrComponent::Get (AActor* Target)
 {
-   if (Target == nullptr) {
-      R_LOG_STATIC ("Invalid Target object");
-      return false;
-   }
+   if (!ensure (Target)) return nullptr;
    URStatusMgrComponent* StatusMgr = nullptr;
    {
       TArray<URStatusMgrComponent*> StatusMgrList;
       Target->GetComponents (StatusMgrList);
       if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
    }
-   if (!StatusMgr) {
-      R_LOG_STATIC_PRINTF ("Could not find StatusMgrComponent in [%s]", *Target->GetName ());
-      return false;
-   }
+   if (!ensure (StatusMgr)) return nullptr;
    return StatusMgr;
 }
 

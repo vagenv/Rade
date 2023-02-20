@@ -28,36 +28,15 @@ ARActiveStatusEffect::ARActiveStatusEffect ()
 
 bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
 {
-   if (isRunning) {
-      R_LOG ("Already running")
-      return false;
-   }
-
-   // -- Check values
-   if (Causer_ == nullptr) {
-      R_LOG ("Invalid Causer");
-      return false;
-   }
-   if (Target_ == nullptr)  {
-      R_LOG ("Invalid Target");
-      return false;
-   }
-   if (!Target_->HasAuthority ())  {
-      R_LOG ("Has no authority");
-      return false;
-   }
-
+   // --- Check Values
+   if (!ensure (Causer_))                  return false;
+   if (!ensure (Target_))                  return false;
+   if (!ensure (!isRunning))               return false;
+   if (!ensure (Causer_->HasAuthority ())) return false;
    UWorld* World = GetWorld ();
-   if (World == nullptr)  {
-      R_LOG ("No authority");
-      return false;
-   }
-
+   if (!ensure (World))                    return false;
    URStatusMgrComponent* StatusMgr_ = URStatusMgrComponent::Get (Target_);
-   if (StatusMgr_ == nullptr)   {
-      R_LOG ("No Status mgr");
-      return false;
-   }
+   if (!ensure (StatusMgr_))               return false;
 
    // --- Set variables
    isRunning = true;
@@ -118,12 +97,12 @@ double ARActiveStatusEffect::GetDurationLeft () const
 
 bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects)
 {
-   // --- Get Status Mgr
-   if (Target == nullptr)        return false;
-   if (!Target->HasAuthority ()) return false;
-
+   // --- Check Values
+   if (!ensure (Target))                  return false;
+   if (!ensure (Target->HasAuthority ())) return false;
+   if (!ensure (!Tag.IsEmpty ()))         return false;
    URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
-   if (!StatusMgr) return false;
+   if (!ensure (StatusMgr))               return false;
 
    // --- Action
    return StatusMgr->SetPassiveEffects (Tag, Effects);
@@ -131,12 +110,12 @@ bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const F
 
 bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FString &Tag)
 {
-   // --- Get Status Mgr
-   if (Target == nullptr)        return false;
-   if (!Target->HasAuthority ()) return false;
-
+   // --- Check Values
+   if (!ensure (Target))                  return false;
+   if (!ensure (Target->HasAuthority ())) return false;
+   if (!ensure (!Tag.IsEmpty ()))         return false;
    URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
-   if (!StatusMgr) return false;
+   if (!ensure (StatusMgr))               return false;
 
    // --- Action
    return StatusMgr->RmPassiveEffects (Tag);
@@ -144,17 +123,19 @@ bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FS
 
 bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<ARActiveStatusEffect> Effect)
 {
-   // --- Get Status Mgr
-   if (Causer == nullptr)        return false;
-   if (Target == nullptr)        return false;
-   if (Effect == nullptr)        return false;
-   if (!Causer->HasAuthority ()) return false;
+   // --- Check Values
+   if (!ensure (Causer))                  return false;
+   if (!ensure (Causer->HasAuthority ())) return false;
+   if (!ensure (Target))                  return false;
    UWorld* World = Target->GetWorld ();
-   if (!World) return false;
+   if (!World)                            return false;
+   if (!ensure (Effect))                  return false;
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
+   if (!ensure (StatusMgr))               return false;
 
    // --- Action
    ARActiveStatusEffect* NewEffect = World->SpawnActor<ARActiveStatusEffect>(Effect);
-   if (!NewEffect) return false;
+   if (!ensure (NewEffect)) return false;
    return NewEffect->Apply (Causer, Target);
 }
 
