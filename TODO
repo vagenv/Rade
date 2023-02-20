@@ -20,16 +20,7 @@ Roll/Phase
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
 
-Cumulative Effects vs Single Instance
-
 MoveSpeed and Critical Substat used
-
-===========================
-   Inventory
-===========================
-
-Item Subclass cast/function call override.
-Cast error.
 
 =================================================
    Save/Load Simplification
@@ -108,8 +99,6 @@ UI
 
 Death/Revive
 
-
-
 =================================================
    Session History
 =================================================
@@ -172,7 +161,7 @@ Partial body blend.
 Smooth animations
 
 Animations:
-- Look around
+- Look around (Camera rotation)
 - Run/Sprint
 - Ragdoll death
 - Melee fight
@@ -286,8 +275,11 @@ Craft in game menu
 =================================================
 
 Smoother Turns
+
 Behind back right
-Focus actor
+
+Focus on attackable targets
+
 Restore to move direction after a few seconds
 
 =================================================
