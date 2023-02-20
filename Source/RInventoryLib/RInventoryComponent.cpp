@@ -37,13 +37,9 @@ void URInventoryComponent::BeginPlay()
 
       // Save/Load inventory
       if (bSaveLoad) {
-         FRSaveEvent SavedDelegate;
-         SavedDelegate.AddDynamic (this, &URInventoryComponent::OnSave);
-         URSaveMgr::OnSave (world, SavedDelegate);
-
-         FRSaveEvent LoadedDelegate;
-         LoadedDelegate.AddDynamic (this, &URInventoryComponent::OnLoad);
-         URSaveMgr::OnLoad (world, LoadedDelegate);
+         // Careful with collision of 'UniqueSaveId'
+         FString UniqueSaveId = GetOwner ()->GetName () + "_Inventory";
+         Init_Save (GetWorld (), UniqueSaveId);
       }
 
       for (const FRItemDataHandle &ItItem : DefaultItems) {
@@ -579,49 +575,20 @@ void URInventoryComponent::CheckClosestPickup ()
 //                 Save / Load
 //=============================================================================
 
-void URInventoryComponent::OnSave ()
+void URInventoryComponent::OnSave (FBufferArchive &SaveData)
 {
-   R_RETURN_IF_NOT_ADMIN;
-
-   // --- Save player Inventory
-
    // Convert ItemData to array to JSON strings
    TArray<FString> ItemDataRaw;
    for (FRItemData ItItem : Items) {
       ItemDataRaw.Add (ItItem.GetJSON ());
    }
-
-   // Convert array into buffer
-   FBufferArchive ToBinary;
-   ToBinary << ItemDataRaw;
-
-   FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";
-
-   // Set binary data to save file
-   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
-      R_LOG_PRINTF ("Failed to save [%s] Inventory.", *SaveUniqueId);
-   }
+   SaveData << ItemDataRaw;
 }
 
-void URInventoryComponent::OnLoad ()
+void URInventoryComponent::OnLoad (FMemoryReader &LoadData)
 {
-   R_RETURN_IF_NOT_ADMIN;
-
-   // --- Load player Inventory
-   FString SaveUniqueId = GetOwner ()->GetName () + "_Inventory";
-
-   // Get binary data from save file
-   TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Inventory.", *SaveUniqueId);
-      return;
-   }
-
-   // Convert Binary to array of JSON strings
    TArray<FString> ItemDataRaw;
-   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   FromBinary.Seek(0);
-   FromBinary << ItemDataRaw;
+   LoadData << ItemDataRaw;
 
    // Convert JSON strings to ItemData
    TArray<FRItemData> LoadedItems;

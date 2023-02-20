@@ -6,6 +6,9 @@
 
 void IRSaveInterface::Init_Save (UWorld *World_, const FString &SaveId)
 {
+   if (!ensure (World_))             return;
+   if (!ensure (!SaveId.IsEmpty ())) return;
+
    ObjectSaveId = SaveId;
    World = World_;
 

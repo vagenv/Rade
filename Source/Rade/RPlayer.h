@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RCharacter.h"
+#include "RSaveLib/RSaveInterface.h"
 #include "InputActionValue.h"
 #include "RPlayer.generated.h"
 
@@ -35,7 +36,7 @@ enum class ECameraState : uint8
 //                          Main Player Class
 //=============================================================================
 UCLASS(config = Game)
-class RADE_API ARPlayer : public ARCharacter
+class RADE_API ARPlayer : public ARCharacter, public IRSaveInterface
 {
    GENERATED_BODY()
 
@@ -181,11 +182,9 @@ public:
    void Input_SaveGame ();
    void Input_LoadGame ();
 
-   // Callbacks, called by USaveMgr
-   UFUNCTION ()
-      void OnSave ();
-   UFUNCTION ()
-      void OnLoad ();
+protected:
+   virtual void OnSave (FBufferArchive &SaveData) override;
+   virtual void OnLoad (FMemoryReader &LoadData) override;
 
 public:
 

@@ -5,6 +5,7 @@
 #include "RStatusTypes.h"
 #include "RStatusEffect.h"
 #include "RDamageType.h"
+#include "RSaveLib/RSaveInterface.h"
 #include "RStatusMgrComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
@@ -14,7 +15,7 @@ class URInventoryComponent;
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType)
-class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent
+class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent, public IRSaveInterface
 {
    GENERATED_BODY()
 public:
@@ -265,16 +266,12 @@ public:
    //==========================================================================
 
    // Status Saved / Loaded between sessions.
-   // Careful with collision of 'SaveUniqueId'
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       bool bSaveLoad = false;
 
 protected:
-   // Rade Save events
-   UFUNCTION()
-      void OnSave ();
-   UFUNCTION()
-      void OnLoad ();
+   virtual void OnSave (FBufferArchive &SaveData) override;
+   virtual void OnLoad (FMemoryReader &LoadData) override;
 
 
    //==========================================================================
