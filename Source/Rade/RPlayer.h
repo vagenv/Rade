@@ -12,10 +12,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInputEvent);
 // Directional input event
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInputEventFloat, float, scrollValue);
 
-
 class APlayerController;
 class URJetpackComponent;
-// class URAnimInstance;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -52,7 +50,6 @@ public:
    virtual void BeginPlay() override;
    virtual void EndPlay  (const EEndPlayReason::Type EndPlayReason) override;
    virtual void Tick     (float DeltaTime) override;
-
 
    //==========================================================================
    //                   Components and Important References
@@ -164,6 +161,17 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnAltAction;
+
+
+   //==========================================================================
+   //                           State Checking
+   //==========================================================================
+
+   //UPROPERTY(BlueprintCallable, Category = "Rade|Action")
+      bool CanJump () const;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Camera")
+      float JumpCost = 30;
 
    //==========================================================================
    //                         Save/Load

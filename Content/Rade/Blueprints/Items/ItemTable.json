@@ -32,7 +32,7 @@
 		"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-right.arrow-badge-right",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 20,
+		"Weight": 5,
 		"Price": 0,
 		"PickupMesh": "None",
 		"Pickup": "None",

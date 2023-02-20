@@ -2,8 +2,8 @@
 
 #include "RItemAction.h"
 
-void URItemAction::Used (URInventoryComponent *Inventory, FRItemData ItemData, int32 ItemIdx)
+void URItemAction::Used (AActor* Owner, URInventoryComponent *Inventory, const FRActionItemData &ItemData)
 {
-   BP_Used (Inventory, ItemData, ItemIdx);
+   BP_Used (Owner, Inventory, ItemData);
 }
 

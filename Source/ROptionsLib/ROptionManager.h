@@ -4,6 +4,10 @@
 
 #include "ROptionManager.generated.h"
 
+// ============================================================================
+//                   Screen Resolution
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct ROPTIONSLIB_API FRScreenResolution
 {
@@ -17,6 +21,10 @@ struct ROPTIONSLIB_API FRScreenResolution
 
    bool operator == (const FRScreenResolution &res) const noexcept;
 };
+
+// ============================================================================
+//                   Video Quality
+// ============================================================================
 
 USTRUCT(BlueprintType)
 struct ROPTIONSLIB_API FRVideoQualitySetting
@@ -69,6 +77,10 @@ struct ROPTIONSLIB_API FRVideoQualitySetting
    bool operator == (const FRVideoQualitySetting &res) const noexcept;
 };
 
+// ============================================================================
+//                   Util Function Library
+// ============================================================================
+
 UCLASS()
 class ROPTIONSLIB_API UROptionUtilFunc : public UBlueprintFunctionLibrary
 {
@@ -87,6 +99,11 @@ public:
    UFUNCTION(BlueprintPure, Category = "Rade|Settings", meta=(DisplayName="Equal (FRVideoQualitySetting)", CompactNodeTitle="=="))
 	   static bool FRVideoQualitySetting_EqualEqual (const FRVideoQualitySetting& A, const FRVideoQualitySetting& B);
 };
+
+// ============================================================================
+//                   Option Manager
+// ============================================================================
+
 
 // Manager for Audio/Video/Input
 UCLASS()

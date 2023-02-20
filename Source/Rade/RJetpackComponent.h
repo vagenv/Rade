@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "RJetpackComponent.generated.h"
 
+class URStatusMgrComponent;
 class UCharacterMovementComponent;
 
 UCLASS(BlueprintType)
@@ -20,32 +21,15 @@ public:
    // Base events
    URJetpackComponent ();
    virtual void BeginPlay () override;
-   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-   // Owners Movement Component
-protected:
-   UCharacterMovementComponent *MovementComponent = nullptr;
-public:
+   UFUNCTION()
+      virtual bool CanUse () const;
 
-   //==========================================================================
-   //                         Params
-   //==========================================================================
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Jetpack")
+      float UseCost = 30;
 
-   // Current Charge Percent
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float CurrentChargePercent = 50;
-
-   // Minimal Usable Charge
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float MinUseablePercent = 40;
-
-   // Restore Value
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float RestorePower = 20;
-
-   // Push Multiplier
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jetpack")
-      float PushPower = 7;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Jetpack")
+      FRuntimeFloatCurve AgiToJumpPower;
 
    //==========================================================================
    //                         Calls
@@ -53,9 +37,11 @@ public:
 
    UFUNCTION(Reliable, Server)
       void Use ();
-      void Use_Implementation ();
+      virtual void Use_Implementation ();
 
-   protected:
-      void FillUp (float DeltaTime);
+protected:
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Jetpack")
+      UCharacterMovementComponent* GetMovementComponent () const;
 };
 

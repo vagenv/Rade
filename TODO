@@ -1,57 +1,39 @@
 ===========================
-   Status
+   Other
 ===========================
 
-Strength     = Damage
-Dexterity    = Evasion;
-Consitution  = Max Health;
-Intelligence = Max Mana;
-Wisdom       = Mana Regen;
-Charisma     = Prices;
+Bunny Hop Animation
 
-Damage Evasion
+Enemy Dies (Bunny Explosion)
+- Puff
+- Bunny Left
+- Hops/Away
 
-Effect containers (List/Array) [Where?]
+Create Folder with Balance curves
+Move All FRuntimeFloatCurve to blueprint subclass
 
-RStatusEffect:
-- Start
-- Tick
-- End
-- Duration
-- Event to apply action. (Causer + Victim)
+Roll/Phase
+- Animation
+- Cost
+- Invincible Frame
 
-Effects on:
-- Health
-- Stamina
-- Mana
-- MoveSpeed
-- Evasion
-- Jump Strength
-- AttackSpeed
-- AttackPower
+Stamina/Mana/Health
+- If used, stop restoring, and resume after N seconds.
 
-===========================
-   Stamina
-===========================
+MoveSpeed and Critical Substat used
 
-Stamina
-- Roll and jump use stamina
-- Stop Restoring until a few seconds later.
+=================================================
+   Save/Load Simplification
+=================================================
+
+Redesign as a singleton?
+Save/Load as a Interface class with blueprint event?
+
+EquipmentMgr
+StatusMgr
 
 ===========================
-   TakeDamage
-===========================
-
-TakeDamage (based on what body part was hit) (bone name?):
-- Headshot
-- Protected by armor
-
-RDamageType
-- Status Effect List
-- Random chance to apply RStatusEffect
-
-===========================
-   Abilities / Skills / Magic
+   Abilities / Skills / Magic / Talents
 ===========================
 
 AbilityManager or add to StatusMgr?
@@ -72,19 +54,16 @@ UI
 - Requirnments
 
 ===========================
-   Consuable with Effects
+   Weapons/TakeDamage/Death/Revive
 ===========================
 
-ConsumableItem : ActionItem
-- Duration
-- ItemData.Action will apply the effect and manage video/audio effects
-- Effect?
+List of Struct:
+- Chances
+- Active status effect
 
-===========================
-   Weapons
-===========================
-
-===========================
+TakeDamage (based on what body part was hit) (bone name?):
+- Headshot
+- Protected by armor
 
 ItemData uniqueID?
 - Differentiate Dublicates
@@ -111,18 +90,14 @@ Weapons (with damage type)
 - Magic Staff/Wand
 - Shield
 - Attack combo?
+- Stat Scaling
 
 Damage Dummy
 
 UI
 - Damage
 
-=================================================
-   Save/Load Simplification
-=================================================
-
-Redesign as a singleton?
-Save/Load as a Interface class with blueprint event?
+Death/Revive
 
 =================================================
    Session History
@@ -137,9 +112,22 @@ DamageMgrComponent to GameMode
    Network
 =================================================
 
+=======
+Replication
+=======
+Smart Replication of FRStatusValue
+- Once every few seconds
+- Local updates and adjusts to new values on rep
+
+=======
+Spawn Menu
+=======
 Select spawn point
 See status. Smooth start
 
+=======
+Session
+=======
 Network Session
 - Deep dive / Analysis / Simplification
 - Persistent session widget
@@ -173,7 +161,7 @@ Partial body blend.
 Smooth animations
 
 Animations:
-- Look around
+- Look around (Camera rotation)
 - Run/Sprint
 - Ragdoll death
 - Melee fight
@@ -215,13 +203,59 @@ Animations:
    UI (Nice to have)
 =================================================
 
+- Mono Font
 - Audio channels
 - Persistent Audio Settings
 - Input
 
+- Smooth bars movement.
+
+===========================
+   Status (Nice to have)
+===========================
+
+=======
+Resistance from stats?
+=======
+
+Physical(Str)
+-Blunt
+-Pierce
+-Slash
+
+??? (Agi)
+-Bleed
+-Poison
+-Rot
+
+??? (Int)
+-Magic
+-Lightining
+-Fire
+
+???
+-Light
+-Dark
+-Heal
+
 =================================================
    Inventory (Nice to have)
 =================================================
+
+Random Item data.
+- Price/Rarity/Effect/Color
+
+Store
+- Sold Item List? Re-buy?
+
+=======
+   UI
+=======
+
+Select slot
+- List of Items for it
+
+Items by groups
 
 Box UI
 - With PopupMenu for details
@@ -232,24 +266,20 @@ Item UI
 
 Gold as separate inventory value?
 
-Store
-- Sold Item List? Re-buy?
-- Sell/Buy percent overhead?
-
 Craft in game menu
 - Personal list of crafting
 
-
-Random Item data.
-- Price/Rarity/Effect/Color
 
 =================================================
    Camera
 =================================================
 
 Smoother Turns
+
 Behind back right
-Focus actor
+
+Focus on attackable targets
+
 Restore to move direction after a few seconds
 
 =================================================
@@ -260,6 +290,9 @@ Blueprint Data validation
 
 Gameplay Ability System
 
+Determine bottlenecks. (240+ FPS)
+- CPU
+- GPU
 
 Action Popup UI
 - Short Press/Long Press
@@ -305,14 +338,21 @@ Nanite and lumen
    Game Design
 =================================================
 
-Style:
+=======
+Style
+=======
 - 3rd/1st Person Shooter/Slasher
 
-Movement:
+=======
+Movement
+=======
 - Jump
 - Roll + Sprint
+DarkSouls vs Sekiro vs DMC
 
+=======
 Attack types
+=======
 - Melee / Ranged
 - Guns
 - Spells. Instant + Casting
@@ -320,17 +360,49 @@ Attack types
 - Turrents / Towers
 - Ally NPCs
 
+=======
 Battles
+=======
 - Many enemies
 - Spawn in waves
 - Defend checkpoint
 - Buy upgrades
 - Change terrain?
 - Hire more NPCs and upgrade them.
+- Select team
 
-
+=======
 Random Content
+=======
 - Item quality affects strength of effects?
 - Equipment stats/effect
 - Weapon stats/effects
+- Level?
 
+Attack counter
+Roll Invincible
+
+=======
+Classes
+=======
+
+Class tree reqirnment?
+- Stats?
+- Levels?
+
+Warrior (StrongBoi)
+- Berserk (AngryBoi/BonkBoi) (big weapon)
+- BladeMaster (FightBoi) (Dual Weapons)
+- Guardian/Tank (ThiccBoi) (Shield, Pusher, Absorb dmg then return)
+
+Rougue (FastBoi)
+- Assassin (KnifeBoi) (daggers)
+- Ranger (FarBoi) (bows, crossbows, slings)
+- Gunslinger (GunBoi) (Pistols, Shotguns, Rockets)
+
+Mage (SmartBoi)
+- Wizard (MagicBoi) (Spells)
+- Warlock (PainBoi) (Curses)
+- Summoner (PartyBoi/ClubBoi) (Skeletons / Ghosts)
+
+=======

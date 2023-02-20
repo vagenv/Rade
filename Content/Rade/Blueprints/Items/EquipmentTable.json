@@ -1,32 +1,22 @@
 [
 	{
-		"Name": "Hat",
+		"Name": "HatOfStrength",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
-		"Resistence": [
+		"Resistence": [],
+		"PassiveEffects": [
 			{
-				"DamageType": "/Script/CoreUObject.Class'/Script/RCharacterLib.RDamageType_Fall'",
-				"Resistance": 5000
+				"Scale": "FLAT",
+				"Target": "STR",
+				"Value": 20
 			}
 		],
-		"Stats":
-		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
-		},
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -46,24 +36,34 @@
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
-		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 50,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
-		},
+		"Resistence": [
+			{
+				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Pierce.RDamageType_Pierce_C'",
+				"Value": 30
+			}
+		],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "AttackPower",
+				"Value": 40
+			},
+			{
+				"Scale": "None",
+				"Target": "None",
+				"Value": 0
+			},
+			{
+				"Scale": "None",
+				"Target": "None",
+				"Value": 0
+			}
+		],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -84,23 +84,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
-		},
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -121,23 +110,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 100,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
-		},
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -158,23 +136,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Dexterity": 100,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
-		},
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -195,23 +162,12 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Stats":
-		{
-			"Strength": 0,
-			"Dexterity": 100,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
-		},
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
-			"Strength": 0,
-			"Dexterity": 0,
-			"Consitution": 0,
-			"Intelligence": 0,
-			"Wisdom": 0,
-			"Charisma": 0
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
@@ -222,6 +178,186 @@
 		"MaxCount": 1,
 		"Weight": 2,
 		"Price": 12,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfAgility",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [
+			{
+				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
+				"Value": 20
+			}
+		],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "AGI",
+				"Value": 20
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfIntelligence",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "INT",
+				"Value": 20
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfBadBoi",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "STR",
+				"Value": -10
+			},
+			{
+				"Scale": "FLAT",
+				"Target": "AGI",
+				"Value": -10
+			},
+			{
+				"Scale": "FLAT",
+				"Target": "INT",
+				"Value": -10
+			},
+			{
+				"Scale": "PERCENT",
+				"Target": "HealthRegen",
+				"Value": 500
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfRegen",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "HealthRegen",
+				"Value": 5
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfEvasion",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "Evasion",
+				"Value": 15
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 0.5,
+		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
 		"JsonData": ""

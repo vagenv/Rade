@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RItemTypes.h"
+#include "RItemAction.h"
 #include "RUtilLib/RLog.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
@@ -129,6 +130,18 @@ bool FRActionItemData::WriteJSON ()
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
    return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0, true);
+}
+
+bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
+{
+   // valid archetype
+   if (!Action) return false;
+
+   URItemAction *ItemBP = Action->GetDefaultObject<URItemAction>();
+   if (!ensure (ItemBP)) return false;
+   ItemBP->Used (Owner, Inventory, *this);
+
+   return true;
 }
 
 // ============================================================================

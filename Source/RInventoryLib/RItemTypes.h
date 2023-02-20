@@ -9,6 +9,7 @@
 //                   Item description
 //=============================================================================
 
+class  AActor;
 class  ARItemPickup;
 class  URItemAction;
 class  URInventoryComponent;
@@ -178,6 +179,8 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    virtual bool WriteJSON () override;
 
    static bool Cast (const FRItemData &src, FRActionItemData &dst);
+
+   virtual bool Used (AActor* Owner, URInventoryComponent *Inventory);
 };
 
 

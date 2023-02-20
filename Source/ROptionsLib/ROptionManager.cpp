@@ -78,10 +78,10 @@ bool UROptionManager::GetSupportedScreenResolutions (TArray<FRScreenResolution>&
 {
    FScreenResolutionArray ResolutionsArray;
    if (RHIGetAvailableResolutions (ResolutionsArray, true)){
-      for (const FScreenResolutionRHI& Resolution : ResolutionsArray){
+      for (const FScreenResolutionRHI& ItResolution : ResolutionsArray){
          FRScreenResolution res;
-         res.Height = Resolution.Height;
-         res.Width  = Resolution.Width;
+         res.Height = ItResolution.Height;
+         res.Width  = ItResolution.Width;
          Resolutions.AddUnique (res);
       }
       return true;
@@ -215,10 +215,10 @@ bool UROptionManager::GetAllActionInput (TArray<FText>&InputActions, TArray<FTex
    InputActions.Empty();
    InputKeys.Empty();
 
-   const TArray <FInputActionKeyMapping> &mapping = settings->GetActionMappings();
-   for (auto map : mapping) {
-      InputActions.Add (FText::FromName(map.ActionName));
-      InputKeys.Add (map.Key.GetDisplayName());
+   const auto &Mappings = settings->GetActionMappings();
+   for (const auto &ItMap : Mappings) {
+      InputActions.Add (FText::FromName (ItMap.ActionName));
+      InputKeys.Add (ItMap.Key.GetDisplayName ());
    }
    return true;
 }
@@ -227,10 +227,11 @@ bool UROptionManager::GetActionInput (const FName& ActionName, FText& ActionKey)
 {
    UInputSettings* settings = UInputSettings::GetInputSettings();
    if (!ensure (settings)) return false;
-   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings();
-   for (auto map : mapping) {
-      if (map.ActionName == ActionName) {
-         ActionKey = map.Key.GetDisplayName ();
+
+   const auto &Mappings = settings->GetActionMappings();
+   for (const auto &ItMap : Mappings) {
+      if (ItMap.ActionName == ActionName) {
+         ActionKey = ItMap.Key.GetDisplayName ();
          return true;
       }
    }
@@ -241,18 +242,18 @@ bool UROptionManager::SetActionInput (const FName& ActionName, const FText& Acti
 {
    UInputSettings* settings = UInputSettings::GetInputSettings();
    if (!ensure (settings)) return false;
-   const TArray <FInputActionKeyMapping>& mapping = settings->GetActionMappings ();
+   const auto &Mappings = settings->GetActionMappings();
 
-   for (auto &map : mapping) {
-      if (map.ActionName == ActionName) {
-         FInputActionKeyMapping newAction = map;
+   for (const auto &ItMap : Mappings) {
+      if (ItMap.ActionName == ActionName) {
+         FInputActionKeyMapping newAction = ItMap;
          newAction.Key = FKey (*ActionKey.ToString());
-         settings->RemoveActionMapping (map);
+         settings->RemoveActionMapping (ItMap);
          settings->AddActionMapping (newAction);
       }
    }
 
-   settings->SaveKeyMappings();
+   settings->SaveKeyMappings ();
    for (TObjectIterator<UPlayerInput> It; It; ++It) {
       It->ForceRebuildingKeyMaps (true);
       It->TryUpdateDefaultConfigFile ();

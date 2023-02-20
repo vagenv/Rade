@@ -5,7 +5,6 @@
 #include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 
-#include "RItemAction.h"
 #include "RItemPickup.h"
 #include "Net/UnrealNetwork.h"
 
@@ -34,9 +33,7 @@ void URInventoryComponent::BeginPlay()
    const UWorld *world = GetWorld ();
    if (!ensure (world)) return;
 
-
    if (R_IS_NET_ADMIN) {
-
 
       // Save/Load inventory
       if (bSaveLoad) {
@@ -49,10 +46,10 @@ void URInventoryComponent::BeginPlay()
          URSaveMgr::OnLoad (world, LoadedDelegate);
       }
 
-      for (const auto &itItem : DefaultItems) {
-         if (!AddItem_Arch (itItem))
+      for (const FRItemDataHandle &ItItem : DefaultItems) {
+         if (!AddItem_Arch (ItItem))
             R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
-               *itItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
+               *ItItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
       }
    }
 
@@ -81,7 +78,6 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 
 void URInventoryComponent::OnRep_Items ()
 {
-   CalcWeight ();
    OnInventoryUpdated.Broadcast ();
 }
 
@@ -92,50 +88,50 @@ void URInventoryComponent::OnRep_Items ()
 bool URInventoryComponent::HasItem_Arch (const FRItemDataHandle &CheckItem) const
 {
    // --- Create required item info
-   FRItemData requireItem;
-   if (!CheckItem.ToItem (requireItem)) return false;
-   return HasItem_Data (requireItem);
+   FRItemData RequireItem;
+   if (!CheckItem.ToItem (RequireItem)) return false;
+   return HasItem_Data (RequireItem);
 }
 
-bool URInventoryComponent::HasItem_Data (FRItemData requireItem) const
+bool URInventoryComponent::HasItem_Data (FRItemData RequireItem) const
 {
    // --- Iterate over inventory items
-   for (const FRItemData &itItem : Items) {
-      if (itItem.Name != requireItem.Name) continue;
-      requireItem.Count -= itItem.Count;
-      if (requireItem.Count <= 0) break;
+   for (const FRItemData &ItItem : Items) {
+      if (ItItem.Name != RequireItem.Name) continue;
+      RequireItem.Count -= ItItem.Count;
+      if (RequireItem.Count <= 0) break;
    }
-   return (requireItem.Count <= 0);
+   return (RequireItem.Count <= 0);
 }
 
 
 bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems) const
 {
    // --- Create list of required item infos
-   TArray<FRItemData> requiredItems;
-   for (const FRItemDataHandle &itItem : CheckItems) {
-      FRItemData requireItem;
-      if (!itItem.ToItem (requireItem)) return false;
-      requiredItems.Add (requireItem);
+   TArray<FRItemData> RequiredItems;
+   for (const FRItemDataHandle &ItItem : CheckItems) {
+      FRItemData RequireItem;
+      if (!ItItem.ToItem (RequireItem)) return false;
+      RequiredItems.Add (RequireItem);
    }
 
    // --- Iterate over inventory items
-   for (const FRItemData &itItem : Items) {
+   for (const FRItemData &ItItem : Items) {
 
       // --- Iterate over required items
-      for (int i = 0; i < requiredItems.Num (); i++) {
-         FRItemData &requireItem = requiredItems[i];
-         if (itItem.Name != requireItem.Name) continue;
+      for (int iRequireItem = 0; iRequireItem < RequiredItems.Num (); iRequireItem++) {
+         FRItemData &RequireItem = RequiredItems[iRequireItem];
+         if (ItItem.Name != RequireItem.Name) continue;
 
-         requireItem.Count -= itItem.Count;
-         if (requireItem.Count <= 0) {
-            requiredItems.RemoveAt (i);
+         RequireItem.Count -= ItItem.Count;
+         if (RequireItem.Count <= 0) {
+            RequiredItems.RemoveAt (iRequireItem);
             break;
          };
       }
    }
 
-   return requiredItems.Num () == 0;
+   return RequiredItems.Num () == 0;
 }
 
 int URInventoryComponent::GetCountItem (const FRItemData &CheckItem) const
@@ -214,8 +210,8 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 
    // --- Check if overflow. For default items.
    if (NewItem.Count > NewItem.MaxCount) {
-      int n = NewItem.Count / NewItem.MaxCount;
-      for (int i = 0; i < n; i++) {
+      int nNewInstance = NewItem.Count / NewItem.MaxCount;
+      for (int iNewInstance = 0; iNewInstance < nNewInstance; iNewInstance++) {
 
          // Check if slot available
          if (Items.Num () >= SlotsMax) break;
@@ -317,11 +313,11 @@ bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
 
    // Remove until finished
    while (RmItemData.Count > 0) {
-      for (int i = 0; i < Items.Num (); i++) {
-         if (Items[i].Name != RmItemData.Name) continue;
+      for (int iItem = 0; iItem < Items.Num (); iItem++) {
+         if (Items[iItem].Name != RmItemData.Name) continue;
 
-         int Count = FMath::Min (Items[i].Count, RmItemData.Count);
-         if (!RemoveItem_Index (i, Count)) return false;
+         int Count = FMath::Min (Items[iItem].Count, RmItemData.Count);
+         if (!RemoveItem_Index (iItem, Count)) return false;
          RmItemData.Count -= Count;
       }
    }
@@ -349,12 +345,13 @@ void URInventoryComponent::TransferAll_Server_Implementation (URInventoryCompone
 }
 bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!DstInventory) {
       R_LOG ("Invalid Destination Inventory");
       return false;
    }
-   int n = Items.Num ();
-   for (int i = 0; i< n; i++) {
+   int nItems = Items.Num ();
+   for (int iItem = 0; iItem < nItems; iItem++) {
       if (!TransferItem (DstInventory, 0, 0)) {
          return false;
       }
@@ -381,6 +378,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
                                          int32 SrcItemIdx,
                                          int32 SrcItemCount)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!DstInventory) {
       R_LOG ("Invalid Destination Inventory");
       return false;
@@ -407,6 +405,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
 
 void URInventoryComponent::CalcWeight ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    float WeightNew = 0;
    // Find same kind of item
    for (const FRItemData &ItItem : Items) {
@@ -444,13 +443,8 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-   // valid archetype
-   if (!ItemData.Action) return false;
+   if (ItemData.Used (GetOwner (), this)) return false;
 
-   URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
-
-   if (!ensure (ItemBP)) return false;
-   ItemBP->Used (this, ItemData, ItemIdx);
    BP_Used (ItemIdx);
 
    // Consumable
@@ -469,7 +463,7 @@ void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent 
 }
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   R_RETURN_IF_NOT_ADMIN_BOOL;
+   R_RETURN_IF_NOT_ADMIN_NULL;
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
@@ -558,19 +552,19 @@ void URInventoryComponent::CheckClosestPickup ()
    FVector              newClosestPickupLoc;
    const ARItemPickup * newClosestPickup = nullptr;
 
-   for (const ARItemPickup *itPickup : CurrentPickups) {
-      if (!ensure (itPickup)) continue;
+   for (const ARItemPickup *ItPickup : CurrentPickups) {
+      if (!ensure (ItPickup)) continue;
 
-      FVector itLoc = itPickup->GetActorLocation ();
+      FVector ItLoc = ItPickup->GetActorLocation ();
 
       if (!newClosestPickup) {
-         newClosestPickup    = itPickup;
-         newClosestPickupLoc = itLoc;
+         newClosestPickup    = ItPickup;
+         newClosestPickupLoc = ItLoc;
       }
 
-      if (FVector::Distance (PlayerLoc, itLoc) < FVector::Distance (PlayerLoc, newClosestPickupLoc)) {
-         newClosestPickup    = itPickup;
-         newClosestPickupLoc = itLoc;
+      if (FVector::Distance (PlayerLoc, ItLoc) < FVector::Distance (PlayerLoc, newClosestPickupLoc)) {
+         newClosestPickup    = ItPickup;
+         newClosestPickupLoc = ItLoc;
       }
    }
 
@@ -593,8 +587,8 @@ void URInventoryComponent::OnSave ()
 
    // Convert ItemData to array to JSON strings
    TArray<FString> ItemDataRaw;
-   for (FRItemData item : Items) {
-      ItemDataRaw.Add (item.GetJSON ());
+   for (FRItemData ItItem : Items) {
+      ItemDataRaw.Add (ItItem.GetJSON ());
    }
 
    // Convert array into buffer
@@ -630,20 +624,20 @@ void URInventoryComponent::OnLoad ()
    FromBinary << ItemDataRaw;
 
    // Convert JSON strings to ItemData
-   TArray<FRItemData> loadedItems;
-   for (const FString &ItemRaw : ItemDataRaw) {
+   TArray<FRItemData> LoadedItems;
+   for (const FString &ItItemRaw : ItemDataRaw) {
 
       FRItemData Item;
-      Item.SetJSON (ItemRaw);
+      Item.SetJSON (ItItemRaw);
       if (!Item.ReadJSON ()) {
-         R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItemRaw);
+         R_LOG_PRINTF ("Failed to parse Item string [%s]", *ItItemRaw);
          continue;
       }
-      loadedItems.Add (Item);
+      LoadedItems.Add (Item);
    }
 
    // Update inventory
-   Items = loadedItems;
+   Items = LoadedItems;
    OnInventoryUpdated.Broadcast ();
 }
 

@@ -31,15 +31,16 @@ float URDamageType::CalcDamage (float Damage, float Resistance) const
 
 URDamageType_Fall::URDamageType_Fall ()
 {
-
    UIName = "Fall";
 
-   // Exception transform velocity to damage
+   // Transform velocity to damage
    FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();
-   FallDamageCurveData->Reset ();
-   FallDamageCurveData->AddKey (1000, 0); // Minimum
-   FallDamageCurveData->AddKey (1500, 40);
-   FallDamageCurveData->AddKey (2000, 100);
+   FallDamageCurveData->AddKey (1000,    0); // Minimum
+   FallDamageCurveData->AddKey (1500,   40);
+   FallDamageCurveData->AddKey (2000,  100);
+   FallDamageCurveData->AddKey (3000,  500);
+   FallDamageCurveData->AddKey (4000, 1000);
+   FallDamageCurveData->AddKey (5000, 9999);
 }
 
 float URDamageType_Fall::CalcDamage (float Velocity, float Resistance) const

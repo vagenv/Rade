@@ -180,16 +180,16 @@ bool URSaveMgr::OnLoad (const FRSaveEvent &Delegate)
 void URSaveMgr::BroadcastLoad ()
 {
   // Broadcast event to all listeners
-   for (const FRSaveEvent &event : OnLoadDelegates) {
-      event.Broadcast ();
+   for (const FRSaveEvent &ItEvent : OnLoadDelegates) {
+      ItEvent.Broadcast ();
    }
 }
 
 void URSaveMgr::BroadcastSave ()
 {
   // Broadcast event to all listeners
-   for (const FRSaveEvent &event : OnSaveDelegates) {
-      event.Broadcast ();
+   for (const FRSaveEvent &ItEvent : OnSaveDelegates) {
+      ItEvent.Broadcast ();
    }
 }
 

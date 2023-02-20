@@ -5,15 +5,17 @@
 #include "RInventoryLib/RItemTypes.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusTypes.h"
+#include "RStatusLib/RStatusEffect.h"
 #include "REquipmentTypes.generated.h"
 
 class AActor;
+class URInventoryComponent;
 class UREquipmentSlotComponent;
 class UREquipmentMgrComponent;
 class UWorld;
 
 // ============================================================================
-//          Move to RCharacter ?
+//                Consumable Items
 // ============================================================================
 
 USTRUCT(BlueprintType)
@@ -21,17 +23,21 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
 
-   // 0 = Single instance effect
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float DurationSec = 0;
+   virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
-   // ----
-   // List of applied effects.
-   // ----
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<TSubclassOf<ARActiveStatusEffect> > ActiveEffects;
 
    static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
+
+
+   virtual bool ReadJSON () override;
+   virtual bool WriteJSON () override;
 };
 
+// ============================================================================
+//          Equipment
+// ============================================================================
 
 USTRUCT(BlueprintType)
 struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
@@ -52,12 +58,15 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
       TArray<FRResistanceStat> Resistence;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRCharacterStats Stats;
+      TArray<FRPassiveStatusEffect> PassiveEffects;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRCharacterStats RequiredStats;
+      FRCoreStats RequiredStats;
 
    static bool Cast (const FRItemData &src, FREquipmentData &dst);
+
+   virtual bool ReadJSON () override;
+   virtual bool WriteJSON () override;
 };
 
 UCLASS()

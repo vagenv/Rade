@@ -15,6 +15,35 @@
 UREquipmentMgrComponent::UREquipmentMgrComponent ()
 {
    SetIsReplicatedByDefault (true);
+
+   // Equip Load
+   FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurve ();
+   StrToWeightMaxData->AddKey (   0,   10); // Minimum
+   StrToWeightMaxData->AddKey (   1, 10.5);
+   StrToWeightMaxData->AddKey (  10,   15);
+   StrToWeightMaxData->AddKey ( 100,   50);
+   StrToWeightMaxData->AddKey (1000,  100);
+   StrToWeightMaxData->AddKey (5000,  150);
+
+   // Weight To Evasion
+   FRichCurve* WeightToEvasionData = WeightToEvasion.GetRichCurve ();
+   WeightToEvasionData->AddKey ( 40,   0); // Minimum
+   WeightToEvasionData->AddKey ( 50,  -5);
+   WeightToEvasionData->AddKey ( 60, -10);
+   WeightToEvasionData->AddKey ( 70, -20);
+   WeightToEvasionData->AddKey ( 80, -30);
+   WeightToEvasionData->AddKey ( 90, -45);
+   WeightToEvasionData->AddKey (100, -60);
+
+   // Weight to Move speed
+   FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurve ();
+   WeightToMoveSpeedData->AddKey ( 40,   0); // Minimum
+   WeightToMoveSpeedData->AddKey ( 50,  -5);
+   WeightToMoveSpeedData->AddKey ( 60, -10);
+   WeightToMoveSpeedData->AddKey ( 70, -15);
+   WeightToMoveSpeedData->AddKey ( 80, -20);
+   WeightToMoveSpeedData->AddKey ( 90, -30);
+   WeightToMoveSpeedData->AddKey (100, -40);
 }
 
 // Replication
@@ -23,15 +52,78 @@ void UREquipmentMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProper
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 }
 
-void UREquipmentMgrComponent::BeginPlay()
+void UREquipmentMgrComponent::BeginPlay ()
 {
-   Super::BeginPlay();
+   Super::BeginPlay ();
+
+   if (R_IS_NET_ADMIN) {
+      if (URStatusMgrComponent *StatusMgr = URStatusMgrComponent::Get (GetOwner ())) {
+         StatusMgr->OnStatusUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatusUpdated);
+      }
+      OnStatusUpdated ();
+   }
 }
 
 void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
 }
+
+//=============================================================================
+//           Weight penalty using Inventory and StatusMgr
+//=============================================================================
+
+void UREquipmentMgrComponent::CalcWeight ()
+{
+   R_RETURN_IF_NOT_ADMIN;
+   Super::CalcWeight ();
+
+   URStatusMgrComponent *StatusMgr = URStatusMgrComponent::Get (GetOwner ());
+   if (!StatusMgr) return;
+
+   const FRichCurve* WeightToEvasionData   = WeightToEvasion.GetRichCurveConst ();
+   const FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurveConst ();
+
+   if (!ensure (WeightToEvasionData))    return;
+   if (!ensure (WeightToMoveSpeedData))  return;
+
+   float EquipLoad = WeightCurrent * 100. / WeightMax;
+   FRPassiveStatusEffect EvasionEffect;
+   EvasionEffect.Scale  = ERStatusEffectScale::PERCENT;
+   EvasionEffect.Target = ERStatusEffectTarget::Evasion;
+   EvasionEffect.Value  = WeightToEvasionData->Eval (EquipLoad);
+
+   FRPassiveStatusEffect MoveSpeedEffect;
+   MoveSpeedEffect.Scale  = ERStatusEffectScale::PERCENT;
+   MoveSpeedEffect.Target = ERStatusEffectTarget::MoveSpeed;
+   MoveSpeedEffect.Value  = WeightToMoveSpeedData->Eval (EquipLoad);
+
+   TArray<FRPassiveStatusEffect> Effects;
+   Effects.Add (EvasionEffect);
+   Effects.Add (MoveSpeedEffect);
+
+   StatusMgr->SetPassiveEffects ("Weight Penalty", Effects);
+}
+
+void UREquipmentMgrComponent::OnStatusUpdated ()
+{
+   const FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurveConst ();
+   if (!ensure (StrToWeightMaxData)) return;
+
+   URStatusMgrComponent *StatusMgr = URStatusMgrComponent::Get (GetOwner ());
+   if (StatusMgr) {
+      FRCoreStats StatsTotal = StatusMgr->GetCoreStats_Total ();
+      WeightMax = StrToWeightMaxData->Eval (StatsTotal.STR);
+      if (LastWeightMax != WeightMax) {
+         LastWeightMax = WeightMax;
+         CalcWeight ();
+      }
+   }
+}
+
+//=============================================================================
+//                 Equip/Unequip
+//=============================================================================
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 {
@@ -44,6 +136,19 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
+
+   {
+      FRConsumableItemData ItemData;
+      if (FRConsumableItemData::Cast (Items[ItemIdx], ItemData)) {
+         if (!ItemData.Used (GetOwner (), this)) return false;
+
+
+         BP_Used (ItemIdx);
+         if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
+         return true;
+      }
+   }
+
    // --- Not an equipment item. Pass management to Inventory.
    FREquipmentData ItemData;
    if (!FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
@@ -54,11 +159,8 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 
    // --- If Custom Action is defined
    if (success && ItemData.Action) {
-      URItemAction *ItemBP = ItemData.Action->GetDefaultObject<URItemAction>();
-      if (ItemBP) {
-         ItemBP->Used (this, ItemData, ItemIdx);
-         BP_Used (ItemIdx);
-      }
+      if (!ItemData.Used (GetOwner (), this)) return false;
+      BP_Used (ItemIdx);
    }
    return success;
 }
@@ -77,8 +179,28 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
          *EquipmentData.Name, *EquipmentData.EquipmentSlot->GetName ());
       return false;
    }
+   return Equip (EquipmentSlot, EquipmentData);
+}
 
-   URStatusMgrComponent* StatusMgr = GetStatusMgr ();
+bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!EquipmentSlot) {
+      R_LOG ("Invalid Equipment Slot pointer");
+      return false;
+   }
+   if (!EquipmentData.EquipmentSlot.Get ()) {
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
+      return false;
+   }
+   if (EquipmentSlot->GetClass () != EquipmentData.EquipmentSlot) {
+      R_LOG_PRINTF ("Inconsistent Slot Class: Item [%s] Slot []",
+         *EquipmentSlot->GetClass ()->GetName (),
+         *EquipmentData.EquipmentSlot->GetName ()
+         );
+   }
+
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
    if (!EquipmentData.RequiredStats.Empty ()) {
       if (!StatusMgr) {
          R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.Name);
@@ -100,9 +222,8 @@ bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->AddStat (EquipmentData.Stats);
-      StatusMgr->AddResistance (EquipmentData.Resistence);
-      // TODO: Add addition stats and effects
+      StatusMgr->SetPassiveEffects (EquipmentData.Name, EquipmentData.PassiveEffects);
+      StatusMgr->AddResistance     (EquipmentData.Name, EquipmentData.Resistence);
    }
 
    // --- Update slot data
@@ -119,11 +240,10 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    if (!EquipmentSlot)       return false;
    if (!EquipmentSlot->Busy) return false;
 
-   URStatusMgrComponent* StatusMgr = GetStatusMgr ();
+   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
    if (StatusMgr) {
-      StatusMgr->RmStat (EquipmentSlot->EquipmentData.Stats);
-      StatusMgr->RmResistance (EquipmentSlot->EquipmentData.Resistence);
-      // TODO: Remove effects
+      StatusMgr->RmPassiveEffects (EquipmentSlot->EquipmentData.Name);
+      StatusMgr->RmResistance     (EquipmentSlot->EquipmentData.Name);
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
@@ -132,17 +252,11 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    return true;
 }
 
-// --- Get Components
+// ============================================================================
+//                      Get Components
+// ============================================================================
 
-URStatusMgrComponent* UREquipmentMgrComponent::GetStatusMgr () const
-{
-   TArray<URStatusMgrComponent*> StatusMgrList;
-   GetOwner ()->GetComponents (StatusMgrList);
-   if (StatusMgrList.Num ()) return StatusMgrList[0];
-   else                      return nullptr;
-}
-
-UREquipmentSlotComponent * UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &SlotClass) const
+UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
 {
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
@@ -150,15 +264,15 @@ UREquipmentSlotComponent * UREquipmentMgrComponent::GetEquipmentSlot (const TSub
    UREquipmentSlotComponent *EquipmentSlot = nullptr;
 
    // --- Find equip slot
-   for (auto &itSlot : CurrentEquipmentSlots) {
-      if (itSlot->GetClass () == SlotClass) {
+   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (ItSlot->GetClass () == SlotClass) {
 
          // First slot available
-         if (!EquipmentSlot) EquipmentSlot = itSlot;
+         if (!EquipmentSlot) EquipmentSlot = ItSlot;
 
          // Empty Slot found
-         if (!itSlot->Busy) {
-            EquipmentSlot = itSlot;
+         if (!ItSlot->Busy) {
+            EquipmentSlot = ItSlot;
             break;
          }
       }

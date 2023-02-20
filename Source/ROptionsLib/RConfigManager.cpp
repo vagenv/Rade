@@ -100,9 +100,9 @@ bool URConfigManager::LoadConfig_Color (const FString& FileName, const FString& 
 bool URConfigManager::ReloadConfig ()
 {
    if (!ensure (GConfig)) return false;
-   TArray<FString> configFiles;
-   GConfig->GetConfigFilenames (configFiles);
-   for (const FString& file : configFiles) GConfig->LoadFile (file);
+   TArray<FString> ConfigFiles;
+   GConfig->GetConfigFilenames (ConfigFiles);
+   for (const FString& ItFile : ConfigFiles) GConfig->LoadFile (ItFile);
    return true;
 }
 

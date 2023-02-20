@@ -28,16 +28,35 @@ public:
    virtual bool UseItem (int32 ItemIdx) override;
 
    virtual bool Equip   (const FREquipmentData    &EquipmentData);
+   virtual bool Equip   (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData);
    virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      URStatusMgrComponent*      GetStatusMgr     () const;
+   virtual void CalcWeight ();
+private:
+   // To evade endless when:
+   // OnStatusUpdated -> CalcWeight -> SetEffect -> OnStatusUpdated
+   float LastWeightMax = 0;
+
+protected:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
+      FRuntimeFloatCurve StrToWeightMax;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve WeightToEvasion;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve WeightToMoveSpeed;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      UREquipmentSlotComponent * GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> &Type) const;
+      UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> Type) const;
+public:
 
    // Delegate when equipment updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
       FREquipmentMgrEvent OnEquipmentUpdated;
+
+protected:
+   UFUNCTION()
+      void OnStatusUpdated ();
 };
 

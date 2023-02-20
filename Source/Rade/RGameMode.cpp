@@ -5,7 +5,7 @@
 
 ARGameMode::ARGameMode()
 {
-   SaveMgr = CreateDefaultSubobject<URSaveMgr>(TEXT("SaveMgr"));
+   SaveMgr = CreateDefaultSubobject<URSaveMgr> (TEXT ("SaveMgr"));
 }
 
 void ARGameMode::BeginPlay ()
