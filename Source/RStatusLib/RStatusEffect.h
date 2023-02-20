@@ -147,6 +147,12 @@ public:
    UPROPERTY(BlueprintAssignable)
       FRActiveStatusEffectEvent OnEnd;
 
+   UFUNCTION(BlueprintImplementableEvent, Category =  "Rade|Status")
+      void BP_Canceled ();
+
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnCancel;
+
    // Functions
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       double GetDurationLeft () const;

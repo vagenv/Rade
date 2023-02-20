@@ -95,6 +95,8 @@ void ARActiveStatusEffect::Ended ()
 void ARActiveStatusEffect::Cancel ()
 {
    TimerToEnd.Invalidate ();
+   BP_Canceled ();
+   OnCancel.Broadcast ();
    Ended ();
 }
 
