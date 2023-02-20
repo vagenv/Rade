@@ -38,6 +38,22 @@ bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
    URStatusMgrComponent* StatusMgr_ = URStatusMgrComponent::Get (Target_);
    if (!ensure (StatusMgr_))               return false;
 
+
+   // --- Check Refresh/Stacking
+   TArray<ARActiveStatusEffect*> CurrentEffects = StatusMgr_->GetActiveEffects ();
+   for (ARActiveStatusEffect* ItActiveEffect : CurrentEffects) {
+      if (ItActiveEffect->GetClass () == GetClass ()) {
+         if (StackMax > 1) {
+            StackCurrent = FMath::Clamp (ItActiveEffect->StackCurrent + 1., 1., StackMax);
+            for (FRPassiveStatusEffect &ItPassiveEffect : PassiveEffects) {
+               ItPassiveEffect.Value *= StackCurrent;
+            }
+         }
+         ItActiveEffect->Cancel ();
+         break;
+      }
+   }
+
    // --- Set variables
    isRunning = true;
    Elapse    = FPlatformTime::Seconds () + Duration;

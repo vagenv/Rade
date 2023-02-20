@@ -107,6 +107,12 @@ public:
       float Duration = 5;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      float StackMax = 1;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      float StackCurrent = 1;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
