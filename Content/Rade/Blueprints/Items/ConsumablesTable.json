@@ -1,6 +1,9 @@
 [
 	{
 		"Name": "HealthPack",
+		"ActiveEffects": [
+			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C'"
+		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C'",
 		"DestroyOnAction": true,
 		"Rarity": "E",
@@ -16,6 +19,9 @@
 	},
 	{
 		"Name": "ManaPack",
+		"ActiveEffects": [
+			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C'"
+		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C'",
 		"DestroyOnAction": true,
 		"Rarity": "E",

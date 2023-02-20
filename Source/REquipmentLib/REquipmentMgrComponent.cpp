@@ -136,6 +136,19 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
+
+   {
+      FRConsumableItemData ItemData;
+      if (FRConsumableItemData::Cast (Items[ItemIdx], ItemData)) {
+         if (!ItemData.Used (GetOwner (), this)) return false;
+
+
+         BP_Used (ItemIdx);
+         if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
+         return true;
+      }
+   }
+
    // --- Not an equipment item. Pass management to Inventory.
    FREquipmentData ItemData;
    if (!FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
@@ -209,7 +222,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->SetPassiveEffects (EquipmentData.Name, EquipmentData.Effects);
+      StatusMgr->SetPassiveEffects (EquipmentData.Name, EquipmentData.PassiveEffects);
       StatusMgr->AddResistance     (EquipmentData.Name, EquipmentData.Resistence);
    }
 

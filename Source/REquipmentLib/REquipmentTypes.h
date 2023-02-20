@@ -26,9 +26,13 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TSubclassOf<ARActiveStatusEffect> > Effects;
+    TArray<TSubclassOf<ARActiveStatusEffect> > ActiveEffects;
 
    static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
+
+
+   virtual bool ReadJSON () override;
+   virtual bool WriteJSON () override;
 };
 
 // ============================================================================
@@ -54,12 +58,15 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
       TArray<FRResistanceStat> Resistence;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TArray<FRPassiveStatusEffect> Effects;
+      TArray<FRPassiveStatusEffect> PassiveEffects;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FRCoreStats RequiredStats;
 
    static bool Cast (const FRItemData &src, FREquipmentData &dst);
+
+   virtual bool ReadJSON () override;
+   virtual bool WriteJSON () override;
 };
 
 UCLASS()

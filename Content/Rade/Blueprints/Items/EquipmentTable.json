@@ -5,7 +5,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "STR",
@@ -42,7 +42,7 @@
 				"Value": 30
 			}
 		],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "AttackPower",
@@ -84,7 +84,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [],
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
 			"STR": 0,
@@ -110,7 +110,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [],
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
 			"STR": 0,
@@ -136,7 +136,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [],
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
 			"STR": 0,
@@ -162,7 +162,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [],
+		"PassiveEffects": [],
 		"RequiredStats":
 		{
 			"STR": 0,
@@ -193,7 +193,7 @@
 				"Value": 20
 			}
 		],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "AGI",
@@ -225,7 +225,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "INT",
@@ -257,7 +257,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "STR",
@@ -304,7 +304,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "HealthRegen",
@@ -336,7 +336,7 @@
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
-		"Effects": [
+		"PassiveEffects": [
 			{
 				"Scale": "FLAT",
 				"Target": "Evasion",
