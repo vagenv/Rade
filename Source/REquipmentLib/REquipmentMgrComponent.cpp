@@ -1,12 +1,15 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "REquipmentMgrComponent.h"
-#include "RUtilLib/RLog.h"
 #include "REquipmentTypes.h"
 #include "REquipmentSlotComponent.h"
-#include "RInventoryLib/RItemAction.h"
-#include "RStatusLib/RStatusMgrComponent.h"
+
+#include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RJSON.h"
+
+#include "RStatusLib/RStatusMgrComponent.h"
+#include "RInventoryLib/RItemAction.h"
 
 //=============================================================================
 //                 Core
@@ -278,5 +281,49 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
       }
    }
    return EquipmentSlot;
+}
+
+
+//=============================================================================
+//                 Save / Load
+//=============================================================================
+
+void UREquipmentMgrComponent::OnSave (FBufferArchive &SaveData)
+{
+   Super::OnSave (SaveData);
+
+   TArray<FString> EquipedItemsRaw;
+
+   // --- Get equiped items
+   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
+   GetOwner ()->GetComponents (CurrentEquipmentSlots);
+   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (ItSlot->Busy) {
+         FString RawData;
+         if (RJSON::ToString (ItSlot->EquipmentData, RawData)) EquipedItemsRaw.Add (RawData);
+      }
+   }
+   SaveData << EquipedItemsRaw;
+}
+
+void UREquipmentMgrComponent::OnLoad (FMemoryReader &LoadData)
+{
+   Super::OnLoad (LoadData);
+
+   // --- Unequip current items
+   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
+   GetOwner ()->GetComponents (CurrentEquipmentSlots);
+   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      UnEquip (ItSlot);
+   }
+
+   TArray<FString> EquipedItemsRaw;
+   LoadData << EquipedItemsRaw;
+
+   // --- Equip Items
+   for (const FString &ItRaw : EquipedItemsRaw) {
+      FREquipmentData EquipData;
+      if (RJSON::ToStruct (ItRaw, EquipData)) Equip (EquipData);
+   }
 }
 

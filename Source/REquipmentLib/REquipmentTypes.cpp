@@ -3,8 +3,7 @@
 #include "REquipmentTypes.h"
 #include "RUtilLib/RLog.h"
 #include "RStatusLib/RStatusEffect.h"
-#include "Json.h"
-#include "JsonObjectConverter.h"
+#include "RUtilLib/RJson.h"
 
 
 // ============================================================================
@@ -23,14 +22,14 @@ bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 
 bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
 {
-   return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0, true);
+   return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
 bool FRConsumableItemData::ReadJSON ()
 {
    // Destination of data to be read
    FRConsumableItemData dst;
-   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0, true)) return false;
+   if (!RJSON::ToStruct (JsonData, dst)) return false;
 
    // Create reference for direct assignment
    FRConsumableItemData &obj = *this;
@@ -50,7 +49,7 @@ bool FRConsumableItemData::WriteJSON ()
 {
    FString dst;
    JsonData = "";
-   if (!FJsonObjectConverter::UStructToJsonObjectString<FRConsumableItemData> (*this, dst)) return false;
+   if (!RJSON::ToString (*this, dst)) return false;
    JsonData = dst;
    return true;
 }
@@ -61,14 +60,14 @@ bool FRConsumableItemData::WriteJSON ()
 
 bool FREquipmentData::Cast (const FRItemData &src, FREquipmentData &dst)
 {
-   return FJsonObjectConverter::JsonObjectStringToUStruct<FREquipmentData> (src.GetJSON (), &dst, 0, 0, true);
+   return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
 bool FREquipmentData::ReadJSON ()
 {
    // Destination of data to be read
    FREquipmentData dst;
-   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0, true)) return false;
+   if (!RJSON::ToStruct (JsonData, dst)) return false;
 
    // Create reference for direct assignment
    FREquipmentData &obj = *this;
@@ -88,10 +87,12 @@ bool FREquipmentData::WriteJSON ()
 {
    FString dst;
    JsonData = "";
-   if (!FJsonObjectConverter::UStructToJsonObjectString<FREquipmentData> (*this, dst)) return false;
+   if (!RJSON::ToString (*this, dst)) return false;
+
    JsonData = dst;
    return true;
 }
+
 
 // ============================================================================
 //                      UREquipmentUtilLibrary

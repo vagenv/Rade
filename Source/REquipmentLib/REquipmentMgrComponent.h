@@ -58,5 +58,9 @@ public:
 protected:
    UFUNCTION()
       void OnStatusUpdated ();
+
+protected:
+   virtual void OnSave (FBufferArchive &SaveData) override;
+   virtual void OnLoad (FMemoryReader &LoadData) override;
 };
 
