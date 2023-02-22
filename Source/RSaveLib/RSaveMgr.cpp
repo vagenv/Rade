@@ -16,7 +16,11 @@ URSaveMgr* URSaveMgr::GetInstance (const UWorld *World)
    AGameModeBase *GameMode = World->GetAuthGameMode ();
    if (!ensure (GameMode)) return nullptr;
 
-   return GameMode->FindComponentByClass<URSaveMgr>();
+   URSaveMgr* SaveMgr = GameMode->FindComponentByClass<URSaveMgr>();
+   if (SaveMgr == nullptr) {
+      R_LOG_STATIC_PRINTF ("Component [URSaveMgr] not found in Game Mode [%s]", *GameMode->GetName ());
+   }
+   return SaveMgr;
 }
 
 bool URSaveMgr::SaveSync (const UWorld *World)
@@ -80,7 +84,7 @@ bool URSaveMgr::Set (const UWorld *World, const FString &key, const TArray<uint8
 //                   Member calls
 //=============================================================================
 
-URSaveMgr::URSaveMgr()
+URSaveMgr::URSaveMgr ()
 {
 }
 
@@ -89,7 +93,7 @@ void URSaveMgr::CheckSaveFile ()
    if (SaveFile) return;
 
    // Generate default Save File
-   SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass()));
+   SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
 }
 
 
@@ -122,7 +126,7 @@ bool URSaveMgr::LoadSync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-   SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveFile->SaveSlotName, SaveFile->UserIndex));
+   SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex));
    if (SaveFile != nullptr) BroadcastLoad ();
    return (SaveFile != nullptr);
 }
