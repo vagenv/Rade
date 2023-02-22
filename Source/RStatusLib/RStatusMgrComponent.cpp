@@ -157,15 +157,11 @@ void URStatusMgrComponent::BeginPlay ()
 
       RecalcStatus ();
 
-      // Save/Load Current Status
+      // Save/Load Status
       if (bSaveLoad) {
-         FRSaveEvent SavedDelegate;
-         SavedDelegate.AddDynamic (this, &URStatusMgrComponent::OnSave);
-         URSaveMgr::OnSave (world, SavedDelegate);
-
-         FRSaveEvent LoadedDelegate;
-         LoadedDelegate.AddDynamic (this, &URStatusMgrComponent::OnLoad);
-         URSaveMgr::OnLoad (world, LoadedDelegate);
+         // Careful with collision of 'UniqueSaveId'
+         FString UniqueSaveId = GetOwner ()->GetName () + "_StatusMgr";
+         Init_Save (GetWorld (), UniqueSaveId);
       }
    }
 }
@@ -652,39 +648,16 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 //                 Save / Load
 //=============================================================================
 
-void URStatusMgrComponent::OnSave ()
+void URStatusMgrComponent::OnSave (FBufferArchive &SaveData)
 {
-   R_RETURN_IF_NOT_ADMIN;
-
-   // --- Save player status
-   FBufferArchive ToBinary;
-   ToBinary << Health << Mana << Stamina;
-
-   FString SaveUniqueId = GetOwner ()->GetName () + "_StatusMgr";
-
-   // Set binary data to save file
-   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
-      R_LOG_PRINTF ("Failed to save [%s] Status.", *SaveUniqueId);
-   }
+   SaveData << Health << Mana << Stamina;
+   SaveData << CoreStats_Base;
 }
 
-void URStatusMgrComponent::OnLoad ()
+void URStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
-   R_RETURN_IF_NOT_ADMIN;
-
-   // --- Load player status
-   FString SaveUniqueId = GetOwner ()->GetName () + "_StatusMgr";
-
-   // Get binary data from save file
-   TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Status.", *SaveUniqueId);
-      return;
-   }
-
-   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   FromBinary.Seek (0);
-   FromBinary << Health << Mana << Stamina;
+   LoadData << Health << Mana << Stamina;
+   LoadData << CoreStats_Base;
 }
 
 

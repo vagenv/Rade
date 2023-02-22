@@ -33,6 +33,13 @@ struct RSTATUSLIB_API FRCoreStats
 
    FRCoreStats operator + (const FRCoreStats &stat) const;
    FRCoreStats operator - (const FRCoreStats &stat) const;
+
+   friend FArchive& operator << (FArchive& Ar, FRCoreStats &Data) {
+      Ar << Data.STR;
+      Ar << Data.AGI;
+      Ar << Data.INT;
+      return Ar;
+   }
 };
 
 // ============================================================================
@@ -61,6 +68,15 @@ struct RSTATUSLIB_API FRSubStats
 
    FRSubStats operator + (const FRSubStats &stat) const;
    FRSubStats operator - (const FRSubStats &stat) const;
+
+   friend FArchive& operator << (FArchive& Ar, FRSubStats &Value) {
+      Ar << Value.Evasion;
+      Ar << Value.Critical;
+      Ar << Value.MoveSpeed;
+      Ar << Value.AttackSpeed;
+      Ar << Value.AttackPower;
+      return Ar;
+   }
 };
 
 // ============================================================================
@@ -84,7 +100,12 @@ struct RSTATUSLIB_API FRStatusValue
 
    void Tick (float DeltaTime);
 
-   friend FArchive& operator << (FArchive& Ar, FRStatusValue &Value);
+   friend FArchive& operator << (FArchive& Ar, FRStatusValue &Value) {
+      Ar << Value.Current;
+      Ar << Value.Max;
+      Ar << Value.Regen;
+      return Ar;
+   }
 };
 
 UCLASS()

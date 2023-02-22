@@ -102,13 +102,9 @@ void ARPlayer::BeginPlay ()
 
    if (HasAuthority ()) {
       // --- Save / Load data
-      FRSaveEvent SavedDelegate;
-      SavedDelegate.AddDynamic (this, &ARPlayer::OnSave);
-      URSaveMgr::OnSave (GetWorld (), SavedDelegate);
-
-      FRSaveEvent LoadedDelegate;
-      LoadedDelegate.AddDynamic (this, &ARPlayer::OnLoad);
-      URSaveMgr::OnLoad (GetWorld (), LoadedDelegate);
+      // Careful with collision of 'UniqueSaveId'
+      FString UniqueSaveId = GetName () + "_Player";
+      Init_Save (GetWorld (), UniqueSaveId);
    }
 
    // --- Seed out Spawn Location a bit
@@ -144,38 +140,18 @@ void ARPlayer::Input_LoadGame ()
    }
 }
 
-void ARPlayer::OnSave ()
+void ARPlayer::OnSave (FBufferArchive &SaveData)
 {
-   R_RETURN_IF_NOT_ADMIN;
-   FString SaveUniqueId = GetOwner ()->GetName () + "_Player";
-   // --- Save player location
    FVector  loc = GetActorLocation ();
    FRotator rot = GetActorRotation ();
-
-   FBufferArchive ToBinary;
-   ToBinary << loc << rot;
-   if (!URSaveMgr::Set (GetWorld (), SaveUniqueId, ToBinary)) {
-      R_LOG_PRINTF ("Failed to save [%s] Location.", *SaveUniqueId);
-   }
+   SaveData << loc << rot;
 }
 
-void ARPlayer::OnLoad ()
+void ARPlayer::OnLoad (FMemoryReader &LoadData)
 {
-   R_RETURN_IF_NOT_ADMIN;
-   FString SaveUniqueId = GetOwner ()->GetName () + "_Player";
-
-   // Get binary data from save file
-   TArray<uint8> BinaryArray;
-   if (!URSaveMgr::Get (GetWorld (), SaveUniqueId, BinaryArray)) {
-      R_LOG_PRINTF ("Failed to load [%s] Location.", *SaveUniqueId);
-      return;
-   }
-
    FVector  loc;
    FRotator rot;
-   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
-   FromBinary.Seek (0);
-   FromBinary << loc << rot;
+   LoadData << loc << rot;
 
    SetActorLocation (loc);
    SetActorRotation (rot);

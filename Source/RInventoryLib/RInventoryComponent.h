@@ -4,6 +4,7 @@
 
 #include "RItemTypes.h"
 #include "Components/ActorComponent.h"
+#include "RSaveLib/RSaveInterface.h"
 #include "RInventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
@@ -12,7 +13,7 @@ class ARItemPickup;
 
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType)
-class RINVENTORYLIB_API URInventoryComponent : public UActorComponent
+class RINVENTORYLIB_API URInventoryComponent : public UActorComponent, public IRSaveInterface
 {
    GENERATED_BODY()
 public:
@@ -248,17 +249,11 @@ public:
    //==========================================================================
 
 public:
-   // Inventory Saved / Loaded between sessions.
-   // Should be used only for Player.
-   // Careful with collision of 'InventoryUniqueId'
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bSaveLoad = false;
 
 protected:
-   // Rade Save events
-   UFUNCTION()
-      void OnSave ();
-   UFUNCTION()
-      void OnLoad ();
+   virtual void OnSave (FBufferArchive &SaveData) override;
+   virtual void OnLoad (FMemoryReader &LoadData) override;
 };
 

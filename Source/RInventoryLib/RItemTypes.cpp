@@ -5,6 +5,7 @@
 #include "RUtilLib/RLog.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
+#include "RUtilLib/RJson.h"
 
 // ============================================================================
 //                      FRItemDataHandle
@@ -54,7 +55,7 @@ bool FRItemData::ReadJSON ()
 {
    // Destination of data to be read
    FRItemData dst;
-   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0, true)) return false;
+   if (!RJSON::ToStruct (JsonData, dst)) return false;
 
    // Create reference for direct assignment
    FRItemData &obj = *this;
@@ -74,25 +75,11 @@ bool FRItemData::WriteJSON ()
 {
    FString dst;
    JsonData = "";
-   if (!FJsonObjectConverter::UStructToJsonObjectString<FRItemData> (*this, dst)) return false;
+   if (!RJSON::ToString (*this, dst)) return false;
    JsonData = dst;
    return true;
 }
 
-// bool FRItemData::Cast (const FRItemData &src, FRItemData &dst)
-// {
-//    return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0);
-// }
-
-// bool FRItemData::FromJSON (const FString &src, FRItemData &dst)
-// {
-//    return FJsonObjectConverter::JsonObjectStringToUStruct (src, &dst, 0, 0);
-// }
-
-// bool FRItemData::ToJSON (const FRItemData &src, FString &dst)
-// {
-//    return FJsonObjectConverter::UStructToJsonObjectString<FRItemData> (src, dst);
-// }
 
 // ============================================================================
 //                      FRActionItemData
@@ -102,7 +89,7 @@ bool FRActionItemData::ReadJSON ()
 {
    // Destination of data to be read
    FRActionItemData dst;
-   if (!FJsonObjectConverter::JsonObjectStringToUStruct (JsonData, &dst, 0, 0, true)) return false;
+   if (!RJSON::ToStruct (JsonData, dst)) return false;
 
    // Create reference for direct assignment
    FRActionItemData &obj = *this;
@@ -122,14 +109,14 @@ bool FRActionItemData::WriteJSON ()
 {
    FString dst;
    JsonData = "";
-   if (!FJsonObjectConverter::UStructToJsonObjectString<FRActionItemData> (*this, dst)) return false;
+   if (!RJSON::ToString (*this, dst)) return false;
    JsonData = dst;
    return true;
 }
 
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
-   return FJsonObjectConverter::JsonObjectStringToUStruct (src.GetJSON (), &dst, 0, 0, true);
+   return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
 bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
@@ -143,6 +130,7 @@ bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 
    return true;
 }
+
 
 // ============================================================================
 //                      URItemUtilLibrary

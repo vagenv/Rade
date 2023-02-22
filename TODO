@@ -22,15 +22,13 @@ Stamina/Mana/Health
 
 MoveSpeed and Critical Substat used
 
-=================================================
-   Save/Load Simplification
-=================================================
+UI
+- Start Menu with Option Menu
+- MainMenu -> StatusMenu + Options Menu
 
-Redesign as a singleton?
-Save/Load as a Interface class with blueprint event?
+Investigate Icon/Item/Data Load Stutters
 
-EquipmentMgr
-StatusMgr
+SaveFile List with pictures and descriptions.
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -134,6 +132,14 @@ Network Session
 - Real time data. (Latency, Player count)
 - Return to main screen
 - Persistent data between sessions
+
+=======
+UI
+=======
+With controller
+- Search for sessions
+- Enter session
+- Host session
 
 =================================================
    Chat
@@ -269,7 +275,6 @@ Gold as separate inventory value?
 Craft in game menu
 - Personal list of crafting
 
-
 =================================================
    Camera
 =================================================
@@ -383,7 +388,7 @@ Attack counter
 Roll Invincible
 
 =======
-Classes
+Character Classes
 =======
 
 Class tree reqirnment?
