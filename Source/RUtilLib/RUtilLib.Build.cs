@@ -10,7 +10,9 @@ public class RUtilLib : ModuleRules
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
-         "Engine"
+         "Engine",
+         "Json",
+         "JsonUtilities",
       });
    }
 }
