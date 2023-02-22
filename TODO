@@ -26,15 +26,9 @@ UI
 - Start Menu with Option Menu
 - MainMenu -> StatusMenu + Options Menu
 
-=================================================
-   Save/Load Simplification
-=================================================
+Investigate Icon/Item/Data Load Stutters
 
-Redesign as a singleton?
-Save/Load as a Interface class with blueprint event?
-
-EquipmentMgr
-StatusMgr
+SaveFile List with pictures and descriptions.
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -281,7 +275,6 @@ Gold as separate inventory value?
 Craft in game menu
 - Personal list of crafting
 
-
 =================================================
    Camera
 =================================================
@@ -395,7 +388,7 @@ Attack counter
 Roll Invincible
 
 =======
-Classes
+Character Classes
 =======
 
 Class tree reqirnment?
