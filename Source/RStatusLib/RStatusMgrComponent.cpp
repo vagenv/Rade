@@ -651,11 +651,13 @@ float URStatusMgrComponent::TakeDamage (float DamageAmount,
 void URStatusMgrComponent::OnSave (FBufferArchive &SaveData)
 {
    SaveData << Health << Mana << Stamina;
+   SaveData << CoreStats_Base;
 }
 
 void URStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
    LoadData << Health << Mana << Stamina;
+   LoadData << CoreStats_Base;
 }
 
 

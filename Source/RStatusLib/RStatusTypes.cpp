@@ -89,10 +89,3 @@ void FRStatusValue::Tick (float DeltaTime)
    Current = FMath::Clamp (Current, 0, Max);
 }
 
-FArchive& operator << (FArchive& Ar, FRStatusValue &Value) {
-   Ar << Value.Current;
-   Ar << Value.Max;
-   Ar << Value.Regen;
-   return Ar;
-}
-
