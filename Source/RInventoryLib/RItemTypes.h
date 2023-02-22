@@ -134,7 +134,6 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSubclassOf<ARItemPickup> Pickup;
 
-
    // --- Internal Runtime information
 
    // Refreshes member variables from internal JsonData
@@ -142,7 +141,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    // Parse JsonData and update current class variables
    virtual bool ReadJSON ();
 
-   // Constructs JSON string of current structt and assigns it to JsonData
+   // Constructs JSON string of current struct types and assigns it to JsonData
    // DANGEROUS!!! Only call it on correct subclass version.
    virtual bool WriteJSON ();
 
