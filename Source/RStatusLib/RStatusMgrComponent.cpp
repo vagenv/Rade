@@ -161,7 +161,7 @@ void URStatusMgrComponent::BeginPlay ()
       if (bSaveLoad) {
          // Careful with collision of 'UniqueSaveId'
          FString UniqueSaveId = GetOwner ()->GetName () + "_StatusMgr";
-         Init_Save (GetWorld (), UniqueSaveId);
+         Init_Save (this, UniqueSaveId);
       }
    }
 }

@@ -39,7 +39,7 @@ void URInventoryComponent::BeginPlay()
       if (bSaveLoad) {
          // Careful with collision of 'UniqueSaveId'
          FString UniqueSaveId = GetOwner ()->GetName () + "_Inventory";
-         Init_Save (GetWorld (), UniqueSaveId);
+         Init_Save (this, UniqueSaveId);
       }
 
       for (const FRItemDataHandle &ItItem : DefaultItems) {

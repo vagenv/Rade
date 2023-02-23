@@ -9,76 +9,19 @@
 //                   Static calls
 //=============================================================================
 
-URSaveMgr* URSaveMgr::GetInstance (const UWorld *World)
+URSaveMgr* URSaveMgr::GetInstance (UObject* WorldContextObject)
 {
+   if (!ensure (WorldContextObject)) return nullptr;
+
+   UWorld *World = WorldContextObject->GetWorld ();
    if (!ensure (World)) return nullptr;
 
    AGameModeBase *GameMode = World->GetAuthGameMode ();
    if (!ensure (GameMode)) return nullptr;
 
    URSaveMgr* SaveMgr = GameMode->FindComponentByClass<URSaveMgr>();
-   if (SaveMgr == nullptr) {
-      R_LOG_STATIC_PRINTF ("Component [URSaveMgr] not found in Game Mode [%s]", *GameMode->GetName ());
-   }
    return SaveMgr;
 }
-
-bool URSaveMgr::SaveSync (const UWorld *World)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->SaveSync ();
-   else          return false;
-}
-
-bool URSaveMgr::SaveASync (const UWorld *World)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->SaveASync ();
-   else          return false;
-}
-
-bool URSaveMgr::LoadSync (const UWorld *World)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->LoadSync ();
-   else          return false;
-}
-
-bool URSaveMgr::LoadASync (const UWorld *World)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->LoadASync ();
-   else          return false;
-}
-
-bool URSaveMgr::OnSave (const UWorld *World, const FRSaveEvent &Delegate)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->OnSave (Delegate);
-   else          return false;
-}
-
-bool URSaveMgr::OnLoad (const UWorld *World, const FRSaveEvent &Delegate)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->OnLoad (Delegate);
-   else          return false;
-}
-
-bool URSaveMgr::Get (const UWorld *World, const FString &key, TArray<uint8> &data)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->Get (key, data);
-   else          return false;
-}
-
-bool URSaveMgr::Set (const UWorld *World, const FString &key, const TArray<uint8> &data)
-{
-   URSaveMgr* Instance = URSaveMgr::GetInstance (World);
-   if (Instance) return Instance->Set (key, data);
-   else          return false;
-}
-
 
 //=============================================================================
 //                   Member calls
@@ -96,24 +39,24 @@ void URSaveMgr::CheckSaveFile ()
    SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
 }
 
-
 //=============================================================================
-//                   Save/Load
+//                   Save
 //=============================================================================
 
 bool URSaveMgr::SaveSync ()
 {
    CheckSaveFile ();
-   BroadcastSave ();
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
+   OnSave.Broadcast ();
+
    return UGameplayStatics::SaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
 }
 
 bool URSaveMgr::SaveASync ()
 {
    CheckSaveFile ();
-   BroadcastSave ();
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
+   OnSave.Broadcast ();
 
    // Setup save complete delegate.
    FAsyncSaveGameToSlotDelegate SavedDelegate;
@@ -122,12 +65,16 @@ bool URSaveMgr::SaveASync ()
    return true;
 }
 
+//=============================================================================
+//                   Load
+//=============================================================================
+
 bool URSaveMgr::LoadSync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
    SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex));
-   if (SaveFile != nullptr) BroadcastLoad ();
+   if (SaveFile != nullptr) OnLoad.Broadcast ();
    return (SaveFile != nullptr);
 }
 
@@ -159,44 +106,8 @@ void URSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class 
       R_LOG_PRINTF ("Loading [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
-   BroadcastLoad ();
+   OnLoad.Broadcast ();
 }
-
-
-//=============================================================================
-//                   Callbacks
-//=============================================================================
-
-
-bool URSaveMgr::OnSave (const FRSaveEvent &Delegate)
-{
-   OnSaveDelegates.Add (Delegate);
-   return true;
-}
-
-
-bool URSaveMgr::OnLoad (const FRSaveEvent &Delegate)
-{
-   OnLoadDelegates.Add (Delegate);
-   return true;
-}
-
-void URSaveMgr::BroadcastLoad ()
-{
-  // Broadcast event to all listeners
-   for (const FRSaveEvent &ItEvent : OnLoadDelegates) {
-      ItEvent.Broadcast ();
-   }
-}
-
-void URSaveMgr::BroadcastSave ()
-{
-  // Broadcast event to all listeners
-   for (const FRSaveEvent &ItEvent : OnSaveDelegates) {
-      ItEvent.Broadcast ();
-   }
-}
-
 
 //=============================================================================
 //                   Data management

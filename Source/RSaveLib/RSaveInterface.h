@@ -11,6 +11,7 @@
 #include "RSaveInterface.generated.h"
 
 class UWorld;
+class URSaveMgr;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -27,13 +28,11 @@ protected:
 
 	// Must be called on BeginPlay
 	UFUNCTION()
-		virtual void Init_Save (UWorld *World_, const FString &SaveId);
-
+		virtual void Init_Save (UObject* WorldContextObject, const FString &SaveId);
 
 	// Must be implemented
 	virtual void OnSave (FBufferArchive &SaveData) = 0;
 	virtual void OnLoad (FMemoryReader &LoadData) = 0;
-
 
 	// Internal events
    UFUNCTION()
@@ -50,5 +49,8 @@ private:
 
 	UPROPERTY ()
 		UWorld *World = nullptr;
+
+	UPROPERTY ()
+		URSaveMgr *SaveMgr = nullptr;
 };
 
