@@ -22,17 +22,97 @@ Stamina/Mana/Health
 
 MoveSpeed and Critical Substat used
 
-UI
-- Start Menu with Option Menu
-- MainMenu -> StatusMenu + Options Menu
-
-Investigate Icon/Item/Data Load Stutters
-
 SaveFile List with pictures and descriptions.
+
+===========================
+   UI cleanup
+===========================
+
+
+OptionMenu / StatusMenu -> ActionMenu
+Hide/Unhide Whichever is pressed last
+
+
+=======
+Action Menu
+=======
+
+Stastus Bar
+- Health
+- Stamina
+- Mana
+
+Active Status Effect Icons under Bar
+
+Weapon Bar
+
+Chat UI
+
+Pickup
+
+Actions Slots
+
+=======
+Actions Slots
+=======
+
+Icon
+CanUse
+Use
+Cooldown
+
+=======
+Status Menu
+=======
+Equipment
+Inventory
+Status
+Crafting
+Network
+
+
+=======
+Option Menu
+=======
+Session Menu
+Save/Load
+Graphics Settings
+Audio Setting
+Quit
+
+=======
+Session Menu
+=======
+
+Client/Server
+
+Ping to Server
+
+Connected Players:
+- Name
+- Ping
+- Level
+- HP
+- Distance
+
+=======
+Network Menu
+=======
+
+=======
+StartGame
+=======
+With controller
+- Search for sessions
+- Enter session
+- Host session
+
 
 ===========================
    Abilities / Skills / Magic / Talents
 ===========================
+
+SkillSlot?
 
 AbilityManager or add to StatusMgr?
 - Experience points
@@ -133,13 +213,7 @@ Network Session
 - Return to main screen
 - Persistent data between sessions
 
-=======
-UI
-=======
-With controller
-- Search for sessions
-- Enter session
-- Host session
+
 
 =================================================
    Chat
@@ -150,6 +224,11 @@ Chat
 - Independent component like USaveMgr?
 - A new module?
 - Audio messages?
+
+Emotions
+- Icon (Animation)
+- Sound
+- On top of player
 
 =================================================
    Animation
