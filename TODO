@@ -24,84 +24,49 @@ MoveSpeed and Critical Substat used
 
 SaveFile List with pictures and descriptions.
 
+
 ===========================
    UI cleanup
 ===========================
 
-
-OptionMenu / StatusMenu -> ActionMenu
-Hide/Unhide Whichever is pressed last
-
-
-=======
+==============
 Action Menu
+==============
+
+
 =======
-
-Stastus Bar
-- Health
-- Stamina
-- Mana
-
-Active Status Effect Icons under Bar
-
-Weapon Bar
-
-Chat UI
-
 Pickup
-
-Actions Slots
-
 =======
-Actions Slots
-=======
+- More compact
+- Name of pickup
 
-Icon
-CanUse
-Use
-Cooldown
 
-=======
+==============
 Status Menu
+==============
+
 =======
 Equipment
+=======
+- Slot list
+- Equipable items for each slot
+
+
+=======
 Inventory
+=======
+Sort by types/rarity/types
+
+
+=======
 Status
-Crafting
-Network
-
-
 =======
-Option Menu
-=======
-Session Menu
-Save/Load
-Graphics Settings
-Audio Setting
-Quit
+- Active / passive effects with culprit
 
-=======
-Session Menu
-=======
 
-Client/Server
-
-Ping to Server
-
-Connected Players:
-- Name
-- Ping
-- Level
-- HP
-- Distance
-
-=======
-Network Menu
-=======
-
-=======
+==============
 StartGame
-=======
+==============
 With controller
 - Search for sessions
 - Enter session
@@ -111,8 +76,6 @@ With controller
 ===========================
    Abilities / Skills / Magic / Talents
 ===========================
-
-SkillSlot?
 
 AbilityManager or add to StatusMgr?
 - Experience points
@@ -131,27 +94,54 @@ UI
 - Upgrade
 - Requirnments
 
+=======
+UI Actions/Skill Slots (Left Bottom)
+=======
+- Icon
+- CanUse
+- Use
+- Cooldown
+
 ===========================
-   Weapons/TakeDamage/Death/Revive
+Damage Dummy.
 ===========================
+- Max Regen
+- Takes damage and plays animation
+- UI Damage Value
+
+
+===========================
+   Death/Revive
+===========================
+- Enemy Health bar
+- Death ragdoll.
+- Revive spot.
+
+
+===========================
+   Session History
+===========================
+DamageMgrComponent to GameMode
+- Tracks Events of Abilities/Damage/Death/Revive
+- Callbacks on death/revive
+- History: Array of Events
+
+
+===========================
+   Weapons
+===========================
+
+WeaponItem : EquipmentItem
+- AttackSpeed
+- AnimStyle?
 
 List of Struct:
 - Chances
 - Active status effect
 
-TakeDamage (based on what body part was hit) (bone name?):
-- Headshot
-- Protected by armor
-
 ItemData uniqueID?
 - Differentiate Dublicates
 - Equiped/busy?
-
-Reuse equipment slot or subclass of equipment slot?
-Single/double hand?
-
-WeaponItem : EquipmentItem
-- AttackSpeed
 
 MeleeWeaponItem : WeaponItem
 
@@ -159,6 +149,9 @@ RangedWeaponItem : WeaponItem
 - CurrenAmmo
 - MaxAmmo ?
 - MagSize ?
+
+Reuse equipment slot or subclass of equipment slot?
+Single/double hand?
 
 Weapons (with damage type)
 - Rifle
@@ -170,21 +163,63 @@ Weapons (with damage type)
 - Attack combo?
 - Stat Scaling
 
-Damage Dummy
+TakeDamage (based on what body part was hit) (bone name?):
+- Headshot
+- Protected by armor
 
-UI
-- Damage
+=======
+UI Weapon bar (Left bottom)
+=======
+For ranged / consuable weapons
 
-Death/Revive
+===========================
+   UI Todo
+===========================
 
-=================================================
-   Session History
-=================================================
+=======
+Crafting
+=======
+Personal list
 
-DamageMgrComponent to GameMode
-- Tracks Events of Abilities/Damage/Death/Revive
-- Callbacks on death/revive
-- History: Array of Events
+
+==============
+Option Menu
+==============
+Save/Load By slots
+
+
+=======
+Session
+=======
+Connected Players:
+- Name
+- Ping
+- Level
+- HP
+- Distance
+
+
+=======
+Network Menu
+=======
+Network Configuration
+
+
+=======
+User Action (Bottom Center)
+=======
+- Interact
+- Open chest
+
+
+=======
+Dialogue (Bottom Center)
+=======
+
+
+=======
+Map (Right Top)?
+=======
 
 =================================================
    Network
@@ -197,11 +232,13 @@ Smart Replication of FRStatusValue
 - Once every few seconds
 - Local updates and adjusts to new values on rep
 
+
 =======
 Spawn Menu
 =======
 Select spawn point
 See status. Smooth start
+
 
 =======
 Session
@@ -212,7 +249,6 @@ Network Session
 - Real time data. (Latency, Player count)
 - Return to main screen
 - Persistent data between sessions
-
 
 
 =================================================
@@ -226,9 +262,10 @@ Chat
 - Audio messages?
 
 Emotions
-- Icon (Animation)
+- Icon / Emoji (Animation)
 - Sound
 - On top of player
+- Character animation
 
 =================================================
    Animation
@@ -255,7 +292,6 @@ Animations:
 =================================================
    AI
 =================================================
-
 - pathfinding
 - patrol
 - Melee and ranged
@@ -263,10 +299,10 @@ Animations:
 - Attack together
 - Hide
 
+
 =================================================
    Sound
 =================================================
-
 - Jump / Land
 - Running
 - Weapon Attack / Reloading
@@ -274,10 +310,10 @@ Animations:
 - Explosion
 - Environment
 
+
 =================================================
    VFX
 =================================================
-
 - Blood
 - Explosion
 - Smoke
@@ -287,13 +323,12 @@ Animations:
 =================================================
    UI (Nice to have)
 =================================================
-
 - Mono Font
 - Audio channels
 - Persistent Audio Settings
 - Input
-
 - Smooth bars movement.
+- Colors when increase/decrease
 
 ===========================
    Status (Nice to have)
@@ -326,45 +361,23 @@ Physical(Str)
 =================================================
    Inventory (Nice to have)
 =================================================
-
-Random Item data.
-- Price/Rarity/Effect/Color
+Generate Items/Weapon/Equipment randomly. With schema.
+- Price
+- Rarity
+- Effect
+- Color
 
 Store
 - Sold Item List? Re-buy?
 
-=======
-   UI
-=======
-
-Select slot
-- List of Items for it
-
-Items by groups
-
-Box UI
-- With PopupMenu for details
-
-Item UI
-- Sorting?
-- Tabs [All][Equipment][Consumables][Craft][Quest][...]
-
-Gold as separate inventory value?
-
-Craft in game menu
-- Personal list of crafting
-
 =================================================
    Camera
 =================================================
+- Smoother Turns
+- Behind back right
+- Focus on attackable targets
+- Restore to move direction after a few seconds
 
-Smoother Turns
-
-Behind back right
-
-Focus on attackable targets
-
-Restore to move direction after a few seconds
 
 =================================================
    Other
