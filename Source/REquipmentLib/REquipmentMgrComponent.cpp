@@ -139,13 +139,10 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-
    {
       FRConsumableItemData ItemData;
       if (FRConsumableItemData::Cast (Items[ItemIdx], ItemData)) {
          if (!ItemData.Used (GetOwner (), this)) return false;
-
-
          BP_Used (ItemIdx);
          if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
          return true;
