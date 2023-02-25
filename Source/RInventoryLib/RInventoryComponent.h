@@ -34,11 +34,11 @@ public:
 
    // Current
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      float WeightCurrent = 0;
+      int32 WeightCurrent = 0;
 
-   // Maximum weight actor can carry
+   // Maximum weight actor can carry. In grams
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
-      float WeightMax = 25;
+      int32 WeightMax = 25000;
 
    //==========================================================================
    //                 Item list

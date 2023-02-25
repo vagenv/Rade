@@ -21,14 +21,14 @@ UREquipmentMgrComponent::UREquipmentMgrComponent ()
 
    // Equip Load
    FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurve ();
-   StrToWeightMaxData->AddKey (   0,   10); // Minimum
-   StrToWeightMaxData->AddKey (   1, 10.5);
-   StrToWeightMaxData->AddKey (  10,   15);
-   StrToWeightMaxData->AddKey ( 100,   50);
-   StrToWeightMaxData->AddKey (1000,  100);
-   StrToWeightMaxData->AddKey (5000,  150);
+   StrToWeightMaxData->AddKey (   0,   10000); // Minimum
+   StrToWeightMaxData->AddKey (   1,   10050);
+   StrToWeightMaxData->AddKey (  10,   15000);
+   StrToWeightMaxData->AddKey ( 100,   50000);
+   StrToWeightMaxData->AddKey (1000,  100000);
+   StrToWeightMaxData->AddKey (5000,  150000);
 
-   // Weight To Evasion
+   // Weight percent To Evasion
    FRichCurve* WeightToEvasionData = WeightToEvasion.GetRichCurve ();
    WeightToEvasionData->AddKey ( 40,   0); // Minimum
    WeightToEvasionData->AddKey ( 50,  -5);

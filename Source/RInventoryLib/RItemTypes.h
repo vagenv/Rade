@@ -114,9 +114,9 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 MaxCount = 100;
 
-   // Item Weight of each instance
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 0.0))
-      float Weight = 1;
+   // Item Weight of each instance. In gramms.
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 0))
+      int32 Weight = 0;
 
    // Selling price
    // 0 -> Can't sell

@@ -173,7 +173,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // --- Limit weight being used
-   float WeightAdd = NewItem.Count * NewItem.Weight;
+   int32 WeightAdd = NewItem.Count * NewItem.Weight;
    if (WeightCurrent + WeightAdd > WeightMax) return false;
 
    // --- Check if item is stackable
@@ -206,7 +206,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 
    // --- Check if overflow. For default items.
    if (NewItem.Count > NewItem.MaxCount) {
-      int nNewInstance = NewItem.Count / NewItem.MaxCount;
+      int nNewInstance = NewItem.Count / NewItem.MaxCount - 1;
       for (int iNewInstance = 0; iNewInstance < nNewInstance; iNewInstance++) {
 
          // Check if slot available
@@ -347,12 +347,16 @@ bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
       return false;
    }
    int nItems = Items.Num ();
+
+   bool success = true;
+   int32 SrcItemIdx = 0;
    for (int iItem = 0; iItem < nItems; iItem++) {
-      if (!TransferItem (DstInventory, 0, 0)) {
-         return false;
+      if (!TransferItem (DstInventory, SrcItemIdx, 0)) {
+         success = false;
+         SrcItemIdx++; // Move to next one
       }
    }
-   return true;
+   return success;
 }
 
 void URInventoryComponent::TransferItem_Server_Implementation (URInventoryComponent *SrcInventory,
@@ -389,7 +393,20 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
    FRItemData ItemData = Items[SrcItemIdx];
 
    // All items
-   if (SrcItemCount <= 0) SrcItemCount = ItemData.Count;
+   if (SrcItemCount <= 0) {
+      SrcItemCount = ItemData.Count;
+
+      // Downscale if not enough space
+      int32 WeightAvailable = DstInventory->WeightMax - DstInventory->WeightCurrent ;
+      int32 WeightRequired  = ItemData.Count * ItemData.Weight;
+      if (WeightAvailable < WeightRequired) {
+         SrcItemCount = WeightAvailable / ItemData.Weight;
+      }
+   }
+
+   // Can't fit anything
+   if (SrcItemCount == 0) return false;
+
    ItemData.Count = SrcItemCount;
 
    // Try to add item
@@ -402,7 +419,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
 void URInventoryComponent::CalcWeight ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   float WeightNew = 0;
+   int32 WeightNew = 0;
    // Find same kind of item
    for (const FRItemData &ItItem : Items) {
       WeightNew += (ItItem.Count * ItItem.Weight);
