@@ -93,9 +93,13 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       ERItemRarity Rarity = ERItemRarity::None;
 
-   // Item Name
+   // Data table row Unique ID
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Name = FString ("Please set item name");
+      FString Name;
+
+   // Item Label
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FString Label = FString ("Please set item label");
 
    // Tooltip or Press E to Use/Equip
    UPROPERTY(EditAnywhere, BlueprintReadWrite)

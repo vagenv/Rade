@@ -1,6 +1,7 @@
 [
 	{
 		"Name": "Rock",
+		"Label": "Rock",
 		"Rarity": "E",
 		"Tooltip": "A shiny Rockt to sell",
 		"Icon": "/Game/Rade/Sprites/Icons/alarm.alarm",
@@ -14,6 +15,7 @@
 	},
 	{
 		"Name": "MusicNotes",
+		"Label": "MusicNotes",
 		"Rarity": "QUEST",
 		"Tooltip": "A quest item to delivery",
 		"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-down.arrow-badge-down",
@@ -27,6 +29,7 @@
 	},
 	{
 		"Name": "HeavyRocks",
+		"Label": "HeavyRocks",
 		"Rarity": "MAINQUEST",
 		"Tooltip": "A heavy quest item",
 		"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-right.arrow-badge-right",
@@ -40,6 +43,7 @@
 	},
 	{
 		"Name": "Gold",
+		"Label": "Gold",
 		"Rarity": "E",
 		"Tooltip": "Current used in exchange of goods and services",
 		"Icon": "/Game/Rade/Sprites/Icons/coins.coins",

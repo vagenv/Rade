@@ -1,6 +1,7 @@
 [
 	{
 		"Name": "Stick",
+		"Label": "Wooden Stick",
 		"Rarity": "F",
 		"Tooltip": "A stick you can find anywhere around",
 		"Icon": "None",
@@ -14,6 +15,7 @@
 	},
 	{
 		"Name": "Wood",
+		"Label": "Wood",
 		"Rarity": "E",
 		"Tooltip": "A building material used all around the realm.",
 		"Icon": "None",
@@ -27,6 +29,7 @@
 	},
 	{
 		"Name": "AnimalHide",
+		"Label": "AnimalHide",
 		"Rarity": "E",
 		"Tooltip": "Belonged to Animal",
 		"Icon": "None",
@@ -40,6 +43,7 @@
 	},
 	{
 		"Name": "Leather",
+		"Label": "Leather",
 		"Rarity": "E",
 		"Tooltip": "A durable and flexible material",
 		"Icon": "None",
@@ -53,6 +57,7 @@
 	},
 	{
 		"Name": "Bone",
+		"Label": "Bone",
 		"Rarity": "E",
 		"Tooltip": "Nearly everyone has a few of them inside, right?",
 		"Icon": "None",
@@ -66,6 +71,7 @@
 	},
 	{
 		"Name": "RawIron",
+		"Label": "RawIron",
 		"Rarity": "E",
 		"Tooltip": "Unprocessed Iron",
 		"Icon": "None",
@@ -79,6 +85,7 @@
 	},
 	{
 		"Name": "IronIngot",
+		"Label": "IronIngot",
 		"Rarity": "D",
 		"Tooltip": "Iron ingot.",
 		"Icon": "None",
@@ -92,6 +99,7 @@
 	},
 	{
 		"Name": "SteelIngot",
+		"Label": "SteelIngot",
 		"Rarity": "C",
 		"Tooltip": "Steel Ingot",
 		"Icon": "None",
@@ -105,6 +113,7 @@
 	},
 	{
 		"Name": "RawCopper",
+		"Label": "RawCopper",
 		"Rarity": "E",
 		"Tooltip": "Unprocessed copper",
 		"Icon": "None",
@@ -118,6 +127,7 @@
 	},
 	{
 		"Name": "CopperIngot",
+		"Label": "CopperIngot",
 		"Rarity": "D",
 		"Tooltip": "Copper ingot",
 		"Icon": "None",
@@ -131,6 +141,7 @@
 	},
 	{
 		"Name": "RawSilver",
+		"Label": "RawSilver",
 		"Rarity": "C",
 		"Tooltip": "Unprocessed silver",
 		"Icon": "None",
@@ -144,6 +155,7 @@
 	},
 	{
 		"Name": "SilverIngot",
+		"Label": "SilverIngot",
 		"Rarity": "B",
 		"Tooltip": "Silver Ingot",
 		"Icon": "None",
@@ -157,6 +169,7 @@
 	},
 	{
 		"Name": "RawGold",
+		"Label": "RawGold",
 		"Rarity": "B",
 		"Tooltip": "Unprocessed gold",
 		"Icon": "None",
@@ -170,6 +183,7 @@
 	},
 	{
 		"Name": "GoldIngot",
+		"Label": "GoldIngot",
 		"Rarity": "A",
 		"Tooltip": "Gold Ingot",
 		"Icon": "None",
@@ -183,6 +197,7 @@
 	},
 	{
 		"Name": "ManaStone_Small",
+		"Label": "ManaStone_Small",
 		"Rarity": "C",
 		"Tooltip": "Mana Stone",
 		"Icon": "None",
@@ -196,6 +211,7 @@
 	},
 	{
 		"Name": "ManaStone_Medium",
+		"Label": "ManaStone_Medium",
 		"Rarity": "B",
 		"Tooltip": "Mana Stone",
 		"Icon": "None",
@@ -209,6 +225,7 @@
 	},
 	{
 		"Name": "ManaStone_Big",
+		"Label": "ManaStone_Big",
 		"Rarity": "A",
 		"Tooltip": "Mana Stone",
 		"Icon": "None",
@@ -222,6 +239,7 @@
 	},
 	{
 		"Name": "Sand",
+		"Label": "Sand",
 		"Rarity": "E",
 		"Tooltip": "Sand",
 		"Icon": "None",
@@ -235,6 +253,7 @@
 	},
 	{
 		"Name": "Glass",
+		"Label": "Glass",
 		"Rarity": "C",
 		"Tooltip": "Glass",
 		"Icon": "None",

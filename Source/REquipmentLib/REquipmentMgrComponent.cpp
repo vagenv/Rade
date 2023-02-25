@@ -168,7 +168,7 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
 bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!EquipmentData.EquipmentSlot.Get ()) {
+   if (!EquipmentData.EquipmentSlot) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
       return false;
    }

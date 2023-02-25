@@ -1,6 +1,7 @@
 [
 	{
 		"Name": "HealthPack",
+		"Label": "Health Pack",
 		"ActiveEffects": [
 			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C'"
 		],
@@ -19,6 +20,7 @@
 	},
 	{
 		"Name": "ManaPack",
+		"Label": "Mana Pack",
 		"ActiveEffects": [
 			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C'"
 		],
