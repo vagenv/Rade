@@ -1,37 +1,5 @@
 [
 	{
-		"Name": "HatOfStrength",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
-		"CurrentDurability": 100,
-		"MaxDurability": 100,
-		"Resistence": [],
-		"PassiveEffects": [
-			{
-				"Scale": "FLAT",
-				"Target": "STR",
-				"Value": 20
-			}
-		],
-		"RequiredStats":
-		{
-			"STR": 0,
-			"AGI": 0,
-			"INT": 0
-		},
-		"Action": "None",
-		"DestroyOnAction": false,
-		"Rarity": "C",
-		"Tooltip": "A funny hat",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
-		"Count": 1,
-		"MaxCount": 1,
-		"Weight": 500,
-		"Price": 5,
-		"PickupMesh": "None",
-		"Pickup": "None",
-		"JsonData": ""
-	},
-	{
 		"Name": "Sword",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
 		"CurrentDurability": 100,
@@ -94,7 +62,7 @@
 		"Action": "None",
 		"DestroyOnAction": false,
 		"Rarity": "E",
-		"Tooltip": "A nice pistol",
+		"Tooltip": "A nice Pistol",
 		"Icon": "/Game/Rade/Sprites/Icons/bug.bug",
 		"Count": 1,
 		"MaxCount": 1,
@@ -178,6 +146,38 @@
 		"MaxCount": 1,
 		"Weight": 2000,
 		"Price": 12,
+		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfStrength",
+		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [],
+		"PassiveEffects": [
+			{
+				"Scale": "FLAT",
+				"Target": "STR",
+				"Value": 20
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 0,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"Rarity": "C",
+		"Tooltip": "A funny hat",
+		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 500,
+		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
 		"JsonData": ""
