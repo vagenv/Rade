@@ -22,47 +22,23 @@ Stamina/Mana/Health
 
 MoveSpeed and Critical Substat used
 
-SaveFile List with pictures and descriptions.
-
+SaveFile List with level pictures, date and map name.
 
 ===========================
    UI cleanup
 ===========================
 
-==============
-Action Menu
-==============
-
-
 =======
-Pickup
+Inventory
 =======
-- More compact
-- Name of pickup
-
-
-==============
-Status Menu
-==============
+Item list set/resize not remove/add
+Tab by types
+Sort by types/rarity/types
 
 =======
 Equipment
 =======
-- Slot list
-- Equipable items for each slot
-
-
-=======
-Inventory
-=======
-Sort by types/rarity/types
-
-
-=======
-Status
-=======
-- Active / passive effects with culprit
-
+Drop down list of each slot, with by tag
 
 ==============
 StartGame
@@ -330,6 +306,9 @@ Animations:
 - Smooth bars movement.
 - Colors when increase/decrease
 
+UI drop down action
+- Inventory
+
 ===========================
    Status (Nice to have)
 ===========================
@@ -357,6 +336,13 @@ Physical(Str)
 -Light
 -Dark
 -Heal
+
+=================================================
+   Inventory (Nice to have)
+=================================================
+
+- EffectIcon digit as stack.
+- EffectIcon Elapse as opacity?
 
 =================================================
    Inventory (Nice to have)
