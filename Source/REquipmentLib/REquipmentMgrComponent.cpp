@@ -6,7 +6,7 @@
 
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RUtilLib/RJSON.h"
+#include "RUtilLib/RJson.h"
 
 #include "RStatusLib/RStatusMgrComponent.h"
 #include "RInventoryLib/RItemAction.h"
