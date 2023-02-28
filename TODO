@@ -29,16 +29,15 @@ SaveFile List with level pictures, date and map name.
 ===========================
 
 =======
-Inventory
+Dropdown action list
 =======
-Item list set/resize not remove/add
-Tab by types
-Sort by types/rarity/types
+
 
 =======
 Equipment
 =======
-Drop down list of each slot, with by tag
+Drop down list of items to equip for each slot, with tag
+
 
 ==============
 StartGame
@@ -299,6 +298,8 @@ Animations:
 =================================================
    UI (Nice to have)
 =================================================
+- Scrolling header
+
 - Mono Font
 - Audio channels
 - Persistent Audio Settings
@@ -341,12 +342,10 @@ Physical(Str)
    Inventory (Nice to have)
 =================================================
 
-- EffectIcon digit as stack.
-- EffectIcon Elapse as opacity?
+Tab by types
+Sort by types/rarity/types
 
-=================================================
-   Inventory (Nice to have)
-=================================================
+
 Generate Items/Weapon/Equipment randomly. With schema.
 - Price
 - Rarity
