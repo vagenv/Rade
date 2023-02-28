@@ -1,14 +1,14 @@
 [
 	{
 		"Name": "HealthPack",
-		"Label": "Health Pack",
 		"ActiveEffects": [
 			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C'"
 		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C'",
 		"DestroyOnAction": true,
 		"Rarity": "E",
-		"Tooltip": "An item to heal user",
+		"Label": "Health Pack",
+		"Tooltip": "Health. MORE HEALTH!",
 		"Icon": "/Game/Rade/Sprites/Icons/alert-triangle.alert-triangle",
 		"Count": 1,
 		"MaxCount": 10,
@@ -20,14 +20,14 @@
 	},
 	{
 		"Name": "ManaPack",
-		"Label": "Mana Pack",
 		"ActiveEffects": [
 			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C'"
 		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C'",
 		"DestroyOnAction": true,
 		"Rarity": "E",
-		"Tooltip": "An item to restore mana",
+		"Label": "Mana Pack",
+		"Tooltip": "ME DRINK. ME SMARTER!",
 		"Icon": "/Game/Rade/Sprites/Icons/ball-tennis.ball-tennis",
 		"Count": 1,
 		"MaxCount": 10,
