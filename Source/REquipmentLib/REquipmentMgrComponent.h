@@ -25,7 +25,8 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    // Check if item equip
-   virtual bool UseItem (int32 ItemIdx) override;
+   virtual bool          UseItem  (int32 ItemIdx) override;
+   virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0) override;
 
    virtual bool Equip   (const FREquipmentData    &EquipmentData);
    virtual bool Equip   (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData);

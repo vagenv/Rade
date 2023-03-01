@@ -125,7 +125,7 @@ void UREquipmentMgrComponent::OnStatusUpdated ()
 }
 
 //=============================================================================
-//                 Equip/Unequip
+//                 Use/Drop override
 //=============================================================================
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
@@ -165,6 +165,36 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
    return success;
 }
 
+ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
+{
+   R_RETURN_IF_NOT_ADMIN_NULL;
+
+
+   // --- Check if Item should be unequiped
+
+   FREquipmentData ItemData;
+   // Is Equipment item
+   if (FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
+
+      // Get target slot type
+      UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (ItemData.EquipmentSlot);
+
+      if (EquipmentSlot) {
+
+         // Item equiped
+         if (EquipmentSlot->EquipmentData.Name == ItemData.Name) {
+            UnEquip (EquipmentSlot);
+         }
+      }
+   }
+
+   return Super::DropItem (ItemIdx, Count);
+}
+
+//=============================================================================
+//                 Equip/Unequip
+//=============================================================================
+
 bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
@@ -194,7 +224,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
       return false;
    }
    if (EquipmentSlot->GetClass () != EquipmentData.EquipmentSlot) {
-      R_LOG_PRINTF ("Inconsistent Slot Class: Item [%s] Slot []",
+      R_LOG_PRINTF ("Incompatable Equipment Slot and Item Slot Class: Slot [%s] Item [%s]",
          *EquipmentSlot->GetClass ()->GetName (),
          *EquipmentData.EquipmentSlot->GetName ()
          );
@@ -258,6 +288,7 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
 UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
 {
+   if (!SlotClass) return nullptr;
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
 
@@ -279,7 +310,6 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
    }
    return EquipmentSlot;
 }
-
 
 //=============================================================================
 //                 Save / Load
