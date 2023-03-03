@@ -1,12 +1,12 @@
 [
 	{
-		"Name": "Hat",
+		"Name": "HatOfBadBoi",
 		"CreateItem":
 		{
 			"Arch":
 			{
 				"DataTable": "/Script/Engine.DataTable'/Game/Rade/Blueprints/Items/EquipmentTable.EquipmentTable'",
-				"RowName": "Hat"
+				"RowName": "HatOfBadBoi"
 			},
 			"Count": 1
 		},
@@ -22,7 +22,7 @@
 		]
 	},
 	{
-		"Name": "NewRow",
+		"Name": "HeavyRocks",
 		"CreateItem":
 		{
 			"Arch":

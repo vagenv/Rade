@@ -104,7 +104,7 @@ void ARPlayer::BeginPlay ()
       // --- Save / Load data
       // Careful with collision of 'UniqueSaveId'
       FString UniqueSaveId = GetName () + "_Player";
-      Init_Save (GetWorld (), UniqueSaveId);
+      Init_Save (this, UniqueSaveId);
    }
 
    // --- Seed out Spawn Location a bit
@@ -120,24 +120,6 @@ void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void ARPlayer::Tick (float DeltaTime)
 {
    Super::Tick (DeltaTime);
-}
-
-void ARPlayer::Input_SaveGame ()
-{
-   bool res = URSaveMgr::SaveASync (GetWorld ());
-   if (!res) {
-      R_LOG ("Save failed");
-      return;
-   }
-}
-
-void ARPlayer::Input_LoadGame ()
-{
-   bool res = URSaveMgr::LoadASync (GetWorld ());
-   if (!res) {
-      R_LOG ("Load failed");
-      return;
-   }
 }
 
 void ARPlayer::OnSave (FBufferArchive &SaveData)
@@ -183,9 +165,6 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
       EnhancedInputComponent->BindAction (IA_ChangeCamera, ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
       EnhancedInputComponent->BindAction (IA_Action,       ETriggerEvent::Started, this, &ARPlayer::Input_Action);
       EnhancedInputComponent->BindAction (IA_AltAction,    ETriggerEvent::Started, this, &ARPlayer::Input_AltAction);
-
-      EnhancedInputComponent->BindAction (IA_Save, ETriggerEvent::Started, this, &ARPlayer::Input_SaveGame);
-      EnhancedInputComponent->BindAction (IA_Load, ETriggerEvent::Started, this, &ARPlayer::Input_LoadGame);
 	}
 }
 
@@ -293,33 +272,6 @@ bool ARPlayer::CanJump () const
    return (Stamina.Current > JumpCost);
 }
 
-
-/*
-// Checking if player can shoot
-bool ARPlayer::CanShoot()
-{
-   // Player and mesh is in the state where he can shoot
-   if (   IsAnimState(EAnimState::Idle_Run)
-      || (IsAnimState(EAnimState::Jumploop) && bCanFireInAir))
-      return true;
-
-   return false;
-}
-
-// Check if player can sprint
-bool ARPlayer::CanSprint()
-{
-   bool bReturnCanShoot = true;
-   if (TheWeapon && TheWeapon->bShooting)  bReturnCanShoot = false;
-   if (!IsAnimState(EAnimState::Idle_Run)) bReturnCanShoot = false;
-   if (  CharacterMovementComponent
-      && !CharacterMovementComponent->IsMovingOnGround())
-      bReturnCanShoot = false;
-
-   return bReturnCanShoot;
-}
-*/
-
 // Update First Person and Third Person Components visibility
 void ARPlayer::UpdateComponentsVisibility ()
 {
@@ -328,15 +280,7 @@ void ARPlayer::UpdateComponentsVisibility ()
       if (FirstPersonCameraComponent) FirstPersonCameraComponent->Activate();
 
       if (GetMesh()) GetMesh()->SetOwnerNoSee(true);
-
       if (Mesh1P) Mesh1P->SetVisibility(true);
-
-      /*
-      if (TheWeapon) {
-         if (TheWeapon->Mesh1P) TheWeapon->Mesh1P->SetVisibility(true);
-         if (TheWeapon->Mesh3P) TheWeapon->Mesh3P->SetOwnerNoSee(true);
-      }
-      */
 
    // Currently Third Person Camera
    } else if (CurrentCameraState == ECameraState::TP_Camera) {
@@ -346,13 +290,6 @@ void ARPlayer::UpdateComponentsVisibility ()
 
       if (GetMesh()) GetMesh()->SetOwnerNoSee(false);
       if (Mesh1P)    Mesh1P->SetVisibility(false);
-
-      /*
-      if (TheWeapon) {
-         if (TheWeapon->Mesh1P) TheWeapon->Mesh1P->SetVisibility(false);
-         if (TheWeapon->Mesh3P) TheWeapon->Mesh3P->SetOwnerNoSee(false);
-      }
-      */
    }
 }
 

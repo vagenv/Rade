@@ -6,7 +6,7 @@
 
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RUtilLib/RJSON.h"
+#include "RUtilLib/RJson.h"
 
 #include "RStatusLib/RStatusMgrComponent.h"
 #include "RInventoryLib/RItemAction.h"
@@ -21,14 +21,14 @@ UREquipmentMgrComponent::UREquipmentMgrComponent ()
 
    // Equip Load
    FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurve ();
-   StrToWeightMaxData->AddKey (   0,   10); // Minimum
-   StrToWeightMaxData->AddKey (   1, 10.5);
-   StrToWeightMaxData->AddKey (  10,   15);
-   StrToWeightMaxData->AddKey ( 100,   50);
-   StrToWeightMaxData->AddKey (1000,  100);
-   StrToWeightMaxData->AddKey (5000,  150);
+   StrToWeightMaxData->AddKey (   0,   10000); // Minimum
+   StrToWeightMaxData->AddKey (   1,   10050);
+   StrToWeightMaxData->AddKey (  10,   15000);
+   StrToWeightMaxData->AddKey ( 100,   50000);
+   StrToWeightMaxData->AddKey (1000,  100000);
+   StrToWeightMaxData->AddKey (5000,  150000);
 
-   // Weight To Evasion
+   // Weight percent To Evasion
    FRichCurve* WeightToEvasionData = WeightToEvasion.GetRichCurve ();
    WeightToEvasionData->AddKey ( 40,   0); // Minimum
    WeightToEvasionData->AddKey ( 50,  -5);
@@ -125,7 +125,7 @@ void UREquipmentMgrComponent::OnStatusUpdated ()
 }
 
 //=============================================================================
-//                 Equip/Unequip
+//                 Use/Drop override
 //=============================================================================
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
@@ -139,13 +139,10 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-
    {
       FRConsumableItemData ItemData;
       if (FRConsumableItemData::Cast (Items[ItemIdx], ItemData)) {
          if (!ItemData.Used (GetOwner (), this)) return false;
-
-
          BP_Used (ItemIdx);
          if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
          return true;
@@ -168,10 +165,40 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
    return success;
 }
 
+ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
+{
+   R_RETURN_IF_NOT_ADMIN_NULL;
+
+
+   // --- Check if Item should be unequiped
+
+   FREquipmentData ItemData;
+   // Is Equipment item
+   if (FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
+
+      // Get target slot type
+      UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (ItemData.EquipmentSlot);
+
+      if (EquipmentSlot) {
+
+         // Item equiped
+         if (EquipmentSlot->EquipmentData.Name == ItemData.Name) {
+            UnEquip (EquipmentSlot);
+         }
+      }
+   }
+
+   return Super::DropItem (ItemIdx, Count);
+}
+
+//=============================================================================
+//                 Equip/Unequip
+//=============================================================================
+
 bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!EquipmentData.EquipmentSlot.Get ()) {
+   if (!EquipmentData.EquipmentSlot) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
       return false;
    }
@@ -197,7 +224,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
       return false;
    }
    if (EquipmentSlot->GetClass () != EquipmentData.EquipmentSlot) {
-      R_LOG_PRINTF ("Inconsistent Slot Class: Item [%s] Slot []",
+      R_LOG_PRINTF ("Incompatable Equipment Slot and Item Slot Class: Slot [%s] Item [%s]",
          *EquipmentSlot->GetClass ()->GetName (),
          *EquipmentData.EquipmentSlot->GetName ()
          );
@@ -261,6 +288,7 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
 UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
 {
+   if (!SlotClass) return nullptr;
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
 
@@ -282,7 +310,6 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
    }
    return EquipmentSlot;
 }
-
 
 //=============================================================================
 //                 Save / Load

@@ -172,6 +172,5 @@ public:
    // Set Global Sound Volume
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
       static bool SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume);
-
 };
 

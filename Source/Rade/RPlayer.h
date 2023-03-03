@@ -51,6 +51,7 @@ public:
    virtual void BeginPlay() override;
    virtual void EndPlay  (const EEndPlayReason::Type EndPlayReason) override;
    virtual void Tick     (float DeltaTime) override;
+   void GetLifetimeReplicatedProps (TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
    //==========================================================================
    //                   Components and Important References
@@ -135,12 +136,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
 	   TObjectPtr<UInputAction> IA_AltAction;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> IA_Save;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-      TObjectPtr<UInputAction> IA_Load;
-
    // --- Internal function callen on onput
 	virtual void Input_Move (const FInputActionValue& Value);
 	virtual void Input_Look (const FInputActionValue& Value);
@@ -177,10 +172,6 @@ public:
    //==========================================================================
    //                         Save/Load
    //==========================================================================
-
-   // Input events
-   void Input_SaveGame ();
-   void Input_LoadGame ();
 
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
@@ -257,29 +248,6 @@ protected:
 
    // Called on all users when player revived
    virtual void GlobalRevive_Implementation();
-   */
-public:
-
-   void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
-   //==========================================================================
-   //                       State Checking
-   //==========================================================================
-
-   /*
-   // Called to reset current move speed when player fired (Fire after sprint)
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade")
-      void ResetMoveSpeed();
-
-   // Check player state if he can fire
-   virtual bool CanShoot();
-
-   // Can player Sprint
-   UFUNCTION(BlueprintCallable, Category = "Rade")
-      bool  CanSprint();
-
-   // Player Landed
-   virtual void Landed(const FHitResult& Hit)override;
    */
 
 public:

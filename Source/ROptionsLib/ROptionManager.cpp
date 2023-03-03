@@ -187,7 +187,8 @@ bool UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &
    if (!ensure (world)) return false;
 
    FAudioDeviceHandle audioDeviceHandler = world->GetAudioDevice ();
-   Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
+   //if (!ensure (audioDeviceHandler)) return false;
+   //Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
    return true;
 }
 
