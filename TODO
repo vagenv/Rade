@@ -24,29 +24,6 @@ MoveSpeed and Critical Substat used
 
 SaveFile List with level pictures, date and map name.
 
-===========================
-   UI cleanup
-===========================
-
-=======
-Dropdown action list
-=======
-
-
-=======
-Equipment
-=======
-Drop down list of items to equip for each slot, with tag
-
-
-==============
-StartGame
-==============
-With controller
-- Search for sessions
-- Enter session
-- Host session
-
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -150,6 +127,8 @@ For ranged / consuable weapons
 ===========================
    UI Todo
 ===========================
+
+Click/Hover zones overlap
 
 =======
 Crafting
@@ -341,6 +320,8 @@ Physical(Str)
 =================================================
    Inventory (Nice to have)
 =================================================
+
+ItemData Type check before cast
 
 Tab by types
 Sort by types/rarity/types
