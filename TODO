@@ -1,29 +1,16 @@
 ===========================
-   Other
+   TODO / Issues
 ===========================
 
-Bunny Hop Animation
+Option Menu, use RUI objects
 
-Enemy Dies (Bunny Explosion)
-- Puff
-- Bunny Left
-- Hops/Away
+Movement lags in session
 
-Create Folder with Balance curves
-Move All FRuntimeFloatCurve to blueprint subclass
+Optimization for Laptop / High FPS on PC
 
-Roll/Phase
-- Animation
-- Cost
-- Invincible Frame
+Inventory Replication max only  once a second, last replication value/date stored?
 
-Stamina/Mana/Health
-- If used, stop restoring, and resume after N seconds.
-
-MoveSpeed and Critical Substat used
-
-SaveFile List with level pictures, date and map name.
-
+StatusValue Local update + Once a second set from server
 
 ===========================
    Abilities / Skills / Magic / Talents
@@ -227,6 +214,8 @@ Emotions
 
 Animation Blueprint (Network)
 
+Bunny/Object Hop Animation with body deformation
+
 Partial body blend.
 - Overlaps
 - Lower body
@@ -241,7 +230,7 @@ Animations:
 - Run/Sprint
 - Ragdoll death
 - Melee fight
-- Roll
+- Roll/Phase (With Invincible Frame and Cost)
 
 =================================================
    AI
@@ -268,6 +257,14 @@ Animations:
 =================================================
    VFX
 =================================================
+
+Enemy Death -> Bunny Explosion
+- Puff
+- Bunny Left
+- Hops/Away
+
+- Roll/Phase
+
 - Blood
 - Explosion
 - Smoke
@@ -292,6 +289,11 @@ UI drop down action
 ===========================
    Status (Nice to have)
 ===========================
+
+MoveSpeed and Critical Substat used
+
+Stamina/Mana/Health
+- If used, stop restoring, and resume after N seconds.
 
 =======
 Resistance from stats?
@@ -348,6 +350,12 @@ Store
 =================================================
    Other
 =================================================
+
+
+SaveFile List with level pictures, date and map name.
+
+Create Folder with Balance curves
+Move All FRuntimeFloatCurve to blueprint subclass
 
 Blueprint Data validation
 
