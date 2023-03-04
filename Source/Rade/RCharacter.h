@@ -29,11 +29,11 @@ public:
    //              Components and Important References
    //==========================================================================
 
+   // Equipment Manager
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
       TObjectPtr<UREquipmentMgrComponent> EquipmentMgr;
 
-
-   //  Inventory Component
+   // Status Manager
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
       TObjectPtr<URStatusMgrComponent> StatusMgr;
 
