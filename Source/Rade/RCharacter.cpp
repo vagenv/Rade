@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RCharacter.h"
+#include "RJump.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 #include "RStatusLib/RDamageType.h"
@@ -25,6 +26,7 @@ ARCharacter::ARCharacter ()
 
    AbilityMgr = CreateDefaultSubobject<URAbilityMgrComponent> (TEXT("AbilityManager"));
    AbilityMgr->SetIsReplicated (true);
+   AbilityMgr->DefaultAbilities.Add (URAbility_Jump::StaticClass ());
 
    bReplicates  = true;
 }

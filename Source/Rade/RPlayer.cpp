@@ -1,12 +1,14 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RPlayer.h"
-
+#include "RJump.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
 #include "RStatusLib/RStatusMgrComponent.h"
+#include "RAbilityLib/RAbilityMgrComponent.h"
 
 #include "RJetpackComponent.h"
 
@@ -70,6 +72,9 @@ ARPlayer::ARPlayer ()
    EquipmentMgr->bSaveLoad = true;
    EquipmentMgr->bCheckClosestPickup = true;
    StatusMgr->bSaveLoad = true;
+
+   // --- Ability
+   AbilityMgr->DefaultAbilities.Add (URAbility_DoubleJump::StaticClass ());
 
    bAutoRevive = true;
 }
@@ -220,6 +225,11 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
+   URAbility_Jump *JumpAbility = URUtil::GetComponent<URAbility_Jump> (this);
+   if (!JumpAbility) {
+      R_LOG ("No jump Ability");
+   }
+
    if (GetMovementComponent ()->IsMovingOnGround ()) {
       if (CanJump ()) {
          // TODO: Call on server
