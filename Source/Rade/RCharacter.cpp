@@ -5,6 +5,7 @@
 #include "RUtilLib/RCheck.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusMgrComponent.h"
+#include "RAbilityLib/RAbilityMgrComponent.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -22,6 +23,9 @@ ARCharacter::ARCharacter ()
    StatusMgr = CreateDefaultSubobject<URStatusMgrComponent> (TEXT("StatusManager"));
    StatusMgr->SetIsReplicated (true);
 
+   AbilityMgr = CreateDefaultSubobject<URAbilityMgrComponent> (TEXT("AbilityManager"));
+   AbilityMgr->SetIsReplicated (true);
+
    bReplicates  = true;
 }
 
@@ -31,6 +35,7 @@ void ARCharacter::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLife
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
    DOREPLIFETIME (ARCharacter, EquipmentMgr);
    DOREPLIFETIME (ARCharacter, StatusMgr);
+   DOREPLIFETIME (ARCharacter, AbilityMgr);
 }
 
 // Called when the game starts or when spawned

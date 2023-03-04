@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRCharacterEvent);
 
 class UREquipmentMgrComponent;
 class URStatusMgrComponent;
+class URAbilityMgrComponent;
 
 UCLASS(Blueprintable)
 class RADE_API ARCharacter : public ACharacter
@@ -36,6 +37,9 @@ public:
    // Status Manager
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
       TObjectPtr<URStatusMgrComponent> StatusMgr;
+
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Character")
+      TObjectPtr<URAbilityMgrComponent> AbilityMgr;
 
    //==========================================================================
    //                        Take Damage

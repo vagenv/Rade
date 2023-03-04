@@ -16,6 +16,7 @@ public class RadeEditorTarget : TargetRules
       ExtraModuleNames.Add ("RInventoryLib");
       ExtraModuleNames.Add ("RSessionManagerLib");
       ExtraModuleNames.Add ("RStatusLib");
+      ExtraModuleNames.Add ("RAbilityLib");
       ExtraModuleNames.Add ("REquipmentLib");
       ExtraModuleNames.Add ("Rade");
    }

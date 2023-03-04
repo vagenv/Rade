@@ -2,25 +2,20 @@
 
 using UnrealBuildTool;
 
-public class Rade : ModuleRules
+public class RAbilityLib : ModuleRules
 {
-   public Rade (ReadOnlyTargetRules Target) : base (Target)
+   public RAbilityLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
          "Engine",
-         "InputCore",
-         "EnhancedInput",
+         "Json",
+         "JsonUtilities",
          "RUtilLib",
-         "ROptionsLib",
-         "RSessionManagerLib",
          "RSaveLib",
-         "RInventoryLib",
          "RStatusLib",
-         "RAbilityLib",
-         "REquipmentLib",
       });
    }
 }

@@ -35,6 +35,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RAbilityLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "REquipmentLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
