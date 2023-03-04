@@ -659,20 +659,3 @@ void URStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
    LoadData << CoreStats_Base;
 }
 
-
-//=============================================================================
-//                 UTIL
-//=============================================================================
-URStatusMgrComponent* URStatusMgrComponent::Get (AActor* Target)
-{
-   if (!ensure (Target)) return nullptr;
-   URStatusMgrComponent* StatusMgr = nullptr;
-   {
-      TArray<URStatusMgrComponent*> StatusMgrList;
-      Target->GetComponents (StatusMgrList);
-      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
-   }
-   if (!ensure (StatusMgr)) return nullptr;
-   return StatusMgr;
-}
-

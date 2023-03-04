@@ -1,11 +1,15 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RJetpackComponent.h"
+
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RStatusLib/RStatusMgrComponent.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "Math/UnrealMathUtility.h"
-#include "RStatusLib/RStatusMgrComponent.h"
+
 
 URJetpackComponent::URJetpackComponent ()
 {
@@ -33,7 +37,7 @@ bool URJetpackComponent::CanUse () const
    if (!MovementComponent) return false;
    if (MovementComponent->IsMovingOnGround ()) return false;
 
-   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (!StatusMgr) return false;
 
    FRStatusValue Mana = StatusMgr->GetMana ();
@@ -46,7 +50,7 @@ void URJetpackComponent::Use_Implementation ()
 
    UCharacterMovementComponent* MovementComponent = GetMovementComponent ();
    if (!MovementComponent) return;
-   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (GetOwner ());
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (!StatusMgr) return;
 
    const FRichCurve* AgiToJumpPowerData = AgiToJumpPower.GetRichCurveConst ();

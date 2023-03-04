@@ -72,19 +72,3 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
 
 }
 
-//=============================================================================
-//                 UTIL
-//=============================================================================
-URAbilityMgrComponent* URAbilityMgrComponent::Get (AActor* Target)
-{
-   if (!ensure (Target)) return nullptr;
-   URAbilityMgrComponent* AbilityMgr = nullptr;
-   {
-      TArray<URAbilityMgrComponent*> AbilityMgrList;
-      Target->GetComponents (AbilityMgrList);
-      if (AbilityMgrList.Num ()) AbilityMgr = AbilityMgrList[0];
-   }
-   if (!ensure (AbilityMgr)) return nullptr;
-   return AbilityMgr;
-}
-
