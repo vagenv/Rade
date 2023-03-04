@@ -8,6 +8,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityMgrEvent);
 
+
+class URAbility;
+
 // Ability Manager Component.
 UCLASS(Blueprintable, BlueprintType)
 class RABILITYLIB_API URAbilityMgrComponent : public UActorComponent, public IRSaveInterface
@@ -21,6 +24,23 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+   //==========================================================================
+   //                 Core
+   //==========================================================================
+
+   // Item to be added upon game start
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Ability")
+      TArray<TSubclassOf<URAbility> > DefaultAbilities;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+      URAbility* GetAbility (const TSubclassOf<URAbility> Ability);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+      bool AddAbility (const TSubclassOf<URAbility> Ability);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+      bool RMAbility  (const TSubclassOf<URAbility> Ability);
 
    //==========================================================================
    //                 Save/Load

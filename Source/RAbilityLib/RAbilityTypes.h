@@ -9,6 +9,35 @@
 // ============================================================================
 
 
+UCLASS(Abstract, Blueprintable, BlueprintType)
+class RABILITYLIB_API URAbility : public UActorComponent
+{
+   GENERATED_BODY()
+public:
+
+   URAbility();
+   virtual void BeginPlay () override;
+   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+   // --- Values
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FString UIName;
+
+   // --- Events
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+      virtual void Use () {};
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      virtual bool CanUse () { return false; };
+
+protected:
+
+};
+
+
+
 UCLASS()
 class RABILITYLIB_API URAbilityUtilLibrary : public UBlueprintFunctionLibrary
 {

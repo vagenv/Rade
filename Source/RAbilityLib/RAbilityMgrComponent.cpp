@@ -16,7 +16,6 @@ URAbilityMgrComponent::URAbilityMgrComponent ()
    PrimaryComponentTick.bCanEverTick = true;
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
-
 }
 
 // Replication
@@ -39,6 +38,10 @@ void URAbilityMgrComponent::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
 
+      for (const TSubclassOf<URAbility> It : DefaultAbilities) {
+         AddAbility (It);
+      }
+
       // Save/Load Status
       if (bSaveLoad) {
          // Careful with collision of 'UniqueSaveId'
@@ -56,6 +59,41 @@ void URAbilityMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URAbilityMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
+}
+//=============================================================================
+//                 Add / RM
+//=============================================================================
+
+URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Ability_)
+{
+   URAbility* Result = nullptr;
+   if (Ability_) {
+      TArray<URAbility*> AbilityList;
+      GetOwner ()->GetComponents (AbilityList);
+      for (URAbility *ItAbility : AbilityList) {
+         if (ItAbility->GetClass () == Ability_->GetClass ()) {
+            Result = ItAbility;
+            break;
+         }
+      }
+   }
+   return Result;
+}
+
+bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
+{
+   URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
+   if (!ensure (!Ability)) return false;
+
+   return false;
+}
+
+bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
+{
+   URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
+   if (!ensure (!Ability)) return false;
+
+   return false;
 }
 
 //=============================================================================
