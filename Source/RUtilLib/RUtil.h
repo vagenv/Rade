@@ -24,7 +24,7 @@ T* URUtil::GetComponent (const AActor * Target)
       Target->GetComponents (CompObjList);
       if (CompObjList.Num ()) CompObj = CompObjList[0];
    }
-   if (!ensure (CompObj)) return nullptr;
+   if (!CompObj) return nullptr;
    return CompObj;
 }
 
