@@ -71,7 +71,7 @@ URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Abili
       TArray<URAbility*> AbilityList;
       GetOwner ()->GetComponents (AbilityList);
       for (URAbility *ItAbility : AbilityList) {
-         if (ItAbility->GetClass () == Ability_->GetClass ()) {
+         if (ItAbility->GetClass () == Ability_) {
             Result = ItAbility;
             break;
          }
@@ -88,6 +88,7 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
    Ability = NewObject<URAbility> (GetOwner (), Ability_);
    if (!ensure (Ability)) return false;
    Ability->RegisterComponent ();
+   OnAbilityListUpdated.Broadcast ();
    return true;
 }
 
@@ -97,6 +98,7 @@ bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
    if (!ensure (!Ability)) return false;
 
    Ability->DestroyComponent ();
+   OnAbilityListUpdated.Broadcast ();
    return true;
 }
 

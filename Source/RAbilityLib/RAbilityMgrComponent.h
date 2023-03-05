@@ -42,6 +42,10 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
       bool RMAbility  (const TSubclassOf<URAbility> Ability);
 
+   // When Ability list updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
+      FRAbilityMgrEvent OnAbilityListUpdated;
+
    //==========================================================================
    //                 Save/Load
    //==========================================================================

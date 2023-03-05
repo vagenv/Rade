@@ -13,6 +13,7 @@ URAbility::URAbility ()
 {
    PrimaryComponentTick.bCanEverTick = true;
    PrimaryComponentTick.bStartWithTickEnabled = true;
+   PrimaryComponentTick.TickInterval = 0.2;
    SetIsReplicatedByDefault (true);
 }
 
@@ -35,24 +36,33 @@ void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URAbility::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
+
+   // Decrease cooldown
+   if (CooldownLeft > 0) {
+      CooldownLeft = FMath::Clamp (CooldownLeft - DeltaTime, 0 , Cooldown);
+   }
+
+   // CanUse may be overloaded
+   if (UseBlocked && CanUse ()) {
+      UseBlocked = false;
+      OnAbilityStatusUpdated.Broadcast ();
+   }
 }
 
 void URAbility::Use ()
 {
-   UsedLast = FPlatformTime::Seconds ();
+   UseBlocked = true;
+   CooldownLeft = Cooldown;
+   OnAbilityStatusUpdated.Broadcast ();
 }
 
 bool URAbility::CanUse () const
 {
-   return FPlatformTime::Seconds () > UsedLast + Cooldown;
+   return GetCooldownLeft () == 0;
 }
 
 double URAbility::GetCooldownLeft () const
 {
-   if (!Cooldown) return 0;
-   if (!UsedLast) return 0;
-   double dt = UsedLast + Cooldown - FPlatformTime::Seconds ();
-   if (dt < 0) dt = 0;
-   return dt;
+   return CooldownLeft;
 }
 

@@ -4,10 +4,11 @@
 
 #include "RAbilityTypes.generated.h"
 
-// ============================================================================
-//                   Core Stat
-// ============================================================================
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
 
+// ============================================================================
+//                   Ability Component
+// ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType)
 class RABILITYLIB_API URAbility : public UActorComponent
@@ -38,12 +39,20 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       double GetCooldownLeft () const;
 
+
+   // When Ability list updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
+      FRAbilityEvent OnAbilityStatusUpdated;
+
 protected:
 
-
-   double UsedLast = 0;
+   bool   UseBlocked = true;
+   double CooldownLeft = 0;
 };
 
+// ============================================================================
+//                   Ability Util Library
+// ============================================================================
 
 
 UCLASS()
@@ -52,10 +61,6 @@ class RABILITYLIB_API URAbilityUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   // UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status",
-   //    meta = (DisplayName = "<", CompactNodeTitle = "<"))
-   //    static bool FRCoreStats_Less (const FRCoreStats &a, const FRCoreStats &b) {
-   //       return (a < b);
-   //    }
+
 };
 

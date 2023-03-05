@@ -12,15 +12,36 @@
 URAbility_Jump::URAbility_Jump()
 {
    Cooldown = 1;
+   UIName = "Jump";
+}
+
+void URAbility_Jump::BeginPlay ()
+{
+   Super::BeginPlay ();
+
+   Character = Cast<ACharacter> (GetOwner ());
+   if (!ensure (Character)) return;
+
+   MoveComponent = Character->GetMovementComponent ();
+   if (!ensure (MoveComponent)) return;
+
+   StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   if (!ensure (StatusMgr)) return;
+}
+
+void URAbility_Jump::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+   Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
+
+   if (MoveComponent) {
+      OnGround = MoveComponent->IsMovingOnGround ();
+   }
 }
 
 void URAbility_Jump::Use ()
 {
-   if (!CanUse ()) return;
-
-   ACharacter *Character = Cast<ACharacter> (GetOwner ());
+   if (!CanUse ())          return;
    if (!ensure (Character)) return;
-   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (!ensure (StatusMgr)) return;
 
    StatusMgr->UseStamina (StaminaCost);
@@ -30,16 +51,8 @@ void URAbility_Jump::Use ()
 
 bool URAbility_Jump::CanUse () const
 {
-   if (!Super::CanUse ()) return false;
-   ACharacter *Character = Cast<ACharacter> (GetOwner ());
-   if (!ensure (Character)) return false;
-
-   UPawnMovementComponent *MoveComponent = Character->GetMovementComponent ();
-   if (!ensure (MoveComponent)) return false;
-
-   if (!MoveComponent->IsMovingOnGround ()) return false;
-
-   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   if (!Super::CanUse ())   return false;
+   if (!OnGround)           return false;
    if (!ensure (StatusMgr)) return false;
 
    FRStatusValue Stamina = StatusMgr->GetStamina ();
@@ -52,6 +65,8 @@ bool URAbility_Jump::CanUse () const
 
 URAbility_DoubleJump::URAbility_DoubleJump ()
 {
+   UIName = "Double Jump";
+
    // Default damage Curve
    FRichCurve* AgiToJumpPowerData = AgiToJumpPower.GetRichCurve ();
 
@@ -62,15 +77,35 @@ URAbility_DoubleJump::URAbility_DoubleJump ()
    AgiToJumpPowerData->AddKey ( 100, 1500);
 }
 
+void URAbility_DoubleJump::BeginPlay ()
+{
+   Super::BeginPlay ();
+
+   Character = Cast<ACharacter> (GetOwner ());
+   if (!ensure (Character)) return;
+
+   MoveComponent = Character->GetMovementComponent ();
+   if (!ensure (MoveComponent)) return;
+
+   StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   if (!ensure (StatusMgr)) return;
+}
+
+void URAbility_DoubleJump::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+   Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
+
+   if (MoveComponent) {
+      OnGround = MoveComponent->IsMovingOnGround ();
+      if (OnGround) Landed = true;
+   }
+}
+
 void URAbility_DoubleJump::Use ()
 {
-   if (!CanUse ()) return;
-
-   ACharacter *Character = Cast<ACharacter> (GetOwner ());
-   if (!ensure (Character)) return;
-   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
-   if (!ensure (StatusMgr)) return;
-   UPawnMovementComponent *MoveComponent = Character->GetMovementComponent ();
+   if (!CanUse ())              return;
+   if (!ensure (Character))     return;
+   if (!ensure (StatusMgr))     return;
    if (!ensure (MoveComponent)) return;
 
    const FRichCurve* AgiToJumpPowerData = AgiToJumpPower.GetRichCurveConst ();
@@ -86,20 +121,14 @@ void URAbility_DoubleJump::Use ()
 
    StatusMgr->UseMana (ManaCost);
    Super::Use ();
+   Landed = false;
 }
 
 bool URAbility_DoubleJump::CanUse () const
 {
-   if (!Super::CanUse ()) return false;
-   ACharacter *Character = Cast<ACharacter> (GetOwner ());
-   if (!ensure (Character)) return false;
-
-   UPawnMovementComponent *MoveComponent = Character->GetMovementComponent ();
-   if (!ensure (MoveComponent)) return false;
-
-   if (MoveComponent->IsMovingOnGround ()) return false;
-
-   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   if (!Super::CanUse ())   return false;
+   if (OnGround)            return false;
+   if (!Landed)             return false;
    if (!ensure (StatusMgr)) return false;
 
    FRStatusValue Mana = StatusMgr->GetMana ();
