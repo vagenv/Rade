@@ -85,7 +85,10 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (!Ability)) return false;
 
-   return false;
+   Ability = NewObject<URAbility> (GetOwner (), Ability_);
+   if (!ensure (Ability)) return false;
+   Ability->RegisterComponent ();
+   return true;
 }
 
 bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
@@ -93,7 +96,8 @@ bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (!Ability)) return false;
 
-   return false;
+   Ability->DestroyComponent ();
+   return true;
 }
 
 //=============================================================================
