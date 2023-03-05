@@ -36,7 +36,7 @@ bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
    if (!ensure (Causer_->HasAuthority ())) return false;
    UWorld* World = GetWorld ();
    if (!ensure (World))                    return false;
-   URStatusMgrComponent* StatusMgr_ = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   URStatusMgrComponent* StatusMgr_ = URUtil::GetComponent<URStatusMgrComponent> (Target_);
    if (!ensure (StatusMgr_))               return false;
 
 
