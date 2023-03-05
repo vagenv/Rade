@@ -1,6 +1,6 @@
-===========================
+=================================================
    TODO / Issues
-===========================
+=================================================
 
 Option Menu, use RUI objects
 
@@ -12,63 +12,62 @@ Inventory Replication max only  once a second, last replication value/date store
 
 StatusValue Local update + Once a second set from server
 
-===========================
+=================================================
    Abilities / Skills / Magic / Talents
-===========================
+=================================================
 
-AbilityManager or add to StatusMgr?
 - Experience points
 - Levels
 - Skills
 - Abilities/Skills
 - Passive StatusEffects
 
-- Double jump as ability [Remove Jetpack]
-
-bool CanUse ();
-void Use ();
-
 UI
 - Select Skill
 - Upgrade
-- Requirnments
 
 =======
-UI Actions/Skill Slots (Left Bottom)
+UI Actions Slots
 =======
 - Icon
-- CanUse
-- Use
 - Cooldown
+- Switch between them
+- UI to set them
 
-===========================
-Damage Dummy.
-===========================
-- Max Regen
-- Takes damage and plays animation
-- UI Damage Value
+=================================================
+   Damage
+=================================================
+
+DamageMgrComponent / SessionMgrComponent
+- Add to GameMode
+- Static calls to report event
+- Delegate to subscribe to event
+- Events : Abilities/Damage/Death/Revive
+- Callbacks on death/revive
+- History of events.
 
 
-===========================
+======
    Death/Revive
-===========================
-- Enemy Health bar
+======
 - Death ragdoll.
 - Revive spot.
 
+======
+UI
+======
+Enemy Health bar
+Damage Value over the character
 
-===========================
-   Session History
-===========================
-DamageMgrComponent to GameMode
-- Tracks Events of Abilities/Damage/Death/Revive
-- Callbacks on death/revive
-- History: Array of Events
+======
+Dummy
+======
+- Takes damage and plays animation
+- Death / Revive
 
-
-===========================
+=================================================
    Weapons
-===========================
+=================================================
 
 WeaponItem : EquipmentItem
 - AttackSpeed
