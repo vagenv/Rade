@@ -9,6 +9,11 @@
 //             Jump
 //=============================================================================
 
+URAbility_Jump::URAbility_Jump()
+{
+   Cooldown = 1;
+}
+
 void URAbility_Jump::Use ()
 {
    if (!CanUse ()) return;
@@ -20,10 +25,12 @@ void URAbility_Jump::Use ()
 
    StatusMgr->UseStamina (StaminaCost);
    Character->Jump ();
+   Super::Use ();
 }
 
-bool URAbility_Jump::CanUse ()
+bool URAbility_Jump::CanUse () const
 {
+   if (!Super::CanUse ()) return false;
    ACharacter *Character = Cast<ACharacter> (GetOwner ());
    if (!ensure (Character)) return false;
 
@@ -78,10 +85,12 @@ void URAbility_DoubleJump::Use ()
    MoveComponent->Velocity.Z += JumpVelocity;
 
    StatusMgr->UseMana (ManaCost);
+   Super::Use ();
 }
 
-bool URAbility_DoubleJump::CanUse ()
+bool URAbility_DoubleJump::CanUse () const
 {
+   if (!Super::CanUse ()) return false;
    ACharacter *Character = Cast<ACharacter> (GetOwner ());
    if (!ensure (Character)) return false;
 

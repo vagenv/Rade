@@ -37,3 +37,22 @@ void URAbility::TickComponent (float DeltaTime, enum ELevelTick TickType, FActor
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
 }
 
+void URAbility::Use ()
+{
+   UsedLast = FPlatformTime::Seconds ();
+}
+
+bool URAbility::CanUse () const
+{
+   return FPlatformTime::Seconds () > UsedLast + Cooldown;
+}
+
+double URAbility::GetCooldownLeft () const
+{
+   if (!Cooldown) return 0;
+   if (!UsedLast) return 0;
+   double dt = UsedLast + Cooldown - FPlatformTime::Seconds ();
+   if (dt < 0) dt = 0;
+   return dt;
+}
+

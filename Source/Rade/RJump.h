@@ -12,10 +12,12 @@ class RADE_API URAbility_Jump : public URAbility
    GENERATED_BODY()
 public:
 
-   virtual void Use () override;
-   virtual bool CanUse () override;
+   URAbility_Jump ();
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jump")
+   virtual void Use () override;
+   virtual bool CanUse () const override;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Jump")
 	   float StaminaCost = 40;
 
 protected:
@@ -31,12 +33,12 @@ public:
    URAbility_DoubleJump ();
 
    virtual void Use () override;
-   virtual bool CanUse () override;
+   virtual bool CanUse () const override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Jetpack")
       FRuntimeFloatCurve AgiToJumpPower;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Jump")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Jump")
 	   float ManaCost = 30;
 
 protected:

@@ -22,18 +22,26 @@ public:
 
    // --- Values
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString UIName;
+      FString UIName = "";
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      float Cooldown = 3;
 
    // --- Events
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
-      virtual void Use () {};
+      virtual void Use ();
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-      virtual bool CanUse () { return false; };
+      virtual bool CanUse () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      double GetCooldownLeft () const;
 
 protected:
 
+
+   double UsedLast = 0;
 };
 
 
