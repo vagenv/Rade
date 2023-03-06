@@ -95,8 +95,9 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
 {
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
-   if (!ensure (!Ability)) return false;
+   if (!ensure (Ability)) return false;
 
+   Ability->UnregisterComponent ();
    Ability->DestroyComponent ();
    OnAbilityListUpdated.Broadcast ();
    return true;

@@ -57,10 +57,5 @@ public:
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
    virtual void OnLoad (FMemoryReader &LoadData) override;
-
-
-   //==========================================================================
-   //                    UTIL
-   //==========================================================================
 };
 
