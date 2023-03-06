@@ -16,23 +16,50 @@ StatusValue Local update + Once a second set from server
    Abilities / Skills / Magic / Talents
 =================================================
 
-- Experience points
-- Levels
-- Skills
-- Abilities/Skills
-- Passive StatusEffects
+AbilityBase
+AbilityTarget::Use (List<Actor>)
+AbilityAOE::Use (Location)
+
+BP_Used ()
+BP_UsedOnActors (List<Actor>)
+
+Ability Aura?
+
+=======
+UI Actions Slots manager
+=======
+List of slots
+
+Use (Target)?
+
+=======
+Abilities
+=======
+
+Types
+- Passive / Active
+- AOE
+- Passive StatusEffects on self
+- Active StatusEffects on self / target / actors in range
+
+Abilities to Implement:
+- Personal Heal
+- Mass heal
+- Explosion
+- Implosion
+
+=================================================
+   Experience Manager?
+=================================================
+
+Experience Tracker.
+Experience points
+Experience -> To Level
+Level Up -> Stats increase
 
 UI
 - Select Skill
 - Upgrade
-
-=======
-UI Actions Slots
-=======
-- Icon
-- Cooldown
-- Switch between them
-- UI to set them
 
 =================================================
    Damage
