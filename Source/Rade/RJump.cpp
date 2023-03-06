@@ -65,6 +65,7 @@ bool URAbility_Jump::CanUse () const
 
 URAbility_DoubleJump::URAbility_DoubleJump ()
 {
+   Cooldown = 5;
    UIName = "Double Jump";
 
    // Default damage Curve
