@@ -66,6 +66,7 @@ void URAbilityMgrComponent::TickComponent (float DeltaTime, enum ELevelTick Tick
 
 URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Ability_)
 {
+   if (!ensure (Ability_)) return nullptr;
    URAbility* Result = nullptr;
    if (Ability_) {
       TArray<URAbility*> AbilityList;
@@ -82,6 +83,7 @@ URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Abili
 
 bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 {
+   if (!ensure (Ability_)) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (!Ability)) return false;
 
@@ -94,6 +96,7 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 
 bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
 {
+   if (!ensure (Ability_)) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (Ability)) return false;
 
