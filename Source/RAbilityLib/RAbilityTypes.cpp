@@ -5,35 +5,29 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
+
 //=============================================================================
-//                 Abilities
+//                 Passsive Ability
 //=============================================================================
 
-URAbility::URAbility ()
+URAbility_Passive::URAbility_Passive ()
+{
+   PrimaryComponentTick.bCanEverTick = false;
+   PrimaryComponentTick.bStartWithTickEnabled = false;
+}
+
+//=============================================================================
+//                 Active Ability
+//=============================================================================
+
+URAbility_Active::URAbility_Active ()
 {
    PrimaryComponentTick.bCanEverTick = true;
    PrimaryComponentTick.bStartWithTickEnabled = true;
    PrimaryComponentTick.TickInterval = 0.2;
-   SetIsReplicatedByDefault (true);
 }
 
-void URAbility::BeginPlay ()
-{
-   Super::BeginPlay ();
-   const UWorld *world = GetWorld ();
-   if (!ensure (world)) return;
-
-   if (R_IS_NET_ADMIN) {
-
-   }
-}
-
-void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
-{
-   Super::EndPlay (EndPlayReason);
-}
-
-void URAbility::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
 
@@ -49,15 +43,16 @@ void URAbility::TickComponent (float DeltaTime, enum ELevelTick TickType, FActor
    }
 }
 
-void URAbility::Use ()
+void URAbility_Active::Use ()
 {
+   if (!CanUse ()) return;
    UseBlocked = true;
    CooldownLeft = Cooldown;
    OnAbilityStatusUpdated.Broadcast ();
    OnAbilityUsed.Broadcast ();
 }
 
-bool URAbility::CanUse () const
+bool URAbility_Active::CanUse () const
 {
    return CooldownLeft == 0;
 }

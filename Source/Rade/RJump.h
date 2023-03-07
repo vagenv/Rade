@@ -14,7 +14,7 @@ class URStatusMgrComponent  ;
 // ============================================================================
 
 UCLASS(BlueprintType)
-class RADE_API URAbility_Jump : public URAbility
+class RADE_API URAbility_Jump : public URAbility_Active
 {
    GENERATED_BODY()
 public:
@@ -44,7 +44,7 @@ protected:
 // ============================================================================
 
 UCLASS(BlueprintType)
-class RADE_API URAbility_DoubleJump : public URAbility
+class RADE_API URAbility_DoubleJump : public URAbility_Active
 {
    GENERATED_BODY()
 public:
@@ -57,7 +57,7 @@ public:
    virtual void Use    ()       override;
    virtual bool CanUse () const override;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Jetpack")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Jump")
       FRuntimeFloatCurve AgiToJumpPower;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Jump")
