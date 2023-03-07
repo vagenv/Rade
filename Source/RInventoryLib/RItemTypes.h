@@ -132,7 +132,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    // Pickup mesh
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TObjectPtr<UStaticMesh> PickupMesh;
+      TSoftObjectPtr<UStaticMesh> PickupMesh;
 
    // Custom pickup class. Will be used if set.
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
