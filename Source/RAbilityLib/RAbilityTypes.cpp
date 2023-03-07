@@ -54,15 +54,11 @@ void URAbility::Use ()
    UseBlocked = true;
    CooldownLeft = Cooldown;
    OnAbilityStatusUpdated.Broadcast ();
+   OnAbilityUsed.Broadcast ();
 }
 
 bool URAbility::CanUse () const
 {
-   return GetCooldownLeft () == 0;
-}
-
-double URAbility::GetCooldownLeft () const
-{
-   return CooldownLeft;
+   return CooldownLeft == 0;
 }
 

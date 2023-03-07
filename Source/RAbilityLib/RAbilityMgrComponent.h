@@ -8,7 +8,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityMgrEvent);
 
-
 class URAbility;
 
 // Ability Manager Component.
