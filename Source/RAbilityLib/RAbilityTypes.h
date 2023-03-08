@@ -18,11 +18,11 @@ class RABILITYLIB_API URAbility : public UActorComponent
 public:
 
    // UI Display Name
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       FString UIName = "";
 
    // Ability Icon
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Ability")
       TSoftObjectPtr<UTexture2D> Icon;
 };
 
@@ -44,6 +44,33 @@ public:
 };
 
 
+UCLASS(Abstract, Blueprintable, BlueprintType)
+class RABILITYLIB_API URAbility_Aura : public URAbility_Passive
+{
+   GENERATED_BODY()
+public:
+
+   URAbility_Aura ();
+
+   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+   virtual void CheckRange ();
+
+   // Range for actor search
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      float Range = 1000;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      TSubclassOf<AActor> AffectedType;
+
+   // --- Runtime status
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
+      TArray<AActor*> AffectedActors;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
+      FRAbilityEvent OnUpdated;
+};
+
 //=============================================================================
 //                 Active Ability
 //=============================================================================
@@ -58,14 +85,14 @@ public:
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       float Cooldown = 3;
 
    // --- Runtime status
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
       bool UseBlocked = true;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
       double CooldownLeft = 0;
 
    // --- Core Function Calls

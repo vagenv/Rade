@@ -5,7 +5,6 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
-
 //=============================================================================
 //                 Passsive Ability
 //=============================================================================
@@ -14,6 +13,46 @@ URAbility_Passive::URAbility_Passive ()
 {
    PrimaryComponentTick.bCanEverTick = false;
    PrimaryComponentTick.bStartWithTickEnabled = false;
+}
+
+//=============================================================================
+//                 Passsive Ability
+//=============================================================================
+
+URAbility_Aura::URAbility_Aura ()
+{
+   PrimaryComponentTick.bCanEverTick = true;
+   PrimaryComponentTick.bStartWithTickEnabled = true;
+   PrimaryComponentTick.TickInterval = 1;
+
+   AffectedType = ACharacter::StaticClass ();
+}
+
+void URAbility_Aura::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+   Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
+   CheckRange ();
+}
+
+void URAbility_Aura::CheckRange ()
+{
+   if (!AffectedType) return;
+
+   FVector OwnerLocation = GetOwner ()->GetActorLocation ();
+
+   TArray<AActor*> SearchResult;
+   UGameplayStatics::GetAllActorsOfClass (this, AffectedType, SearchResult);
+
+   TArray<AActor*> Result;
+   for (AActor* ItActor : SearchResult) {
+      if (!ItActor) continue;
+      if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
+      Result.Add (ItActor);
+   }
+
+   AffectedActors = Result;
+
+   OnUpdated.Broadcast ();
 }
 
 //=============================================================================
