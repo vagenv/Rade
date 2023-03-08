@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 class ARItemPickup;
 
 // Inventory Component. Holds all items an actor own
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent))
 class RINVENTORYLIB_API URInventoryComponent : public UActorComponent, public IRSaveInterface
 {
    GENERATED_BODY()

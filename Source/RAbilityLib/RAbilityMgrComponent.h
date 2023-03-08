@@ -10,7 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityMgrEvent);
 class URAbility;
 
 // Ability Manager Component.
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent))
 class RABILITYLIB_API URAbilityMgrComponent : public UActorComponent, public IRSaveInterface
 {
    GENERATED_BODY()
