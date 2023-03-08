@@ -17,6 +17,8 @@ class RABILITYLIB_API URAbility : public UActorComponent
    GENERATED_BODY()
 public:
 
+   URAbility ();
+
    // UI Display Name
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       FString UIName = "";
@@ -53,7 +55,7 @@ public:
    URAbility_Aura ();
 
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
-
+   virtual void BeginPlay () override;
    virtual void CheckRange ();
 
    // Range for actor search
@@ -111,6 +113,11 @@ public:
    // When Ability status updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityEvent OnAbilityStatusUpdated;
+
+   // --- Server version
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
+      void Use_Server ();
+      virtual void Use_Server_Implementation ();
 
 protected:
 };

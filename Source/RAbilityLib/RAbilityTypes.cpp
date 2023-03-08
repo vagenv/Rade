@@ -1,9 +1,19 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RAbilityTypes.h"
+
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+
+//=============================================================================
+//                 Passsive Ability
+//=============================================================================
+
+URAbility::URAbility ()
+{
+   SetIsReplicatedByDefault (true);
+}
 
 //=============================================================================
 //                 Passsive Ability
@@ -26,6 +36,15 @@ URAbility_Aura::URAbility_Aura ()
    PrimaryComponentTick.TickInterval = 1;
 
    AffectedType = ACharacter::StaticClass ();
+}
+
+void URAbility_Aura::BeginPlay ()
+{
+   Super::BeginPlay ();
+
+   if (!R_IS_NET_ADMIN) {
+      SetComponentTickEnabled (false);
+   }
 }
 
 void URAbility_Aura::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -84,6 +103,7 @@ void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType,
 
 void URAbility_Active::Use ()
 {
+   R_RETURN_IF_NOT_ADMIN;
    if (!CanUse ()) return;
    UseBlocked = true;
    CooldownLeft = Cooldown;
@@ -96,3 +116,7 @@ bool URAbility_Active::CanUse () const
    return CooldownLeft == 0;
 }
 
+void URAbility_Active::Use_Server_Implementation ()
+{
+   Use ();
+}

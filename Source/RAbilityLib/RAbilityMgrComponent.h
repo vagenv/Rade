@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "RAbilityTypes.h"
 #include "RSaveLib/RSaveInterface.h"
 #include "RAbilityMgrComponent.generated.h"
 
