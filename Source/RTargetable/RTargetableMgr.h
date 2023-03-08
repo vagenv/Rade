@@ -50,7 +50,6 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable", meta = (AutoCreateRefTerm = "FilterOut"))
       virtual URTargetableComponent* Find (FVector Origin, FRotator Direction, TArray<AActor*> FilterOut);
 
-
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       static float GetAngle (const FVector v1, const FVector v2);
 

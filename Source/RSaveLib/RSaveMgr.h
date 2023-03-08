@@ -45,17 +45,17 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-          bool Get (const FString &key, TArray<uint8> &data);
+         bool Get (const FString &key, TArray<uint8> &data);
 
    //==========================================================================
    //                  Set Data
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-          bool Set (const FString &key, const TArray<uint8> &data);
+         bool Set (const FString &key, const TArray<uint8> &data);
 
    //==========================================================================
-   //                  Get instalce -> GameMode component
+   //                  Get instamce -> GameMode component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
