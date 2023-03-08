@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RTargetableMgr.h"
-
+#include "RTargetableComponent.h"
 #include "RUtilLib/RLog.h"
 
 //=============================================================================
@@ -28,4 +28,18 @@ URTargetableMgr* URTargetableMgr::GetInstance (UObject* WorldContextObject)
 
 URTargetableMgr::URTargetableMgr ()
 {
+}
+
+void URTargetableMgr::AddTarget (URTargetableComponent * Target)
+{
+   if (!ensure (Target)) return;
+   TargetableList.Add (Target);
+   OnListUpdated.Broadcast ();
+}
+
+void URTargetableMgr::RmTarget  (URTargetableComponent * Target)
+{
+   if (!ensure (Target)) return;
+   TargetableList.Remove (Target);
+   OnListUpdated.Broadcast ();
 }
