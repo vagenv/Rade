@@ -15,7 +15,6 @@ public class RAbilityLib : ModuleRules
          "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
-         "RStatusLib",
       });
    }
 }
