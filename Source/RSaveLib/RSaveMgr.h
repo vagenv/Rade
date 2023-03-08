@@ -10,7 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
 class USaveGame;
 class URSaveGame;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
 class RSAVELIB_API URSaveMgr : public UActorComponent
 {
    GENERATED_BODY()
