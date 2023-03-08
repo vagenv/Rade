@@ -7,16 +7,19 @@
 void URTargetableComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
-      Mgr->AddTarget (this);
-   }
+   SetTargetable (true);
 }
 
 void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
-      Mgr->RmTarget (this);
-   }
+   SetTargetable (false);
    Super::EndPlay (EndPlayReason);
 }
 
+void URTargetableComponent::SetTargetable (bool Enabled)
+{
+   if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
+      if (Enabled) Mgr->AddTarget (this);
+      else         Mgr->RmTarget (this);
+   }
+}
