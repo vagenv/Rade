@@ -12,6 +12,8 @@ Inventory Replication max only  once a second, last replication value/date store
 
 StatusValue Local update + Once a second set from server
 
+Ability Cooldown Local update.
+
 =================================================
    Experience Manager?
 =================================================
