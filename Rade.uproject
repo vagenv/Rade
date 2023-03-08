@@ -10,6 +10,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RTargetableLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "ROptionsLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
