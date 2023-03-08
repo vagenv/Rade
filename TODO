@@ -13,42 +13,6 @@ Inventory Replication max only  once a second, last replication value/date store
 StatusValue Local update + Once a second set from server
 
 =================================================
-   Abilities / Skills / Magic / Talents
-=================================================
-
-AbilityBase
-AbilityTarget::Use (List<Actor>)
-AbilityAOE::Use (Location)
-
-BP_Used ()
-BP_UsedOnActors (List<Actor>)
-
-Ability Aura?
-
-=======
-UI Actions Slots manager
-=======
-List of slots
-
-Use (Target)?
-
-=======
-Abilities
-=======
-
-Types
-- Passive / Active
-- AOE
-- Passive StatusEffects on self
-- Active StatusEffects on self / target / actors in range
-
-Abilities to Implement:
-- Personal Heal
-- Mass heal
-- Explosion
-- Implosion
-
-=================================================
    Experience Manager?
 =================================================
 
@@ -60,6 +24,19 @@ Level Up -> Stats increase
 UI
 - Select Skill
 - Upgrade
+
+
+=================================================
+   Targets
+=================================================
+
+- ITargetable
+- Get list of actors in range.
+- Get Camera rotation and closes to target
+- Switch between targets with Look movement
+- Out of range -> Remove target
+- UI Target
+
 
 =================================================
    Damage
@@ -91,6 +68,7 @@ Dummy
 ======
 - Takes damage and plays animation
 - Death / Revive
+
 
 =================================================
    Weapons
@@ -136,6 +114,17 @@ TakeDamage (based on what body part was hit) (bone name?):
 UI Weapon bar (Left bottom)
 =======
 For ranged / consuable weapons
+
+
+=================================================
+   Abilities (TODO)
+=================================================
+
+Save/Load
+
+Targeted (Status Effects / Spells?)
+- Location / Allies / Enemies / Id Group
+
 
 ===========================
    UI Todo
