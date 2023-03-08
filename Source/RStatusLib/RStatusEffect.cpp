@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RStatusEffect.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 #include "RStatusMgrComponent.h"
@@ -35,7 +36,7 @@ bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
    if (!ensure (Causer_->HasAuthority ())) return false;
    UWorld* World = GetWorld ();
    if (!ensure (World))                    return false;
-   URStatusMgrComponent* StatusMgr_ = URStatusMgrComponent::Get (Target_);
+   URStatusMgrComponent* StatusMgr_ = URUtil::GetComponent<URStatusMgrComponent> (Target_);
    if (!ensure (StatusMgr_))               return false;
 
 
@@ -119,7 +120,7 @@ bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const F
    if (!ensure (Target))                  return false;
    if (!ensure (Target->HasAuthority ())) return false;
    if (!ensure (!Tag.IsEmpty ()))         return false;
-   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target);
    if (!ensure (StatusMgr))               return false;
 
    // --- Action
@@ -132,7 +133,7 @@ bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FS
    if (!ensure (Target))                  return false;
    if (!ensure (Target->HasAuthority ())) return false;
    if (!ensure (!Tag.IsEmpty ()))         return false;
-   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target);
    if (!ensure (StatusMgr))               return false;
 
    // --- Action
@@ -148,7 +149,7 @@ bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor
    UWorld* World = Target->GetWorld ();
    if (!World)                            return false;
    if (!ensure (Effect))                  return false;
-   URStatusMgrComponent* StatusMgr = URStatusMgrComponent::Get (Target);
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target);
    if (!ensure (StatusMgr))               return false;
 
    // --- Action

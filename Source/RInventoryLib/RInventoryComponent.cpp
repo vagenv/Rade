@@ -516,7 +516,8 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
       Pickup = GetWorld ()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
       // Custom mesh pickup
       if (ItemData.PickupMesh) {
-         Pickup->MeshComponent->SetStaticMesh (ItemData.PickupMesh);
+         // TODO
+         //Pickup->MeshComponent->SetStaticMesh (ItemData.PickupMesh);
       }
    }
    Pickup->SetOwner (GetOwner ());

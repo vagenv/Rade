@@ -1,21 +1,19 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RPlayer.h"
-
+#include "RJump.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 #include "RSaveLib/RSaveMgr.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
 #include "RStatusLib/RStatusMgrComponent.h"
-
-#include "RJetpackComponent.h"
+#include "RAbilityLib/RAbilityMgrComponent.h"
 
 #include "Engine.h"
-
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
 #include "Net/UnrealNetwork.h"
 
 //=============================================================================
@@ -63,8 +61,6 @@ ARPlayer::ARPlayer ()
    GetMesh()->CastShadow = true;
    GetMesh()->bOwnerNoSee = true;
    GetMesh()->SetIsReplicated (true);
-
-   Jetpack = CreateDefaultSubobject<URJetpackComponent> (TEXT("Jetpack"));
 
    // --- Inventory
    EquipmentMgr->bSaveLoad = true;
@@ -220,14 +216,12 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 // Player Pressed Jump
 void ARPlayer::Input_Jump ()
 {
-   if (GetMovementComponent ()->IsMovingOnGround ()) {
-      if (CanJump ()) {
-         // TODO: Call on server
-         // StatusMgr->UseStamina (JumpCost);
-         Super::Jump ();
-      }
-   } else {
-      if (Jetpack->CanUse ()) Jetpack->Use ();
+   if (URAbility_Jump *JumpAbility = URUtil::GetComponent<URAbility_Jump> (this)) {
+      if (JumpAbility->CanUse ()) JumpAbility->Use_Custom ();
+   }
+
+   if (URAbility_DoubleJump *JumpAbility = URUtil::GetComponent<URAbility_DoubleJump> (this)) {
+      if (JumpAbility->CanUse ()) JumpAbility->Use_Server ();
    }
 }
 
@@ -263,15 +257,6 @@ void ARPlayer::Input_AltAction ()
 //                           State Checking
 //=============================================================================
 
-bool ARPlayer::CanJump () const
-{
-   if (StatusMgr->IsDead ()) return false;
-   if (!GetMovementComponent ()->IsMovingOnGround ()) return false;
-
-   FRStatusValue Stamina = StatusMgr->GetStamina ();
-   return (Stamina.Current > JumpCost);
-}
-
 // Update First Person and Third Person Components visibility
 void ARPlayer::UpdateComponentsVisibility ()
 {
@@ -292,7 +277,6 @@ void ARPlayer::UpdateComponentsVisibility ()
       if (Mesh1P)    Mesh1P->SetVisibility(false);
    }
 }
-
 
 //=============================================================================
 //                   Damage/Death/Revive

@@ -3,7 +3,6 @@
 #include "RStatusMgrComponent.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RSaveLib/RSaveMgr.h"
 
 #include "Net/UnrealNetwork.h"
 #include "Engine/DamageEvents.h"
@@ -658,22 +657,5 @@ void URStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
    LoadData << Health << Mana << Stamina;
    LoadData << CoreStats_Base;
-}
-
-
-//=============================================================================
-//                 TUIL
-//=============================================================================
-URStatusMgrComponent* URStatusMgrComponent::Get (AActor* Target)
-{
-   if (!ensure (Target)) return nullptr;
-   URStatusMgrComponent* StatusMgr = nullptr;
-   {
-      TArray<URStatusMgrComponent*> StatusMgrList;
-      Target->GetComponents (StatusMgrList);
-      if (StatusMgrList.Num ()) StatusMgr = StatusMgrList[0];
-   }
-   if (!ensure (StatusMgr)) return nullptr;
-   return StatusMgr;
 }
 

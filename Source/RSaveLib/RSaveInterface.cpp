@@ -12,7 +12,7 @@ void IRSaveInterface::Init_Save (UObject* WorldContextObject, const FString &Sav
    UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (World_)) return;
    URSaveMgr *SaveMgr_ = URSaveMgr::GetInstance (WorldContextObject);
-   if (ensure (!SaveMgr_)) return;
+   if (!ensure (SaveMgr_)) return;
 
    ObjectSaveId = SaveId;
    World        = World_;

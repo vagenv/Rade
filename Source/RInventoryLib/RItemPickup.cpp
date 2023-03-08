@@ -11,11 +11,6 @@
 // Sets default values
 ARItemPickup::ARItemPickup ()
 {
-   // Root component
-   RootComponent = CreateDefaultSubobject<USceneComponent> (TEXT ("RootComponent"));
-   RootComponent->SetIsReplicated (true);
-   SetRootComponent (RootComponent);
-
    // Set Static Mesh Component
    MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
    MeshComponent->SetMobility (EComponentMobility::Movable);
@@ -25,6 +20,7 @@ ARItemPickup::ARItemPickup ()
    MeshComponent->SetSimulatePhysics (true);
    MeshComponent->SetIsReplicated (true);
    MeshComponent->bAutoActivate = true;
+   SetRootComponent (RootComponent);
 
    static ConstructorHelpers::FObjectFinder<UStaticMesh>
       defaultMesh (TEXT("StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cube.Shape_Cube'"));

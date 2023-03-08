@@ -61,10 +61,6 @@ public:
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
       TObjectPtr<APlayerController> PlayerController;
 
-   // Rade Player Controller
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Player")
-      TObjectPtr<URJetpackComponent> Jetpack;
-
    //==========================================================================
    //            1st person Mesh and animation
    //==========================================================================
@@ -157,17 +153,6 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnAltAction;
-
-
-   //==========================================================================
-   //                           State Checking
-   //==========================================================================
-
-   //UPROPERTY(BlueprintCallable, Category = "Rade|Action")
-      bool CanJump () const;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Camera")
-      float JumpCost = 30;
 
    //==========================================================================
    //                         Save/Load

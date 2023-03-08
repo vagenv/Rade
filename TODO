@@ -1,87 +1,80 @@
-===========================
-   Other
-===========================
+=================================================
+   TODO / Issues
+=================================================
 
-Bunny Hop Animation
+Option Menu, use RUI objects
 
-Enemy Dies (Bunny Explosion)
-- Puff
-- Bunny Left
-- Hops/Away
+Movement lags in session
 
-Create Folder with Balance curves
-Move All FRuntimeFloatCurve to blueprint subclass
+Optimization for Laptop / High FPS on PC
 
-Roll/Phase
-- Animation
-- Cost
-- Invincible Frame
+Inventory Replication max only  once a second, last replication value/date stored?
 
-Stamina/Mana/Health
-- If used, stop restoring, and resume after N seconds.
+StatusValue Local update + Once a second set from server
 
-MoveSpeed and Critical Substat used
+Ability Cooldown Local update.
 
-SaveFile List with level pictures, date and map name.
+=================================================
+   Experience Manager?
+=================================================
 
-
-===========================
-   Abilities / Skills / Magic / Talents
-===========================
-
-AbilityManager or add to StatusMgr?
-- Experience points
-- Levels
-- Skills
-- Abilities/Skills
-- Passive StatusEffects
-
-- Double jump as ability [Remove Jetpack]
-
-bool CanUse ();
-void Use ();
+Experience Tracker.
+Experience points
+Experience -> To Level
+Level Up -> Stats increase
 
 UI
 - Select Skill
 - Upgrade
-- Requirnments
-
-=======
-UI Actions/Skill Slots (Left Bottom)
-=======
-- Icon
-- CanUse
-- Use
-- Cooldown
-
-===========================
-Damage Dummy.
-===========================
-- Max Regen
-- Takes damage and plays animation
-- UI Damage Value
 
 
-===========================
+=================================================
+   Targets
+=================================================
+
+- ITargetable
+- Get list of actors in range.
+- Get Camera rotation and closes to target
+- Switch between targets with Look movement
+- Out of range -> Remove target
+- UI Target
+
+
+=================================================
+   Damage
+=================================================
+
+DamageMgrComponent / SessionMgrComponent
+- Add to GameMode
+- Static calls to report event
+- Delegate to subscribe to event
+- Events : Abilities/Damage/Death/Revive
+- Callbacks on death/revive
+- History of events.
+
+
+======
    Death/Revive
-===========================
-- Enemy Health bar
+======
 - Death ragdoll.
 - Revive spot.
 
+======
+UI
+======
+Enemy Health bar
+Damage Value over the character
 
-===========================
-   Session History
-===========================
-DamageMgrComponent to GameMode
-- Tracks Events of Abilities/Damage/Death/Revive
-- Callbacks on death/revive
-- History: Array of Events
+======
+Dummy
+======
+- Takes damage and plays animation
+- Death / Revive
 
 
-===========================
+=================================================
    Weapons
-===========================
+=================================================
 
 WeaponItem : EquipmentItem
 - AttackSpeed
@@ -123,6 +116,17 @@ TakeDamage (based on what body part was hit) (bone name?):
 UI Weapon bar (Left bottom)
 =======
 For ranged / consuable weapons
+
+
+=================================================
+   Abilities (TODO)
+=================================================
+
+Save/Load
+
+Targeted (Status Effects / Spells?)
+- Location / Allies / Enemies / Id Group
+
 
 ===========================
    UI Todo
@@ -227,6 +231,8 @@ Emotions
 
 Animation Blueprint (Network)
 
+Bunny/Object Hop Animation with body deformation
+
 Partial body blend.
 - Overlaps
 - Lower body
@@ -241,7 +247,7 @@ Animations:
 - Run/Sprint
 - Ragdoll death
 - Melee fight
-- Roll
+- Roll/Phase (With Invincible Frame and Cost)
 
 =================================================
    AI
@@ -268,6 +274,14 @@ Animations:
 =================================================
    VFX
 =================================================
+
+Enemy Death -> Bunny Explosion
+- Puff
+- Bunny Left
+- Hops/Away
+
+- Roll/Phase
+
 - Blood
 - Explosion
 - Smoke
@@ -292,6 +306,11 @@ UI drop down action
 ===========================
    Status (Nice to have)
 ===========================
+
+MoveSpeed and Critical Substat used
+
+Stamina/Mana/Health
+- If used, stop restoring, and resume after N seconds.
 
 =======
 Resistance from stats?
@@ -346,8 +365,23 @@ Store
 
 
 =================================================
+   Face animation?
+=================================================
+- Rig meshes
+- Camera recording
+- Universal
+- Voice to Expression.
+
+
+=================================================
    Other
 =================================================
+
+
+SaveFile List with level pictures, date and map name.
+
+Create Folder with Balance curves
+Move All FRuntimeFloatCurve to blueprint subclass
 
 Blueprint Data validation
 
