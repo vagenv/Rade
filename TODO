@@ -14,30 +14,37 @@ StatusValue Local update + Once a second set from server
 
 Ability Cooldown Local update.
 
-=================================================
-   Experience Manager?
-=================================================
-
-Experience Tracker.
-Experience points
-Experience -> To Level
-Level Up -> Stats increase
-
-UI
-- Select Skill
-- Upgrade
+Inventory network update.
 
 
 =================================================
    Targets
 =================================================
 
-- ITargetable
-- Get list of actors in range.
-- Get Camera rotation and closes to target
-- Switch between targets with Look movement
-- Out of range -> Remove target
-- UI Target
+TargetableComponent
+- enabled/disabled
+- onBeginPlay/onEndPlay register with Mgr
+
+TargetableMgrComponent / TargetMgrComponent
+- Distance of search
+- Angle (30 / 40)
+- Find/Get (Actor) / (WorldContext, Location, Direction)
+
+Attach to bone/socket
+
+Mutiple target on same actor?
+
+Query List of Actors then filter by range / Overlap sphere for tracking
+
+Get Camera rotation and closes to target
+
+Switch between targets with Camera look movement
+
+Out of range -> Remove target
+
+Target focused -> Outlined
+
+UI Target
 
 
 =================================================
@@ -116,6 +123,19 @@ TakeDamage (based on what body part was hit) (bone name?):
 UI Weapon bar (Left bottom)
 =======
 For ranged / consuable weapons
+
+=================================================
+   Experience Manager?
+=================================================
+
+Experience Tracker.
+Experience points
+Experience -> To Level
+Level Up -> Stats increase
+
+UI
+- Select Skill
+- Upgrade
 
 
 =================================================
