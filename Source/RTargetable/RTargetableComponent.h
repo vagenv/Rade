@@ -16,6 +16,10 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+      bool IsTargetable = false;
+
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
       void SetTargetable (bool Enabled);
 };

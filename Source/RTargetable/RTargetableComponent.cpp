@@ -18,6 +18,7 @@ void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 void URTargetableComponent::SetTargetable (bool Enabled)
 {
+   IsTargetable = Enabled;
    if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
       if (Enabled) Mgr->AddTarget (this);
       else         Mgr->RmTarget (this);
