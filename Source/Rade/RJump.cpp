@@ -1,8 +1,10 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RJump.h"
+
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "RStatusLib/RStatusMgrComponent.h"
 
 //=============================================================================
@@ -38,15 +40,29 @@ void URAbility_Jump::TickComponent (float DeltaTime, enum ELevelTick TickType, F
    }
 }
 
+void URAbility_Jump::Use_Custom ()
+{
+   if (R_IS_NET_ADMIN) {
+      Use ();
+      return;
+   }
+
+   // Tell server
+   Use_Server ();
+
+   // Call local jump. Movement component will resolve it.
+   Use ();
+}
+
 void URAbility_Jump::Use ()
 {
    if (!CanUse ())          return;
    if (!ensure (Character)) return;
    if (!ensure (StatusMgr)) return;
 
-   StatusMgr->UseStamina (StaminaCost);
+   if (R_IS_NET_ADMIN) StatusMgr->UseStamina (StaminaCost);
    Character->Jump ();
-   Super::Use ();
+   if (R_IS_NET_ADMIN) Super::Use ();
 }
 
 bool URAbility_Jump::CanUse () const

@@ -217,11 +217,11 @@ void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 void ARPlayer::Input_Jump ()
 {
    if (URAbility_Jump *JumpAbility = URUtil::GetComponent<URAbility_Jump> (this)) {
-      if (JumpAbility->CanUse ()) JumpAbility->Use ();
+      if (JumpAbility->CanUse ()) JumpAbility->Use_Custom ();
    }
 
    if (URAbility_DoubleJump *JumpAbility = URUtil::GetComponent<URAbility_DoubleJump> (this)) {
-      if (JumpAbility->CanUse ()) JumpAbility->Use ();
+      if (JumpAbility->CanUse ()) JumpAbility->Use_Server ();
    }
 }
 
