@@ -102,10 +102,6 @@ void ARPlayer::BeginPlay ()
       FString UniqueSaveId = GetName () + "_Player";
       Init_Save (this, UniqueSaveId);
    }
-
-   // --- Seed out Spawn Location a bit
-   //FVector RandomLoc = FVector(FMath::RandRange(-100, 100), FMath::RandRange(-100, 100), 0);
-   //SetActorLocation(GetActorLocation() + RandomLoc);
 }
 
 void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -277,126 +273,6 @@ void ARPlayer::UpdateComponentsVisibility ()
       if (Mesh1P)    Mesh1P->SetVisibility(false);
    }
 }
-
-//=============================================================================
-//                   Damage/Death/Revive
-//=============================================================================
-/*
-void ARPlayer::Die (AActor *DeathCauser, AController* EventInstigator)
-{
-   Super::Die (DeathCauser, EventInstigator);
-}
-*/
-
-/*
-// Player Died , called on Server
-void ARPlayer::ServerDie()
-{
-   // Stop any Fire
-   FireEnd();
-
-   // Switch to third Person View on death, to look at body
-   CurrentCameraState = ECameraState::TP_Camera;
-
-   Super::ServerDie();
-
-   APlayerState *playerState = GetPlayerState();
-   if (GetPlayerState() && Cast<ARPlayerState>(playerState))
-   {
-      Cast<ARPlayerState>(playerState)->DeathCount++;
-   }
-   if (  EventInstigator
-      && EventInstigator->GetPawn()
-      && EventInstigator->GetPawn()->GetPlayerState()
-      && Cast<ARPlayerState>(EventInstigator->GetPawn()->GetPlayerState()))
-   {
-      Cast<ARPlayerState>(EventInstigator->GetPawn()->GetPlayerState ())->KillCount++;
-   }
-
-}
-// Player Died, Called on all users
-void ARPlayer::GlobalDeath_Implementation()
-{
-   // Disable player input
-   DisableInput(Cast<APlayerController>(Controller));
-
-   // Event and Ragdoll
-   Super::GlobalDeath_Implementation();
-
-   // Update Visibility
-   UpdateComponentsVisibility();
-
-   // Call on Blueprint
-   BP_PlayerDied();
-}
-
-
-// Revive Player
-void ARPlayer::ServerRevive()
-{
-   Super::ServerRevive();
-
-   // Find The Closest Revive Point
-   TActorIterator<APlayerStart> p(GetWorld());
-   APlayerStart* revivePoint = *p;
-
-   for (TActorIterator<APlayerStart> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
-      if (revivePoint
-         &&   FVector::Dist (revivePoint->GetActorLocation(), GetActorLocation())
-            > FVector::Dist (ActorItr->GetActorLocation(),    GetActorLocation()))
-      {
-         revivePoint = *ActorItr;
-      }
-   }
-   // Create a small offset from the spawn point
-   if (revivePoint)
-      GetRootComponent()->SetWorldLocation(revivePoint->GetActorLocation() + FVector(FMath::RandRange(-400, 400),
-                                           FMath::RandRange(-400, 400), 60));
-
-}
-
-void ARPlayer::GlobalRevive_Implementation()
-{
-   Super::GlobalRevive_Implementation();
-
-   // Enable Input
-   EnableInput(Cast<APlayerController>(Controller));
-   // Set Camer to Default Camera state
-   CurrentCameraState = DefaultCameraState;
-   UpdateComponentsVisibility();
-   Global_SetAnimArchtype_Implementation(EAnimArchetype::EmptyHand);
-
-   BP_PlayerRevived();
-}
-
-*/
-
-//=============================================================================
-//             Network Chat, Props and Replication
-//=============================================================================
-
-/*
-bool ARPlayer::AddChatMessage_Validate(const FString & TheMessage)
-{
-   return true;
-}
-void ARPlayer::AddChatMessage_Implementation(const FString & TheMessage)
-{
-   if (GetWorld() && GetWorld()->GetGameState<ARadeGameState>()) {
-      GetWorld()->GetGameState<ARadeGameState>()->AddNewChatMessage(TheMessage, this);
-   }
-}
-
-void ARPlayer::SetCharacterStats_Implementation(const FString &newName, FLinearColor newColor)
-{
-   Super::SetCharacterStats_Implementation(newName,newColor);
-   if (GetPlayerState()) {
-      GetPlayerState()->SetPlayerName (newName);
-      if (Cast<ARPlayerState>(GetPlayerState()))Cast<ARPlayerState>(GetPlayerState())->PlayerColor = newColor;
-   }
-}
-
-*/
 
 //=============================================================================
 //       Util
