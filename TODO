@@ -21,37 +21,22 @@ Inventory network update.
    Targets
 =================================================
 
-TargetableComponent
-- enabled/disabled
-- onBeginPlay/onEndPlay register with Mgr
+If Targeted
+- UI Show crosshair
 
-TargetableMgrComponent / TargetMgrComponent
-- Distance of search
-- Angle (30 / 40)
-- Find/Get (Actor) / (WorldContext, Location, Direction)
+Target focused -> Outlined?
 
-Attach to bone/socket
-
-Mutiple target on same actor?
-
-Query List of Actors then filter by range / Overlap sphere for tracking
-
-Get Camera rotation and closes to target
+Move camera -> Stop lerping -> After delay lerp again
+Move camera too far -> Stop Targeting?
 
 Switch between targets with Camera look movement
-
-Out of range -> Remove target
-
-Target focused -> Outlined
-
-UI Target
 
 
 =================================================
    Damage
 =================================================
 
-DamageMgrComponent / SessionMgrComponent
+DamageMgrComponent / SessionEventMgrComponent
 - Add to GameMode
 - Static calls to report event
 - Delegate to subscribe to event
