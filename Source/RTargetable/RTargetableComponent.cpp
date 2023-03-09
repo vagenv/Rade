@@ -7,21 +7,46 @@
 void URTargetableComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   SetTargetable (true);
+   if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
+      Mgr->AddTarget (this);
+   }
 }
 
 void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   SetTargetable (false);
+   if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
+      Mgr->RmTarget (this);
+   }
    Super::EndPlay (EndPlayReason);
 }
 
-void URTargetableComponent::SetTargetable (bool Enabled)
+//=============================================================================
+//         Can this target be selected
+//=============================================================================
+
+void URTargetableComponent::SetIsTargetable (bool CanFind)
 {
-   IsTargetable = Enabled;
-   if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
-      if (Enabled) Mgr->AddTarget (this);
-      else         Mgr->RmTarget (this);
-   }
+   IsTargetable = CanFind;
+   OnIsTargetable.Broadcast ();
+}
+
+bool URTargetableComponent::GetIsTargetable () const
+{
+   return IsTargetable;
+}
+
+//=============================================================================
+//         Is this target be selected
+//=============================================================================
+
+void URTargetableComponent::SetIsTargeted (bool CanTarget)
+{
+   IsTargetable = CanTarget;
+   OnIsTargeted.Broadcast ();
+}
+
+bool URTargetableComponent::GetIsTargeted () const
+{
+   return IsTargeted;
 }
 

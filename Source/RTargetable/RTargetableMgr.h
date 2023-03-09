@@ -5,7 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "RTargetableMgr.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableMgrEvent);
 
 class URTargetableComponent;
 
@@ -27,7 +27,7 @@ protected:
 public:
    // Called when target list has been modified
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
-      FRTargetableEvent OnListUpdated;
+      FRTargetableMgrEvent OnListUpdated;
 
    // Distance at which target can be searched
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")

@@ -291,6 +291,7 @@ void ARPlayer::TargetingTick (float DeltaTime)
 void ARPlayer::TargetSearch ()
 {
    if (TargetCurrent) {
+      TargetCurrent->SetIsTargeted (false);
       TargetCurrent = nullptr;
    } else {
 
@@ -302,6 +303,8 @@ void ARPlayer::TargetSearch ()
          TargetCurrent = TargetMgr->Find (FirstPersonCameraComponent->GetComponentLocation (),
                                           FirstPersonCameraComponent->GetComponentRotation (),
                                           blacklist);
+
+         if (TargetCurrent) TargetCurrent->SetIsTargeted (true);
       }
    }
    OnTargetUpdated.Broadcast ();
@@ -315,9 +318,10 @@ void ARPlayer::TargetCheck ()
 
       float Distance = FVector::Dist (GetActorLocation (), TargetCurrent->GetComponentLocation ());
       if (Distance > TargetMgr->SearchDistance) RemoveTarget = true;
-      if (!TargetCurrent->IsTargetable) RemoveTarget = true;
+      if (!TargetCurrent->GetIsTargetable ())   RemoveTarget = true;
 
       if (RemoveTarget) {
+         TargetCurrent->SetIsTargeted (false);
          TargetCurrent = nullptr;
          OnTargetUpdated.Broadcast ();
       }
