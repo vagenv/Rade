@@ -24,3 +24,4 @@ void URTargetableComponent::SetTargetable (bool Enabled)
       else         Mgr->RmTarget (this);
    }
 }
+

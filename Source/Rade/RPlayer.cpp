@@ -2,9 +2,12 @@
 
 #include "RPlayer.h"
 #include "RJump.h"
+
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RTargetable/RTargetableComponent.h"
+#include "RTargetable/RTargetableMgr.h"
 #include "RSaveLib/RSaveMgr.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
 #include "RStatusLib/RStatusMgrComponent.h"
@@ -15,6 +18,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
+
+#include "DrawDebugHelpers.h"
 
 //=============================================================================
 //             Core
@@ -67,6 +72,14 @@ ARPlayer::ARPlayer ()
    EquipmentMgr->bCheckClosestPickup = true;
    StatusMgr->bSaveLoad = true;
 
+   // --- Targetable
+   FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurve ();
+   TargetAngleToLerpPowerData->AddKey (0,   0);
+   TargetAngleToLerpPowerData->AddKey (1,  20);
+   TargetAngleToLerpPowerData->AddKey (5,  10);
+   TargetAngleToLerpPowerData->AddKey (20,  5);
+   TargetAngleToLerpPowerData->AddKey (40,  1);
+
    bAutoRevive = true;
 }
 
@@ -102,6 +115,10 @@ void ARPlayer::BeginPlay ()
       FString UniqueSaveId = GetName () + "_Player";
       Init_Save (this, UniqueSaveId);
    }
+
+   TargetMgr = URTargetableMgr::GetInstance (this);
+
+   GetWorldTimerManager().SetTimer (TargetCheckHandle, this, &ARPlayer::TargetCheck, 1, true);
 }
 
 void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -112,29 +129,13 @@ void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void ARPlayer::Tick (float DeltaTime)
 {
    Super::Tick (DeltaTime);
+   TargetingTick (DeltaTime);
 }
 
-void ARPlayer::OnSave (FBufferArchive &SaveData)
-{
-   FVector  loc = GetActorLocation ();
-   FRotator rot = GetActorRotation ();
-   SaveData << loc << rot;
-}
-
-void ARPlayer::OnLoad (FMemoryReader &LoadData)
-{
-   FVector  loc;
-   FRotator rot;
-   LoadData << loc << rot;
-
-   SetActorLocation (loc);
-   SetActorRotation (rot);
-}
 
 //=============================================================================
 //             Input
 //=============================================================================
-
 
 // Bind input to events
 void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
@@ -154,7 +155,7 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
 		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-      EnhancedInputComponent->BindAction (IA_ChangeCamera, ETriggerEvent::Started, this, &ARPlayer::Input_ChangeCamera);
+      EnhancedInputComponent->BindAction (IA_ChangeCamera, ETriggerEvent::Started, this, &ARPlayer::TargetSearch);
       EnhancedInputComponent->BindAction (IA_Action,       ETriggerEvent::Started, this, &ARPlayer::Input_Action);
       EnhancedInputComponent->BindAction (IA_AltAction,    ETriggerEvent::Started, this, &ARPlayer::Input_AltAction);
 	}
@@ -189,6 +190,8 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
    if (StatusMgr->IsDead ()) return;
+   if (TargetCurrent) return;
+
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr) {
@@ -201,7 +204,7 @@ void ARPlayer::Input_Look (const FInputActionValue& Value)
 // Player Mesh Rotation after after the input
 void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
 {
-   Super::FaceRotation (NewControlRotation,DeltaTime);
+   Super::FaceRotation (NewControlRotation, DeltaTime);
    if (FirstPersonCameraComponent) {
       FRotator rot = FirstPersonCameraComponent->GetComponentRotation ();
       rot.Pitch = NewControlRotation.Pitch;
@@ -250,6 +253,78 @@ void ARPlayer::Input_AltAction ()
 }
 
 //=============================================================================
+//             Input
+//=============================================================================
+
+
+void ARPlayer::TargetingTick (float DeltaTime)
+{
+   if (TargetCurrent) {
+
+      // --- Collect values
+      FVector  CameraLocation = FirstPersonCameraComponent->GetComponentLocation ();
+      FRotator CameraRotation = FirstPersonCameraComponent->GetComponentRotation ();
+      FVector  CameraDir      = CameraRotation.Vector ();
+
+      FVector TargetLocation = TargetCurrent->GetComponentLocation ();
+      FVector TargetDir      = TargetLocation - CameraLocation;
+      TargetDir.Normalize ();
+
+      // Camera lerp speed
+      float LerpPower = 4;
+
+      // Transform Angle to Lerp power
+      const FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurveConst ();
+      if (TargetAngleToLerpPowerData) {
+         float Angle = URTargetableMgr::GetAngle (CameraDir, TargetDir);
+         LerpPower = TargetAngleToLerpPowerData->Eval (Angle);
+      }
+
+      // Lerp to Target Rotation
+      FRotator TargetRot = FMath::Lerp (CameraDir, TargetDir, DeltaTime * LerpPower).Rotation ();
+
+      // Set Rotation
+      GetController ()->SetControlRotation (TargetRot);
+   }
+}
+
+void ARPlayer::TargetSearch ()
+{
+   if (TargetCurrent) {
+      TargetCurrent = nullptr;
+   } else {
+
+      if (TargetMgr) {
+
+         TArray<AActor*> blacklist;
+         blacklist.Add (this);
+
+         TargetCurrent = TargetMgr->Find (FirstPersonCameraComponent->GetComponentLocation (),
+                                          FirstPersonCameraComponent->GetComponentRotation (),
+                                          blacklist);
+      }
+   }
+   OnTargetUpdated.Broadcast ();
+}
+
+void ARPlayer::TargetCheck ()
+{
+   if (TargetCurrent && TargetMgr) {
+
+      bool RemoveTarget = false;
+
+      float Distance = FVector::Dist (GetActorLocation (), TargetCurrent->GetComponentLocation ());
+      if (Distance > TargetMgr->SearchDistance) RemoveTarget = true;
+      if (!TargetCurrent->IsTargetable) RemoveTarget = true;
+
+      if (RemoveTarget) {
+         TargetCurrent = nullptr;
+         OnTargetUpdated.Broadcast ();
+      }
+   }
+}
+
+//=============================================================================
 //                           State Checking
 //=============================================================================
 
@@ -272,6 +347,27 @@ void ARPlayer::UpdateComponentsVisibility ()
       if (GetMesh()) GetMesh()->SetOwnerNoSee(false);
       if (Mesh1P)    Mesh1P->SetVisibility(false);
    }
+}
+
+//=============================================================================
+//             Save/Load
+//=============================================================================
+
+void ARPlayer::OnSave (FBufferArchive &SaveData)
+{
+   FVector  loc = GetActorLocation ();
+   FRotator rot = GetActorRotation ();
+   SaveData << loc << rot;
+}
+
+void ARPlayer::OnLoad (FMemoryReader &LoadData)
+{
+   FVector  loc;
+   FRotator rot;
+   LoadData << loc << rot;
+
+   SetActorLocation (loc);
+   SetActorRotation (rot);
 }
 
 //=============================================================================

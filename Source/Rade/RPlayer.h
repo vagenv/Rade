@@ -7,6 +7,9 @@
 #include "InputActionValue.h"
 #include "RPlayer.generated.h"
 
+// For general any events
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREvent);
+
 // For general input event
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInputEvent);
 
@@ -14,12 +17,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInputEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInputEventFloat, float, scrollValue);
 
 class APlayerController;
-class URJetpackComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputAction;
 class UInputMappingContext;
+class URTargetableComponent;
+class URTargetableMgr;
 
 //=============================================================================
 //                   Camera State Type
@@ -153,6 +157,39 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
       FRInputEvent Input_OnAltAction;
+
+   //==========================================================================
+   //                         Target
+   //==========================================================================
+
+   // Called by Tick. Adjusts camera angle
+   UFUNCTION()
+      virtual void TargetingTick (float DeltaTime);
+
+   // Searches for new focus target
+   UFUNCTION()
+      virtual void TargetSearch ();
+
+   // Handle to TargetCheck
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+      FTimerHandle TargetCheckHandle;
+
+   // Checks if Targeting actor is valid and within range
+   UFUNCTION()
+      virtual void TargetCheck ();
+
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+      FRuntimeFloatCurve TargetAngleToLerpPower;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+      URTargetableComponent* TargetCurrent = nullptr;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+      URTargetableMgr* TargetMgr = nullptr;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
+      FREvent OnTargetUpdated;
 
    //==========================================================================
    //                         Save/Load
