@@ -27,7 +27,6 @@
 
 ARPlayer::ARPlayer ()
 {
-
    // Set size for collision capsule
    GetCapsuleComponent ()->InitCapsuleSize (42.f, 96.0f);
 
@@ -129,7 +128,7 @@ void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void ARPlayer::Tick (float DeltaTime)
 {
    Super::Tick (DeltaTime);
-   TargetingTick (DeltaTime);
+   if (GetController ()) TargetingTick (DeltaTime);
 }
 
 
@@ -256,7 +255,6 @@ void ARPlayer::Input_AltAction ()
 //             Input
 //=============================================================================
 
-
 void ARPlayer::TargetingTick (float DeltaTime)
 {
    if (TargetCurrent) {
@@ -290,8 +288,11 @@ void ARPlayer::TargetingTick (float DeltaTime)
 
 void ARPlayer::TargetSearch ()
 {
+   URTargetableComponent *TargetLast = TargetCurrent;
+
    if (TargetCurrent) {
       TargetCurrent->SetIsTargeted (false);
+
       TargetCurrent = nullptr;
    } else {
 
@@ -307,7 +308,7 @@ void ARPlayer::TargetSearch ()
          if (TargetCurrent) TargetCurrent->SetIsTargeted (true);
       }
    }
-   OnTargetUpdated.Broadcast ();
+   if (TargetCurrent != TargetLast) OnTargetUpdated.Broadcast ();
 }
 
 void ARPlayer::TargetCheck ()
