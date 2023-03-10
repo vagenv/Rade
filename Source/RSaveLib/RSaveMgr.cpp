@@ -16,10 +16,10 @@ URSaveMgr* URSaveMgr::GetInstance (UObject* WorldContextObject)
    UWorld *World = WorldContextObject->GetWorld ();
    if (!ensure (World)) return nullptr;
 
-   AGameModeBase *GameMode = World->GetAuthGameMode ();
-   if (!ensure (GameMode)) return nullptr;
+   AGameStateBase *GameState = World->GetGameState ();
+   if (!ensure (GameState)) return nullptr;
 
-   URSaveMgr* SaveMgr = GameMode->FindComponentByClass<URSaveMgr>();
+   URSaveMgr* SaveMgr = GameState->FindComponentByClass<URSaveMgr>();
    return SaveMgr;
 }
 

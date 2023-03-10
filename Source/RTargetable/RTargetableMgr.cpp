@@ -15,10 +15,10 @@ URTargetableMgr* URTargetableMgr::GetInstance (UObject* WorldContextObject)
    UWorld *World = WorldContextObject->GetWorld ();
    if (!ensure (World)) return nullptr;
 
-   AGameModeBase *GameMode = World->GetAuthGameMode ();
-   if (!ensure (GameMode)) return nullptr;
+   AGameStateBase *GameState = World->GetGameState ();
+   if (!ensure (GameState)) return nullptr;
 
-   URTargetableMgr* TargetableMgr = GameMode->FindComponentByClass<URTargetableMgr>();
+   URTargetableMgr* TargetableMgr = GameState->FindComponentByClass<URTargetableMgr>();
    return TargetableMgr;
 }
 
