@@ -65,11 +65,11 @@ ARPlayer::ARPlayer ()
 
    // --- Targetable
    FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurve ();
-   TargetAngleToLerpPowerData->AddKey (0,   0);
-   TargetAngleToLerpPowerData->AddKey (1,  20);
-   TargetAngleToLerpPowerData->AddKey (5,  10);
-   TargetAngleToLerpPowerData->AddKey (20,  5);
-   TargetAngleToLerpPowerData->AddKey (40,  1);
+   TargetAngleToLerpPowerData->AddKey (0,  10);
+   TargetAngleToLerpPowerData->AddKey (1,   9);
+   TargetAngleToLerpPowerData->AddKey (5,   7);
+   TargetAngleToLerpPowerData->AddKey (20,  4);
+   TargetAngleToLerpPowerData->AddKey (40,  5);
 
    bAutoRevive = true;
 }
@@ -86,7 +86,7 @@ void ARPlayer::BeginPlay ()
    SetTickGroup (TG_PostUpdateWork);
 
    // Get Player Controller
-   if (GetController() && Cast<APlayerController>(GetController ())) {
+   if (GetController () && Cast<APlayerController>(GetController ())) {
       PlayerController = Cast<APlayerController>(GetController ());
 
       //Add Input Mapping Context
@@ -219,7 +219,21 @@ void ARPlayer::TargetingTick (float DeltaTime)
 
       FVector TargetLocation = TargetCurrent->GetComponentLocation ();
       TargetDir = TargetLocation - CameraLocation;
+
+   // --- Focus Angle
+   } else if (!CustomTargetDir.IsNearlyZero ()) {
+      FVector  CameraLocation = CameraComponent->GetComponentLocation ();
+      FRotator CameraRotation = CameraComponent->GetComponentRotation ();
+      CameraDir = CameraRotation.Vector ();
+      TargetDir = CustomTargetDir;
    }
+
+   // --- Is there a target
+   if (!TargetDir.IsNearlyZero ()) {
+
+      // Normalize Direction and add offset;
+      TargetDir.Normalize ();
+      TargetDir += FVector (0, 0, TargetVerticalOffset);
 
       // Camera lerp speed
       float LerpPower = 4;
@@ -229,11 +243,14 @@ void ARPlayer::TargetingTick (float DeltaTime)
       if (TargetAngleToLerpPowerData) {
          float Angle = URTargetableMgr::GetAngle (CameraDir, TargetDir);
          LerpPower = TargetAngleToLerpPowerData->Eval (Angle);
+
+         // Remove targeting
+         if (!CustomTargetDir.IsNearlyZero () && Angle < CustomTargetStopAngle) CustomTargetDir = FVector::Zero ();
       }
 
       // Lerp to Target Rotation
       float LerpValue = FMath::Clamp (DeltaTime * LerpPower, 0, 1);
-      FRotator TargetRot = FMath::Lerp (CameraDir, TargetDir + FVector (0, 0, -0.1), LerpValue).Rotation ();
+      FRotator TargetRot = FMath::Lerp (CameraDir, TargetDir, LerpValue).Rotation ();
 
       // Set Rotation
       GetController ()->SetControlRotation (TargetRot);
@@ -260,6 +277,7 @@ void ARPlayer::TargetSearch ()
                                           blacklist);
 
          if (TargetCurrent) TargetCurrent->SetIsTargeted (true);
+         else               CustomTargetDir = GetCapsuleComponent ()->GetComponentRotation ().Vector ();
       }
    }
    if (TargetCurrent != TargetLast) OnTargetUpdated.Broadcast ();

@@ -123,6 +123,9 @@ public:
       virtual void TargetCheck ();
 
 
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+      float TargetVerticalOffset = -0.1;
+
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
       FRuntimeFloatCurve TargetAngleToLerpPower;
 
@@ -134,6 +137,13 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
       FREvent OnTargetUpdated;
+
+   // If no target.
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+      FVector CustomTargetDir;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+      float CustomTargetStopAngle = 1;
 
    //==========================================================================
    //                         Save/Load
