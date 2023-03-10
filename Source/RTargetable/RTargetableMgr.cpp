@@ -54,6 +54,7 @@ URTargetableComponent* URTargetableMgr::Find (FVector Origin, FRotator Direction
    // --- Iterate over Targets
    for (URTargetableComponent* ItTarget : TargetableList) {
       if (!ItTarget) continue;
+      if (!ItTarget->GetIsTargetable ()) continue;
 
       // Check blacklist
       if (FilterOut.Contains (ItTarget->GetOwner ())) continue;

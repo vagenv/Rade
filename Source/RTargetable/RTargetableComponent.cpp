@@ -41,7 +41,7 @@ bool URTargetableComponent::GetIsTargetable () const
 
 void URTargetableComponent::SetIsTargeted (bool CanTarget)
 {
-   IsTargetable = CanTarget;
+   IsTargeted = CanTarget;
    OnIsTargeted.Broadcast ();
 }
 

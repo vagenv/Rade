@@ -50,6 +50,6 @@ protected:
 
    // Can this Target be selected
    UPROPERTY()
-      bool IsTargetable = false;
+      bool IsTargetable = true;
 };
 
