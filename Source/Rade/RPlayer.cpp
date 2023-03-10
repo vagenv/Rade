@@ -30,41 +30,33 @@ ARPlayer::ARPlayer ()
    // Set size for collision capsule
    GetCapsuleComponent ()->InitCapsuleSize (42.f, 96.0f);
 
-   // --- Camera
-   // Create a CameraComponent
-   FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent> (TEXT ("FirstPersonCamera"));
-   FirstPersonCameraComponent->SetupAttachment (GetCapsuleComponent (), NAME_None);
-   FirstPersonCameraComponent->SetRelativeLocation (FVector(0, 0, 64.f)); // Position the camera
+   // Don't rotate when the controller rotates. Let that just affect the camera.
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 
-   // Create a camera boom (pulls in towards the player if there is a collision)
-   ThirdPersonCameraBoom = CreateDefaultSubobject<USpringArmComponent> (TEXT ("CameraBoom"));
-   ThirdPersonCameraBoom->SetupAttachment (RootComponent, NAME_None);
-   ThirdPersonCameraBoom->TargetArmLength = 150;
-   ThirdPersonCameraBoom->SetRelativeLocation (FVector(0,50,100));
-   ThirdPersonCameraBoom->bUsePawnControlRotation = true;
+	// Configure character movement
+	GetCharacterMovement ()->bOrientRotationToMovement = true; // Character moves in the direction of input...
+	GetCharacterMovement ()->RotationRate = FRotator (0.0f, 500.0f, 0.0f); // ...at this rotation rate
 
-   // Create a follow camera
-   ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent> (TEXT ("PlayerCamera"));
-   ThirdPersonCameraComponent->SetupAttachment (ThirdPersonCameraBoom, USpringArmComponent::SocketName);
+	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
+	// instead of recompiling to adjust them
+	GetCharacterMovement ()->JumpZVelocity = 700.f;
+	GetCharacterMovement ()->AirControl = 0.35f;
+	GetCharacterMovement ()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement ()->MinAnalogWalkSpeed = 20.f;
+	GetCharacterMovement ()->BrakingDecelerationWalking = 2000.f;
 
-   // --- Mesh
-   // Set First Person Mesh
-   Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ("CharacterMesh1P"));
-   Mesh1P->SetOnlyOwnerSee (true);
-   Mesh1P->SetupAttachment (FirstPersonCameraComponent, NAME_None);
-   Mesh1P->SetRelativeLocation (FVector (0.f, 0.f, -150.f));
-   Mesh1P->bCastDynamicShadow = false;
-   Mesh1P->CastShadow = false;
-   Mesh1P->bOnlyOwnerSee = true;
-   Mesh1P->SetIsReplicated (true);
+	// Create a camera boom (pulls in towards the player if there is a collision)
+	CameraBoomComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT ("CameraBoom"));
+	CameraBoomComponent->SetupAttachment (RootComponent);
+	CameraBoomComponent->TargetArmLength = 400.0f; // The camera follows at this distance behind the character
+	CameraBoomComponent->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
-   // Set Third Person Mesh
-   GetMesh()->SetOwnerNoSee (true);
-   GetMesh()->SetupAttachment (RootComponent, NAME_None);
-   GetMesh()->bCastDynamicShadow = true;
-   GetMesh()->CastShadow = true;
-   GetMesh()->bOwnerNoSee = true;
-   GetMesh()->SetIsReplicated (true);
+	// Create a follow camera
+	CameraComponent = CreateDefaultSubobject<UCameraComponent> (TEXT ("FollowCamera"));
+	CameraComponent->SetupAttachment (CameraBoomComponent, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	CameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
    // --- Inventory
    EquipmentMgr->bSaveLoad = true;
@@ -91,22 +83,19 @@ void ARPlayer::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifet
 void ARPlayer::BeginPlay ()
 {
    Super::BeginPlay ();
+   SetTickGroup (TG_PostUpdateWork);
 
    // Get Player Controller
    if (GetController() && Cast<APlayerController>(GetController ())) {
       PlayerController = Cast<APlayerController>(GetController ());
 
       //Add Input Mapping Context
-      if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+      if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+            ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem> (PlayerController->GetLocalPlayer ()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext (DefaultMappingContext, 0);
 		}
    }
-
-   // --- Setup Camera
-   // Set Current Camera to Default State
-   CurrentCameraState = DefaultCameraState;
-   UpdateComponentsVisibility ();
 
    if (HasAuthority ()) {
       // --- Save / Load data
@@ -154,14 +143,11 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
 		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-      EnhancedInputComponent->BindAction (IA_ChangeCamera, ETriggerEvent::Started, this, &ARPlayer::TargetSearch);
-      EnhancedInputComponent->BindAction (IA_Action,       ETriggerEvent::Started, this, &ARPlayer::Input_Action);
-      EnhancedInputComponent->BindAction (IA_AltAction,    ETriggerEvent::Started, this, &ARPlayer::Input_AltAction);
+      EnhancedInputComponent->BindAction (IA_TargetFocus, ETriggerEvent::Started, this, &ARPlayer::TargetSearch);
 	}
 }
 
 // ---  Movement Input
-
 void ARPlayer::Input_Move (const FInputActionValue& Value)
 {
    if (StatusMgr->IsDead ()) return;
@@ -171,14 +157,14 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 
 	if (Controller != nullptr) {
 		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation ();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation (0, Rotation.Yaw, 0);
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix (YawRotation).GetUnitAxis (EAxis::X);
 
 		// get right vector
-		const FVector RightDirection = FRotationMatrix (YawRotation).GetUnitAxis (EAxis::Y);
+		const FVector RightDirection   = FRotationMatrix (YawRotation).GetUnitAxis (EAxis::Y);
 
 		// add movement
 		AddMovementInput (ForwardDirection, MovementVector.Y);
@@ -186,29 +172,20 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 	}
 }
 
+// --- Look
 void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
    if (StatusMgr->IsDead ()) return;
-   if (TargetCurrent) return;
+   //if (TargetCurrent) return;
 
+	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr) {
 		// add yaw and pitch input to controller
-		AddControllerYawInput (LookAxisVector.X);
+		AddControllerYawInput   (LookAxisVector.X);
 		AddControllerPitchInput (LookAxisVector.Y);
 	}
-}
-
-// Player Mesh Rotation after after the input
-void ARPlayer::FaceRotation (FRotator NewControlRotation, float DeltaTime)
-{
-   Super::FaceRotation (NewControlRotation, DeltaTime);
-   if (FirstPersonCameraComponent) {
-      FRotator rot = FirstPersonCameraComponent->GetComponentRotation ();
-      rot.Pitch = NewControlRotation.Pitch;
-      FirstPersonCameraComponent->SetWorldRotation (rot);
-   }
 }
 
 // Player Pressed Jump
@@ -223,50 +200,26 @@ void ARPlayer::Input_Jump ()
    }
 }
 
-// Player Pressed CameraChange
-void ARPlayer::Input_ChangeCamera ()
-{
-   if (StatusMgr->IsDead ()) return;
-
-   // Change Camera
-   if (DefaultCameraState == ECameraState::FP_Camera) {
-      DefaultCameraState = ECameraState::TP_Camera;
-      CurrentCameraState = DefaultCameraState;
-      UpdateComponentsVisibility ();
-   } else if (DefaultCameraState == ECameraState::TP_Camera) {
-      DefaultCameraState = ECameraState::FP_Camera;
-      CurrentCameraState = DefaultCameraState;
-      UpdateComponentsVisibility ();
-   }
-   Input_OnChangeCamera.Broadcast ();
-}
-
-void ARPlayer::Input_Action ()
-{
-   Input_OnAction.Broadcast ();
-}
-
-void ARPlayer::Input_AltAction ()
-{
-   Input_OnAltAction.Broadcast ();
-}
-
 //=============================================================================
 //             Input
 //=============================================================================
 
 void ARPlayer::TargetingTick (float DeltaTime)
 {
+   FVector TargetDir = FVector::Zero ();
+   FVector CameraDir = FVector::Zero ();
+
+   // --- Focus Target
    if (TargetCurrent) {
 
       // --- Collect values
-      FVector  CameraLocation = FirstPersonCameraComponent->GetComponentLocation ();
-      FRotator CameraRotation = FirstPersonCameraComponent->GetComponentRotation ();
-      FVector  CameraDir      = CameraRotation.Vector ();
+      FVector  CameraLocation = CameraComponent->GetComponentLocation ();
+      FRotator CameraRotation = CameraComponent->GetComponentRotation ();
+      CameraDir = CameraRotation.Vector ();
 
       FVector TargetLocation = TargetCurrent->GetComponentLocation ();
-      FVector TargetDir      = TargetLocation - CameraLocation;
-      TargetDir.Normalize ();
+      TargetDir = TargetLocation - CameraLocation;
+   }
 
       // Camera lerp speed
       float LerpPower = 4;
@@ -279,7 +232,8 @@ void ARPlayer::TargetingTick (float DeltaTime)
       }
 
       // Lerp to Target Rotation
-      FRotator TargetRot = FMath::Lerp (CameraDir, TargetDir, DeltaTime * LerpPower).Rotation ();
+      float LerpValue = FMath::Clamp (DeltaTime * LerpPower, 0, 1);
+      FRotator TargetRot = FMath::Lerp (CameraDir, TargetDir + FVector (0, 0, -0.1), LerpValue).Rotation ();
 
       // Set Rotation
       GetController ()->SetControlRotation (TargetRot);
@@ -301,8 +255,8 @@ void ARPlayer::TargetSearch ()
          TArray<AActor*> blacklist;
          blacklist.Add (this);
 
-         TargetCurrent = TargetMgr->Find (FirstPersonCameraComponent->GetComponentLocation (),
-                                          FirstPersonCameraComponent->GetComponentRotation (),
+         TargetCurrent = TargetMgr->Find (CameraComponent->GetComponentLocation (),
+                                          CameraComponent->GetComponentRotation (),
                                           blacklist);
 
          if (TargetCurrent) TargetCurrent->SetIsTargeted (true);
@@ -329,33 +283,9 @@ void ARPlayer::TargetCheck ()
    }
 }
 
-//=============================================================================
-//                           State Checking
-//=============================================================================
-
-// Update First Person and Third Person Components visibility
-void ARPlayer::UpdateComponentsVisibility ()
-{
-   if (CurrentCameraState == ECameraState::FP_Camera) {
-      if (ThirdPersonCameraComponent) ThirdPersonCameraComponent->Deactivate();
-      if (FirstPersonCameraComponent) FirstPersonCameraComponent->Activate();
-
-      if (GetMesh()) GetMesh()->SetOwnerNoSee(true);
-      if (Mesh1P) Mesh1P->SetVisibility(true);
-
-   // Currently Third Person Camera
-   } else if (CurrentCameraState == ECameraState::TP_Camera) {
-
-      if (ThirdPersonCameraComponent) ThirdPersonCameraComponent->Activate();
-      if (FirstPersonCameraComponent) FirstPersonCameraComponent->Deactivate();
-
-      if (GetMesh()) GetMesh()->SetOwnerNoSee(false);
-      if (Mesh1P)    Mesh1P->SetVisibility(false);
-   }
-}
 
 //=============================================================================
-//             Save/Load
+//                Save/Load
 //=============================================================================
 
 void ARPlayer::OnSave (FBufferArchive &SaveData)
@@ -376,7 +306,7 @@ void ARPlayer::OnLoad (FMemoryReader &LoadData)
 }
 
 //=============================================================================
-//       Util
+//             Util
 //=============================================================================
 
 ARPlayer* ARPlayer::GetLocalRadePlayer (UObject* WorldContextObject)

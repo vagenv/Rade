@@ -26,17 +26,6 @@ class URTargetableComponent;
 class URTargetableMgr;
 
 //=============================================================================
-//                   Camera State Type
-//=============================================================================
-
-UENUM(BlueprintType)
-enum class ECameraState : uint8
-{
-   FP_Camera UMETA(DisplayName = "First Person Camera"),
-   TP_Camera UMETA(DisplayName = "Third Person Camera"),
-};
-
-//=============================================================================
 //                          Main Player Class
 //=============================================================================
 UCLASS(config = Game)
@@ -66,40 +55,18 @@ public:
       TObjectPtr<APlayerController> PlayerController;
 
    //==========================================================================
-   //            1st person Mesh and animation
-   //==========================================================================
-   //  First Person Mesh
-   UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Rade|Player")
-      TObjectPtr<USkeletalMeshComponent> Mesh1P;
-
-   //==========================================================================
-   //            1st person and 3rd person cameras
+   //            Camera
    //==========================================================================
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
-      TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
+      TObjectPtr<USpringArmComponent> CameraBoomComponent;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
-      TObjectPtr<USpringArmComponent> ThirdPersonCameraBoom;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
-      TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;
-
-   // Begin play Camera state
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
-      ECameraState DefaultCameraState = ECameraState::TP_Camera;
-
-   // Current Camera State
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
-      ECameraState CurrentCameraState = ECameraState::TP_Camera;
+      TObjectPtr<UCameraComponent> CameraComponent;
 
    // Camera Mouse sensitivity
    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Camera")
       float CameraMouseSensivity = 1.0;
-
-   // Updates Component Visibility when Camera State Changes
-   UFUNCTION()
-      virtual void UpdateComponentsVisibility ();
 
    //==========================================================================
    //                  Input events
@@ -128,35 +95,12 @@ public:
 	   TObjectPtr<UInputAction> IA_Jump;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> IA_ChangeCamera;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> IA_Action;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Input", meta = (AllowPrivateAccess = "true"))
-	   TObjectPtr<UInputAction> IA_AltAction;
+	   TObjectPtr<UInputAction> IA_TargetFocus;
 
    // --- Internal function callen on onput
 	virtual void Input_Move (const FInputActionValue& Value);
 	virtual void Input_Look (const FInputActionValue& Value);
    virtual void Input_Jump ();
-
-   virtual void Input_ChangeCamera ();
-   virtual void Input_Action ();
-   virtual void Input_AltAction ();
-
-   // For First person Camera
-   virtual void FaceRotation (FRotator NewControlRotation, float DeltaTime) override;
-
-   // --- Event to subscribe to
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEvent Input_OnChangeCamera;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEvent Input_OnAction;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Input")
-      FRInputEvent Input_OnAltAction;
 
    //==========================================================================
    //                         Target
