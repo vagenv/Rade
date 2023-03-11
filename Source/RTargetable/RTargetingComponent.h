@@ -44,7 +44,11 @@ public:
 
    // Delay in seconds after look input before camera can be turned to target
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetRefocusDelay = 1.5;
+      float TargetRefocusDelay = 1;
+
+	// How soon after a new target can be searched
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+		float TargetSearchDelay = 0.5;
 
    //==========================================================================
    //                         Functions
@@ -88,6 +92,8 @@ protected:
 	// How long is left before camera can be turned to target
    float TargetFocusLeft = 0;
 
+	// How long is left before new search can be started
+	float TargetSearchLeft = 0;
 
    // Handle to TargetCheck
    UPROPERTY()

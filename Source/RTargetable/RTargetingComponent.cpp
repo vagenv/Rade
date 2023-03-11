@@ -61,9 +61,9 @@ void URTargetingComponent::TargetAdjust ()
    // If there was input stop turning
    if (!CustomTargetDir.IsNearlyZero ()) CustomTargetDir = FVector::Zero ();
 
-   if (TargetCurrent) {
+   if (TargetCurrent && !TargetSearchLeft) {
       // Reset value
-      TargetFocusLeft = TargetRefocusDelay;
+      TargetFocusLeft  = TargetRefocusDelay;
 
       URTargetableComponent* TargetNew = nullptr;
       TArray<AActor*> blacklist;
@@ -78,6 +78,7 @@ void URTargetingComponent::TargetAdjust ()
          TargetNew->SetIsTargeted (true);
          TargetCurrent = TargetNew;
          TargetFocusLeft = 0;
+         TargetSearchLeft = TargetSearchDelay;
          OnTargetUpdated.Broadcast ();
       }
    }
@@ -86,7 +87,8 @@ void URTargetingComponent::TargetAdjust ()
 void URTargetingComponent::TargetingTick (float DeltaTime)
 {
    // Delay active
-   TargetFocusLeft = FMath::Clamp (TargetFocusLeft - DeltaTime, 0 , TargetRefocusDelay);
+   TargetFocusLeft  = FMath::Clamp (TargetFocusLeft  - DeltaTime, 0, TargetRefocusDelay);
+   TargetSearchLeft = FMath::Clamp (TargetSearchLeft - DeltaTime, 0, TargetSearchDelay);
    if (TargetFocusLeft > 0) return;
 
    FRotator CurrentRot = GetComponentRotation ();
