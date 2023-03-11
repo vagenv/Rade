@@ -2,6 +2,8 @@
 	{
 		"Name": "Sword",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
+		"StaticMesh": "None",
+		"SkeletalMesh": "/Game/Rade/Meshes/Weapons/Sword/Sword_Mesh.Sword_Mesh",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [
@@ -50,6 +52,8 @@
 	{
 		"Name": "Pistol",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
+		"StaticMesh": "None",
+		"SkeletalMesh": "/Game/Rade/Meshes/Weapons/HandGun/HandGun_Mesh.HandGun_Mesh",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -77,6 +81,8 @@
 	{
 		"Name": "WoodenShield",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_L_BP.EquipmentSlot_Hand_L_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -104,6 +110,8 @@
 	{
 		"Name": "ShoesOfSpeed",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Legs_BP.EquipmentSlot_Legs_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Pipe.Shape_Pipe",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -131,6 +139,8 @@
 	{
 		"Name": "ClothArmor",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Torso_BP.EquipmentSlot_Torso_BP_C'",
+		"StaticMesh": "None",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -158,6 +168,8 @@
 	{
 		"Name": "HatOfStrength",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Architecture/MaterialSphere.MaterialSphere",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -191,6 +203,8 @@
 	{
 		"Name": "HatOfAgility",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cone.Shape_Cone",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [
@@ -229,6 +243,8 @@
 	{
 		"Name": "HatOfIntelligence",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Pipe.Shape_Pipe",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -262,6 +278,8 @@
 	{
 		"Name": "HatOfBadBoi",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Pipe_90.Shape_Pipe_90",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -310,6 +328,8 @@
 	{
 		"Name": "HatOfRegen",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_WideCapsule.Shape_WideCapsule",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
@@ -343,6 +363,8 @@
 	{
 		"Name": "HatOfEvasion",
 		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Torus.Shape_Torus",
+		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [],
