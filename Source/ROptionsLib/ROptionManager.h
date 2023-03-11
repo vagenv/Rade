@@ -81,7 +81,7 @@ struct ROPTIONSLIB_API FRVideoQualitySetting
 //                   Util Function Library
 // ============================================================================
 
-UCLASS()
+UCLASS(ClassGroup=(_Rade))
 class ROPTIONSLIB_API UROptionUtilFunc : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
@@ -106,7 +106,7 @@ public:
 
 
 // Manager for Audio/Video/Input
-UCLASS()
+UCLASS(ClassGroup=(_Rade))
 class ROPTIONSLIB_API UROptionManager : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()

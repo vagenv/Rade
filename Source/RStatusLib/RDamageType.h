@@ -43,7 +43,7 @@ struct RSTATUSLIB_API FRResistanceStatWithTag
 //                   RDamageType
 // ============================================================================
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RSTATUSLIB_API URDamageType : public UDamageType
 {
    GENERATED_BODY()
@@ -73,7 +73,7 @@ public:
 //                   Fall Damage
 // ============================================================================
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RSTATUSLIB_API URDamageType_Fall : public URDamageType
 {
    GENERATED_BODY()

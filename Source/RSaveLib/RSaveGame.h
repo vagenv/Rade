@@ -15,7 +15,7 @@ struct RSAVELIB_API FRSaveData
 };
 
 // Save Game File
-UCLASS()
+UCLASS(ClassGroup=(_Rade))
 class RSAVELIB_API URSaveGame : public USaveGame
 {
    GENERATED_BODY()

@@ -199,7 +199,7 @@ enum class ERActionResult : uint8
    Failure UMETA (DisplayName = "Failure")
 };
 
-UCLASS()
+UCLASS(ClassGroup=(_Rade))
 class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()

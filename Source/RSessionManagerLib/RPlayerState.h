@@ -6,7 +6,7 @@
 #include "RPlayerState.generated.h"
 
 // Custom Player State Infor
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, ClassGroup=(_Rade))
 class RSESSIONMANAGERLIB_API ARPlayerState : public APlayerState
 {
    GENERATED_BODY()

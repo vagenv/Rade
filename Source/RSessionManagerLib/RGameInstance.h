@@ -36,7 +36,7 @@ struct FRAvaiableSessionsData
 };
 
 // Custom Game Instance
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, ClassGroup=(_Rade))
 class RSESSIONMANAGERLIB_API URGameInstance : public UGameInstance
 {
    GENERATED_BODY()

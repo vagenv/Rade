@@ -28,7 +28,7 @@ class URTargetableMgr;
 //=============================================================================
 //                          Main Player Class
 //=============================================================================
-UCLASS(config = Game)
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RADE_API ARPlayer : public ARCharacter, public IRSaveInterface
 {
    GENERATED_BODY()

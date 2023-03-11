@@ -13,7 +13,7 @@ class URStatusMgrComponent  ;
 //                   Jump
 // ============================================================================
 
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, ClassGroup=(_Rade))
 class RADE_API URAbility_Jump : public URAbility_Active
 {
    GENERATED_BODY()
@@ -44,7 +44,7 @@ protected:
 //                   Double Jump
 // ============================================================================
 
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, ClassGroup=(_Rade))
 class RADE_API URAbility_DoubleJump : public URAbility_Active
 {
    GENERATED_BODY()

@@ -10,7 +10,7 @@ class AActor;
 class URInventoryComponent;
 class ARItemPickup;
 
-UCLASS(Abstract, DefaultToInstanced, BlueprintType, EditInlineNew, NotPlaceable)
+UCLASS(Abstract, DefaultToInstanced, BlueprintType, EditInlineNew, NotPlaceable, ClassGroup=(_Rade))
 class RINVENTORYLIB_API URItemAction : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()

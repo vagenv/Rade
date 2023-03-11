@@ -12,7 +12,7 @@ class AActor;
 class URInventoryComponent;
 
 // General pickup Class for Any Child of class "Item"
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RINVENTORYLIB_API ARItemPickup : public AActor
 {
    GENERATED_BODY()
