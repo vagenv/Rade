@@ -12,7 +12,10 @@
 		{
 			"Name": "RTargetableLib",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		},
 		{
 			"Name": "ROptionsLib",
