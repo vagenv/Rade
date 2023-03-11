@@ -6,9 +6,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RTargetable/RTargetableComponent.h"
-#include "RTargetable/RTargetableMgr.h"
-#include "RSaveLib/RSaveMgr.h"
+#include "RTargetable/RTargetingComponent.h"
 #include "REquipmentLib/REquipmentMgrComponent.h"
 #include "RStatusLib/RStatusMgrComponent.h"
 #include "RAbilityLib/RAbilityMgrComponent.h"
@@ -19,7 +17,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 
-#include "DrawDebugHelpers.h"
 
 //=============================================================================
 //             Core
@@ -63,13 +60,9 @@ ARPlayer::ARPlayer ()
    EquipmentMgr->bCheckClosestPickup = true;
    StatusMgr->bSaveLoad = true;
 
-   // --- Targetable
-   FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurve ();
-   TargetAngleToLerpPowerData->AddKey (0,  10);
-   TargetAngleToLerpPowerData->AddKey (1,   9);
-   TargetAngleToLerpPowerData->AddKey (5,   7);
-   TargetAngleToLerpPowerData->AddKey (20,  4);
-   TargetAngleToLerpPowerData->AddKey (40,  5);
+   // --- Targeting
+   TargetingComponent = CreateDefaultSubobject<URTargetingComponent> (TEXT ("Targeting"));
+   TargetingComponent->SetupAttachment (CameraComponent);
 
    bAutoRevive = true;
 }
@@ -103,10 +96,6 @@ void ARPlayer::BeginPlay ()
       FString UniqueSaveId = GetName () + "_Player";
       Init_Save (this, UniqueSaveId);
    }
-
-   TargetMgr = URTargetableMgr::GetInstance (this);
-
-   GetWorldTimerManager().SetTimer (TargetCheckHandle, this, &ARPlayer::TargetCheck, 1, true);
 }
 
 void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -117,7 +106,10 @@ void ARPlayer::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void ARPlayer::Tick (float DeltaTime)
 {
    Super::Tick (DeltaTime);
-   if (GetController ()) TargetingTick (DeltaTime);
+
+   // Set Rotation
+   if (PlayerController && TargetingComponent->IsTargeting ())
+      PlayerController->SetControlRotation (TargetingComponent->GetTargetRotation ());
 }
 
 
@@ -143,13 +135,14 @@ void ARPlayer::SetupPlayerInputComponent (UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Started,   this, &ARPlayer::Input_Jump);
 		EnhancedInputComponent->BindAction (IA_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-      EnhancedInputComponent->BindAction (IA_TargetFocus, ETriggerEvent::Started, this, &ARPlayer::TargetSearch);
+      EnhancedInputComponent->BindAction (IA_TargetFocus, ETriggerEvent::Started, this, &ARPlayer::Input_TargetFocus);
 	}
 }
 
 // ---  Movement Input
 void ARPlayer::Input_Move (const FInputActionValue& Value)
 {
+   if (!Controller) return;
    if (StatusMgr->IsDead ()) return;
 
 	// input is a Vector2D
@@ -175,17 +168,17 @@ void ARPlayer::Input_Move (const FInputActionValue& Value)
 // --- Look
 void ARPlayer::Input_Look (const FInputActionValue& Value)
 {
+   if (!Controller) return;
    if (StatusMgr->IsDead ()) return;
-   //if (TargetCurrent) return;
 
-	// input is a Vector2D
+   // Input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr) {
-		// add yaw and pitch input to controller
-		AddControllerYawInput   (LookAxisVector.X);
-		AddControllerPitchInput (LookAxisVector.Y);
-	}
+   // add yaw and pitch input to controller
+   AddControllerYawInput   (LookAxisVector.X);
+   AddControllerPitchInput (LookAxisVector.Y);
+
+   TargetingComponent->TargetAdjust ();
 }
 
 // Player Pressed Jump
@@ -200,107 +193,10 @@ void ARPlayer::Input_Jump ()
    }
 }
 
-//=============================================================================
-//             Input
-//=============================================================================
-
-void ARPlayer::TargetingTick (float DeltaTime)
+void ARPlayer::Input_TargetFocus ()
 {
-   FVector TargetDir = FVector::Zero ();
-   FVector CameraDir = FVector::Zero ();
-
-   // --- Focus Target
-   if (TargetCurrent) {
-
-      // --- Collect values
-      FVector  CameraLocation = CameraComponent->GetComponentLocation ();
-      FRotator CameraRotation = CameraComponent->GetComponentRotation ();
-      CameraDir = CameraRotation.Vector ();
-
-      FVector TargetLocation = TargetCurrent->GetComponentLocation ();
-      TargetDir = TargetLocation - CameraLocation;
-
-   // --- Focus Angle
-   } else if (!CustomTargetDir.IsNearlyZero ()) {
-      FVector  CameraLocation = CameraComponent->GetComponentLocation ();
-      FRotator CameraRotation = CameraComponent->GetComponentRotation ();
-      CameraDir = CameraRotation.Vector ();
-      TargetDir = CustomTargetDir;
-   }
-
-   // --- Is there a target
-   if (!TargetDir.IsNearlyZero ()) {
-
-      // Normalize Direction and add offset;
-      TargetDir.Normalize ();
-      TargetDir += FVector (0, 0, TargetVerticalOffset);
-
-      // Camera lerp speed
-      float LerpPower = 4;
-
-      // Transform Angle to Lerp power
-      const FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurveConst ();
-      if (TargetAngleToLerpPowerData) {
-         float Angle = URTargetableMgr::GetAngle (CameraDir, TargetDir);
-         LerpPower = TargetAngleToLerpPowerData->Eval (Angle);
-
-         // Remove targeting
-         if (!CustomTargetDir.IsNearlyZero () && Angle < CustomTargetStopAngle) CustomTargetDir = FVector::Zero ();
-      }
-
-      // Lerp to Target Rotation
-      float LerpValue = FMath::Clamp (DeltaTime * LerpPower, 0, 1);
-      FRotator TargetRot = FMath::Lerp (CameraDir, TargetDir, LerpValue).Rotation ();
-
-      // Set Rotation
-      GetController ()->SetControlRotation (TargetRot);
-   }
+   TargetingComponent->TargetToggle ();
 }
-
-void ARPlayer::TargetSearch ()
-{
-   URTargetableComponent *TargetLast = TargetCurrent;
-
-   if (TargetCurrent) {
-      TargetCurrent->SetIsTargeted (false);
-
-      TargetCurrent = nullptr;
-   } else {
-
-      if (TargetMgr) {
-
-         TArray<AActor*> blacklist;
-         blacklist.Add (this);
-
-         TargetCurrent = TargetMgr->Find (CameraComponent->GetComponentLocation (),
-                                          CameraComponent->GetComponentRotation (),
-                                          blacklist);
-
-         if (TargetCurrent) TargetCurrent->SetIsTargeted (true);
-         else               CustomTargetDir = GetCapsuleComponent ()->GetComponentRotation ().Vector ();
-      }
-   }
-   if (TargetCurrent != TargetLast) OnTargetUpdated.Broadcast ();
-}
-
-void ARPlayer::TargetCheck ()
-{
-   if (TargetCurrent && TargetMgr) {
-
-      bool RemoveTarget = false;
-
-      float Distance = FVector::Dist (GetActorLocation (), TargetCurrent->GetComponentLocation ());
-      if (Distance > TargetMgr->SearchDistance) RemoveTarget = true;
-      if (!TargetCurrent->GetIsTargetable ())   RemoveTarget = true;
-
-      if (RemoveTarget) {
-         TargetCurrent->SetIsTargeted (false);
-         TargetCurrent = nullptr;
-         OnTargetUpdated.Broadcast ();
-      }
-   }
-}
-
 
 //=============================================================================
 //                Save/Load
