@@ -61,12 +61,10 @@ public:
       virtual float CalcDamage (float Damage, float Resistance) const;
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Character")
-      void TakeDamage (AActor* DamageVictim,
-                       float Resistance,
-                       float DamageAmount,
-                       FDamageEvent const& DamageEvent,
-                       AController* EventInstigator,
-                       AActor* DamageCauser) const;
+      void BP_AnyDamage (AActor* DamageVictim,
+                         float Resistance,
+                         float DamageAmount,
+                         AActor* DamageCauser) const;
 };
 
 // ============================================================================

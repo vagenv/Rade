@@ -5,7 +5,6 @@
 #include "RUtilLib/RCheck.h"
 
 #include "Net/UnrealNetwork.h"
-#include "Engine/DamageEvents.h"
 
 #include "RStatusEffect.h"
 
@@ -135,6 +134,81 @@ void URStatusMgrComponent::OnRep_Status ()
 {
    OnStatusUpdated.Broadcast ();
 }
+
+
+/*
+//=============================================================================
+//                       Death / Revive
+//=============================================================================
+
+//         Server Death
+void ARCharacter::Die_Server_Implementation (AActor *DeathCauser, AController* EventInstigator)
+{
+   if (!HasAuthority ()) return;
+
+   Die_Client (DeathCauser, EventInstigator);
+   Die        (DeathCauser, EventInstigator);
+
+   // If character should be automatically revived, revive after a delay
+   if (bAutoRevive)  {
+      FTimerHandle MyHandle;
+      GetWorldTimerManager().SetTimer (MyHandle, this, &ARCharacter::Revive_Server, ReviveTime, false);
+   }
+}
+
+void ARCharacter::Die_Client_Implementation (AActor *DeathCauser, AController* EventInstigator)
+{
+   if (HasAuthority ()) return;
+   Die (DeathCauser, EventInstigator);
+}
+
+void ARCharacter::Die (AActor *DeathCauser, AController* EventInstigator)
+{
+   OnDeath.Broadcast ();
+   ForceRagdoll ();
+}
+
+void ARCharacter::ForceRagdoll ()
+{
+   USkeletalMeshComponent *skelMesh = Cast<USkeletalMeshComponent>(GetMesh ());
+   if (skelMesh) {
+      skelMesh->SetSimulatePhysics(true);
+      skelMesh->BodyInstance.SetCollisionProfileName ("Ragdoll");
+      skelMesh->SetCollisionEnabled (ECollisionEnabled::QueryAndPhysics);
+   }
+}
+
+// --- Revive character
+void ARCharacter::Revive_Server_Implementation ()
+{
+   if (!HasAuthority ()) return;
+
+   GetRootComponent ()->SetWorldLocation (GetActorLocation() + FVector (0, 0, 30));
+
+   Revive_Client ();
+   Revive ();
+}
+
+void ARCharacter::Revive_Client_Implementation ()
+{
+   if (HasAuthority ()) return;
+   Revive ();
+}
+void ARCharacter::Revive ()
+{
+   OnRevive.Broadcast ();
+   GetCapsuleComponent()->BodyInstance.SetCollisionProfileName ("Pawn");
+   USkeletalMeshComponent *skelMesh = GetMesh ();
+   if (skelMesh) {
+      skelMesh->SetSimulatePhysics (false);
+      skelMesh->AttachToComponent (RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+      skelMesh->SetRelativeLocation (Mesh_DefaultRelativeLoc);
+      skelMesh->SetRelativeRotation (Mesh_DefaultRelativeRot);
+      skelMesh->BodyInstance.SetCollisionProfileName ("Pawn");
+   }
+}
+
+*/
 
 //=============================================================================
 //                 Core
@@ -395,6 +469,7 @@ void URStatusMgrComponent::UseHealth (float Amount)
    if (!Health.Current) {
       bDead = true;
       // TODO: Report Death
+      OnStatusUpdated.Broadcast ();
    }
 }
 
@@ -610,27 +685,28 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
 //                 TakeDamage Events
 //=============================================================================
 
-float URStatusMgrComponent::TakeDamage (float DamageAmount,
-                                        FDamageEvent const& DamageEvent,
-                                        AController* EventInstigator,
-                                        AActor* DamageCauser)
+float URStatusMgrComponent::AnyDamage (float DamageAmount,
+                                       const UDamageType* DamageType_,
+                                       AController* InstigatedBy,
+                                       AActor* DamageCauser)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   URDamageType *DamageType = Cast<URDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject (false));
+   const URDamageType *DamageType = Cast<URDamageType>(DamageType_);
 
    if (!IsDead ()) {
 
-      if (RollEvasion () && DamageEvent.DamageTypeClass != URDamageType_Fall::StaticClass ()) {
-         R_LOG ("Evaded attack!");
-         // TODO: Report Evasion
-         return 0;
-      }
-
       if (DamageType) {
-         float Resistance = GetResistanceFor (DamageEvent.DamageTypeClass);
+
+         if (RollEvasion () && DamageType->GetClass () != URDamageType_Fall::StaticClass ()) {
+            R_LOG ("Evaded attack!");
+            // TODO: Report Evasion
+            return 0;
+         }
+
+         float Resistance = GetResistanceFor (DamageType->GetClass ());
 
          DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
-         DamageType->TakeDamage (GetOwner(), Resistance, DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+         DamageType->BP_AnyDamage (GetOwner(), Resistance, DamageAmount, DamageCauser);
          //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", DamageAmount, Resistance);
       } else {
          R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
