@@ -17,19 +17,6 @@ Ability Cooldown Local update.
 Inventory network update.
 
 
-=================================================
-   Targets
-=================================================
-
-If Targeted
-- UI Show crosshair
-
-Target focused -> Outlined?
-
-Move camera -> Stop lerping -> After delay lerp again
-Move camera too far -> Stop Targeting?
-
-Switch between targets with Camera look movement
 
 
 =================================================
@@ -124,6 +111,26 @@ UI
 
 
 =================================================
+   Shaders
+=================================================
+
+Look into shaders
+
+OutLined overlap.
+
+Toon Shaders
+
+
+=================================================
+   Targets
+=================================================
+
+Change to new target -> Shift instantly
+- Block Camera movement
+- Search next closest by angle in direction
+
+
+=================================================
    Abilities (TODO)
 =================================================
 
@@ -133,9 +140,9 @@ Targeted (Status Effects / Spells?)
 - Location / Allies / Enemies / Id Group
 
 
-===========================
+=================================================
    UI Todo
-===========================
+=================================================
 
 Click/Hover zones overlap
 
