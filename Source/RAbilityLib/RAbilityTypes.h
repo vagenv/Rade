@@ -11,7 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
 //                   Ability Component
 // ============================================================================
 
-UCLASS(Abstract, Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RABILITYLIB_API URAbility : public UActorComponent
 {
    GENERATED_BODY()
@@ -33,7 +33,7 @@ public:
 //                 Passive Ability
 //=============================================================================
 
-UCLASS(Abstract, Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RABILITYLIB_API URAbility_Passive : public URAbility
 {
    GENERATED_BODY()
@@ -46,7 +46,7 @@ public:
 };
 
 
-UCLASS(Abstract, Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RABILITYLIB_API URAbility_Aura : public URAbility_Passive
 {
    GENERATED_BODY()
@@ -77,7 +77,7 @@ public:
 //                 Active Ability
 //=============================================================================
 
-UCLASS(Abstract, Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RABILITYLIB_API URAbility_Active : public URAbility
 {
    GENERATED_BODY()

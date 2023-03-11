@@ -14,6 +14,7 @@ public class Rade : ModuleRules
          "InputCore",
          "EnhancedInput",
          "RUtilLib",
+         "RTargetableLib",
          "ROptionsLib",
          "RSessionManagerLib",
          "RSaveLib",

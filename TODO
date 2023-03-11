@@ -14,37 +14,16 @@ StatusValue Local update + Once a second set from server
 
 Ability Cooldown Local update.
 
-=================================================
-   Experience Manager?
-=================================================
-
-Experience Tracker.
-Experience points
-Experience -> To Level
-Level Up -> Stats increase
-
-UI
-- Select Skill
-- Upgrade
+Inventory network update.
 
 
-=================================================
-   Targets
-=================================================
-
-- ITargetable
-- Get list of actors in range.
-- Get Camera rotation and closes to target
-- Switch between targets with Look movement
-- Out of range -> Remove target
-- UI Target
 
 
 =================================================
    Damage
 =================================================
 
-DamageMgrComponent / SessionMgrComponent
+DamageMgrComponent / SessionEventMgrComponent
 - Add to GameMode
 - Static calls to report event
 - Delegate to subscribe to event
@@ -117,6 +96,39 @@ UI Weapon bar (Left bottom)
 =======
 For ranged / consuable weapons
 
+=================================================
+   Experience Manager?
+=================================================
+
+Experience Tracker.
+Experience points
+Experience -> To Level
+Level Up -> Stats increase
+
+UI
+- Select Skill
+- Upgrade
+
+
+=================================================
+   Shaders
+=================================================
+
+Look into shaders
+
+OutLined overlap.
+
+Toon Shaders
+
+
+=================================================
+   Targets
+=================================================
+
+Change to new target -> Shift instantly
+- Block Camera movement
+- Search next closest by angle in direction
+
 
 =================================================
    Abilities (TODO)
@@ -128,9 +140,9 @@ Targeted (Status Effects / Spells?)
 - Location / Allies / Enemies / Id Group
 
 
-===========================
+=================================================
    UI Todo
-===========================
+=================================================
 
 Click/Hover zones overlap
 

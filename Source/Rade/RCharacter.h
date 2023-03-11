@@ -11,7 +11,7 @@ class UREquipmentMgrComponent;
 class URStatusMgrComponent;
 class URAbilityMgrComponent;
 
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, ClassGroup=(_Rade))
 class RADE_API ARCharacter : public ACharacter
 {
    GENERATED_BODY()

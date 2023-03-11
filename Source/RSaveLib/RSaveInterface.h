@@ -32,7 +32,7 @@ protected:
 
 	// Must be implemented
 	virtual void OnSave (FBufferArchive &SaveData) = 0;
-	virtual void OnLoad (FMemoryReader &LoadData) = 0;
+	virtual void OnLoad (FMemoryReader  &LoadData) = 0;
 
 	// Internal events
    UFUNCTION()
@@ -44,13 +44,8 @@ protected:
 private:
 
 	// Values for internal tracking
-	UPROPERTY ()
-		FString ObjectSaveId;
-
-	UPROPERTY ()
-		UWorld *World = nullptr;
-
-	UPROPERTY ()
-		URSaveMgr *SaveMgr = nullptr;
+	FString    ObjectSaveId;
+	UWorld 	 *World   = nullptr;
+	URSaveMgr *SaveMgr = nullptr;
 };
 

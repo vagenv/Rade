@@ -12,7 +12,7 @@ class UREquipmentSlotComponent;
 struct FREquipmentData;
 
 // Status Manager Component.
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class REQUIPMENTLIB_API UREquipmentMgrComponent : public URInventoryComponent
 {
    GENERATED_BODY()

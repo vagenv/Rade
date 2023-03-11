@@ -38,7 +38,7 @@ struct FROnineMessageData
 };
 
 // Custom Game State
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, ClassGroup=(_Rade))
 class RSESSIONMANAGERLIB_API ARGameState : public AGameState
 {
    GENERATED_BODY()

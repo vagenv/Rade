@@ -91,7 +91,7 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
 //                   Active Status Effect
 // ============================================================================
 
-UCLASS(Abstract, Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RSTATUSLIB_API ARActiveStatusEffect : public AActor
 {
    GENERATED_BODY()
@@ -172,7 +172,7 @@ protected:
 //                   Status Effect Library
 // ============================================================================
 
-UCLASS()
+UCLASS(ClassGroup=(_Rade))
 class RSTATUSLIB_API URStatusEffectUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()

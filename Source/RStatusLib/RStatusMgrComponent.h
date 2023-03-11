@@ -14,7 +14,7 @@ class UCharacterMovementComponent;
 class URInventoryComponent;
 
 // Status Manager Component.
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent, public IRSaveInterface
 {
    GENERATED_BODY()

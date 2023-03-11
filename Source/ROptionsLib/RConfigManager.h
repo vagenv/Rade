@@ -4,7 +4,7 @@
 
 #include "RConfigManager.generated.h"
 
-UCLASS()
+UCLASS(ClassGroup=(_Rade))
 class ROPTIONSLIB_API URConfigManager : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()

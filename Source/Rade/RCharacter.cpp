@@ -28,7 +28,7 @@ ARCharacter::ARCharacter ()
    AbilityMgr->SetIsReplicated (true);
    AbilityMgr->DefaultAbilities.Add (URAbility_Jump::StaticClass ());
 
-   bReplicates  = true;
+   bReplicates = true;
 }
 
 // Replication

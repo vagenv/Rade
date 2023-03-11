@@ -11,6 +11,7 @@ public class RadeEditorTarget : TargetRules
       DefaultBuildSettings = BuildSettingsVersion.V2;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
       ExtraModuleNames.Add ("RUtilLib");
+      ExtraModuleNames.Add ("RTargetableLib");
       ExtraModuleNames.Add ("RSaveLib");
       ExtraModuleNames.Add ("ROptionsLib");
       ExtraModuleNames.Add ("RInventoryLib");

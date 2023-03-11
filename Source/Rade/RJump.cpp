@@ -11,7 +11,7 @@
 //             Jump
 //=============================================================================
 
-URAbility_Jump::URAbility_Jump()
+URAbility_Jump::URAbility_Jump ()
 {
    Cooldown = 1;
    UIName = "Jump";
