@@ -17,14 +17,12 @@ Ability Cooldown Local update.
 Inventory network update.
 
 
-
-
 =================================================
    Damage
 =================================================
 
 DamageMgrComponent / SessionEventMgrComponent
-- Add to GameMode
+- Add to Game State
 - Static calls to report event
 - Delegate to subscribe to event
 - Events : Abilities/Damage/Death/Revive
@@ -190,6 +188,30 @@ Dialogue (Bottom Center)
 =======
 Map (Right Top)?
 =======
+
+
+=================================================
+   Game Session
+=================================================
+
+GameMode
+- OnPostLogin . Add list of players
+- Pauseable
+- ChangeName?
+
+GameState
+- score
+- chat
+
+Playerstate
+- Recconect -> Get values from old data
+- player name
+- ping
+- color etc.
+
+Pawn
+- Posses/Unposses hide/show actor with effects
+
 
 =================================================
    Network
