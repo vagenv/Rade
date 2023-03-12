@@ -30,7 +30,7 @@ public:
 
    // Maximum number
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
-      int32 SlotsMax = 10;
+      int32 SlotsMax = 25;
 
    // Current
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")

@@ -8,6 +8,8 @@
 #include "RStatusLib/RStatusEffect.h"
 #include "REquipmentTypes.generated.h"
 
+class UStaticMesh;
+class USkeletalMesh;
 class AActor;
 class URInventoryComponent;
 class UREquipmentSlotComponent;
@@ -47,6 +49,12 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
    // Slot to which item will be attached on spawn
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSubclassOf<UREquipmentSlotComponent> EquipmentSlot;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	   TSoftObjectPtr<UStaticMesh> StaticMesh;
+
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	   TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       float CurrentDurability = 100;

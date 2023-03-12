@@ -10,7 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentSlotEvent);
 
 // Status Manager Component.
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class REQUIPMENTLIB_API UREquipmentSlotComponent : public UActorComponent
+class REQUIPMENTLIB_API UREquipmentSlotComponent : public USceneComponent
 {
    GENERATED_BODY()
 public:

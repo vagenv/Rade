@@ -256,10 +256,11 @@ public:
       FRStatusMgrEvent OnStatusUpdated;
 
    // Calls from RCharacter
-   float TakeDamage (float DamageAmount,
-                     FDamageEvent const& DamageEvent,
-                     AController* EventInstigator,
-                     AActor* DamageCauser);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      float AnyDamage (float Damage,
+                       const UDamageType* DamageType,
+                       AController* InstigatedBy,
+                       AActor* DamageCauser);
 
    //==========================================================================
    //                 Save/Load

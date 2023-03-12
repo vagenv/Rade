@@ -8,47 +8,55 @@ Movement lags in session
 
 Optimization for Laptop / High FPS on PC
 
-Inventory Replication max only  once a second, last replication value/date stored?
-
 StatusValue Local update + Once a second set from server
 
 Ability Cooldown Local update.
 
-Inventory network update.
-
-
+Replace tick timing to game world time
 
 
 =================================================
    Damage
 =================================================
 
-DamageMgrComponent / SessionEventMgrComponent
-- Add to GameMode
-- Static calls to report event
-- Delegate to subscribe to event
-- Events : Abilities/Damage/Death/Revive
-- Callbacks on death/revive
-- History of events.
-
-
-======
-   Death/Revive
-======
-- Death ragdoll.
-- Revive spot.
-
 ======
 UI
 ======
 Enemy Health bar
-Damage Value over the character
+Damage Value over/under the character
+
+======
+Damage
+======
+Abilities.
+- With Target from targeting, or forward direction
+- Radial
+- Effects
+
+======
+Death/Revive
+======
+- Death ragdoll.
+- Revive spot.
 
 ======
 Dummy
 ======
 - Takes damage and plays animation
 - Death / Revive
+
+
+======
+Core
+======
+DamageMgrComponent / SessionEventMgrComponent
+- Add to Game State
+- Static calls to report event
+- Delegate to subscribe to event
+- Events : Abilities/Damage/Death/Revive
+- Callbacks on death/revive
+- History of events.
+
 
 
 =================================================
@@ -190,6 +198,30 @@ Dialogue (Bottom Center)
 =======
 Map (Right Top)?
 =======
+
+
+=================================================
+   Game Session
+=================================================
+
+GameMode
+- OnPostLogin . Add list of players
+- Pauseable
+- ChangeName?
+
+GameState
+- score
+- chat
+
+Playerstate
+- Recconect -> Get values from old data
+- player name
+- ping
+- color etc.
+
+Pawn
+- Posses/Unposses hide/show actor with effects
+
 
 =================================================
    Network
