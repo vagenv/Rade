@@ -8,10 +8,17 @@
 #include "RSaveLib/RSaveInterface.h"
 #include "RStatusMgrComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
-
+class URDamageType;
 class UCharacterMovementComponent;
 class URInventoryComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
+
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_ThreeParams (FRTakeDamageEvent,
+                                                       URStatusMgrComponent, OnAnyRDamage,
+                                                       float, Damage,
+                                                       const URDamageType*, DamageType,
+                                                       AActor*, DamageCauser);
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -75,6 +82,9 @@ public:
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       bool IsDead () const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      void SetDead (bool Dead);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRStatusValue GetHealth () const;
@@ -255,17 +265,28 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnStatusUpdated;
 
-   // Calls from RCharacter
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      float AnyDamage (float Damage,
-                       const UDamageType* DamageType,
-                       AController* InstigatedBy,
-                       AActor* DamageCauser);
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnDeath;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnRevive;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRTakeDamageEvent OnAnyRDamage;
+
+protected:
+   // Connected to AActor::OnTakeAnyDamage event
+   UFUNCTION()
+      void AnyDamage (AActor* DamagedActor,
+                      float Damage,
+                      const UDamageType* DamageType,
+                      AController* InstigatedBy,
+                      AActor* DamageCauser);
 
    //==========================================================================
    //                 Save/Load
    //==========================================================================
-
+public:
    // Status Saved / Loaded between sessions.
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       bool bSaveLoad = false;

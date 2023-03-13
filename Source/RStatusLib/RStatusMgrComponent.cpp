@@ -135,81 +135,6 @@ void URStatusMgrComponent::OnRep_Status ()
    OnStatusUpdated.Broadcast ();
 }
 
-
-/*
-//=============================================================================
-//                       Death / Revive
-//=============================================================================
-
-//         Server Death
-void ARCharacter::Die_Server_Implementation (AActor *DeathCauser, AController* EventInstigator)
-{
-   if (!HasAuthority ()) return;
-
-   Die_Client (DeathCauser, EventInstigator);
-   Die        (DeathCauser, EventInstigator);
-
-   // If character should be automatically revived, revive after a delay
-   if (bAutoRevive)  {
-      FTimerHandle MyHandle;
-      GetWorldTimerManager().SetTimer (MyHandle, this, &ARCharacter::Revive_Server, ReviveTime, false);
-   }
-}
-
-void ARCharacter::Die_Client_Implementation (AActor *DeathCauser, AController* EventInstigator)
-{
-   if (HasAuthority ()) return;
-   Die (DeathCauser, EventInstigator);
-}
-
-void ARCharacter::Die (AActor *DeathCauser, AController* EventInstigator)
-{
-   OnDeath.Broadcast ();
-   ForceRagdoll ();
-}
-
-void ARCharacter::ForceRagdoll ()
-{
-   USkeletalMeshComponent *skelMesh = Cast<USkeletalMeshComponent>(GetMesh ());
-   if (skelMesh) {
-      skelMesh->SetSimulatePhysics(true);
-      skelMesh->BodyInstance.SetCollisionProfileName ("Ragdoll");
-      skelMesh->SetCollisionEnabled (ECollisionEnabled::QueryAndPhysics);
-   }
-}
-
-// --- Revive character
-void ARCharacter::Revive_Server_Implementation ()
-{
-   if (!HasAuthority ()) return;
-
-   GetRootComponent ()->SetWorldLocation (GetActorLocation() + FVector (0, 0, 30));
-
-   Revive_Client ();
-   Revive ();
-}
-
-void ARCharacter::Revive_Client_Implementation ()
-{
-   if (HasAuthority ()) return;
-   Revive ();
-}
-void ARCharacter::Revive ()
-{
-   OnRevive.Broadcast ();
-   GetCapsuleComponent()->BodyInstance.SetCollisionProfileName ("Pawn");
-   USkeletalMeshComponent *skelMesh = GetMesh ();
-   if (skelMesh) {
-      skelMesh->SetSimulatePhysics (false);
-      skelMesh->AttachToComponent (RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-      skelMesh->SetRelativeLocation (Mesh_DefaultRelativeLoc);
-      skelMesh->SetRelativeRotation (Mesh_DefaultRelativeRot);
-      skelMesh->BodyInstance.SetCollisionProfileName ("Pawn");
-   }
-}
-
-*/
-
 //=============================================================================
 //                 Core
 //=============================================================================
@@ -236,6 +161,9 @@ void URStatusMgrComponent::BeginPlay ()
          FString UniqueSaveId = GetOwner ()->GetName () + "_StatusMgr";
          Init_Save (this, UniqueSaveId);
       }
+
+      // Bind To AActor::OnTakeAnyDamage
+      GetOwner ()->OnTakeAnyDamage.AddDynamic (this, &URStatusMgrComponent::AnyDamage);
    }
 }
 
@@ -249,7 +177,6 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
    if (bIsAdmin) StatusRegen (DeltaTime);
 }
-
 
 //=============================================================================
 //                 Recalc stats
@@ -452,6 +379,16 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
+void URStatusMgrComponent::SetDead (bool Dead)
+{
+   bool WasDead = bDead;
+   bDead = Dead;
+
+   // Broadcast only after value has been changed;
+   if (WasDead  && !Dead) OnRevive.Broadcast ();
+   if (!WasDead &&  Dead) OnDeath.Broadcast ();
+}
+
 bool URStatusMgrComponent::IsDead () const
 {
    return bDead;
@@ -467,8 +404,7 @@ void URStatusMgrComponent::UseHealth (float Amount)
    R_RETURN_IF_NOT_ADMIN;
    Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
    if (!Health.Current) {
-      bDead = true;
-      // TODO: Report Death
+      SetDead (true);
       OnStatusUpdated.Broadcast ();
    }
 }
@@ -685,12 +621,13 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
 //                 TakeDamage Events
 //=============================================================================
 
-float URStatusMgrComponent::AnyDamage (float DamageAmount,
-                                       const UDamageType* DamageType_,
-                                       AController* InstigatedBy,
-                                       AActor* DamageCauser)
+void URStatusMgrComponent::AnyDamage (AActor* DamagedActor,
+                                      float DamageAmount,
+                                      const UDamageType* DamageType_,
+                                      AController* InstigatedBy,
+                                      AActor* DamageCauser)
 {
-   R_RETURN_IF_NOT_ADMIN_BOOL;
+   R_RETURN_IF_NOT_ADMIN;
    const URDamageType *DamageType = Cast<URDamageType>(DamageType_);
 
    if (!IsDead ()) {
@@ -700,23 +637,23 @@ float URStatusMgrComponent::AnyDamage (float DamageAmount,
          if (RollEvasion () && DamageType->GetClass () != URDamageType_Fall::StaticClass ()) {
             R_LOG ("Evaded attack!");
             // TODO: Report Evasion
-            return 0;
+            return;
          }
 
          float Resistance = GetResistanceFor (DamageType->GetClass ());
 
          DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
-         DamageType->BP_AnyDamage (GetOwner(), Resistance, DamageAmount, DamageCauser);
+         DamageType->BP_AnyDamage (GetOwner (), Resistance, DamageAmount, DamageCauser);
          //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", DamageAmount, Resistance);
       } else {
          R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
       }
 
       UseHealth (DamageAmount);
+
+      OnAnyRDamage.Broadcast (DamageAmount, DamageType, DamageCauser);
    }
    // TODO: Report Damage
-
-   return DamageAmount;
 }
 
 //=============================================================================
