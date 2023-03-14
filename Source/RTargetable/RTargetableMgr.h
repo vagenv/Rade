@@ -56,7 +56,7 @@ public:
       static float GetAngle (const FVector v1, const FVector v2);
 
    //==========================================================================
-   //                  Get instamce -> GameMode component
+   //                  Get instamce -> GameStat component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")

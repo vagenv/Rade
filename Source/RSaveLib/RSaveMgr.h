@@ -55,7 +55,7 @@ public:
          bool Set (const FString &key, const TArray<uint8> &data);
 
    //==========================================================================
-   //                  Get instamce -> GameMode component
+   //                  Get instamce -> GameState component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
