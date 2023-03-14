@@ -38,27 +38,16 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
       float TargetStopAngle = 1.;
 
-   // Angle at relative to current target to search new target
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetAdjustSearchAngle = 1.;
-
    // Speed at which camera turns to required direction
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
       FRuntimeFloatCurve TargetAngleToLerpPower;
 
-   // Delay in seconds after look input before camera can be turned to target
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetRefocusDelay = 1.;
-
 	// How soon after a new target can be searched
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-		float TargetSearchDelay = 0.5f;
+		float TargetSearchDelay = 0.2f;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetAdjustSearchDegree = 5.f;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetAdjustMinOffset = 0.2f;
+      float TargetAdjustMinOffset = 0.3f;
 
    //==========================================================================
    //                         Functions
@@ -102,11 +91,8 @@ protected:
    UPROPERTY()
       FVector CustomTargetDir;
 
-	// How long is left before camera can be turned to target
-   float TargetFocusLeft = 0;
-
-	// How long is left before new search can be started
-	float TargetSearchLeft = 0;
+	// Time in seconds when last search was performed
+   double LastTargetSearch = 0;
 
    // Handle to TargetCheck
    UPROPERTY()
@@ -120,7 +106,8 @@ protected:
    UFUNCTION()
       virtual void TargetCheck ();
 
+   // Perform search for new target
    UFUNCTION()
-      virtual URTargetableComponent* FindTarget (float OffsetX = 0, float OffsetY = 0) const;
+      virtual void SearchNewTarget (float InputOffsetX = 0, float InputOffsetY = 0);
 };
 

@@ -3,9 +3,8 @@
 #include "RTargetingComponent.h"
 #include "RTargetableComponent.h"
 #include "RTargetableMgr.h"
-
 #include "RUtilLib/RLog.h"
-#include "DrawDebugHelpers.h"
+
 
 //=============================================================================
 //                         Core
@@ -62,38 +61,9 @@ URTargetableComponent* URTargetingComponent::GetCurrentTarget () const
 //                         Functions
 //=============================================================================
 
-void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
-{
-   // If there was input stop turning
-   if (!CustomTargetDir.IsNearlyZero ()) CustomTargetDir = FVector::Zero ();
-
-   if (  TargetCurrent
-      && !TargetSearchLeft
-      && (  FMath::Abs (OffsetX) > TargetAdjustMinOffset
-         || FMath::Abs (OffsetY) > TargetAdjustMinOffset))
-   {
-      // Reset value
-      TargetFocusLeft = TargetRefocusDelay;
-
-      URTargetableComponent* TargetNew = FindTarget (OffsetX, OffsetY);
-      if (TargetNew) {
-         TargetCurrent->SetIsTargeted (false);
-         TargetNew->SetIsTargeted (true);
-         TargetCurrent = TargetNew;
-         TargetFocusLeft = 0;
-         TargetSearchLeft = TargetSearchDelay;
-         OnTargetUpdated.Broadcast ();
-      }
-   }
-}
-
+// Creating smooth rotation to target
 void URTargetingComponent::TargetingTick (float DeltaTime)
 {
-   // Delay active
-   TargetFocusLeft  = FMath::Clamp (TargetFocusLeft  - DeltaTime, 0, TargetRefocusDelay);
-   TargetSearchLeft = FMath::Clamp (TargetSearchLeft - DeltaTime, 0, TargetSearchDelay);
-   if (TargetFocusLeft > 0) return;
-
    FRotator CurrentRot = GetComponentRotation ();
    FVector  CurrentDir = CurrentRot.Vector ();
    FVector  TargetDir  = FVector::Zero ();
@@ -134,10 +104,23 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
    }
 }
 
+// Camera input to change target
+void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
+{
+   // If there was input stop turning
+   if (!CustomTargetDir.IsNearlyZero ()) CustomTargetDir = FVector::Zero ();
+
+   if (   TargetCurrent
+      && (  FMath::Abs (OffsetX) > TargetAdjustMinOffset
+         || FMath::Abs (OffsetY) > TargetAdjustMinOffset))
+   {
+      SearchNewTarget (OffsetX, OffsetY);
+   }
+}
+
+// Targeting enabled/disabled
 void URTargetingComponent::TargetToggle ()
 {
-   TargetFocusLeft = 0;
-
    URTargetableComponent *TargetLast = TargetCurrent;
 
    if (TargetCurrent) {
@@ -145,28 +128,17 @@ void URTargetingComponent::TargetToggle ()
       TargetCurrent = nullptr;
    } else {
 
-      TargetCurrent = FindTarget ();
+      SearchNewTarget ();
 
-      // Set Target
-      if (TargetCurrent)  TargetCurrent->SetIsTargeted (true);
-      // Turn in actor direction
-      else                CustomTargetDir = GetOwner ()->GetActorRotation ().Vector ();
+      // No Target. Focus forward
+      if (!TargetCurrent) CustomTargetDir = GetOwner ()->GetActorRotation ().Vector ();
    }
-   if (TargetCurrent != TargetLast) OnTargetUpdated.Broadcast ();
 }
 
+// Check if target is valid
 void URTargetingComponent::TargetCheck ()
 {
    if (TargetCurrent && TargetMgr) {
-
-      // Check if was disabled/died
-      if (!TargetCurrent->GetIsTargetable ()) {
-         TargetCurrent->SetIsTargeted (false);
-         TargetCurrent = FindTarget ();
-         if (TargetCurrent) TargetCurrent->SetIsTargeted (true);
-         OnTargetUpdated.Broadcast ();
-         return;
-      }
 
       bool RemoveTarget = false;
 
@@ -174,69 +146,60 @@ void URTargetingComponent::TargetCheck ()
       float Distance = FVector::Dist (GetOwner ()->GetActorLocation (), TargetCurrent->GetComponentLocation ());
       if (Distance > TargetMgr->SearchDistance) RemoveTarget = true;
 
-      // --- Check Angle
-      FVector CameraDir = GetComponentRotation ().Vector ();
-      CameraDir.Normalize ();
-      FVector TargetDir = TargetCurrent->GetComponentLocation () - GetComponentLocation ();
-      TargetDir.Normalize ();
-      if (URTargetableMgr::GetAngle (CameraDir, TargetDir) > TargetMgr->SearchAngle) RemoveTarget = true;
+      // Check if target was disabled
+      if (!TargetCurrent->GetIsTargetable ()) RemoveTarget = true;
 
       // Remove
       if (RemoveTarget) {
          TargetCurrent->SetIsTargeted (false);
          TargetCurrent = nullptr;
          OnTargetUpdated.Broadcast ();
+         SearchNewTarget ();
       }
    }
 }
 
-URTargetableComponent* URTargetingComponent::FindTarget (float OffsetX, float OffsetY) const
+void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffsetY)
 {
-   if (!TargetMgr) return nullptr;
-   //if (TargetFocusLeft > 0) return nullptr;
+   if (!TargetMgr) return;
 
-   // --- Ignore List
+   // --- Limit the amount of camera adjustments
+   double CurrentTime = GetWorld ()->GetTimeSeconds ();
+   if (CurrentTime < LastTargetSearch + TargetSearchDelay) return;
+   LastTargetSearch = CurrentTime;
+
    TArray<AActor*>                blacklistActors;
    TArray<URTargetableComponent*> blacklistTargets;
    blacklistActors.Add (GetOwner ());
-   if (TargetCurrent) blacklistTargets.Add (TargetCurrent);
 
-   // --- Adjust search if required
-   FVector  Location = GetComponentLocation ();
-   FRotator Rotation = GetComponentRotation ();
-   Rotation.Yaw   += FMath::Clamp (OffsetX, -1, 1) * TargetAdjustSearchDegree;
-   Rotation.Pitch += FMath::Clamp (OffsetY, -1, 1) * TargetAdjustSearchDegree;
+   URTargetableComponent* TargetNew = nullptr;
 
+   if (TargetCurrent) {
+      // --- Adjust target
+      blacklistTargets.Add (TargetCurrent);
 
-   URTargetableComponent* NewTarget = TargetMgr->Find (Location,
-                                                       Rotation,
-                                                       blacklistActors,
-                                                       blacklistTargets);
+      TargetNew = TargetMgr->FindNear (this,
+                                       TargetCurrent,
+                                       InputOffsetX,
+                                       InputOffsetY,
+                                       blacklistActors,
+                                       blacklistTargets);
 
-
-   if (NewTarget) {
-
-      FVector TargetDir = NewTarget->GetComponentLocation () - GetComponentLocation ();
-      TargetDir.Normalize ();
-
-      // --- Check Offset
-      if (OffsetX) {
-         float dot = FVector::DotProduct (GetRightVector (), TargetDir);
-         if (OffsetX > 0 && dot < 0) return nullptr;
-         if (OffsetX < 0 && dot > 0) return nullptr;
-      }
-
-      if (OffsetY) {
-         float dot = FVector::DotProduct (GetUpVector (), TargetDir);
-
-         if (OffsetY > 0 && dot < 0) return nullptr;
-         if (OffsetY < 0 && dot > 0) return nullptr;
-      }
-
+   } else {
+      // --- Search new target
+      TargetNew = TargetMgr->Find (this,
+                                   blacklistActors,
+                                   blacklistTargets);
    }
 
+   if (TargetNew) {
+      // Unset old one
+      if (TargetCurrent) TargetCurrent->SetIsTargeted (false);
 
-   // Check that new target is in correct direction
-
-   return NewTarget;
+      // Set new one
+      TargetCurrent = TargetNew;
+      TargetCurrent->SetIsTargeted (true);
+      OnTargetUpdated.Broadcast ();
+   }
 }
+
