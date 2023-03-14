@@ -13,11 +13,10 @@ class URInventoryComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
 
-DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_ThreeParams (FRTakeDamageEvent,
-                                                       URStatusMgrComponent, OnAnyRDamage,
-                                                       float, Damage,
-                                                       const URDamageType*, DamageType,
-                                                       AActor*, DamageCauser);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRTakeDamageEvent,
+                                                float, Damage,
+                                                const URDamageType*, DamageType,
+                                                AActor*, DamageCauser);
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
