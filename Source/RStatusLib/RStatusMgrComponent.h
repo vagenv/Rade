@@ -4,7 +4,6 @@
 
 #include "RStatusTypes.h"
 #include "RStatusEffect.h"
-#include "RDamageType.h"
 #include "RSaveLib/RSaveInterface.h"
 #include "RStatusMgrComponent.generated.h"
 

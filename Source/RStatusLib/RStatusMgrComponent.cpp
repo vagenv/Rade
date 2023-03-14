@@ -1,12 +1,12 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RStatusMgrComponent.h"
+#include "RStatusEffect.h"
+#include "RDamageType.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
 #include "Net/UnrealNetwork.h"
-
-#include "RStatusEffect.h"
 
 //=============================================================================
 //                 Core

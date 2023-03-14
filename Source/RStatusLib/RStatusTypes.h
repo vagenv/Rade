@@ -4,6 +4,8 @@
 
 #include "RStatusTypes.generated.h"
 
+class URDamageType;
+
 // ============================================================================
 //                   Core Stat
 // ============================================================================
@@ -107,6 +109,40 @@ struct RSTATUSLIB_API FRStatusValue
       return Ar;
    }
 };
+
+// ============================================================================
+//                   Resistance
+// ============================================================================
+
+USTRUCT(BlueprintType)
+struct RSTATUSLIB_API FRResistanceStat
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      TSubclassOf<URDamageType> DamageType;
+
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float Value = 0;
+};
+
+USTRUCT(BlueprintType)
+struct RSTATUSLIB_API FRResistanceStatWithTag
+{
+   GENERATED_BODY()
+
+   // Who or What is applying Resistance
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FString Tag;
+
+   // What value is added
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      FRResistanceStat Value;
+};
+
+// ============================================================================
+//                   Util Library
+// ============================================================================
 
 UCLASS()
 class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
