@@ -44,7 +44,9 @@ void URTargetableMgr::RmTarget  (URTargetableComponent * Target)
    OnListUpdated.Broadcast ();
 }
 
-URTargetableComponent* URTargetableMgr::Find (FVector Origin, FRotator Direction, TArray<AActor*> FilterOut)
+URTargetableComponent* URTargetableMgr::Find (FVector Origin, FRotator Direction,
+                                              TArray<AActor*>                FilterOutActors,
+                                              TArray<URTargetableComponent*> FilterOutTargets)
 {
    // Camera look direction
    FVector SearchDir = Direction.Vector ();
@@ -57,7 +59,10 @@ URTargetableComponent* URTargetableMgr::Find (FVector Origin, FRotator Direction
       if (!ItTarget->GetIsTargetable ()) continue;
 
       // Check blacklist
-      if (FilterOut.Contains (ItTarget->GetOwner ())) continue;
+      if (FilterOutActors.Contains (ItTarget->GetOwner ())) continue;
+
+      // Check blacklist
+      if (FilterOutTargets.Contains (ItTarget)) continue;
 
       // Check distance
       if (FVector::Dist (ItTarget->GetComponentLocation (), Origin) > SearchDistance) continue;

@@ -32,11 +32,15 @@ public:
 
    // Offset when turning to look at target
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetVerticalOffset = -0.1;
+      float TargetVerticalOffset = -0.1f;
 
 	// Angle at which targeting will stop
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetStopAngle = 1;
+      float TargetStopAngle = 1.;
+
+   // Angle at relative to current target to search new target
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+      float TargetAdjustSearchAngle = 1.;
 
    // Speed at which camera turns to required direction
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
@@ -44,11 +48,17 @@ public:
 
    // Delay in seconds after look input before camera can be turned to target
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetRefocusDelay = 1;
+      float TargetRefocusDelay = 1.;
 
 	// How soon after a new target can be searched
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-		float TargetSearchDelay = 0.5;
+		float TargetSearchDelay = 0.5f;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+      float TargetAdjustSearchDegree = 5.f;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+      float TargetAdjustMinOffset = 0.2f;
 
    //==========================================================================
    //                         Functions
@@ -59,13 +69,16 @@ public:
       virtual void TargetToggle ();
 
 	UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual void TargetAdjust ();
+      virtual void TargetAdjust (float OffsetX, float OffsetY);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       virtual bool IsTargeting () const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       virtual FRotator GetTargetRotation () const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+      virtual URTargetableComponent* GetCurrentTarget () const;
 
    // Broadcasted when TargetCurrent has changed
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
@@ -106,5 +119,8 @@ protected:
    // Checks if Targeting actor is valid and within range
    UFUNCTION()
       virtual void TargetCheck ();
+
+   UFUNCTION()
+      virtual URTargetableComponent* FindTarget (float OffsetX = 0, float OffsetY = 0) const;
 };
 
