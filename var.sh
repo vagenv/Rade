@@ -1,7 +1,7 @@
 #/bin/bash
 
 ROOTDIR=$(pwd)
-UE_DIR=/home/shituser/ssd/unreal/Linux/Linux_Unreal_Engine_5.1.0/
+UE_DIR=$(pwd)/../UE_LINUX/
 
 PROJECT=Rade
 PROJECT_DIR=$ROOTDIR
