@@ -51,3 +51,8 @@ void URDamageMgr::ReportRevive (AActor* WhoRevived)
    OnRevive.Broadcast (WhoRevived);
 }
 
+void URDamageMgr::ReportStatusEffect (ARActiveStatusEffect* Effect, AActor* Causer, AActor* Target)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   OnStatusEffect.Broadcast (Effect, Causer, Target);
+}

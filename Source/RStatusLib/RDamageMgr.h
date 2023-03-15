@@ -6,18 +6,24 @@
 #include "RDamageMgr.generated.h"
 
 class URDamageType;
+class ARActiveStatusEffect;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams (FRAnyDamageEvent,
-                                               AActor*, DamageTarget,
-                                               float, Damage,
-                                               const URDamageType*, DamageType,
-                                               AActor*, DamageCauser);
+                                               AActor*,             Target,
+                                               float,               Amount,
+                                               const URDamageType*, Type,
+                                               AActor*,             Causer);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRDeathEvent,
                                              AActor*, WhoDied);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRReviveEvent,
                                              AActor*, WhoRevived);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
+                                                ARActiveStatusEffect*, Effect,
+                                                AActor*,               Causer,
+                                                AActor*,               Target);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RSTATUSLIB_API URDamageMgr : public UActorComponent
@@ -29,10 +35,10 @@ public:
 
    // --- When someone took damage
    UFUNCTION()
-      void ReportDamage (AActor* DamageTarget,
-                        float Damage,
-                        const URDamageType* DamageType,
-                        AActor* DamageCauser);
+      void ReportDamage (AActor*             Target,
+                         float               Amount,
+                         const URDamageType* Type,
+                         AActor*             Causer);
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRAnyDamageEvent OnAnyRDamage;
@@ -52,6 +58,16 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRReviveEvent OnRevive;
+
+
+   // --- When someone revived
+   UFUNCTION()
+      void ReportStatusEffect (ARActiveStatusEffect* Effect,
+                               AActor*               Causer,
+                               AActor*               Target);
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusEffectEvent OnStatusEffect;
 
    //==========================================================================
    //                  Get instamce -> GameState component

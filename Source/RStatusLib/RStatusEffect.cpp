@@ -1,10 +1,12 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RStatusEffect.h"
+#include "RStatusMgrComponent.h"
+#include "RDamageMgr.h"
+
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RStatusMgrComponent.h"
 
 //=============================================================================
 //                 Passive Effect
@@ -62,6 +64,10 @@ bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
    Target    = Target_;
    StatusMgr = StatusMgr_;
    Started ();
+
+   URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+   if (DamageMgr) DamageMgr->ReportStatusEffect (this, Causer, Target);
+
    return true;
 }
 
