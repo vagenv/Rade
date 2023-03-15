@@ -2,7 +2,7 @@
 
 set ROOTDIR=%~dp0
 set ROOTDIR=%ROOTDIR:~0,-1%
-set UE_DIR=E:/Games/UE_5.1
+set UE_DIR=%~dp0/../../Games/UE_5.1
 
 set PROJECT=Rade
 set PROJECT_DIR=%ROOTDIR%
