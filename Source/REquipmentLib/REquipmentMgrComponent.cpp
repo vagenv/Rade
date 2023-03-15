@@ -170,9 +170,7 @@ ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_NULL;
 
-
    // --- Check if Item should be unequiped
-
    FREquipmentData ItemData;
    // Is Equipment item
    if (FREquipmentData::Cast (Items[ItemIdx], ItemData)) {

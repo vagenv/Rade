@@ -8,7 +8,6 @@
 
 #include "Net/UnrealNetwork.h"
 
-
 //=============================================================================
 //                 Core
 //=============================================================================
@@ -24,7 +23,6 @@ URAbilityMgrComponent::URAbilityMgrComponent ()
 void URAbilityMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-
 }
 
 //=============================================================================
@@ -85,6 +83,7 @@ URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Abili
 
 bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (Ability_)) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (!Ability)) return false;
@@ -98,6 +97,7 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 
 bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (Ability_)) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (Ability)) return false;
