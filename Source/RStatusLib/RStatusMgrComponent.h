@@ -14,9 +14,9 @@ class URInventoryComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRTakeDamageEvent,
-                                                float, Damage,
-                                                const URDamageType*, DamageType,
-                                                AActor*, DamageCauser);
+                                                float,               Amount,
+                                                const URDamageType*, Type,
+                                                AActor*,             Causer);
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -275,11 +275,11 @@ public:
 protected:
    // Connected to AActor::OnTakeAnyDamage event
    UFUNCTION()
-      void AnyDamage (AActor* DamagedActor,
-                      float Damage,
-                      const UDamageType* DamageType,
-                      AController* InstigatedBy,
-                      AActor* DamageCauser);
+      void AnyDamage (AActor*            Target,
+                      float              Amount,
+                      const UDamageType* Type,
+                      AController*       InstigatedBy,
+                      AActor*            Causer);
 
    //==========================================================================
    //                 Save/Load

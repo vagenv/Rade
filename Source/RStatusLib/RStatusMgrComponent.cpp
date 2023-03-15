@@ -631,40 +631,40 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
 //                 TakeDamage Events
 //=============================================================================
 
-void URStatusMgrComponent::AnyDamage (AActor* DamagedActor,
-                                      float DamageAmount,
-                                      const UDamageType* DamageType_,
-                                      AController* InstigatedBy,
-                                      AActor* DamageCauser)
+void URStatusMgrComponent::AnyDamage (AActor*            Target,
+                                      float              Amount,
+                                      const UDamageType* Type_,
+                                      AController*       InstigatedBy,
+                                      AActor*            Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   const URDamageType *DamageType = Cast<URDamageType>(DamageType_);
+   const URDamageType* Type = Cast<URDamageType>(Type_);
 
    if (!IsDead ()) {
 
-      if (DamageType) {
+      if (Type) {
 
-         if (RollEvasion () && DamageType->GetClass () != URDamageType_Fall::StaticClass ()) {
+         if (RollEvasion () && Type->GetClass () != URDamageType_Fall::StaticClass ()) {
             R_LOG ("Evaded attack!");
             // TODO: Report Evasion
             return;
          }
 
-         float Resistance = GetResistanceFor (DamageType->GetClass ());
+         float Resistance = GetResistanceFor (Type->GetClass ());
 
-         DamageAmount = DamageType->CalcDamage (DamageAmount, Resistance);
-         DamageType->BP_AnyDamage (GetOwner (), Resistance, DamageAmount, DamageCauser);
-         //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", DamageAmount, Resistance);
+         Amount = Type->CalcDamage (Amount, Resistance);
+         Type->BP_AnyDamage (GetOwner (), Resistance, Amount, Causer);
+         //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", Amount, Resistance);
       } else {
-         R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", DamageAmount);
+         R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", Amount);
       }
 
-      UseHealth (DamageAmount);
+      UseHealth (Amount);
 
-      OnAnyRDamage.Broadcast (DamageAmount, DamageType, DamageCauser);
+      OnAnyRDamage.Broadcast (Amount, Type, Causer);
 
       URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
-      if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), DamageAmount, DamageType, DamageCauser);
+      if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
    }
 }
 
