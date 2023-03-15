@@ -80,7 +80,7 @@ public:
    //                  Get instamce -> GameState component
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Target Mgr", CompactNodeTitle = "Target Mgr"))
       static URTargetableMgr* GetInstance (UObject* WorldContextObject);
 };
 

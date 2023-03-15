@@ -58,7 +58,7 @@ public:
    //                  Get instamce -> GameState component
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Save", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Save Mgr", CompactNodeTitle = "Save Mgr"))
       static URSaveMgr* GetInstance (UObject* WorldContextObject);
 
    //==========================================================================
