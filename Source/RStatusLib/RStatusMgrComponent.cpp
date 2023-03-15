@@ -3,6 +3,7 @@
 #include "RStatusMgrComponent.h"
 #include "RStatusEffect.h"
 #include "RDamageType.h"
+#include "RDamageMgr.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
@@ -381,12 +382,21 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
 
 void URStatusMgrComponent::SetDead (bool Dead)
 {
+   R_RETURN_IF_NOT_ADMIN;
    bool WasDead = bDead;
    bDead = Dead;
 
+   URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+
    // Broadcast only after value has been changed;
-   if (WasDead  && !Dead) OnRevive.Broadcast ();
-   if (!WasDead &&  Dead) OnDeath.Broadcast ();
+   if (WasDead  && !Dead) {
+      OnRevive.Broadcast ();
+      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+   }
+   if (!WasDead &&  Dead) {
+      OnDeath.Broadcast ();
+      if (DamageMgr) DamageMgr->ReportDeath (GetOwner ());
+   }
 }
 
 bool URStatusMgrComponent::IsDead () const
@@ -652,8 +662,10 @@ void URStatusMgrComponent::AnyDamage (AActor* DamagedActor,
       UseHealth (DamageAmount);
 
       OnAnyRDamage.Broadcast (DamageAmount, DamageType, DamageCauser);
+
+      URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+      if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), DamageAmount, DamageType, DamageCauser);
    }
-   // TODO: Report Damage
 }
 
 //=============================================================================
