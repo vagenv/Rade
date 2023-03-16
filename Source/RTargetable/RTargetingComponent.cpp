@@ -3,8 +3,8 @@
 #include "RTargetingComponent.h"
 #include "RTargetableComponent.h"
 #include "RTargetableMgr.h"
+#include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
-
 
 //=============================================================================
 //                         Core
@@ -126,6 +126,7 @@ void URTargetingComponent::TargetToggle ()
    if (TargetCurrent) {
       TargetCurrent->SetIsTargeted (false);
       TargetCurrent = nullptr;
+      if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
    } else {
 
       SearchNewTarget ();
@@ -153,6 +154,7 @@ void URTargetingComponent::TargetCheck ()
       if (RemoveTarget) {
          TargetCurrent->SetIsTargeted (false);
          TargetCurrent = nullptr;
+         if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
          OnTargetUpdated.Broadcast ();
          SearchNewTarget ();
       }
@@ -199,7 +201,12 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
       // Set new one
       TargetCurrent = TargetNew;
       TargetCurrent->SetIsTargeted (true);
+      if (!R_IS_NET_ADMIN) SetTarget_Server (TargetCurrent);
       OnTargetUpdated.Broadcast ();
    }
 }
 
+void URTargetingComponent::SetTarget_Server_Implementation (URTargetableComponent* TargetCurrent_)
+{
+   TargetCurrent = TargetCurrent_;
+}

@@ -109,5 +109,11 @@ protected:
    // Perform search for new target
    UFUNCTION()
       virtual void SearchNewTarget (float InputOffsetX = 0, float InputOffsetY = 0);
+
+
+   // In case user is targeting someone, notify server
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Targetable")
+              void SetTarget_Server                (URTargetableComponent* TargetCurrent_);
+      virtual void SetTarget_Server_Implementation (URTargetableComponent* TargetCurrent_);
 };
 
