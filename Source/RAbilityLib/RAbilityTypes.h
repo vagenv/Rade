@@ -116,7 +116,7 @@ public:
 
    // --- Server version
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
-      void Use_Server ();
+              void Use_Server ();
       virtual void Use_Server_Implementation ();
 
 protected:

@@ -57,8 +57,9 @@ public:
       FREquipmentMgrEvent OnEquipmentUpdated;
 
 protected:
+   // When status mgr stat values updated
    UFUNCTION()
-      void OnStatusUpdated ();
+      void OnStatsUpdated ();
 
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;

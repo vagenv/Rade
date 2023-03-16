@@ -32,48 +32,24 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-   // Called when variables replicated
-   UFUNCTION()
-      void OnRep_Status ();
-
-   UFUNCTION()
-      void RecalcStatus ();
-
-   UFUNCTION()
-      void RecalcCoreStats ();
-
-   UFUNCTION()
-      void RecalcSubStats ();
-
-   UFUNCTION()
-      void RecalcStatusValues ();
-
    // Owners Movement Component. For stamina Regen.
 private:
       UCharacterMovementComponent *MovementComponent = nullptr;
       bool bIsAdmin = false;
 
    //==========================================================================
-   //                 Status
+   //                 Dead
    //==========================================================================
 protected:
-   // Called by Tick
-   virtual void StatusRegen (float DeltaTime);
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Dead", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       bool bDead = false;
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRStatusValue Health;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRStatusValue Mana;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRStatusValue Stamina;
+   UFUNCTION()
+      void OnRep_Dead ();
 
    //==========================================================================
-   //                 Status Func
+   //                 Dead Func
    //==========================================================================
 
 public:
@@ -83,6 +59,41 @@ public:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void SetDead (bool Dead);
+
+   //==========================================================================
+   //                 Status
+   //==========================================================================
+
+protected:
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRStatusValue Health;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRStatusValue Mana;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      FRStatusValue Stamina;
+
+   // Called by Tick
+   virtual void StatusRegen (float DeltaTime);
+
+   UFUNCTION (NetMulticast, Unreliable)
+      void SetHealth                (FRStatusValue Health_);
+      void SetHealth_Implementation (FRStatusValue Health_);
+
+   UFUNCTION (NetMulticast, Unreliable)
+      void SetMana                (FRStatusValue Mana_);
+      void SetMana_Implementation (FRStatusValue Mana_);
+
+   UFUNCTION (NetMulticast, Unreliable)
+      void SetStamina                (FRStatusValue Stamina_);
+      void SetStamina_Implementation (FRStatusValue Stamina_);
+
+   //==========================================================================
+   //                 Status Func
+   //==========================================================================
+
+public:
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRStatusValue GetHealth () const;
@@ -108,32 +119,47 @@ public:
 
 protected:
    // --- Core Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCoreStats CoreStats_Base;
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRCoreStats CoreStats_Added;
 
    // --- Extra Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRSubStats SubStats_Base;
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       FRSubStats SubStats_Added;
 
    // --- Effects
    // Should be Map of FRSubStats, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
 
    // Active instances running
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<ARActiveStatusEffect*> ActiveEffects;
 
    // --- Resistance
    // Should be Map of FRResistanceStat, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       TArray<FRResistanceStatWithTag> Resistence;
+
+   UFUNCTION()
+      void OnRep_Stats ();
+
+   UFUNCTION()
+      void RecalcStatus ();
+
+   UFUNCTION()
+      void RecalcCoreStats ();
+
+   UFUNCTION()
+      void RecalcSubStats ();
+
+   UFUNCTION()
+      void RecalcStatusValues ();
 
    //==========================================================================
    //                 Status Value Curves
@@ -261,7 +287,7 @@ public:
 public:
    // Delegate when status updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusMgrEvent OnStatusUpdated;
+      FRStatusMgrEvent OnStatsUpdated;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnDeath;
@@ -271,6 +297,9 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRTakeDamageEvent OnAnyRDamage;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRTakeDamageEvent OnEvadeRDamage;
 
 protected:
    // Connected to AActor::OnTakeAnyDamage event

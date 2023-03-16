@@ -19,6 +19,8 @@ URStatusMgrComponent::URStatusMgrComponent ()
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
 
+   // NetUpdateFrequency
+
    // Default
    CoreStats_Base = FRCoreStats (10);
 
@@ -117,10 +119,6 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 
    // --- Status
    DOREPLIFETIME (URStatusMgrComponent, bDead);
-   DOREPLIFETIME (URStatusMgrComponent, Health);
-   DOREPLIFETIME (URStatusMgrComponent, Mana);
-   DOREPLIFETIME (URStatusMgrComponent, Stamina);
-
    DOREPLIFETIME (URStatusMgrComponent, CoreStats_Base);
    DOREPLIFETIME (URStatusMgrComponent, CoreStats_Added);
    DOREPLIFETIME (URStatusMgrComponent, SubStats_Base);
@@ -131,9 +129,9 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URStatusMgrComponent, Resistence);
 }
 
-void URStatusMgrComponent::OnRep_Status ()
+void URStatusMgrComponent::OnRep_Stats ()
 {
-   OnStatusUpdated.Broadcast ();
+   OnStatsUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -154,8 +152,6 @@ void URStatusMgrComponent::BeginPlay ()
       bDead = false;
       bIsAdmin = true;
 
-      RecalcStatus ();
-
       // Save/Load Status
       if (bSaveLoad) {
          // Careful with collision of 'UniqueSaveId'
@@ -165,6 +161,13 @@ void URStatusMgrComponent::BeginPlay ()
 
       // Bind To AActor::OnTakeAnyDamage
       GetOwner ()->OnTakeAnyDamage.AddDynamic (this, &URStatusMgrComponent::AnyDamage);
+
+      FTimerHandle MyHandle;
+      GetOwner ()->GetWorldTimerManager ().SetTimer (MyHandle,
+                                                     this,
+                                                     &URStatusMgrComponent::RecalcStatus,
+                                                     1,
+                                                     false);
    }
 }
 
@@ -176,7 +179,109 @@ void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
-   if (bIsAdmin) StatusRegen (DeltaTime);
+   StatusRegen (DeltaTime);
+}
+
+//=============================================================================
+//                 Dead
+//=============================================================================
+
+void URStatusMgrComponent::OnRep_Dead ()
+{
+   if (bDead) OnDeath.Broadcast ();
+   else       OnRevive.Broadcast ();
+}
+
+void URStatusMgrComponent::SetDead (bool Dead)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   bool WasDead = bDead;
+   bDead = Dead;
+
+   URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+
+   // Broadcast only after value has been changed;
+   if (WasDead  && !Dead) {
+      OnRevive.Broadcast ();
+      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+   }
+   if (!WasDead &&  Dead) {
+      OnDeath.Broadcast ();
+      if (DamageMgr) DamageMgr->ReportDeath (GetOwner ());
+   }
+}
+
+bool URStatusMgrComponent::IsDead () const
+{
+   return bDead;
+}
+
+//=============================================================================
+//                 Status
+//=============================================================================
+
+void URStatusMgrComponent::StatusRegen (float DeltaTime)
+{
+   if (IsDead ()) return;
+   Health.Tick (DeltaTime);
+   Mana.Tick (DeltaTime);
+
+   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
+}
+
+FRStatusValue URStatusMgrComponent::GetHealth () const
+{
+   return Health;
+}
+
+void URStatusMgrComponent::UseHealth (float Amount)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
+   if (!Health.Current) SetDead (true);
+   SetHealth (Health);
+}
+
+FRStatusValue URStatusMgrComponent::GetStamina () const
+{
+   return Stamina;
+}
+
+void URStatusMgrComponent::UseStamina (float Amount)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
+   SetStamina (Stamina);
+}
+
+FRStatusValue URStatusMgrComponent::GetMana () const
+{
+   return Mana;
+}
+
+void URStatusMgrComponent::UseMana (float Amount)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
+   SetMana (Mana);
+}
+
+void URStatusMgrComponent::SetHealth_Implementation (FRStatusValue Health_)
+{
+   if (bIsAdmin) return;
+   Health = Health_;
+}
+
+void URStatusMgrComponent::SetMana_Implementation (FRStatusValue Mana_)
+{
+   if (bIsAdmin) return;
+   Mana = Mana_;
+}
+
+void URStatusMgrComponent::SetStamina_Implementation (FRStatusValue Stamina_)
+{
+   if (bIsAdmin) return;
+   Stamina = Stamina_;
 }
 
 //=============================================================================
@@ -190,7 +295,11 @@ void URStatusMgrComponent::RecalcStatus ()
    RecalcSubStats ();
    RecalcStatusValues ();
 
-   OnStatusUpdated.Broadcast ();
+   SetHealth (Health);
+   SetStamina (Stamina);
+   SetMana (Mana);
+
+   OnStatsUpdated.Broadcast ();
 }
 
 void URStatusMgrComponent::RecalcCoreStats ()
@@ -366,80 +475,6 @@ bool URStatusMgrComponent::RollEvasion () const
    return ((FMath::Rand () % 100) <= GetSubStats_Total ().Evasion);
 }
 
-//=============================================================================
-//                 Status Calls
-//=============================================================================
-
-void URStatusMgrComponent::StatusRegen (float DeltaTime)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (IsDead ()) return;
-   Health.Tick (DeltaTime);
-   Mana.Tick (DeltaTime);
-
-   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
-}
-
-void URStatusMgrComponent::SetDead (bool Dead)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   bool WasDead = bDead;
-   bDead = Dead;
-
-   URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
-
-   // Broadcast only after value has been changed;
-   if (WasDead  && !Dead) {
-      OnRevive.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
-   }
-   if (!WasDead &&  Dead) {
-      OnDeath.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportDeath (GetOwner ());
-   }
-}
-
-bool URStatusMgrComponent::IsDead () const
-{
-   return bDead;
-}
-
-FRStatusValue URStatusMgrComponent::GetHealth () const
-{
-   return Health;
-}
-
-void URStatusMgrComponent::UseHealth (float Amount)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
-   if (!Health.Current) {
-      SetDead (true);
-      OnStatusUpdated.Broadcast ();
-   }
-}
-
-FRStatusValue URStatusMgrComponent::GetStamina () const
-{
-   return Stamina;
-}
-
-void URStatusMgrComponent::UseStamina (float Amount)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
-}
-
-FRStatusValue URStatusMgrComponent::GetMana () const
-{
-   return Mana;
-}
-
-void URStatusMgrComponent::UseMana (float Amount)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
-}
 
 //==========================================================================
 //                 Passive Effect Funcs
