@@ -641,12 +641,10 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
    const URDamageType* Type = Cast<URDamageType>(Type_);
 
    if (!IsDead ()) {
-
       if (Type) {
 
-         if (RollEvasion () && Type->GetClass () != URDamageType_Fall::StaticClass ()) {
-            R_LOG ("Evaded attack!");
-            // TODO: Report Evasion
+         if (Type->Evadeable && RollEvasion ()) {
+            OnEvadeRDamage.Broadcast (Amount, Type, Causer);
             return;
          }
 

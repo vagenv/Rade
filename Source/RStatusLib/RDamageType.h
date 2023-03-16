@@ -21,16 +21,19 @@ public:
 
    URDamageType ();
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FString UIName;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      bool Evadeable = true;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
       FRuntimeFloatCurve ResistanceToDamage;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Character")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       virtual float CalcDamage (float Damage, float Resistance) const;
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Character")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
       void BP_AnyDamage (AActor* DamageVictim,
                          float Resistance,
                          float DamageAmount,
