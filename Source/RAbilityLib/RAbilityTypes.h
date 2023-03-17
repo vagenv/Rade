@@ -98,7 +98,7 @@ public:
       double CooldownLeft = 0;
 
    // --- Core Function Calls
-   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
       virtual void Use ();
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")

@@ -25,19 +25,19 @@ public:
    //                  Save data to disk
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
       bool SaveSync ();
-   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
       bool SaveASync ();
 
    //==========================================================================
    //                  Load data from disk
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
       bool LoadSync ();
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
       bool LoadASync ();
 
    //==========================================================================
@@ -45,14 +45,14 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-         bool Get (const FString &key, TArray<uint8> &data);
+      bool Get (const FString &key, TArray<uint8> &data);
 
    //==========================================================================
    //                  Set Data
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-         bool Set (const FString &key, const TArray<uint8> &data);
+      bool Set (const FString &key, const TArray<uint8> &data);
 
    //==========================================================================
    //                  Get instamce -> GameState component

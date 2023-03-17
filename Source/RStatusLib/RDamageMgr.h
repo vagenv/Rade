@@ -6,7 +6,7 @@
 #include "RDamageMgr.generated.h"
 
 class URDamageType;
-class ARActiveStatusEffect;
+class URActiveStatusEffect;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams (FRAnyDamageEvent,
                                                AActor*,             Target,
@@ -21,7 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRReviveEvent,
                                              AActor*, WhoRevived);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
-                                                ARActiveStatusEffect*, Effect,
+                                                URActiveStatusEffect*, Effect,
                                                 AActor*,               Causer,
                                                 AActor*,               Target);
 
@@ -62,7 +62,7 @@ public:
 
    // --- When someone revived
    UFUNCTION()
-      void ReportStatusEffect (ARActiveStatusEffect* Effect,
+      void ReportStatusEffect (URActiveStatusEffect* Effect,
                                AActor*               Causer,
                                AActor*               Target);
 

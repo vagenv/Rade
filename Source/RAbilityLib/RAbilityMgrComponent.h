@@ -34,10 +34,10 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
       URAbility* GetAbility (const TSubclassOf<URAbility> Ability);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
       bool AddAbility (const TSubclassOf<URAbility> Ability);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
       bool RMAbility  (const TSubclassOf<URAbility> Ability);
 
    // When Ability list updated

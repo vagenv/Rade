@@ -1,9 +1,11 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "REquipmentTypes.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
-#include "RStatusLib/RStatusEffect.h"
 #include "RUtilLib/RJson.h"
+#include "RStatusLib/RStatusEffect.h"
+#include "RStatusLib/RStatusMgrComponent.h"
 
 
 // ============================================================================
@@ -12,8 +14,13 @@
 
 bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 {
-   for (const TSubclassOf<ARActiveStatusEffect> &ItEffect : ActiveEffects) {
-      if (!URStatusEffectUtilLibrary::ApplyStatusEffect_Active (Owner, Owner, ItEffect)) {
+   if (!ensure (Owner))     return false;
+   if (!ensure (Inventory)) return false;
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Owner);
+   if (!ensure (StatusMgr)) return false;
+
+   for (const TSubclassOf<URActiveStatusEffect> &ItEffect : ActiveEffects) {
+      if (!StatusMgr->AddActiveStatusEffect (Owner, ItEffect)) {
          return false;
       }
    }

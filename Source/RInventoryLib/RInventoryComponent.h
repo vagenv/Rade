@@ -53,7 +53,7 @@ protected:
    UFUNCTION()
       virtual void OnRep_Items ();
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(ReplicatedUsing = "OnRep_Items", Replicated)
       TArray<FRItemData> Items;
 
    virtual void CalcWeight ();
@@ -99,11 +99,11 @@ public:
    //==========================================================================
 
    // Add Default item
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool AddItem_Arch (const FRItemDataHandle &Item);
 
    // Add Item struct
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool AddItem (FRItemData ItemData);
 
    //==========================================================================
@@ -111,15 +111,15 @@ public:
    //==========================================================================
 
    // Remove item index
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool RemoveItem_Index (int32 ItemIdx, int32 Count = 1);
 
    // Remove item arch
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool RemoveItem_Arch  (const FRItemDataHandle &ItemHandle);
 
    // Remove item data
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool RemoveItem_Data  (FRItemData ItemData);
 
    //==========================================================================
@@ -127,11 +127,11 @@ public:
    //==========================================================================
 
    // Transfer everything
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool TransferAll  (URInventoryComponent *DstInventory);
 
    // Transfer a single item
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool TransferItem (URInventoryComponent *DstInventory,
                                  int32 SrcItemIdx,
                                  int32 SrcItemCount);
@@ -140,10 +140,10 @@ public:
    //                 Item use / drop events
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool UseItem           (int32 ItemIdx);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0);
 
    //==========================================================================
@@ -250,6 +250,7 @@ public:
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       const ARItemPickup* GetClosestPickup () const;
 
+protected:
    // Should be used only for main local Player.
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
       bool bCheckClosestPickup = false;
