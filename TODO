@@ -16,19 +16,30 @@ Replace tick timing to game world time
 
 Camera turn forward automatically after n seconds of moving
 
+Item Type as private String -> Faster cast
+
+Remove blueprintevent
+
+Magnetic pickup
+
+Dialogue system
 
 =================================================
    Damage
 =================================================
 
-RDamageLib? RDamage and REvent Reporter?
 
-DamageMgrComponent / SessionEventMgrComponent
-- Add to Game State
-- GetInstance
-- OnAnyRDamage Delegate
-- Static calls to report damage
-- List of events: Damage / Abilities? / Death / Revive
+StatusEffect to UActorComponent
+
+StatusEffect on Client
+
+Ability in blueprunt
+- cost
+- can use
+
+
+Item Pickup Emptied -> Change color
+
 
 =================================================
    Experience Manager?
