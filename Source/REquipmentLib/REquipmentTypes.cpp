@@ -4,7 +4,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RJson.h"
-#include "RStatusLib/RStatusEffect.h"
+#include "RStatusLib/RActiveStatusEffect.h"
 #include "RStatusLib/RStatusMgrComponent.h"
 
 

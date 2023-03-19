@@ -5,7 +5,7 @@
 #include "RInventoryLib/RItemTypes.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusTypes.h"
-#include "RStatusLib/RStatusEffect.h"
+#include "RStatusLib/RPassiveStatusEffect.h"
 #include "REquipmentTypes.generated.h"
 
 class UStaticMesh;
@@ -14,6 +14,7 @@ class AActor;
 class URInventoryComponent;
 class UREquipmentSlotComponent;
 class UREquipmentMgrComponent;
+class URActiveStatusEffect;
 class UWorld;
 
 // ============================================================================

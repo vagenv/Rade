@@ -3,13 +3,14 @@
 #pragma once
 
 #include "RStatusTypes.h"
-#include "RStatusEffect.h"
+#include "RPassiveStatusEffect.h"
 #include "RSaveLib/RSaveInterface.h"
 #include "RStatusMgrComponent.generated.h"
 
 class URDamageType;
-class UCharacterMovementComponent;
+class URActiveStatusEffect;
 class URInventoryComponent;
+class UCharacterMovementComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
 

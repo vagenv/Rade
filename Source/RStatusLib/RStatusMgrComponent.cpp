@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RStatusMgrComponent.h"
-#include "RStatusEffect.h"
+#include "RActiveStatusEffect.h"
 #include "RDamageType.h"
 #include "RDamageMgr.h"
 
