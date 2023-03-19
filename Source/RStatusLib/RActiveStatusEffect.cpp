@@ -68,7 +68,6 @@ void URActiveStatusEffect::Started ()
    Apply ();
    if (StatusMgr) StatusMgr->OnActiveEffectsUpdated.Broadcast ();
    OnStart.Broadcast ();
-   R_LOG_PRINTF ("[%s] Effect started", *GetName ());
 }
 
 void URActiveStatusEffect::Stop ()
@@ -87,21 +86,21 @@ void URActiveStatusEffect::Refresh_Implementation ()
    if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
 
    if (StackMax > 1 && StackCurrent < StackMax) {
-      int StackLast = StackCurrent;
+      // int StackLast = StackCurrent;
       StackCurrent = FMath::Clamp (StackCurrent + 1, 1, StackMax);
 
-      // --- For debug
-      const FRichCurve* StackToScaleData = StackToScale.GetRichCurveConst ();
-      if (!ensure (StackToScaleData))  return;
-      float StackLastScale    = StackToScaleData->Eval (StackLast);
-      float StackCurrentScale = StackToScaleData->Eval (StackCurrent);
+      // // --- For debug
+      // const FRichCurve* StackToScaleData = StackToScale.GetRichCurveConst ();
+      // if (!ensure (StackToScaleData))  return;
+      // float StackLastScale    = StackToScaleData->Eval (StackLast);
+      // float StackCurrentScale = StackToScaleData->Eval (StackCurrent);
 
-      R_LOG_PRINTF ("[%s] Effect stack increased [%d %.1f%] => [%d %.1f]",
-         *GetName (),
-         StackLast, StackLastScale * 100,
-         StackCurrent, StackCurrentScale * 100);
+      // R_LOG_PRINTF ("[%s] Effect stack increased [%d %.1f%] => [%d %.1f]",
+      //    *GetName (),
+      //    StackLast, StackLastScale * 100,
+      //    StackCurrent, StackCurrentScale * 100);
    } else {
-      R_LOG_PRINTF ("[%s] Effect refreshed", *GetName ());
+      // R_LOG_PRINTF ("[%s] Effect refreshed", *GetName ());
    }
 
    Apply ();
