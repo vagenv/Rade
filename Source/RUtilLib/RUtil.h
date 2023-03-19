@@ -56,7 +56,9 @@ public:
    // Get local player for HUD
    UFUNCTION(BlueprintPure, Category = "Rade|Util", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Local Rade Player", CompactNodeTitle = "Get Rade Player", Keywords = "get rade player"))
       static ACharacter* GetLocalRadePlayer (UObject* WorldContextObject);
+
+   // Uses Eval call of FRuntimeFloatCurve
+   UFUNCTION(BlueprintPure, Category = "Rade|Util")
+	   static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime);
 };
-
-
 
