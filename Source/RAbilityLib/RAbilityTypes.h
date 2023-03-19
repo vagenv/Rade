@@ -57,9 +57,12 @@ public:
 
    URAbility_Aura ();
 
-   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
    virtual void BeginPlay () override;
    virtual void CheckRange ();
+
+   // How often to check if target is within range
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      float CheckRangeInterval = 1;
 
    // Range for actor search
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
@@ -74,6 +77,11 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityEvent OnUpdated;
+
+protected:
+   UPROPERTY()
+      FTimerHandle TimerCheckRange;
+
 };
 
 //=============================================================================

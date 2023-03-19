@@ -47,6 +47,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       bool GetIsRunning () const;
 
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      float GetStackScale (int Stack = -1) const;
+
    //==========================================================================
    //                 Values
    //==========================================================================
@@ -70,13 +73,19 @@ public:
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       AActor* Causer = nullptr;
 
+protected:
+
+   // How stacks are scaling passive effect
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve StackToScale;
+
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       URStatusMgrComponent* StatusMgr = nullptr;
 
    //==========================================================================
    //                 Events
    //==========================================================================
-
+public:
    // Effect started
    UPROPERTY(BlueprintAssignable)
       FRActiveStatusEffectEvent OnStart;
@@ -99,7 +108,8 @@ protected:
    virtual void Started ();
    virtual void Ended ();
 
-   FTimerHandle TimerToEnd;
+   UPROPERTY()
+      FTimerHandle TimerToEnd;
 
    UPROPERTY()
       bool IsRunning = false;

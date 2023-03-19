@@ -150,10 +150,5 @@ class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   // UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status",
-   //    meta = (DisplayName = "<", CompactNodeTitle = "<"))
-   //    static bool FRCoreStats_Less (const FRCoreStats &a, const FRCoreStats &b) {
-   //       return (a < b);
-   //    }
 };
 

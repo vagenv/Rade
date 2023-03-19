@@ -20,6 +20,12 @@ URActiveStatusEffect::URActiveStatusEffect ()
    PrimaryComponentTick.bCanEverTick = false;
    PrimaryComponentTick.bStartWithTickEnabled = false;
    bAutoRegister = true;
+
+   FRichCurve* StackToScaleData = StackToScale.GetRichCurve ();
+   StackToScaleData->AddKey (  1,   1); // Minimum
+   StackToScaleData->AddKey ( 10,   5);
+   StackToScaleData->AddKey ( 50,  15);
+   StackToScaleData->AddKey (100,  20); // Maximum
 }
 
 void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -32,11 +38,15 @@ void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 void URActiveStatusEffect::OnComponentCreated ()
 {
    Super::OnComponentCreated ();
-   GetOwner ()->AddInstanceComponent (this);
+
+   if (!GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->AddInstanceComponent (this);
 }
 void URActiveStatusEffect::OnComponentDestroyed (bool bDestroyingHierarchy)
 {
-   GetOwner ()->RemoveInstanceComponent (this);
+   if (GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->RemoveInstanceComponent (this);
+
    Super::OnComponentDestroyed (bDestroyingHierarchy);
 }
 
@@ -80,10 +90,17 @@ void URActiveStatusEffect::Refresh ()
    if (StackMax > 1 && StackCurrent < StackMax) {
       int StackLast = StackCurrent;
       StackCurrent = FMath::Clamp (StackCurrent + 1, 1, StackMax);
-      for (FRPassiveStatusEffect &ItPassiveEffect : PassiveEffects) {
-         ItPassiveEffect.Value = ItPassiveEffect.Value * StackCurrent / StackLast;
-      }
-      R_LOG_PRINTF ("[%s] Effect stack increased [%d] => [%d]", *GetName (), StackLast, StackCurrent);
+
+      // --- For debug
+      const FRichCurve* StackToScaleData = StackToScale.GetRichCurveConst ();
+      if (!ensure (StackToScaleData))  return;
+      float StackLastScale    = StackToScaleData->Eval (StackLast);
+      float StackCurrentScale = StackToScaleData->Eval (StackCurrent);
+
+      R_LOG_PRINTF ("[%s] Effect stack increased [%d %.1f%] => [%d %.1f]",
+         *GetName (),
+         StackLast, StackLastScale * 100,
+         StackCurrent, StackCurrentScale * 100);
    } else {
       R_LOG_PRINTF ("[%s] Effect refreshed", *GetName ());
    }
@@ -98,13 +115,21 @@ void URActiveStatusEffect::Apply ()
    if (!ensure (World)) return;
    StartTime = World->GetTimeSeconds ();
 
-   if (StatusMgr && R_IS_NET_ADMIN) {
-      StatusMgr->SetPassiveEffects (UIName, PassiveEffects);
-   }
-   if (Duration > 0) {
-      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Ended, Duration, false);
-   }
    if (R_IS_NET_ADMIN) {
+      if (StatusMgr) {
+
+         float StackScale = GetStackScale ();
+         TArray<FRPassiveStatusEffect> CopyPassiveEffects = PassiveEffects;
+         for (FRPassiveStatusEffect &ItPassiveEffect : CopyPassiveEffects) {
+            ItPassiveEffect.Value = ItPassiveEffect.Value * StackScale;
+         }
+         StatusMgr->SetPassiveEffects (UIName, CopyPassiveEffects);
+      }
+
+      if (Duration > 0) {
+         World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Ended, Duration, false);
+      }
+
       URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
       if (DamageMgr) DamageMgr->ReportStatusEffect (this, Causer, GetOwner ());
    }
@@ -134,11 +159,22 @@ bool URActiveStatusEffect::GetIsRunning () const
    return IsRunning;
 }
 
+float URActiveStatusEffect::GetStackScale (int Stack) const
+{
+   if (Stack < 1) Stack = StackCurrent;
+   const FRichCurve* StackToScaleData = StackToScale.GetRichCurveConst ();
+   if (!ensure (StackToScaleData))  return 1;
+   return StackToScaleData->Eval (Stack);
+}
+
 //=============================================================================
-//                 Effect Library
+//                 Status Effect Library
 //=============================================================================
 
-bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects)
+bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (
+   AActor *Target,
+   const FString &Tag,
+   const TArray<FRPassiveStatusEffect> &Effects)
 {
    // --- Check Values
    if (!ensure (Target))                  return false;
@@ -151,7 +187,9 @@ bool URStatusEffectUtilLibrary::SetStatusEffect_Passive (AActor *Target, const F
    return StatusMgr->SetPassiveEffects (Tag, Effects);
 }
 
-bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FString &Tag)
+bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (
+   AActor *Target,
+   const FString &Tag)
 {
    // --- Check Values
    if (!ensure (Target))                  return false;
@@ -164,11 +202,13 @@ bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FS
    return StatusMgr->RmPassiveEffects (Tag);
 }
 
-bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<URActiveStatusEffect> Effect_)
+bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (
+   AActor* Causer,
+   AActor *Target,
+   const TSubclassOf<URActiveStatusEffect> Effect_)
 {
    // --- Check Values
    if (!ensure (Causer))                  return false;
-   // if (!ensure (Causer->HasAuthority ())) return false;
    if (!ensure (Target))                  return false;
    if (!ensure (Effect_))                 return false;
 

@@ -568,9 +568,11 @@ bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclas
    }
 
    URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), Effect_);
-   Effect->Causer = Causer;
+   if (Effect) {
+      Effect->Causer = Causer;
+   }
 
-   return true;
+   return Effect != nullptr;
 }
 
 //=============================================================================

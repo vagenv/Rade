@@ -19,7 +19,9 @@ URAbility::URAbility ()
 void URAbility::OnComponentCreated ()
 {
    Super::OnComponentCreated ();
-   GetOwner ()->AddInstanceComponent (this);
+
+   if (!GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->AddInstanceComponent (this);
 
    if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
       Mgr->OnAbilityListUpdated.Broadcast ();
@@ -29,7 +31,8 @@ void URAbility::OnComponentDestroyed (bool bDestroyingHierarchy)
    if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
       Mgr->OnAbilityListUpdated.Broadcast ();
 
-   GetOwner ()->RemoveInstanceComponent (this);
+   if (GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->RemoveInstanceComponent (this);
    Super::OnComponentDestroyed (bDestroyingHierarchy);
 }
 
@@ -49,28 +52,16 @@ URAbility_Passive::URAbility_Passive ()
 
 URAbility_Aura::URAbility_Aura ()
 {
-   PrimaryComponentTick.bCanEverTick = true;
-   PrimaryComponentTick.bStartWithTickEnabled = true;
-   PrimaryComponentTick.TickInterval = 1;
-
    AffectedType = ACharacter::StaticClass ();
 }
 
 void URAbility_Aura::BeginPlay ()
 {
    Super::BeginPlay ();
-
-   if (!R_IS_NET_ADMIN) {
-      SetComponentTickEnabled (false);
-   }
+   GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
+                                             this, &URAbility_Aura::CheckRange,
+                                             CheckRangeInterval, true);
 }
-
-void URAbility_Aura::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
-{
-   Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
-   CheckRange ();
-}
-
 void URAbility_Aura::CheckRange ()
 {
    if (!AffectedType) return;
