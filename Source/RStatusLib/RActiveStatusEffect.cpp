@@ -32,7 +32,6 @@ void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
    DOREPLIFETIME (URActiveStatusEffect, Causer);
-   // DOREPLIFETIME (URActiveStatusEffect, StartTime);
 }
 
 void URActiveStatusEffect::OnComponentCreated ()
@@ -81,7 +80,7 @@ void URActiveStatusEffect::Stop ()
    Ended ();
 }
 
-void URActiveStatusEffect::Refresh ()
+void URActiveStatusEffect::Refresh_Implementation ()
 {
    UWorld* World = GetWorld ();
    if (!ensure (World)) return;
@@ -126,12 +125,12 @@ void URActiveStatusEffect::Apply ()
          StatusMgr->SetPassiveEffects (UIName, CopyPassiveEffects);
       }
 
-      if (Duration > 0) {
-         World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Ended, Duration, false);
-      }
-
       URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
       if (DamageMgr) DamageMgr->ReportStatusEffect (this, Causer, GetOwner ());
+   }
+
+   if (Duration > 0) {
+      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Ended, Duration, false);
    }
 }
 

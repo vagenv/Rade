@@ -33,8 +33,9 @@ public:
    //==========================================================================
 public:
    // Effect has been re-applied
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+   UFUNCTION(NetMulticast, Unreliable, BlueprintCallable, Category = "Rade|Status")
       void Refresh ();
+      void Refresh_Implementation ();
 
    // Cancel effect and destroy component.
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
