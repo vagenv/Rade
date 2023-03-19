@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RAbilityTypes.h"
+#include "RAbilityMgrComponent.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
@@ -13,6 +14,23 @@
 URAbility::URAbility ()
 {
    SetIsReplicatedByDefault (true);
+}
+
+void URAbility::OnComponentCreated ()
+{
+   Super::OnComponentCreated ();
+   GetOwner ()->AddInstanceComponent (this);
+
+   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      Mgr->OnAbilityListUpdated.Broadcast ();
+}
+void URAbility::OnComponentDestroyed (bool bDestroyingHierarchy)
+{
+   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      Mgr->OnAbilityListUpdated.Broadcast ();
+
+   GetOwner ()->RemoveInstanceComponent (this);
+   Super::OnComponentDestroyed (bDestroyingHierarchy);
 }
 
 //=============================================================================

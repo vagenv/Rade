@@ -3,6 +3,7 @@
 #include "RAbilityMgrComponent.h"
 #include "RAbilityTypes.h"
 
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
@@ -88,10 +89,7 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (!Ability)) return false;
 
-   Ability = NewObject<URAbility> (GetOwner (), Ability_);
-   if (!ensure (Ability)) return false;
-   Ability->RegisterComponent ();
-   OnAbilityListUpdated.Broadcast ();
+   URUtil::AddComponent<URAbility> (GetOwner (), Ability_);
    return true;
 }
 
@@ -102,9 +100,7 @@ bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (Ability)) return false;
 
-   Ability->UnregisterComponent ();
    Ability->DestroyComponent ();
-   OnAbilityListUpdated.Broadcast ();
    return true;
 }
 

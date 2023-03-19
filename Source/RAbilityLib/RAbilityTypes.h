@@ -19,6 +19,9 @@ public:
 
    URAbility ();
 
+   virtual void OnComponentCreated () override;
+   virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
+
    // UI Display Name
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       FString UIName = "";
