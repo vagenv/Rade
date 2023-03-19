@@ -12,7 +12,10 @@ class RUTILLIB_API URUtil
 {
 public:
    template<typename T>
-   static T* GetComponent (const AActor * Target);
+   static T* GetComponent (const AActor* Target);
+
+   template<typename T>
+   static T* AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass);
 };
 
 template<typename T>
@@ -28,6 +31,21 @@ T* URUtil::GetComponent (const AActor * Target)
    if (!CompObj) return nullptr;
    return CompObj;
 }
+
+template<typename T>
+T* URUtil::AddComponent (AActor * Target, const TSubclassOf<UActorComponent> CompClass)
+{
+   if (!ensure (Target)) return nullptr;
+   if (!ensure (CompClass)) return nullptr;
+
+   UActorComponent *NewComp = Target->AddComponentByClass (CompClass, false, FTransform(), false);
+   if (!ensure (NewComp)) return nullptr;
+
+   T *TargetComp = Cast<T>(NewComp);
+   ensure (NewComp);
+   return TargetComp;
+}
+
 
 UCLASS()
 class RUTILLIB_API URUtilLibrary : public UBlueprintFunctionLibrary
