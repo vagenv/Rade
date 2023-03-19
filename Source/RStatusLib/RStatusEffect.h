@@ -92,79 +92,97 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RSTATUSLIB_API ARActiveStatusEffect : public AActor
+class RSTATUSLIB_API URActiveStatusEffect : public UActorComponent
 {
    GENERATED_BODY()
 public:
 
-   ARActiveStatusEffect ();
+   URActiveStatusEffect ();
 
-   // --- Values
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString UIName;
+   virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
+   virtual void BeginPlay () override;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float Duration = 5;
+   virtual void OnComponentCreated () override;
+   virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float StackMax = 1;
+   //==========================================================================
+   //                 Functions
+   //==========================================================================
+public:
+   // Effect has been re-applied
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      void Refresh ();
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      float StackCurrent = 1;
+   // Cancel effect and destroy component.
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      void Stop ();
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<FRPassiveStatusEffect> PassiveEffects;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      bool isRunning = false;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      AActor* Causer = nullptr;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      AActor* Target = nullptr;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      URStatusMgrComponent* StatusMgr = nullptr;
-
-   // Must be called right after construction
-   bool Apply (AActor* Causer_, AActor* Target_);
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void Cancel ();
-
-   // --- Events
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
-      void BP_Started ();
-
-   UPROPERTY(BlueprintAssignable)
-      FRActiveStatusEffectEvent OnStart;
-
-   UFUNCTION(BlueprintImplementableEvent, Category =  "Rade|Status")
-      void BP_Ended ();
-
-   UPROPERTY(BlueprintAssignable)
-      FRActiveStatusEffectEvent OnEnd;
-
-   UFUNCTION(BlueprintImplementableEvent, Category =  "Rade|Status")
-      void BP_Canceled ();
-
-   UPROPERTY(BlueprintAssignable)
-      FRActiveStatusEffectEvent OnCancel;
-
-   // Functions
+   // Get lifetime left
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       double GetDurationLeft () const;
 
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      bool GetIsRunning () const;
+
+   //==========================================================================
+   //                 Values
+   //==========================================================================
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FString UIName;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      float Duration = 5;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      int StackMax = 1;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      int StackCurrent = 1;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      TArray<FRPassiveStatusEffect> PassiveEffects;
+
+   // Must be set by server
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      AActor* Causer = nullptr;
+
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      URStatusMgrComponent* StatusMgr = nullptr;
+
+   //==========================================================================
+   //                 Events
+   //==========================================================================
+
+   // Effect started
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnStart;
+
+   // Effect was re-applied
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnRefresh;
+
+   // Effect ended
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnEnd;
+
+   // Effect canceled
+   UPROPERTY(BlueprintAssignable)
+      FRActiveStatusEffectEvent OnCancel;
+
 protected:
 
+   virtual void Apply ();
    virtual void Started ();
    virtual void Ended ();
 
    FTimerHandle TimerToEnd;
 
-   double Elapse = 0;
+   UPROPERTY()
+      bool IsRunning = false;
+
+   UPROPERTY()
+      double StartTime = 0;
 };
 
 
@@ -178,13 +196,13 @@ class RSTATUSLIB_API URStatusEffectUtilLibrary : public UBlueprintFunctionLibrar
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       static bool SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       static bool RmStatusEffect_Passive (AActor *Target, const FString &Tag);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      static bool ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<ARActiveStatusEffect> Effect);
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      static bool ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<URActiveStatusEffect> Effect);
 };
 

@@ -8,6 +8,8 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
+#include "Net/UnrealNetwork.h"
+
 //=============================================================================
 //                 Passive Effect
 //=============================================================================
@@ -25,95 +27,124 @@ FRPassiveStatusEffect FRPassiveStatusEffect::operator + (const FRPassiveStatusEf
 //                 Active Effect
 //=============================================================================
 
-ARActiveStatusEffect::ARActiveStatusEffect ()
+URActiveStatusEffect::URActiveStatusEffect ()
 {
+   SetIsReplicatedByDefault (true);
+   PrimaryComponentTick.bCanEverTick = false;
+   PrimaryComponentTick.bStartWithTickEnabled = false;
+   bAutoRegister = true;
 }
 
-bool ARActiveStatusEffect::Apply (AActor *Causer_, AActor* Target_)
+void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+   Super::GetLifetimeReplicatedProps (OutLifetimeProps);
+   DOREPLIFETIME (URActiveStatusEffect, Causer);
+   // DOREPLIFETIME (URActiveStatusEffect, StartTime);
+}
+
+void URActiveStatusEffect::OnComponentCreated ()
+{
+   Super::OnComponentCreated ();
+   GetOwner ()->AddInstanceComponent (this);
+}
+void URActiveStatusEffect::OnComponentDestroyed (bool bDestroyingHierarchy)
+{
+   GetOwner ()->RemoveInstanceComponent (this);
+   Super::OnComponentDestroyed (bDestroyingHierarchy);
+}
+
+void URActiveStatusEffect::BeginPlay ()
+{
+   Super::BeginPlay ();
+   Started ();
+}
+
+void URActiveStatusEffect::Started ()
 {
    // --- Check Values
-   if (!ensure (Causer_))                  return false;
-   if (!ensure (Target_))                  return false;
-   if (!ensure (!isRunning))               return false;
-   if (!ensure (Causer_->HasAuthority ())) return false;
-   UWorld* World = GetWorld ();
-   if (!ensure (World))                    return false;
-   URStatusMgrComponent* StatusMgr_ = URUtil::GetComponent<URStatusMgrComponent> (Target_);
-   if (!ensure (StatusMgr_))               return false;
-
-
-   // --- Check Refresh/Stacking
-   TArray<ARActiveStatusEffect*> CurrentEffects = StatusMgr_->GetActiveEffects ();
-   for (ARActiveStatusEffect* ItActiveEffect : CurrentEffects) {
-      if (ItActiveEffect->GetClass () == GetClass ()) {
-         if (StackMax > 1) {
-            StackCurrent = FMath::Clamp (ItActiveEffect->StackCurrent + 1., 1., StackMax);
-            for (FRPassiveStatusEffect &ItPassiveEffect : PassiveEffects) {
-               ItPassiveEffect.Value *= StackCurrent;
-            }
-         }
-         ItActiveEffect->Cancel ();
-         break;
-      }
-   }
-
-   // --- Set variables
-   isRunning = true;
-   Elapse    = FPlatformTime::Seconds () + Duration;
-   Causer    = Causer_;
-   Target    = Target_;
+   if (!ensure (GetWorld ())) return;
+   URStatusMgrComponent* StatusMgr_ = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   if (!ensure (StatusMgr_)) return;
    StatusMgr = StatusMgr_;
-   Started ();
 
-   URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
-   if (DamageMgr) DamageMgr->ReportStatusEffect (this, Causer, Target);
+   IsRunning = true;
 
-   return true;
-}
-
-void ARActiveStatusEffect::Started ()
-{
-   AttachToActor (Target, FAttachmentTransformRules::SnapToTargetIncludingScale);
-   if (StatusMgr && Duration) {
-      StatusMgr->AddActiveEffect (this);
-      StatusMgr->SetPassiveEffects (UIName, PassiveEffects);
-   }
-   BP_Started ();
+   Apply ();
+   if (StatusMgr) StatusMgr->OnActiveEffectsUpdated.Broadcast ();
    OnStart.Broadcast ();
-
-   if (Duration > 0) {
-      GetWorld ()->GetTimerManager ().SetTimer (TimerToEnd, this, &ARActiveStatusEffect::Ended, Duration, false);
-   } else {
-      Ended ();
-   }
+   R_LOG_PRINTF ("[%s] Effect started", *GetName ());
 }
 
-void ARActiveStatusEffect::Ended ()
+void URActiveStatusEffect::Stop ()
 {
-   if (StatusMgr && Duration) {
-      StatusMgr->RmActiveEffect (this);
-      StatusMgr->RmPassiveEffects (UIName);
-   }
-   BP_Ended ();
-   OnEnd.Broadcast ();
-   Destroy ();
-}
-
-void ARActiveStatusEffect::Cancel ()
-{
-   TimerToEnd.Invalidate ();
-   BP_Canceled ();
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
+   if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
    OnCancel.Broadcast ();
    Ended ();
 }
 
-double ARActiveStatusEffect::GetDurationLeft () const
+void URActiveStatusEffect::Refresh ()
 {
-   if (!Duration) return 0;
-   if (!Elapse)   return 0;
-   double dt = Elapse - FPlatformTime::Seconds ();
-   if (dt < 0) dt = 0;
-   return dt;
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
+   if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
+
+   if (StackMax > 1 && StackCurrent < StackMax) {
+      int StackLast = StackCurrent;
+      StackCurrent = FMath::Clamp (StackCurrent + 1, 1, StackMax);
+      for (FRPassiveStatusEffect &ItPassiveEffect : PassiveEffects) {
+         ItPassiveEffect.Value = ItPassiveEffect.Value * StackCurrent / StackLast;
+      }
+      R_LOG_PRINTF ("[%s] Effect stack increased [%d] => [%d]", *GetName (), StackLast, StackCurrent);
+   } else {
+      R_LOG_PRINTF ("[%s] Effect refreshed", *GetName ());
+   }
+
+   Apply ();
+   OnRefresh.Broadcast ();
+}
+
+void URActiveStatusEffect::Apply ()
+{
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
+   StartTime = World->GetTimeSeconds ();
+
+   if (StatusMgr && R_IS_NET_ADMIN) {
+      StatusMgr->SetPassiveEffects (UIName, PassiveEffects);
+   }
+   if (Duration > 0) {
+      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Ended, Duration, false);
+   }
+   if (R_IS_NET_ADMIN) {
+      URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+      if (DamageMgr) DamageMgr->ReportStatusEffect (this, Causer, GetOwner ());
+   }
+}
+
+void URActiveStatusEffect::Ended ()
+{
+   IsRunning = false;
+
+   if (StatusMgr) {
+      if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (UIName);
+      StatusMgr->OnActiveEffectsUpdated.Broadcast ();
+   }
+   OnEnd.Broadcast ();
+   if (R_IS_NET_ADMIN) DestroyComponent ();
+}
+
+double URActiveStatusEffect::GetDurationLeft () const
+{
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return 0;
+   return FMath::Clamp (StartTime + Duration - World->GetTimeSeconds (), 0, Duration);
+}
+
+bool URActiveStatusEffect::GetIsRunning () const
+{
+   return IsRunning;
 }
 
 //=============================================================================
@@ -146,21 +177,19 @@ bool URStatusEffectUtilLibrary::RmStatusEffect_Passive (AActor *Target, const FS
    return StatusMgr->RmPassiveEffects (Tag);
 }
 
-bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<ARActiveStatusEffect> Effect)
+bool URStatusEffectUtilLibrary::ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<URActiveStatusEffect> Effect_)
 {
    // --- Check Values
    if (!ensure (Causer))                  return false;
-   if (!ensure (Causer->HasAuthority ())) return false;
+   // if (!ensure (Causer->HasAuthority ())) return false;
    if (!ensure (Target))                  return false;
+   if (!ensure (Effect_))                 return false;
+
    UWorld* World = Target->GetWorld ();
    if (!World)                            return false;
-   if (!ensure (Effect))                  return false;
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target);
    if (!ensure (StatusMgr))               return false;
 
-   // --- Action
-   ARActiveStatusEffect* NewEffect = World->SpawnActor<ARActiveStatusEffect>(Effect);
-   if (!ensure (NewEffect)) return false;
-   return NewEffect->Apply (Causer, Target);
+   return StatusMgr->AddActiveStatusEffect (Causer, Effect_);
 }
 

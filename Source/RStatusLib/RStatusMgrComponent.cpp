@@ -4,6 +4,8 @@
 #include "RStatusEffect.h"
 #include "RDamageType.h"
 #include "RDamageMgr.h"
+
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
@@ -125,7 +127,6 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URStatusMgrComponent, SubStats_Added);
 
    DOREPLIFETIME (URStatusMgrComponent, PassiveEffects);
-   DOREPLIFETIME (URStatusMgrComponent, ActiveEffects);
    DOREPLIFETIME (URStatusMgrComponent, Resistence);
 }
 
@@ -550,36 +551,26 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 //                 Active Effect Funcs
 //==========================================================================
 
-bool URStatusMgrComponent::AddActiveEffect (ARActiveStatusEffect* Effect)
+bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (Effect)) return false;
-   for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
-      if (ActiveEffects[iEffect] == Effect) {
-         return false;
-      }
-   }
+   if (!ensure (Causer))  return false;
+   if (!ensure (Effect_)) return false;
 
-   ActiveEffects.Add (Effect);
-   return true;
-}
-
-bool URStatusMgrComponent::RmActiveEffect (ARActiveStatusEffect* Effect)
-{
-   R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (Effect)) return false;
-   for (int iEffect = 0; iEffect < ActiveEffects.Num (); iEffect++) {
-      if (ActiveEffects[iEffect] == Effect) {
-         ActiveEffects.RemoveAt (iEffect);
+   TArray<URActiveStatusEffect*> CurrentEffects;
+   GetOwner()->GetComponents (CurrentEffects);
+   for (URActiveStatusEffect* ItActiveEffect : CurrentEffects) {
+      if (!ItActiveEffect) continue;
+      if (ItActiveEffect->GetClass () == Effect_) {
+         ItActiveEffect->Refresh ();
          return true;
       }
    }
-   return false;
-}
 
-TArray<ARActiveStatusEffect* > URStatusMgrComponent::GetActiveEffects () const
-{
-   return ActiveEffects;
+   URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), Effect_);
+   Effect->Causer = Causer;
+
+   return true;
 }
 
 //=============================================================================

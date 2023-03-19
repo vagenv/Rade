@@ -136,10 +136,6 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
       TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
 
-   // Active instances running
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<ARActiveStatusEffect*> ActiveEffects;
-
    // --- Resistance
    // Should be Map of FRResistanceStat, but for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
@@ -249,13 +245,10 @@ public:
    //==========================================================================
    //                 Active Effect Funcs
    //==========================================================================
+public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      TArray<ARActiveStatusEffect*> GetActiveEffects () const;
-
-   // For internal use only
-   bool AddActiveEffect (ARActiveStatusEffect* Effect);
-   bool RmActiveEffect  (ARActiveStatusEffect* Effect);
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      bool AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect);
 
    //==========================================================================
    //                 Resistance Funcs
