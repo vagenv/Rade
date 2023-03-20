@@ -20,12 +20,6 @@ Remove blueprintevent
 
 Magnetic pickup
 
-=================================================
-FIX
-=================================================
-
-Item Type as private String -> Faster cast
-
 
 =================================================
    RDescriptor Interface/
