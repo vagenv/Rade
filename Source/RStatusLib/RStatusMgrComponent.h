@@ -36,7 +36,6 @@ public:
    // Owners Movement Component. For stamina Regen.
 private:
       UCharacterMovementComponent *MovementComponent = nullptr;
-      bool bIsAdmin = false;
 
    //==========================================================================
    //                 Dead
@@ -307,7 +306,7 @@ private:
    //==========================================================================
 public:
    // Status Saved / Loaded between sessions.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool bSaveLoad = false;
 
 protected:

@@ -27,7 +27,7 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve ResistanceToDamage;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
@@ -51,7 +51,7 @@ class RSTATUSLIB_API URDamageType_Fall : public URDamageType
 public:
    URDamageType_Fall();
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve FallDamageCurve;
 
    virtual float CalcDamage (float Velocity, float Resistance) const override;

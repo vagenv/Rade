@@ -18,13 +18,13 @@ struct RSTATUSLIB_API FRCoreStats
    FRCoreStats ();
    FRCoreStats (float Value);
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float STR = 0;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float AGI = 0;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float INT = 0;
 
    // Are any values set
@@ -53,19 +53,19 @@ struct RSTATUSLIB_API FRSubStats
 {
    GENERATED_BODY()
 
-   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
       float Evasion = 0;
 
-   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
       float Critical = 0;
 
-   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
       float MoveSpeed = 0;
 
-   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
       float AttackSpeed = 0;
 
-   UPROPERTY (EditAnywhere, BlueprintReadWrite)
+   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
       float AttackPower = 0;
 
    FRSubStats operator + (const FRSubStats &stat) const;
@@ -90,14 +90,14 @@ struct RSTATUSLIB_API FRStatusValue
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Current = 50;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Max = 100;
 
    // Per second
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Regen = 0;
 
    void Tick (float DeltaTime);
@@ -119,10 +119,10 @@ struct RSTATUSLIB_API FRResistanceStat
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSubclassOf<URDamageType> DamageType;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Value = 0;
 };
 
@@ -132,11 +132,11 @@ struct RSTATUSLIB_API FRResistanceStatWithTag
    GENERATED_BODY()
 
    // Who or What is applying Resistance
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Tag;
 
    // What value is added
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRResistanceStat Value;
 };
 

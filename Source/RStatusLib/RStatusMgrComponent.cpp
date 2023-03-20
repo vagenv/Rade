@@ -151,7 +151,6 @@ void URStatusMgrComponent::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
       bDead = false;
-      bIsAdmin = true;
 
       // Save/Load Status
       if (bSaveLoad) {
@@ -269,19 +268,19 @@ void URStatusMgrComponent::UseMana (float Amount)
 
 void URStatusMgrComponent::SetHealth_Implementation (FRStatusValue Health_)
 {
-   if (bIsAdmin) return;
+   if (R_IS_NET_ADMIN) return;
    Health = Health_;
 }
 
 void URStatusMgrComponent::SetMana_Implementation (FRStatusValue Mana_)
 {
-   if (bIsAdmin) return;
+   if (R_IS_NET_ADMIN) return;
    Mana = Mana_;
 }
 
 void URStatusMgrComponent::SetStamina_Implementation (FRStatusValue Stamina_)
 {
-   if (bIsAdmin) return;
+   if (R_IS_NET_ADMIN) return;
    Stamina = Stamina_;
 }
 
@@ -619,7 +618,6 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRRes
 {
    R_RETURN_IF_NOT_ADMIN;
    if (!ensure (!Tag.IsEmpty ()))  return;
-   if (!ensure (AddValues.Num ())) return;
 
    // Clean
    RmResistance (Tag);

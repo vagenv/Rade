@@ -10,7 +10,7 @@ struct RSAVELIB_API FRSaveData
 {
    GENERATED_BODY()
 
-   UPROPERTY(VisibleAnywhere, Category = "Rade")
+   UPROPERTY(VisibleAnywhere)
       TArray<uint8> Data;
 };
 

@@ -134,10 +134,6 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       float Cooldown = 3;
 
-   // --- Runtime status
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
-      bool UseBlocked = true;
-
    //==========================================================================
    //                 Functions
    //==========================================================================

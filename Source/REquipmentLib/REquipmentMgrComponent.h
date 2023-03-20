@@ -42,10 +42,10 @@ protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRuntimeFloatCurve StrToWeightMax;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRuntimeFloatCurve WeightToEvasion;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRuntimeFloatCurve WeightToMoveSpeed;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")

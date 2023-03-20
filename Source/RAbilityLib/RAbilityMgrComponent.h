@@ -28,7 +28,7 @@ public:
    //==========================================================================
 
    // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Ability")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       TArray<TSubclassOf<URAbility> > DefaultAbilities;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
@@ -49,7 +49,7 @@ public:
    //==========================================================================
 
    // Status Saved / Loaded between sessions.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Ability")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       bool bSaveLoad = false;
 
 protected:

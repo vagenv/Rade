@@ -56,13 +56,13 @@ struct RSTATUSLIB_API FRPassiveStatusEffect
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       ERStatusEffectScale Scale = ERStatusEffectScale::None;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       ERStatusEffectTarget Target = ERStatusEffectTarget::None;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Value = 0.;
 
    inline FRPassiveStatusEffect operator + (const FRPassiveStatusEffect &obj) const;
@@ -74,11 +74,11 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
    GENERATED_BODY()
 
    // Who or What is applying effect
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Tag;
 
    // What value is added
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRPassiveStatusEffect Value;
 };
 

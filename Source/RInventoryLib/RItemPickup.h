@@ -44,15 +44,15 @@ public:
    //==========================================================================
 
    // Activation delay
-   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       float PickupActivationDelay = 1.;
 
    // Auto Pickup
-   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       bool bAutoPickup = false;
 
    // Auto Pickup
-   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Inventory")
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       bool bAutoDestroy = true;
 
    //==========================================================================
