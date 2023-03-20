@@ -51,6 +51,11 @@ bool FRItemDataHandle::ToItem (FRItemData &dst) const
 //                      FRItemData
 // ============================================================================
 
+FRItemData::FRItemData ()
+{
+   Type = FString (typeid (FRItemData).name ());
+}
+
 bool FRItemData::ReadJSON ()
 {
    // Destination of data to be read
@@ -85,6 +90,11 @@ bool FRItemData::WriteJSON ()
 //                      FRActionItemData
 // ============================================================================
 
+FRActionItemData::FRActionItemData()
+{
+   Type = FString (typeid (FRActionItemData).name ());
+}
+
 bool FRActionItemData::ReadJSON ()
 {
    // Destination of data to be read
@@ -116,6 +126,7 @@ bool FRActionItemData::WriteJSON ()
 
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
+   if (src.Type != FString (typeid (FRActionItemData).name ())) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 

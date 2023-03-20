@@ -26,6 +26,8 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
 
+   FRConsumableItemData ();
+
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -46,6 +48,8 @@ USTRUCT(BlueprintType)
 struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
+
+   FREquipmentData ();
 
    // Slot to which item will be attached on spawn
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

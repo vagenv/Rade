@@ -87,6 +87,12 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
 
+   FRItemData();
+
+   // Must be defined in all subclasses for type checking and casting
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      FString Type;
+
    // --- Base data every item should have
 
    // Rarity
@@ -170,6 +176,8 @@ USTRUCT(BlueprintType)
 struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 {
    GENERATED_BODY()
+
+   FRActionItemData ();
 
    // Use interface callback
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

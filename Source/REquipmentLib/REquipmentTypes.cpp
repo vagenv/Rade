@@ -12,6 +12,11 @@
 //                      FRConsumableItemData
 // ============================================================================
 
+FRConsumableItemData::FRConsumableItemData()
+{
+   Type = FString (typeid (FRConsumableItemData).name ());
+}
+
 bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 {
    if (!ensure (Owner))     return false;
@@ -29,6 +34,7 @@ bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 
 bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
 {
+   if (src.Type != FString (typeid (FRConsumableItemData).name ())) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
@@ -65,8 +71,15 @@ bool FRConsumableItemData::WriteJSON ()
 //                      FREquipmentData
 // ============================================================================
 
+FREquipmentData::FREquipmentData()
+{
+   Type = FString (typeid (FREquipmentData).name ());
+}
+
+
 bool FREquipmentData::Cast (const FRItemData &src, FREquipmentData &dst)
 {
+   if (src.Type != FString (typeid (FREquipmentData).name ())) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
