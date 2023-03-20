@@ -5,7 +5,7 @@
 #include "RInventoryLib/RItemTypes.h"
 #include "RStatusLib/RDamageType.h"
 #include "RStatusLib/RStatusTypes.h"
-#include "RStatusLib/RStatusEffect.h"
+#include "RStatusLib/RPassiveStatusEffect.h"
 #include "REquipmentTypes.generated.h"
 
 class UStaticMesh;
@@ -14,6 +14,7 @@ class AActor;
 class URInventoryComponent;
 class UREquipmentSlotComponent;
 class UREquipmentMgrComponent;
+class URActiveStatusEffect;
 class UWorld;
 
 // ============================================================================
@@ -25,10 +26,12 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
 
+   FRConsumableItemData ();
+
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TSubclassOf<ARActiveStatusEffect> > ActiveEffects;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<TSubclassOf<URActiveStatusEffect> > ActiveEffects;
 
    static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
 
@@ -46,29 +49,31 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
 
+   FREquipmentData ();
+
    // Slot to which item will be attached on spawn
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSubclassOf<UREquipmentSlotComponent> EquipmentSlot;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	   TSoftObjectPtr<UStaticMesh> StaticMesh;
 
-   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	   TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float CurrentDurability = 100;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float MaxDurability = 100;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<FRResistanceStat> Resistence;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRCoreStats RequiredStats;
 
    static bool Cast (const FRItemData &src, FREquipmentData &dst);
@@ -83,11 +88,11 @@ class REQUIPMENTLIB_API UREquipmentUtilLibrary : public UBlueprintFunctionLibrar
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Character", Meta = (ExpandEnumAsExecs = "Branches"))
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &ItemData,
                                           ERActionResult &Branches);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Character", Meta = (ExpandEnumAsExecs = "Branches"))
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
                                          ERActionResult &Branches);
 };

@@ -10,36 +10,6 @@ class AController;
 class AActor;
 
 // ============================================================================
-//                   Resistance
-// ============================================================================
-
-USTRUCT(BlueprintType)
-struct RSTATUSLIB_API FRResistanceStat
-{
-   GENERATED_BODY()
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      TSubclassOf<URDamageType> DamageType;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float Value = 0;
-};
-
-USTRUCT(BlueprintType)
-struct RSTATUSLIB_API FRResistanceStatWithTag
-{
-   GENERATED_BODY()
-
-   // Who or What is applying Resistance
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Tag;
-
-   // What value is added
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FRResistanceStat Value;
-};
-
-// ============================================================================
 //                   RDamageType
 // ============================================================================
 
@@ -51,16 +21,19 @@ public:
 
    URDamageType ();
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FString UIName;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      bool Evadeable = true;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve ResistanceToDamage;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Character")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       virtual float CalcDamage (float Damage, float Resistance) const;
 
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Character")
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
       void BP_AnyDamage (AActor* DamageVictim,
                          float Resistance,
                          float DamageAmount,
@@ -78,7 +51,7 @@ class RSTATUSLIB_API URDamageType_Fall : public URDamageType
 public:
    URDamageType_Fall();
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Character")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve FallDamageCurve;
 
    virtual float CalcDamage (float Velocity, float Resistance) const override;

@@ -13,3 +13,14 @@ ACharacter* URUtilLibrary::GetLocalRadePlayer (UObject* WorldContextObject)
    return Result;
 }
 
+float URUtilLibrary::GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime)
+{
+	// If an external curve is provided, we'll use that to evaluate
+	if (InCurve.ExternalCurve != nullptr) {
+		return InCurve.ExternalCurve->GetFloatValue (InTime);
+	}
+
+	// If no external curves are provided, we'll evaluate from the rich curve directly
+	return InCurve.GetRichCurveConst ()->Eval (InTime);
+}
+

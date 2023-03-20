@@ -45,10 +45,10 @@ struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(RowType="/Script/RInventoryLib.RItemData"))
       FRItemDataHandle CreateItem;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<FRItemDataHandle> RequiredItems;
 };
 
@@ -87,26 +87,32 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
 
+   FRItemData();
+
+   // Must be defined in all subclasses for type checking and casting
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      FString Type;
+
    // --- Base data every item should have
 
    // Rarity
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       ERItemRarity Rarity = ERItemRarity::None;
 
    // Data table row Unique ID
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Name;
 
    // Item Label
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Label = FString ("Please set item label");
 
    // Tooltip or Press E to Use/Equip
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Tooltip = FString ("Please set item tooltip");
 
    // Item Icon
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSoftObjectPtr<UTexture2D> Icon;
 
    // Number of item instances
@@ -115,27 +121,27 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    // Max number of item instances per item slot
    // Stackable: MaxCount > 1
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       int32 MaxCount = 100;
 
    // Item Weight of each instance. In gramms.
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 0))
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (ClampMin = 0))
       int32 Weight = 0;
 
    // Selling price
    // 0 -> Can't sell
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
       int32 Price = 0;
 
    // --- Pickup
    //    If both are empty, item can not be dropped.
 
    // Pickup mesh
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSoftObjectPtr<UStaticMesh> PickupMesh;
 
    // Custom pickup class. Will be used if set.
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSubclassOf<ARItemPickup> Pickup;
 
    // --- Internal Runtime information
@@ -171,11 +177,13 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 {
    GENERATED_BODY()
 
+   FRActionItemData ();
+
    // Use interface callback
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSubclassOf<URItemAction> Action;
 
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       bool DestroyOnAction = false;
 
    virtual bool ReadJSON  () override;

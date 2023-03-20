@@ -8,6 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableMgrEvent);
 
 class URTargetableComponent;
+class URTargetingComponent;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RTARGETABLELIB_API URTargetableMgr : public UActorComponent
@@ -37,8 +38,14 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
       float SearchAngle = 40;
 
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
+      float InputHWeight = 1;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
+      float InputVWeight = 0.5f;
+
    //==========================================================================
-   //                  Functions
+   //          Functions called by targetable components
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
@@ -47,17 +54,33 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
       virtual void RmTarget  (URTargetableComponent * Target);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable", meta = (AutoCreateRefTerm = "FilterOut"))
-      virtual URTargetableComponent* Find (FVector Origin, FRotator Direction, TArray<AActor*> FilterOut);
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
-      static float GetAngle (const FVector v1, const FVector v2);
-
    //==========================================================================
-   //                  Get instamce -> GameMode component
+   //          Functions called by targeting components
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+      virtual URTargetableComponent* Find (URTargetingComponent*          Targeter,
+                                           TArray<AActor*>                FilterOutActors,
+                                           TArray<URTargetableComponent*> FilterOutTargets);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+      virtual URTargetableComponent* FindNear (URTargetingComponent*          Targeter,
+                                               URTargetableComponent*         CurrentTarget,
+                                               float                          InputOffsetX,
+                                               float                          InputOffsetY,
+                                               TArray<AActor*>                FilterOutActors,
+                                               TArray<URTargetableComponent*> FilterOutTargets);
+
+
+   // Gets angle in degrees between two vectors
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+      static float GetAngle (FVector v1, FVector v2);
+
+   //==========================================================================
+   //                  Get instamce -> GameState component
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Target Mgr", CompactNodeTitle = "Target Mgr"))
       static URTargetableMgr* GetInstance (UObject* WorldContextObject);
 };
 

@@ -14,50 +14,66 @@ Ability Cooldown Local update.
 
 Replace tick timing to game world time
 
+Camera turn forward automatically after n seconds of moving
+
+Remove blueprintevent
+
+Magnetic pickup
+
 
 =================================================
-   Damage
+   RDescriptor Interface/
 =================================================
 
-======
+Item/Abilities/StatusEffects/
+
+RDescriptor
+- GetUILabel
+- GetUITooltip
+- GetUIIcon
+
+=================================================
+   Experience Manager?
+=================================================
+
+Experience Tracker.
+Experience points
+Experience -> To Level
+Level Up -> Stats increase
+
 UI
-======
-Enemy Health bar
-Damage Value over/under the character
+- Select Skill
+- Upgrade
+
+=================================================
+   Save/Load
+=================================================
+
+Redesign SaveMgr for blueprint support.
+
+=================================================
+   Abilities
+=================================================
+
+Save/Load
+- Ability List
+- Ability Slots
 
 ======
-Damage
+Create
 ======
-Abilities.
-- With Target from targeting, or forward direction
-- Radial
-- Effects
+AOE
+- Pull / Push
+- Gravity down
 
 ======
-Death/Revive
+Group
 ======
-- Death ragdoll.
-- Revive spot.
 
-======
-Dummy
-======
-- Takes damage and plays animation
-- Death / Revive
+Targeted (Status Effects / Spells?)
+- Location / Allies / Enemies / Id Group
 
-
-======
-Core
-======
-DamageMgrComponent / SessionEventMgrComponent
-- Add to Game State
-- Static calls to report event
-- Delegate to subscribe to event
-- Events : Abilities/Damage/Death/Revive
-- Callbacks on death/revive
-- History of events.
-
-
+Slots save/load
 
 =================================================
    Weapons
@@ -104,19 +120,6 @@ UI Weapon bar (Left bottom)
 =======
 For ranged / consuable weapons
 
-=================================================
-   Experience Manager?
-=================================================
-
-Experience Tracker.
-Experience points
-Experience -> To Level
-Level Up -> Stats increase
-
-UI
-- Select Skill
-- Upgrade
-
 
 =================================================
    Shaders
@@ -130,26 +133,7 @@ Toon Shaders
 
 
 =================================================
-   Targets
-=================================================
-
-Change to new target -> Shift instantly
-- Block Camera movement
-- Search next closest by angle in direction
-
-
-=================================================
-   Abilities (TODO)
-=================================================
-
-Save/Load
-
-Targeted (Status Effects / Spells?)
-- Location / Allies / Enemies / Id Group
-
-
-=================================================
-   UI Todo
+   UI
 =================================================
 
 Click/Hover zones overlap
@@ -254,6 +238,15 @@ Network Session
 
 
 =================================================
+   Teams
+=================================================
+
+Join team
+Get Team List
+Damage only to enemies
+
+
+=================================================
    Chat
 =================================================
 
@@ -316,6 +309,16 @@ Animations:
 
 
 =================================================
+   Spline
+=================================================
+
+Road
+
+Moving Snake
+
+Paricle effects
+
+=================================================
    VFX
 =================================================
 
@@ -331,6 +334,22 @@ Enemy Death -> Bunny Explosion
 - Smoke
 - GPU particles
 - Niagara
+
+
+=================================================
+   Dialogue system
+=================================================
+
+Find Plugins
+
+JSON/Graph workflow
+
+UI
+- Icon
+- Header
+- Message
+- Select option
+
 
 =================================================
    UI (Nice to have)

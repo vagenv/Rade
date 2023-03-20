@@ -3,11 +3,11 @@
 #include "RAbilityMgrComponent.h"
 #include "RAbilityTypes.h"
 
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
 #include "Net/UnrealNetwork.h"
-
 
 //=============================================================================
 //                 Core
@@ -24,7 +24,6 @@ URAbilityMgrComponent::URAbilityMgrComponent ()
 void URAbilityMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-
 }
 
 //=============================================================================
@@ -85,26 +84,23 @@ URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Abili
 
 bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (Ability_)) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (!Ability)) return false;
 
-   Ability = NewObject<URAbility> (GetOwner (), Ability_);
-   if (!ensure (Ability)) return false;
-   Ability->RegisterComponent ();
-   OnAbilityListUpdated.Broadcast ();
-   return true;
+   Ability = URUtil::AddComponent<URAbility> (GetOwner (), Ability_);
+   return Ability != nullptr;
 }
 
 bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
 {
+   R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (Ability_)) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
    if (!ensure (Ability)) return false;
 
-   Ability->UnregisterComponent ();
    Ability->DestroyComponent ();
-   OnAbilityListUpdated.Broadcast ();
    return true;
 }
 

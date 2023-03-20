@@ -26,7 +26,7 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
       void SetIsTargetable (bool CanFind);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       bool GetIsTargetable () const;
 
    //==========================================================================
@@ -39,7 +39,7 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
       void SetIsTargeted (bool CanTarget);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       bool GetIsTargeted () const;
 
 protected:

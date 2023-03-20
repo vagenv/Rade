@@ -32,23 +32,22 @@ public:
 
    // Offset when turning to look at target
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetVerticalOffset = -0.1;
+      float TargetVerticalOffset = -0.1f;
 
 	// Angle at which targeting will stop
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetStopAngle = 1;
+      float TargetStopAngle = 1.;
 
    // Speed at which camera turns to required direction
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
       FRuntimeFloatCurve TargetAngleToLerpPower;
 
-   // Delay in seconds after look input before camera can be turned to target
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-      float TargetRefocusDelay = 1;
-
 	// How soon after a new target can be searched
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
-		float TargetSearchDelay = 0.5;
+		float TargetSearchDelay = 0.2f;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+      float TargetAdjustMinOffset = 0.3f;
 
    //==========================================================================
    //                         Functions
@@ -59,13 +58,16 @@ public:
       virtual void TargetToggle ();
 
 	UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual void TargetAdjust ();
+      virtual void TargetAdjust (float OffsetX, float OffsetY);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       virtual bool IsTargeting () const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       virtual FRotator GetTargetRotation () const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+      virtual URTargetableComponent* GetCurrentTarget () const;
 
    // Broadcasted when TargetCurrent has changed
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
@@ -89,11 +91,8 @@ protected:
    UPROPERTY()
       FVector CustomTargetDir;
 
-	// How long is left before camera can be turned to target
-   float TargetFocusLeft = 0;
-
-	// How long is left before new search can be started
-	float TargetSearchLeft = 0;
+	// Time in seconds when last search was performed
+   double LastTargetSearch = 0;
 
    // Handle to TargetCheck
    UPROPERTY()
@@ -106,5 +105,15 @@ protected:
    // Checks if Targeting actor is valid and within range
    UFUNCTION()
       virtual void TargetCheck ();
+
+   // Perform search for new target
+   UFUNCTION()
+      virtual void SearchNewTarget (float InputOffsetX = 0, float InputOffsetY = 0);
+
+
+   // In case user is targeting someone, notify server
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Targetable")
+              void SetTarget_Server                (URTargetableComponent* TargetCurrent_);
+      virtual void SetTarget_Server_Implementation (URTargetableComponent* TargetCurrent_);
 };
 

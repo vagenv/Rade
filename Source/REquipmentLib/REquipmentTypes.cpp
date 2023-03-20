@@ -1,19 +1,31 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "REquipmentTypes.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
-#include "RStatusLib/RStatusEffect.h"
 #include "RUtilLib/RJson.h"
+#include "RStatusLib/RActiveStatusEffect.h"
+#include "RStatusLib/RStatusMgrComponent.h"
 
 
 // ============================================================================
 //                      FRConsumableItemData
 // ============================================================================
 
+FRConsumableItemData::FRConsumableItemData()
+{
+   Type = FString (typeid (FRConsumableItemData).name ());
+}
+
 bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 {
-   for (const TSubclassOf<ARActiveStatusEffect> &ItEffect : ActiveEffects) {
-      if (!URStatusEffectUtilLibrary::ApplyStatusEffect_Active (Owner, Owner, ItEffect)) {
+   if (!ensure (Owner))     return false;
+   if (!ensure (Inventory)) return false;
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Owner);
+   if (!ensure (StatusMgr)) return false;
+
+   for (const TSubclassOf<URActiveStatusEffect> &ItEffect : ActiveEffects) {
+      if (!StatusMgr->AddActiveStatusEffect (Owner, ItEffect)) {
          return false;
       }
    }
@@ -22,6 +34,7 @@ bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 
 bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
 {
+   if (src.Type != FString (typeid (FRConsumableItemData).name ())) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
@@ -58,8 +71,15 @@ bool FRConsumableItemData::WriteJSON ()
 //                      FREquipmentData
 // ============================================================================
 
+FREquipmentData::FREquipmentData()
+{
+   Type = FString (typeid (FREquipmentData).name ());
+}
+
+
 bool FREquipmentData::Cast (const FRItemData &src, FREquipmentData &dst)
 {
+   if (src.Type != FString (typeid (FREquipmentData).name ())) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 

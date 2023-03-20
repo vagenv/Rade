@@ -62,9 +62,9 @@ void UREquipmentMgrComponent::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
       if (URStatusMgrComponent *StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ())) {
-         StatusMgr->OnStatusUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatusUpdated);
+         StatusMgr->OnStatsUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatsUpdated);
       }
-      OnStatusUpdated ();
+      OnStatsUpdated ();
    }
 }
 
@@ -109,7 +109,7 @@ void UREquipmentMgrComponent::CalcWeight ()
    StatusMgr->SetPassiveEffects ("Weight Penalty", Effects);
 }
 
-void UREquipmentMgrComponent::OnStatusUpdated ()
+void UREquipmentMgrComponent::OnStatsUpdated ()
 {
    const FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurveConst ();
    if (!ensure (StrToWeightMaxData)) return;
@@ -170,9 +170,7 @@ ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_NULL;
 
-
    // --- Check if Item should be unequiped
-
    FREquipmentData ItemData;
    // Is Equipment item
    if (FREquipmentData::Cast (Items[ItemIdx], ItemData)) {

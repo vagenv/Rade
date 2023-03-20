@@ -3,15 +3,21 @@
 #pragma once
 
 #include "RStatusTypes.h"
-#include "RStatusEffect.h"
-#include "RDamageType.h"
+#include "RPassiveStatusEffect.h"
 #include "RSaveLib/RSaveInterface.h"
 #include "RStatusMgrComponent.generated.h"
 
+class URDamageType;
+class URActiveStatusEffect;
+class URInventoryComponent;
+class UCharacterMovementComponent;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
 
-class UCharacterMovementComponent;
-class URInventoryComponent;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRTakeDamageEvent,
+                                                float,               Amount,
+                                                const URDamageType*, Type,
+                                                AActor*,             Causer);
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -27,9 +33,116 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-   // Called when variables replicated
+   // Owners Movement Component. For stamina Regen.
+private:
+      UCharacterMovementComponent *MovementComponent = nullptr;
+
+   //==========================================================================
+   //                 Dead
+   //==========================================================================
+protected:
+   UPROPERTY(ReplicatedUsing = "OnRep_Dead", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+      bool bDead = false;
+
    UFUNCTION()
-      void OnRep_Status ();
+      void OnRep_Dead ();
+
+   //==========================================================================
+   //                 Dead Func
+   //==========================================================================
+
+public:
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      bool IsDead () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      void SetDead (bool Dead);
+
+   //==========================================================================
+   //                 Status
+   //==========================================================================
+
+protected:
+   UPROPERTY()
+      FRStatusValue Health;
+
+   UPROPERTY()
+      FRStatusValue Mana;
+
+   UPROPERTY()
+      FRStatusValue Stamina;
+
+   // Called by Tick
+   virtual void StatusRegen (float DeltaTime);
+
+   // --- Called by server to adjust client health
+   UFUNCTION (NetMulticast, Unreliable)
+      void SetHealth                (FRStatusValue Health_);
+      void SetHealth_Implementation (FRStatusValue Health_);
+
+   UFUNCTION (NetMulticast, Unreliable)
+      void SetMana                (FRStatusValue Mana_);
+      void SetMana_Implementation (FRStatusValue Mana_);
+
+   UFUNCTION (NetMulticast, Unreliable)
+      void SetStamina                (FRStatusValue Stamina_);
+      void SetStamina_Implementation (FRStatusValue Stamina_);
+
+   //==========================================================================
+   //                 Status Func
+   //==========================================================================
+
+public:
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRStatusValue GetHealth () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      void UseHealth (float Amount);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRStatusValue GetStamina () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      void UseStamina (float Amount);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRStatusValue GetMana () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      void UseMana (float Amount);
+
+   //==========================================================================
+   //                 Stats Data
+   //==========================================================================
+
+protected:
+   // --- Core Stats
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      FRCoreStats CoreStats_Base;
+
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      FRCoreStats CoreStats_Added;
+
+   // --- Extra Stats
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      FRSubStats SubStats_Base;
+
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      FRSubStats SubStats_Added;
+
+   // --- Effects
+   // Should be Map of FRSubStats, but for replication -> Array
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
+
+   // --- Resistance
+   // Should be Map of FRResistanceStat, but for replication -> Array
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      TArray<FRResistanceStatWithTag> Resistence;
+
+   UFUNCTION()
+      void OnRep_Stats ();
 
    UFUNCTION()
       void RecalcStatus ();
@@ -43,96 +156,45 @@ public:
    UFUNCTION()
       void RecalcStatusValues ();
 
-   // Owners Movement Component. For stamina Regen.
-private:
-      UCharacterMovementComponent *MovementComponent = nullptr;
-      bool bIsAdmin = false;
-
    //==========================================================================
-   //                 Status
-   //==========================================================================
-protected:
-   // Called by Tick
-   virtual void StatusRegen (float DeltaTime);
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      bool bDead = false;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRStatusValue Health;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRStatusValue Mana;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRStatusValue Stamina;
-
-   //==========================================================================
-   //                 Status Func
+   //                 Stats Funcs
    //==========================================================================
 
 public:
-
+   // --- Get Core Stats
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      bool IsDead () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRStatusValue GetHealth () const;
+      FRCoreStats GetCoreStats_Base () const;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void UseHealth (float Amount);
+      FRCoreStats GetCoreStats_Added () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRStatusValue GetStamina () const;
+      FRCoreStats GetCoreStats_Total () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void UseStamina (float Amount);
+   // --- Get Extra Stats
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRSubStats GetSubStats_Base () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRStatusValue GetMana () const;
+      FRSubStats GetSubStats_Added () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      void UseMana (float Amount);
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRSubStats GetSubStats_Total () const;
 
-   //==========================================================================
-   //                 Stats Data
-   //==========================================================================
+   // --- Stats functions
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      bool HasStats (const FRCoreStats &RequiredStats) const;
 
-protected:
-   // --- Core Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRCoreStats CoreStats_Base;
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      bool RollCritical () const;
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRCoreStats CoreStats_Added;
-
-   // --- Extra Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRSubStats SubStats_Base;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      FRSubStats SubStats_Added;
-
-   // --- Effects
-   // Should be Map of FRSubStats, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
-
-   // Active instances running
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<ARActiveStatusEffect*> ActiveEffects;
-
-   // --- Resistance
-   // Should be Map of FRResistanceStat, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Status", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRResistanceStatWithTag> Resistence;
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      bool RollEvasion () const;
 
    //==========================================================================
    //                 Status Value Curves
    //==========================================================================
-
 protected:
-   // --- Status Values
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve StrToHealthMax;
 
@@ -154,7 +216,7 @@ protected:
    //==========================================================================
    //                 Extra Stat Curves
    //==========================================================================
-
+protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRuntimeFloatCurve AgiToCritical;
 
@@ -165,109 +227,86 @@ protected:
       FRuntimeFloatCurve AgiToAttackSpeed;
 
    //==========================================================================
-   //                 Stats Funcs
-   //==========================================================================
-
-public:
-   // --- Get Core Stats
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCoreStats GetCoreStats_Base () const;
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCoreStats GetCoreStats_Added () const;
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRCoreStats GetCoreStats_Total () const;
-
-   // --- Get Extra Stats
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRSubStats GetSubStats_Base () const;
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRSubStats GetSubStats_Added () const;
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      FRSubStats GetSubStats_Total () const;
-
-   // --- Stats functions
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      bool HasStats (const FRCoreStats &RequiredStats) const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      bool RollCritical () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      bool RollEvasion () const;
-
-   //==========================================================================
    //                 Passive Effect Funcs
    //==========================================================================
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+public:
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool RmPassiveEffects (const FString &Tag);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       TArray<FRPassiveStatusEffect> GetPassiveEffects () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       TArray<FRPassiveStatusEffectWithTag> GetPassiveEffectsWithTag () const;
 
    //==========================================================================
    //                 Active Effect Funcs
    //==========================================================================
+public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      TArray<ARActiveStatusEffect*> GetActiveEffects () const;
-
-   // For internal use only
-   bool AddActiveEffect (ARActiveStatusEffect* Effect);
-   bool RmActiveEffect  (ARActiveStatusEffect* Effect);
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      bool AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect);
 
    //==========================================================================
    //                 Resistance Funcs
    //==========================================================================
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+public:
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       void AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       void RmResistance (const FString &Tag);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       TArray<FRResistanceStat> GetResistance () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       TArray<FRResistanceStatWithTag> GetResistanceWithTag () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       float GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const;
 
    //==========================================================================
    //                 Events
    //==========================================================================
-
 public:
    // Delegate when status updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusMgrEvent OnStatusUpdated;
+      FRStatusMgrEvent OnStatsUpdated;
 
-   // Calls from RCharacter
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      float AnyDamage (float Damage,
-                       const UDamageType* DamageType,
-                       AController* InstigatedBy,
-                       AActor* DamageCauser);
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnActiveEffectsUpdated;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnDeath;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnRevive;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRTakeDamageEvent OnAnyRDamage;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRTakeDamageEvent OnEvadeRDamage;
+
+private:
+   // Connected to AActor::OnTakeAnyDamage event
+   UFUNCTION()
+      void AnyDamage (AActor*            Target,
+                      float              Amount,
+                      const UDamageType* Type,
+                      AController*       InstigatedBy,
+                      AActor*            Causer);
 
    //==========================================================================
    //                 Save/Load
    //==========================================================================
-
+public:
    // Status Saved / Loaded between sessions.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool bSaveLoad = false;
 
 protected:

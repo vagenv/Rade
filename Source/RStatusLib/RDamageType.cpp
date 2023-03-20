@@ -4,10 +4,6 @@
 #include "RUtilLib/RLog.h"
 
 //=============================================================================
-//                 Resistance
-//=============================================================================
-
-//=============================================================================
 //                 RDamageType
 //=============================================================================
 
@@ -40,6 +36,7 @@ float URDamageType::CalcDamage (float Damage, float Resistance) const
 URDamageType_Fall::URDamageType_Fall ()
 {
    UIName = "Fall";
+   Evadeable = false;
 
    // Transform velocity to damage
    FRichCurve* FallDamageCurveData = FallDamageCurve.GetRichCurve ();

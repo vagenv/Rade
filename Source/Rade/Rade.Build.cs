@@ -12,10 +12,7 @@ public class Rade : ModuleRules
          "CoreUObject",
          "Engine",
          "InputCore",
-         "EnhancedInput",
          "RUtilLib",
-         "RStatusLib",
-         "RAbilityLib",
       });
    }
 }
