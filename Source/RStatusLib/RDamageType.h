@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/DamageType.h"
+#include "RUtilLib/RUIDescription.h"
 #include "RDamageType.generated.h"
 
 struct FDamageEvent;
@@ -22,7 +23,7 @@ public:
    URDamageType ();
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FString UIName;
+      FRUIDescription Description;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;

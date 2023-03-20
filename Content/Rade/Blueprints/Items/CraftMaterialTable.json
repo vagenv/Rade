@@ -1,10 +1,14 @@
 [
 	{
 		"Name": "Stick",
+		"Type": "struct FRItemData",
 		"Rarity": "F",
-		"Label": "Wooden Stick",
-		"Tooltip": "A stick you can find anywhere around",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Wooden Stick",
+			"Tooltip": "A stick you can find anywhere around",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -15,10 +19,14 @@
 	},
 	{
 		"Name": "Wood",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Wood plank",
-		"Tooltip": "A building material used all around the realm.",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Wood plank",
+			"Tooltip": "A building material used all around the realm.",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -29,10 +37,14 @@
 	},
 	{
 		"Name": "AnimalHide",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Animal hide",
-		"Tooltip": "Belonged to Animal",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Animal hide",
+			"Tooltip": "Belonged to Animal",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -43,10 +55,14 @@
 	},
 	{
 		"Name": "Leather",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Leather",
-		"Tooltip": "A durable and flexible material",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Leather",
+			"Tooltip": "A durable and flexible material",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -57,10 +73,14 @@
 	},
 	{
 		"Name": "Bone",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Bone",
-		"Tooltip": "Nearly everyone has a few of them inside, right?",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Bone",
+			"Tooltip": "Nearly everyone has a few of them inside, right?",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 50,
 		"Weight": 1000,
@@ -71,10 +91,14 @@
 	},
 	{
 		"Name": "RawIron",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Raw Iron",
-		"Tooltip": "Just need to collect more...",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Raw Iron",
+			"Tooltip": "Just need to collect more...",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -85,10 +109,14 @@
 	},
 	{
 		"Name": "IronIngot",
+		"Type": "struct FRItemData",
 		"Rarity": "D",
-		"Label": "Iron Ingot",
-		"Tooltip": "Kind of heavy.",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Iron Ingot",
+			"Tooltip": "Kind of heavy.",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -99,10 +127,14 @@
 	},
 	{
 		"Name": "SteelIngot",
+		"Type": "struct FRItemData",
 		"Rarity": "C",
-		"Label": "Steel Ingot",
-		"Tooltip": "Heavy...",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Steel Ingot",
+			"Tooltip": "Heavy...",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -113,10 +145,14 @@
 	},
 	{
 		"Name": "RawCopper",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Raw copper",
-		"Tooltip": "Why is it green?",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Raw copper",
+			"Tooltip": "Why is it green?",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -127,10 +163,14 @@
 	},
 	{
 		"Name": "CopperIngot",
+		"Type": "struct FRItemData",
 		"Rarity": "D",
-		"Label": "Copper Ingot",
-		"Tooltip": "Orange good!",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Copper Ingot",
+			"Tooltip": "Orange good!",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -141,10 +181,14 @@
 	},
 	{
 		"Name": "RawSilver",
+		"Type": "struct FRItemData",
 		"Rarity": "C",
-		"Label": "Raw Silver",
-		"Tooltip": "Unprocessed silver pelets",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Raw Silver",
+			"Tooltip": "Unprocessed silver pelets",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -155,10 +199,14 @@
 	},
 	{
 		"Name": "SilverIngot",
+		"Type": "struct FRItemData",
 		"Rarity": "B",
-		"Label": "Silver Ingot",
-		"Tooltip": "Shiny!",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Silver Ingot",
+			"Tooltip": "Shiny!",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -169,10 +217,14 @@
 	},
 	{
 		"Name": "RawGold",
+		"Type": "struct FRItemData",
 		"Rarity": "B",
-		"Label": "Raw gold",
-		"Tooltip": "My precious...",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Raw gold",
+			"Tooltip": "My precious...",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -183,10 +235,14 @@
 	},
 	{
 		"Name": "GoldIngot",
+		"Type": "struct FRItemData",
 		"Rarity": "A",
-		"Label": "GoldIngot",
-		"Tooltip": "WE ARE RICH!",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "GoldIngot",
+			"Tooltip": "WE ARE RICH!",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -197,10 +253,14 @@
 	},
 	{
 		"Name": "ManaStone_Small",
+		"Type": "struct FRItemData",
 		"Rarity": "C",
-		"Label": "Small Mana Stone",
-		"Tooltip": "...mana...",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Small Mana Stone",
+			"Tooltip": "...mana...",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 100,
@@ -211,10 +271,14 @@
 	},
 	{
 		"Name": "ManaStone_Medium",
+		"Type": "struct FRItemData",
 		"Rarity": "B",
-		"Label": "Mana Stone",
-		"Tooltip": "Mana...",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Mana Stone",
+			"Tooltip": "Mana...",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 300,
@@ -225,10 +289,14 @@
 	},
 	{
 		"Name": "ManaStone_Big",
+		"Type": "struct FRItemData",
 		"Rarity": "A",
-		"Label": "Big mana stone",
-		"Tooltip": "Mana!!!",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Big mana stone",
+			"Tooltip": "Mana!!!",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 10,
 		"Weight": 1000,
@@ -239,10 +307,14 @@
 	},
 	{
 		"Name": "Sand",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Sand",
-		"Tooltip": "It's itchy",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Sand",
+			"Tooltip": "It's itchy",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 100,
@@ -253,10 +325,14 @@
 	},
 	{
 		"Name": "Glass",
+		"Type": "struct FRItemData",
 		"Rarity": "C",
-		"Label": "Glass",
-		"Tooltip": "It's transperant",
-		"Icon": "None",
+		"Description":
+		{
+			"Label": "Glass",
+			"Tooltip": "It's transperant",
+			"Icon": "None"
+		},
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,

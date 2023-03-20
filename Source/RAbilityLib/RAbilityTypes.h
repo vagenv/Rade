@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RUtilLib/RUIDescription.h"
 #include "RAbilityTypes.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
@@ -26,13 +27,8 @@ public:
    //                 Core Params
    //==========================================================================
 
-   // UI Display Name
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
-      FString UIName = "";
-
-   // Ability Icon
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Ability")
-      TSoftObjectPtr<UTexture2D> Icon;
+      FRUIDescription Description;
 
    //==========================================================================
    //                 Core Functions

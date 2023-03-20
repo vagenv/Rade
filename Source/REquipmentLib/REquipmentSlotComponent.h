@@ -4,6 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "REquipmentTypes.h"
+#include "RUtilLib/RUIDescription.h"
 #include "REquipmentSlotComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentSlotEvent);
@@ -21,17 +22,17 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString UIName;
-
    // Called when variables replicated
    UFUNCTION()
       void OnRep_Slot ();
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
+      FRUIDescription Description;
+
+   UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       bool Busy = false;
 
-   UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       FREquipmentData EquipmentData;
 
    // Delegate when slot updated
