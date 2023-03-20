@@ -36,6 +36,16 @@ void URAbility::OnComponentDestroyed (bool bDestroyingHierarchy)
    Super::OnComponentDestroyed (bDestroyingHierarchy);
 }
 
+void URAbility::SetIsEnabled (bool IsEnabled_)
+{
+   IsEnabled = IsEnabled_;
+}
+
+bool URAbility::GetIsEnabled () const
+{
+   return IsEnabled;
+}
+
 //=============================================================================
 //                 Passsive Ability
 //=============================================================================
@@ -91,41 +101,67 @@ URAbility_Active::URAbility_Active ()
 {
    PrimaryComponentTick.bCanEverTick = true;
    PrimaryComponentTick.bStartWithTickEnabled = true;
-   PrimaryComponentTick.TickInterval = 0.2;
+   PrimaryComponentTick.TickInterval = 0.5f;
 }
 
 void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
 
-   // Decrease cooldown
-   if (CooldownLeft > 0) {
-      CooldownLeft = FMath::Clamp (CooldownLeft - DeltaTime, 0 , Cooldown);
-   }
+   if (!IsUseable) {
+      // Update cooldown left
+      UWorld* World = GetWorld ();
+      if (!ensure (World)) return;
+      UseCooldownLeft = FMath::Clamp (UseLastTime + Cooldown - World->GetTimeSeconds (), 0, Cooldown);
 
-   // CanUse may be overloaded
-   if (UseBlocked && CanUse ()) {
-      UseBlocked = false;
-      OnAbilityStatusUpdated.Broadcast ();
+      // Can be used
+      if (UseCooldownLeft == 0 && GetIsEnabled ()) {
+         IsUseable = true;
+         OnAbilityStatusUpdated.Broadcast ();
+      }
    }
-}
-
-void URAbility_Active::Use ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!CanUse ()) return;
-   UseBlocked = true;
-   CooldownLeft = Cooldown;
-   OnAbilityStatusUpdated.Broadcast ();
-   OnAbilityUsed.Broadcast ();
 }
 
 bool URAbility_Active::CanUse () const
 {
-   return CooldownLeft == 0;
+   return GetIsEnabled () && IsUseable;
 }
 
+double URAbility_Active::GetCooldownLeft () const
+{
+   return UseCooldownLeft;
+}
+
+// Called by a person with keyboard
+void URAbility_Active::Use ()
+{
+   if (!CanUse ()) return;
+
+   if (R_IS_NET_ADMIN) Use_Global ();
+   else                Use_Server ();
+}
+
+// Called on the authority
 void URAbility_Active::Use_Server_Implementation ()
 {
-   Use ();
+   if (!CanUse ()) return;
+
+   Use_Global ();
 }
+
+// Called on all instances
+void URAbility_Active::Use_Global_Implementation ()
+{
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
+
+   // Update local state
+   UseLastTime     = World->GetTimeSeconds ();
+   UseCooldownLeft = Cooldown;
+   IsUseable       = false;
+
+   // Broadcast event
+   OnAbilityUsed.Broadcast ();
+   OnAbilityStatusUpdated.Broadcast ();
+}
+

@@ -22,13 +22,33 @@ public:
    virtual void OnComponentCreated () override;
    virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
 
+   //==========================================================================
+   //                 Core Params
+   //==========================================================================
+
    // UI Display Name
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       FString UIName = "";
 
    // Ability Icon
-   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rade|Ability")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Ability")
       TSoftObjectPtr<UTexture2D> Icon;
+
+   //==========================================================================
+   //                 Core Functions
+   //==========================================================================
+
+   // Should the effect of ability be applied
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+      virtual void SetIsEnabled (bool IsEnabled_);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      virtual bool GetIsEnabled () const;
+
+private:
+
+   UPROPERTY()
+      bool IsEnabled = true;
 };
 
 
@@ -43,11 +63,11 @@ class RABILITYLIB_API URAbility_Passive : public URAbility
 public:
 
    URAbility_Passive ();
-
-   // virtual void BeginPlay () override;
-   // virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 };
 
+//=============================================================================
+//                 Aura Ability
+//=============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RABILITYLIB_API URAbility_Aura : public URAbility_Passive
@@ -58,7 +78,13 @@ public:
    URAbility_Aura ();
 
    virtual void BeginPlay () override;
+
+   // Called in interval to create AffectedActirs list
    virtual void CheckRange ();
+
+   //==========================================================================
+   //                 Params
+   //==========================================================================
 
    // How often to check if target is within range
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
@@ -71,17 +97,21 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       TSubclassOf<AActor> AffectedType;
 
-   // --- Runtime status
+   // Actors currently within range.
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
       TArray<AActor*> AffectedActors;
 
+   //==========================================================================
+   //                 Events
+   //==========================================================================
+
+   // Called after AffectedActors list is updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityEvent OnUpdated;
 
 protected:
    UPROPERTY()
       FTimerHandle TimerCheckRange;
-
 };
 
 //=============================================================================
@@ -97,6 +127,9 @@ public:
    URAbility_Active ();
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
+   //==========================================================================
+   //                 Params
+   //==========================================================================
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       float Cooldown = 3;
@@ -105,17 +138,24 @@ public:
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
       bool UseBlocked = true;
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
-      double CooldownLeft = 0;
+   //==========================================================================
+   //                 Functions
+   //==========================================================================
 
-   // --- Core Function Calls
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
+   // Called by user
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
       virtual void Use ();
 
+   // Can the ability be used
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       virtual bool CanUse () const;
 
-   // --- Events
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      double GetCooldownLeft () const;
+
+   //==========================================================================
+   //                 Events
+   //==========================================================================
 
    // When Ability was used
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
@@ -125,24 +165,26 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityEvent OnAbilityStatusUpdated;
 
+protected:
+
    // --- Server version
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
+   UFUNCTION(Server, Reliable, Category = "Rade|Ability")
               void Use_Server ();
       virtual void Use_Server_Implementation ();
 
-protected:
-};
-
-// ============================================================================
-//                   Ability Util Library
-// ============================================================================
-
-UCLASS()
-class RABILITYLIB_API URAbilityUtilLibrary : public UBlueprintFunctionLibrary
-{
-   GENERATED_BODY()
-public:
+   // Effect has been re-applied
+   UFUNCTION(NetMulticast, Unreliable, Category = "Rade|Ability")
+              void Use_Global ();
+      virtual void Use_Global_Implementation ();
 
 
+   UPROPERTY()
+      double UseLastTime = 0;
+
+   UPROPERTY()
+      double UseCooldownLeft = 0;
+
+   UPROPERTY()
+      bool IsUseable = false;
 };
 
