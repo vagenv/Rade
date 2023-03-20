@@ -8,41 +8,44 @@ Movement lags in session
 
 Optimization for Laptop / High FPS on PC
 
-StatusValue Local update + Once a second set from server
-
-Ability Cooldown Local update.
-
-Replace tick timing to game world time
-
-Camera turn forward automatically after n seconds of moving
-
 Remove blueprintevent
 
 Magnetic pickup
 
+=======
+Camera
+=======
+Turn to move direction automatically after n seconds of moving
+
 
 =================================================
-   RDescriptor Interface/
+   RDescriptor Interface
 =================================================
 
-Item/Abilities/StatusEffects/
+RDescriptor GetDescriptor / GetInfo / GetUI
+Add UtilFunc to Item / Abilities / StatusEffects
 
 RDescriptor
-- GetUILabel
-- GetUITooltip
-- GetUIIcon
+- Label
+- Tooltip
+- Icon
 
 =================================================
    Experience Manager?
 =================================================
 
-Experience Tracker.
-Experience points
-Experience -> To Level
-Level Up -> Stats increase
+Exp points
+Exp for each Level (FRuntimeFloatCurve? X:Level -> Y:Exp Required)
+Level Reward
+
+Level Up -> Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase)
+Fractional? +10 -> +2
+
+Level Up -> Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
+
 
 UI
-- Select Skill
+- Add Stat
 - Upgrade
 
 =================================================
@@ -51,29 +54,14 @@ UI
 
 Redesign SaveMgr for blueprint support.
 
-=================================================
-   Abilities
-=================================================
-
-Save/Load
 - Ability List
 - Ability Slots
+- Equipment
+- ActiveStatusEffects?
 
-======
-Create
-======
-AOE
-- Pull / Push
-- Gravity down
+UI
+Save/Load By slots.
 
-======
-Group
-======
-
-Targeted (Status Effects / Spells?)
-- Location / Allies / Enemies / Id Group
-
-Slots save/load
 
 =================================================
    Weapons
@@ -122,21 +110,10 @@ For ranged / consuable weapons
 
 
 =================================================
-   Shaders
-=================================================
-
-Look into shaders
-
-OutLined overlap.
-
-Toon Shaders
-
-
-=================================================
    UI
 =================================================
 
-Click/Hover zones overlap
+Fix Click/Hover zones overlap
 
 =======
 Crafting
@@ -147,7 +124,6 @@ Personal list
 ==============
 Option Menu
 ==============
-Save/Load By slots
 
 
 =======
@@ -175,21 +151,57 @@ User Action (Bottom Center)
 
 
 =======
-Dialogue (Bottom Center)
-=======
-
-
-=======
 Map (Right Top)?
 =======
 
+
+=================================================
+   Level Transition
+=================================================
+
+Smooth Level/World change
+
+Create Transition Level (Between level)
+
+Here is the general flow when executing 'Seamless' travel:
+1. Mark Actors that will persist to the Transition Level (read above)
+2. Travel to the Transition Level
+3. Mark Actors that will persist to the Final Level (read above)
+4. Travel to the Final Leve
+
+
+Level breaking and layering
+
+Open World
+- Desert terrain generated using perlin noise
+- Forrest
+
+
+=================================================
+   Online Subsystem
+=================================================
+
+Default:SubsystemNULL -> Only Lan sessions
+
+Cleanup RSessionManager
+- Add components for GameState and PlayerState
+
+=======
+Session
+=======
+Network Session
+- Deep dive / Analysis / Simplification
+- Persistent session widget
+- Real time data. (Latency, Player count)
+- Return to main screen
+- Persistent data between sessions
 
 =================================================
    Game Session
 =================================================
 
 GameMode
-- OnPostLogin . Add list of players
+- OnPostLogin. Add list of players
 - Pauseable
 - ChangeName?
 
@@ -212,29 +224,10 @@ Pawn
 =================================================
 
 =======
-Replication
-=======
-Smart Replication of FRStatusValue
-- Once every few seconds
-- Local updates and adjusts to new values on rep
-
-
-=======
 Spawn Menu
 =======
 Select spawn point
 See status. Smooth start
-
-
-=======
-Session
-=======
-Network Session
-- Deep dive / Analysis / Simplification
-- Persistent session widget
-- Real time data. (Latency, Player count)
-- Return to main screen
-- Persistent data between sessions
 
 
 =================================================
@@ -243,24 +236,35 @@ Network Session
 
 Join team
 Get Team List
-Damage only to enemies
+FriendlyFire enabled/disabled
 
+
+=================================================
+   Abilities
+=================================================
+
+======
+Group
+======
+
+Radial effect by GroupId (Allies/Enemies)
+- Damage / Heal / StatusEffect
 
 =================================================
    Chat
 =================================================
 
-Chat
-- Update Widget
-- Independent component like USaveMgr?
-- A new module?
-- Audio messages?
+URChatMgr.
+- GameStateComponent
+- New UI build in
 
 Emotions
 - Icon / Emoji (Animation)
 - Sound
 - On top of player
 - Character animation
+
+Audio Messages?
 
 =================================================
    Animation
@@ -285,6 +289,18 @@ Animations:
 - Ragdoll death
 - Melee fight
 - Roll/Phase (With Invincible Frame and Cost)
+
+
+=================================================
+   Shaders
+=================================================
+
+Look into shaders
+
+OutLined overlap.
+
+Toon Shaders
+
 
 =================================================
    AI
@@ -318,6 +334,7 @@ Moving Snake
 
 Paricle effects
 
+
 =================================================
    VFX
 =================================================
@@ -342,7 +359,7 @@ Enemy Death -> Bunny Explosion
 
 Find Plugins
 
-JSON/Graph workflow
+JSON / Graph workflow
 
 UI
 - Icon
@@ -352,22 +369,49 @@ UI
 
 
 =================================================
-   UI (Nice to have)
+   UI
 =================================================
-- Scrolling header
 
-- Mono Font
-- Audio channels
-- Persistent Audio Settings
+======
+Scrolling header
+======
+Prev < Current > Next
+Animation?
+
+======
+Real Mono Font
+======
+
+======
+Bars (Health/Stamina/Mana)
+======
+- Smooth movement. ()
+- Colors when increase (green) / decrease (red)
+
+======
+Settings
+======
+- Audio channels with Persistent Audio Settings
 - Input
-- Smooth bars movement.
-- Colors when increase/decrease
 
-UI drop down action
-- Inventory
+
+======
+Inventory
+======
+Tab by types (Items / Consumable / Equipment / Weapon)
+Sort by types / rarity / types / price
+
+
+======
+Action Popup UI
+======
+- Short Press/Long Press
+- With Animation
+- Button to action
+
 
 ===========================
-   Status (Nice to have)
+   Status
 ===========================
 
 MoveSpeed and Critical Substat used
@@ -399,32 +443,24 @@ Physical(Str)
 -Dark
 -Heal
 
-=================================================
-   Inventory (Nice to have)
-=================================================
 
-ItemData Type check before cast
+===========================
+   Store
+===========================
 
-Tab by types
-Sort by types/rarity/types
+- Sell Items for gold
+- Re-buy?
 
 
-Generate Items/Weapon/Equipment randomly. With schema.
+===========================
+   Inventory
+===========================
+
+Blueprint function which generate Items/Weapon/Equipment randomly. With schema.
 - Price
 - Rarity
 - Effect
 - Color
-
-Store
-- Sold Item List? Re-buy?
-
-=================================================
-   Camera
-=================================================
-- Smoother Turns
-- Behind back right
-- Focus on attackable targets
-- Restore to move direction after a few seconds
 
 
 =================================================
@@ -433,34 +469,45 @@ Store
 - Rig meshes
 - Camera recording
 - Universal
-- Voice to Expression.
+- Audio line to mouth movement.
+- Expression
 
 
 =================================================
-   Other
+   Balancing
 =================================================
 
+Folder with all curves;
+- Items link them
+- Can be updated from JSON / CSV
 
-SaveFile List with level pictures, date and map name.
 
-Create Folder with Balance curves
-Move All FRuntimeFloatCurve to blueprint subclass
+=================================================
+   Validation
+=================================================
 
-Blueprint Data validation
+Item Table validation
 
-Gameplay Ability System
+Blueprint naming scheme validation
+
+
+=================================================
+   Optimization
+=================================================
 
 Determine bottlenecks. (240+ FPS)
 - CPU
 - GPU
 
-Action Popup UI
-- Short Press/Long Press
-- With Animation
-- Button to action
+RAM / VRAM tracing and balancing.
+
+
+=================================================
+   Online
+=================================================
 
 Database
-- Local Mysql?
+- Local Mysql for storing information
 
 External Network API
 - For optional data.
@@ -468,31 +515,36 @@ External Network API
 - Get User info
 - Stream picture/content on demand
 
-VCPP
-- Link against and build with CMAKE
 
 Epic network services
 - Register to API
 - Connecting to user epic account
 
+
 Dedicated server instance
 - Linux / Windows
 - Optimization
 
-World
-- Level breaking and layering
-- Smooth level transition
 
-Open World
-- Desert terrain generated using perlin noise
-- Forrest
+=================================================
+   Nanite and lumen
+=================================================
+- Load high detail models on demand
+- Analyse budget, resource usage and disk read pattern
+
+
+=================================================
+   Other
+=================================================
+
+Gameplay Ability System
+
+VCPP
+- Link against and build with CMAKE
 
 Custom plugin
 - Block constructor or something new
 
-Nanite and lumen
-- Load high detail models on demand
-- Analyse budget, resource usage and disk read pattern
 
 =================================================
    Game Design
@@ -558,7 +610,7 @@ Warrior (StrongBoi)
 Rougue (FastBoi)
 - Assassin (KnifeBoi) (daggers)
 - Ranger (FarBoi) (bows, crossbows, slings)
-- Gunslinger (GunBoi) (Pistols, Shotguns, Rockets)
+- Gunslinger (GunBoi/Boneslinger) (Pistols, Shotguns, Rockets)
 
 Mage (SmartBoi)
 - Wizard (MagicBoi) (Spells)
