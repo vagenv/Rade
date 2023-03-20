@@ -41,20 +41,3 @@ public:
                          AActor* DamageCauser) const;
 };
 
-// ============================================================================
-//                   Fall Damage
-// ============================================================================
-
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RSTATUSLIB_API URDamageType_Fall : public URDamageType
-{
-   GENERATED_BODY()
-public:
-   URDamageType_Fall();
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve FallDamageCurve;
-
-   virtual float CalcDamage (float Velocity, float Resistance) const override;
-};
-
