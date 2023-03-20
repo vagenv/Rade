@@ -16,30 +16,27 @@ Replace tick timing to game world time
 
 Camera turn forward automatically after n seconds of moving
 
-Item Type as private String -> Faster cast
-
 Remove blueprintevent
 
 Magnetic pickup
 
-Dialogue system
-
 =================================================
-   Damage
+FIX
 =================================================
 
-
-StatusEffect to UActorComponent
-
-StatusEffect on Client
-
-Ability in blueprunt
-- cost
-- can use
+Item Type as private String -> Faster cast
 
 
-Item Pickup Emptied -> Change color
+=================================================
+   RDescriptor Interface/
+=================================================
 
+Item/Abilities/StatusEffects/
+
+RDescriptor
+- GetUILabel
+- GetUITooltip
+- GetUIIcon
 
 =================================================
    Experience Manager?
@@ -343,6 +340,22 @@ Enemy Death -> Bunny Explosion
 - Smoke
 - GPU particles
 - Niagara
+
+
+=================================================
+   Dialogue system
+=================================================
+
+Find Plugins
+
+JSON/Graph workflow
+
+UI
+- Icon
+- Header
+- Message
+- Select option
+
 
 =================================================
    UI (Nice to have)
