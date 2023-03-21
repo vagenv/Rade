@@ -2,17 +2,26 @@
    TODO / Issues
 =================================================
 
-Option Menu, use RUI objects
+=======
+UI
+=======
+Option Menu / Status
+- RUI objects
 
-Movement lags in session
+Fix Click/Hover zones overlap of button / border
 
-Optimization for Laptop / High FPS on PC
 
-Remove blueprintevent
+=======
+Network
+=======
+Stress test low bandwidth and lagging.
 
-Magnetic pickup
 
-Skill Level vs Stack
+=======
+Cleanup
+=======
+Remove blueprintevent / add everywhere for events
+
 
 =======
 Camera
@@ -20,23 +29,38 @@ Camera
 Turn to move direction automatically after n seconds of moving
 
 
+=======
+Other
+=======
+- Magnetic pickup
+- Table with Skill Level vs Stack vs Damage
+
 =================================================
-   Experience Manager?
+   Experience Manager
 =================================================
 
-Exp points
-Exp for each Level (FRuntimeFloatCurve? X:Level -> Y:Exp Required)
-Level Reward
 
-Level Up -> Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase)
-Fractional? +10 -> +2
+TMap<TSubClass<ACharacter>, int> ExpMap
+Connects to RDamageMgr OnDeath to provide exp
 
-Level Up -> Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
 
+LevelMgr
+- Exp points
+- Exp for each Level (FRuntimeFloatCurve? X:Level -> Y:Exp Required)
+
+OnExpGained
+
+OnLevelUp
+
+Level up reward:
+- Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase) [Fractional? +10 -> +2]
+- Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
 
 UI
-- Add Stat
-- Upgrade
+- Get current extra core and skill stats
+- SKill list, with + next to them
+- Core stats, with + next to them
+
 
 =================================================
    Save/Load
@@ -48,16 +72,33 @@ Redesign SaveMgr for blueprint support.
 - Ability Slots
 - Equipment
 - ActiveStatusEffects?
+- Experience
 
 UI
 Save/Load By slots.
+
+=================================================
+   Ability
+=================================================
+
+- Chance to apply active status effect. (Burning / Poisoned)
 
 
 =================================================
    Weapons
 =================================================
 
+ItemData uniqueID?
+- Differentiate Dublicates
+- Equiped/busy?
+
+Reuse equipment slot or subclass of equipment slot?
+Single/double hand?
+
+
+=======
 WeaponItem : EquipmentItem
+=======
 - AttackSpeed
 - AnimStyle?
 
@@ -65,21 +106,22 @@ List of Struct:
 - Chances
 - Active status effect
 
-ItemData uniqueID?
-- Differentiate Dublicates
-- Equiped/busy?
-
+=======
 MeleeWeaponItem : WeaponItem
+=======
 
+=======
 RangedWeaponItem : WeaponItem
-- CurrenAmmo
-- MaxAmmo ?
-- MagSize ?
+=======
+Ammo
+- Current
+- Total
+- MagSize
 
-Reuse equipment slot or subclass of equipment slot?
-Single/double hand?
 
-Weapons (with damage type)
+=======
+Weapons to implement
+=======
 - Rifle
 - Shotgun
 - Launcher
@@ -89,7 +131,10 @@ Weapons (with damage type)
 - Attack combo?
 - Stat Scaling
 
-TakeDamage (based on what body part was hit) (bone name?):
+=======
+Hit Component Damage Multiplier
+=======
+ApplyRDamage (based on what body part was hit) (bone name?):
 - Headshot
 - Protected by armor
 
@@ -103,7 +148,6 @@ For ranged / consuable weapons
    UI
 =================================================
 
-Fix Click/Hover zones overlap
 
 =======
 Crafting
@@ -149,29 +193,44 @@ Map (Right Top)?
    Level Transition
 =================================================
 
-Smooth Level/World change
+=======
+App start -> Splash screen
+=======
 
-Create Transition Level (Between level)
+=======
+Loading screen / Level Change
+=======
+- Transition level.
+- Transitioning?
+- Load progress.
 
-Here is the general flow when executing 'Seamless' travel:
-1. Mark Actors that will persist to the Transition Level (read above)
-2. Travel to the Transition Level
-3. Mark Actors that will persist to the Final Level (read above)
-4. Travel to the Final Leve
+=======
+World change
+=======
+- Players still connected.
+- UI class stable and valid
 
+=======
+'Seamless' travel:
+=======
+- Mark Actors that will persist to the Transition Level
+- Travel to the Transition Level
+- Mark Actors that will persist to the Final Level
+- Travel to the Final Level
 
-Level breaking and layering
-
+=======
 Open World
+=======
+- Level breaking and layering
 - Desert terrain generated using perlin noise
-- Forrest
+- Forrest with random tree placement
 
 
 =================================================
    Online Subsystem
 =================================================
 
-Default:SubsystemNULL -> Only Lan sessions
+Default:SubsystemNULL -> Only LAN sessions
 
 Cleanup RSessionManager
 - Add components for GameState and PlayerState
@@ -190,23 +249,36 @@ Network Session
    Game Session
 =================================================
 
+=======
 GameMode
+=======
 - OnPostLogin. Add list of players
 - Pauseable
 - ChangeName?
 
+=======
 GameState
+=======
 - score
 - chat
 
-Playerstate
+=======
+PlayerState
+=======
 - Recconect -> Get values from old data
 - Description (player name, UUID, icon)
+Additional Character info
 - ping
-- color etc.
+- color
+- icon
 
-Pawn
-- Posses/Unposses hide/show actor with effects
+=======
+Pawn between levels / worlds
+=======
+- Posses / Unposses
+- Hide / show pawn
+- Enable / Disable Input (Player State)
+- VFX, sound
 
 
 =================================================
@@ -484,6 +556,10 @@ Blueprint naming scheme validation
 =================================================
    Optimization
 =================================================
+
+Laptop benchmark
+
+High FPS on PC
 
 Determine bottlenecks. (240+ FPS)
 - CPU
