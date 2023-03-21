@@ -12,23 +12,13 @@ Remove blueprintevent
 
 Magnetic pickup
 
+Skill Level vs Stack
+
 =======
 Camera
 =======
 Turn to move direction automatically after n seconds of moving
 
-
-=================================================
-   RDescriptor Interface
-=================================================
-
-RDescriptor GetDescriptor / GetInfo / GetUI
-Add UtilFunc to Item / Abilities / StatusEffects
-
-RDescriptor
-- Label
-- Tooltip
-- Icon
 
 =================================================
    Experience Manager?
@@ -211,7 +201,7 @@ GameState
 
 Playerstate
 - Recconect -> Get values from old data
-- player name
+- Description (player name, UUID, icon)
 - ping
 - color etc.
 
