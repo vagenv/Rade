@@ -11,6 +11,8 @@ public class RadeTarget : TargetRules
       DefaultBuildSettings = BuildSettingsVersion.V2;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
       ExtraModuleNames.Add ("RUtilLib");
+      ExtraModuleNames.Add ("RDamageLib");
+      ExtraModuleNames.Add ("RExperienceLib");
       ExtraModuleNames.Add ("RTargetableLib");
       ExtraModuleNames.Add ("RSaveLib");
       ExtraModuleNames.Add ("ROptionsLib");
