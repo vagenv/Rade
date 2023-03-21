@@ -14,7 +14,7 @@ class AActor;
 //                   RDamageType
 // ============================================================================
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
+UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RSTATUSLIB_API URDamageType : public UDamageType
 {
    GENERATED_BODY()

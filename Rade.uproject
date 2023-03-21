@@ -10,6 +10,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RDamageLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "RTargetableLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
