@@ -301,6 +301,14 @@ private:
                       AController*       InstigatedBy,
                       AActor*            Causer);
 
+   UFUNCTION (NetMulticast, Unreliable)
+      void ReportRDamage                (float               Amount,
+                                         const URDamageType* Type,
+                                         AActor*             Causer);
+      void ReportRDamage_Implementation (float               Amount,
+                                         const URDamageType* Type,
+                                         AActor*             Causer);
+
    //==========================================================================
    //                 Save/Load
    //==========================================================================
