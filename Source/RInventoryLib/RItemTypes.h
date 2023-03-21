@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/DataTable.h"
+#include "RUtilLib/RUIDescription.h"
 #include "RItemTypes.generated.h"
 
 //=============================================================================
@@ -103,17 +104,8 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Name;
 
-   // Item Label
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString Label = FString ("Please set item label");
-
-   // Tooltip or Press E to Use/Equip
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString Tooltip = FString ("Please set item tooltip");
-
-   // Item Icon
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSoftObjectPtr<UTexture2D> Icon;
+      FRUIDescription Description;
 
    // Number of item instances
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

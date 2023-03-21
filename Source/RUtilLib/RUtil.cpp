@@ -1,3 +1,5 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #include "RUtil.h"
 
 ACharacter* URUtilLibrary::GetLocalRadePlayer (UObject* WorldContextObject)

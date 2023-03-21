@@ -37,10 +37,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "E",
-		"Label": "Sword",
-		"Tooltip": "I poke!",
-		"Icon": "/Game/Rade/Sprites/Icons/browser.browser",
+		"Description":
+		{
+			"Label": "Sword",
+			"Tooltip": "I poke!",
+			"Icon": "/Game/Rade/Sprites/Icons/browser.browser"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 3500,
@@ -66,10 +70,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "E",
-		"Label": "Pistol",
-		"Tooltip": "I shoot!",
-		"Icon": "/Game/Rade/Sprites/Icons/bug.bug",
+		"Description":
+		{
+			"Label": "Pistol",
+			"Tooltip": "I shoot!",
+			"Icon": "/Game/Rade/Sprites/Icons/bug.bug"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 900,
@@ -95,10 +103,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "D",
-		"Label": "Wooden Shield",
-		"Tooltip": "Better than nothing",
-		"Icon": "/Game/Rade/Sprites/Icons/circle.circle",
+		"Description":
+		{
+			"Label": "Wooden Shield",
+			"Tooltip": "Better than nothing",
+			"Icon": "/Game/Rade/Sprites/Icons/circle.circle"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 3000,
@@ -124,10 +136,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Shoes Of Speed",
-		"Tooltip": "Gotta go fast",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Shoes Of Speed",
+			"Tooltip": "Gotta go fast",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -153,10 +169,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Cloth Armor",
-		"Tooltip": "Better than naked",
-		"Icon": "/Game/Rade/Sprites/Icons/ball-football.ball-football",
+		"Description":
+		{
+			"Label": "Cloth Armor",
+			"Tooltip": "Better than naked",
+			"Icon": "/Game/Rade/Sprites/Icons/ball-football.ball-football"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 2000,
@@ -188,10 +208,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Hat Of Strength",
-		"Tooltip": "ME STRONG!!!",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Hat Of Strength",
+			"Tooltip": "ME STRONG!!!",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -228,10 +252,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Hat Of Agility",
-		"Tooltip": "ME FAST!!!",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Hat Of Agility",
+			"Tooltip": "ME FAST!!!",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -263,10 +291,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Hat Of Intelligence",
-		"Tooltip": "ME SMART!!!",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Hat Of Intelligence",
+			"Tooltip": "ME SMART!!!",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -313,10 +345,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Hat of Bad Boi. If you equiped this on your own risk... It has effects...",
-		"Tooltip": "A funny hat that has many questionable effects. Only use this if you really know what you're doing... It's your hat... Do whatever you want man.",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Hat of Bad Boi. If you equiped this on your own risk... It has effects...",
+			"Tooltip": "A funny hat that has many questionable effects. Only use this if you really know what you're doing... It's your hat... Do whatever you want man.",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -348,10 +384,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Hat Of Regeneration",
-		"Tooltip": "ME HEAL FAST!",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Hat Of Regeneration",
+			"Tooltip": "ME HEAL FAST!",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -383,10 +423,14 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"Type": "struct FREquipmentData",
 		"Rarity": "C",
-		"Label": "Hat Of Evasion",
-		"Tooltip": "ME SHADOW!",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right",
+		"Description":
+		{
+			"Label": "Hat Of Evasion",
+			"Tooltip": "ME SHADOW!",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,

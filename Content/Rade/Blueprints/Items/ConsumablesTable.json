@@ -6,10 +6,14 @@
 		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C'",
 		"DestroyOnAction": true,
+		"Type": "struct FRConsumableItemData",
 		"Rarity": "E",
-		"Label": "Health Pack",
-		"Tooltip": "Health. MORE HEALTH!",
-		"Icon": "/Game/Rade/Sprites/Icons/alert-triangle.alert-triangle",
+		"Description":
+		{
+			"Label": "Health Pack",
+			"Tooltip": "Health. MORE HEALTH!",
+			"Icon": "/Game/Rade/Sprites/Icons/alert-triangle.alert-triangle"
+		},
 		"Count": 1,
 		"MaxCount": 10,
 		"Weight": 200,
@@ -25,10 +29,14 @@
 		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C'",
 		"DestroyOnAction": true,
+		"Type": "struct FRConsumableItemData",
 		"Rarity": "E",
-		"Label": "Mana Pack",
-		"Tooltip": "ME DRINK. ME SMARTER!",
-		"Icon": "/Game/Rade/Sprites/Icons/ball-tennis.ball-tennis",
+		"Description":
+		{
+			"Label": "Mana Pack",
+			"Tooltip": "ME DRINK. ME SMARTER!",
+			"Icon": "/Game/Rade/Sprites/Icons/ball-tennis.ball-tennis"
+		},
 		"Count": 1,
 		"MaxCount": 10,
 		"Weight": 200,

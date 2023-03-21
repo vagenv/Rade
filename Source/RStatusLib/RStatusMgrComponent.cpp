@@ -685,11 +685,18 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
 
       UseHealth (Amount);
 
-      OnAnyRDamage.Broadcast (Amount, Type, Causer);
+      ReportRDamage (Amount, Type, Causer);
 
       URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
       if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
    }
+}
+
+void URStatusMgrComponent::ReportRDamage_Implementation (float               Amount,
+                                                         const URDamageType* Type,
+                                                         AActor*             Causer)
+{
+   OnAnyRDamage.Broadcast (Amount, Type, Causer);
 }
 
 //=============================================================================

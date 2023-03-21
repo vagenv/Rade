@@ -1,10 +1,14 @@
 [
 	{
 		"Name": "Rock",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Rock",
-		"Tooltip": "Picked from ground. I will make it a traveler",
-		"Icon": "/Game/Rade/Sprites/Icons/alarm.alarm",
+		"Description":
+		{
+			"Label": "Rock",
+			"Tooltip": "Picked from ground. I will make it a traveler",
+			"Icon": "/Game/Rade/Sprites/Icons/alarm.alarm"
+		},
 		"Count": 1,
 		"MaxCount": 5,
 		"Weight": 100,
@@ -15,10 +19,14 @@
 	},
 	{
 		"Name": "MusicNotes",
+		"Type": "struct FRItemData",
 		"Rarity": "QUEST",
-		"Label": "Music Notes",
-		"Tooltip": "A quest item to delivery.",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-down.arrow-badge-down",
+		"Description":
+		{
+			"Label": "Music Notes",
+			"Tooltip": "A quest item to delivery.",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-down.arrow-badge-down"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 10,
@@ -29,10 +37,14 @@
 	},
 	{
 		"Name": "HeavyRocks",
+		"Type": "struct FRItemData",
 		"Rarity": "MAINQUEST",
-		"Label": "Heavy Rocks",
-		"Tooltip": "Why am I even carrying it?",
-		"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-right.arrow-badge-right",
+		"Description":
+		{
+			"Label": "Heavy Rocks",
+			"Tooltip": "Why am I even carrying it?",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-right.arrow-badge-right"
+		},
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 5000,
@@ -43,15 +55,19 @@
 	},
 	{
 		"Name": "Gold",
+		"Type": "struct FRItemData",
 		"Rarity": "E",
-		"Label": "Gold",
-		"Tooltip": "Current used in exchange of goods and services",
-		"Icon": "/Game/Rade/Sprites/Icons/coins.coins",
+		"Description":
+		{
+			"Label": "Gold",
+			"Tooltip": "Current used in exchange of goods and services",
+			"Icon": "/Game/Rade/Sprites/Icons/coins.coins"
+		},
 		"Count": 1,
 		"MaxCount": 9999,
 		"Weight": 10,
 		"Price": 1,
-		"PickupMesh": "/Script/Engine.StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'",
+		"PickupMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule",
 		"Pickup": "None",
 		"JsonData": ""
 	}

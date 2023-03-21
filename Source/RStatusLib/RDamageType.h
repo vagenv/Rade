@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/DamageType.h"
+#include "RUtilLib/RUIDescription.h"
 #include "RDamageType.generated.h"
 
 struct FDamageEvent;
@@ -22,7 +23,7 @@ public:
    URDamageType ();
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FString UIName;
+      FRUIDescription Description;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;
@@ -38,22 +39,5 @@ public:
                          float Resistance,
                          float DamageAmount,
                          AActor* DamageCauser) const;
-};
-
-// ============================================================================
-//                   Fall Damage
-// ============================================================================
-
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RSTATUSLIB_API URDamageType_Fall : public URDamageType
-{
-   GENERATED_BODY()
-public:
-   URDamageType_Fall();
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve FallDamageCurve;
-
-   virtual float CalcDamage (float Velocity, float Resistance) const override;
 };
 
