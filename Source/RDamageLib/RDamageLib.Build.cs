@@ -2,22 +2,16 @@
 
 using UnrealBuildTool;
 
-public class REquipmentLib : ModuleRules
+public class RDamageLib : ModuleRules
 {
-   public REquipmentLib (ReadOnlyTargetRules Target) : base (Target)
+   public RDamageLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
          "Engine",
-         "Json",
-         "JsonUtilities",
          "RUtilLib",
-         "RSaveLib",
-         "RDamageLib",
-         "RInventoryLib",
-         "RStatusLib"
       });
    }
 }

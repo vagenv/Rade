@@ -2,12 +2,12 @@
 
 #include "RStatusMgrComponent.h"
 #include "RActiveStatusEffect.h"
-#include "RDamageType.h"
-#include "RDamageMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RDamageLib/RDamageType.h"
+#include "RDamageLib/RDamageMgr.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -201,13 +201,12 @@ void URStatusMgrComponent::SetDead (bool Dead)
    URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
 
    // Broadcast only after value has been changed;
-   if (WasDead  && !Dead) {
+   if (WasDead && !Dead) {
       OnRevive.Broadcast ();
       if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
    }
-   if (!WasDead &&  Dead) {
+   if (!WasDead && Dead) {
       OnDeath.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportDeath (GetOwner ());
    }
 }
 
@@ -238,7 +237,6 @@ void URStatusMgrComponent::UseHealth (float Amount)
 {
    R_RETURN_IF_NOT_ADMIN;
    Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
-   if (!Health.Current) SetDead (true);
    SetHealth (Health);
 }
 
@@ -329,17 +327,11 @@ void URStatusMgrComponent::RecalcCoreStats ()
 void URStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   const FRichCurve* AgiToEvasionData     = AgiToEvasion.GetRichCurveConst ();
-   const FRichCurve* AgiToCriticalData    = AgiToCritical.GetRichCurveConst ();
-   const FRichCurve* AgiToAttackSpeedData = AgiToAttackSpeed.GetRichCurveConst ();
-
-   if (!ensure (AgiToEvasionData))  return;
-   if (!ensure (AgiToCriticalData)) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   float EvasionTotal     = AgiToEvasionData->Eval (StatsTotal.AGI);
-   float CriticalTotal    = AgiToCriticalData->Eval (StatsTotal.AGI);
-   float AttackSpeedTotal = AgiToAttackSpeedData->Eval (StatsTotal.AGI);
+   float EvasionTotal     = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasion,     StatsTotal.AGI);
+   float CriticalTotal    = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCritical,    StatsTotal.AGI);
+   float AttackSpeedTotal = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeed, StatsTotal.AGI);
    float MoveSpeedTotal   = 0;
 
    // Flat
@@ -362,11 +354,11 @@ void URStatusMgrComponent::RecalcSubStats ()
    }
 
    FRCoreStats StatsCurrent = GetCoreStats_Base ();
-   SubStats_Base.Evasion      = AgiToEvasionData->Eval (StatsCurrent.AGI);
+   SubStats_Base.Evasion      = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasion,     StatsCurrent.AGI);
    SubStats_Added.Evasion     = EvasionTotal - SubStats_Base.Evasion;
-   SubStats_Base.Critical     = AgiToCriticalData->Eval (StatsCurrent.AGI);
+   SubStats_Base.Critical     = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCritical,    StatsCurrent.AGI);
    SubStats_Added.Critical    = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.AttackSpeed  = AgiToAttackSpeedData->Eval (StatsCurrent.AGI);
+   SubStats_Base.AttackSpeed  = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeed, StatsCurrent.AGI);
    SubStats_Added.AttackSpeed = CriticalTotal - SubStats_Base.Critical;
    SubStats_Base.MoveSpeed    = MoveSpeedTotal;
    SubStats_Added.MoveSpeed   = 0;
@@ -391,12 +383,12 @@ void URStatusMgrComponent::RecalcStatusValues ()
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   Health.Max     = StrToHealthMaxData->Eval    (StatsTotal.STR);
-   Health.Regen   = StrToHealthRegenData->Eval  (StatsTotal.STR);
-   Stamina.Max    = AgiToStaminaMaxData->Eval   (StatsTotal.AGI);
-   Stamina.Regen  = AgiToStaminaRegenData->Eval (StatsTotal.AGI);
-   Mana.Max       = IntToManaMaxData->Eval      (StatsTotal.INT);
-   Mana.Regen     = IntToManaRegenData->Eval    (StatsTotal.INT);
+   Health.Max     = URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthMax,    StatsTotal.STR);
+   Health.Regen   = URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthRegen,  StatsTotal.STR);
+   Stamina.Max    = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaMax,   StatsTotal.AGI);
+   Stamina.Regen  = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaRegen, StatsTotal.AGI);
+   Mana.Max       = URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaMax,      StatsTotal.INT);
+   Mana.Regen     = URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaRegen,    StatsTotal.INT);
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
@@ -578,16 +570,17 @@ bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclas
 //                 Resistance Funcs
 //=============================================================================
 
-TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
+TArray<FRDamageResistance> URStatusMgrComponent::GetResistance () const
 {
-   TArray<FRResistanceStat> Result;
-   for (const FRResistanceStatWithTag& ItResistance : Resistence) {
+   TArray<FRDamageResistance> Result;
+   for (const FRDamageResistanceWithTag& ItResistance : Resistence) {
       bool found = false;
       // Combine
-      for (FRResistanceStat& ItRes : Result) {
+      for (FRDamageResistance& ItRes : Result) {
          if (ItRes.DamageType == ItResistance.Value.DamageType) {
             found = true;
-            ItRes.Value += ItResistance.Value.Value;
+            ItRes.Flat    += ItResistance.Value.Flat;
+            ItRes.Percent += ItResistance.Value.Percent;
             break;
          }
       }
@@ -597,24 +590,25 @@ TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
    return Result;
 }
 
-TArray<FRResistanceStatWithTag> URStatusMgrComponent::GetResistanceWithTag () const
+TArray<FRDamageResistanceWithTag> URStatusMgrComponent::GetResistanceWithTag () const
 {
    return Resistence;
 }
 
-float URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
+FRDamageResistance URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
 {
-   if (!ensure (DamageType)) return 0;
-   float Result = 0;
-   for (const FRResistanceStatWithTag& ItResistance : Resistence) {
+   FRDamageResistance Result;
+   if (!ensure (DamageType)) return Result;
+   for (const FRDamageResistanceWithTag& ItResistance : Resistence) {
       if (DamageType == ItResistance.Value.DamageType) {
-         Result += ItResistance.Value.Value;
+         Result.Flat    += ItResistance.Value.Flat;
+         Result.Percent += ItResistance.Value.Percent;
       }
    }
    return Result;
 }
 
-void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
+void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRDamageResistance> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN;
    if (!ensure (!Tag.IsEmpty ()))  return;
@@ -623,8 +617,8 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRRes
    RmResistance (Tag);
 
    // Add again
-   for (const FRResistanceStat& ItAddValue : AddValues) {
-      FRResistanceStatWithTag newRes;
+   for (const FRDamageResistance& ItAddValue : AddValues) {
+      FRDamageResistanceWithTag newRes;
       newRes.Tag   = Tag;
       newRes.Value = ItAddValue;
       Resistence.Add (newRes);
@@ -639,7 +633,7 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
 
    TArray<int32> ToRemove;
    for (int32 iResistance = 0; iResistance < Resistence.Num (); iResistance++) {
-      const FRResistanceStatWithTag& ItResistance = Resistence[iResistance];
+      const FRDamageResistanceWithTag& ItResistance = Resistence[iResistance];
       if (ItResistance.Tag == Tag) ToRemove.Add (iResistance);
    }
    // Nothing to remove
@@ -674,7 +668,7 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
             return;
          }
 
-         float Resistance = GetResistanceFor (Type->GetClass ());
+         FRDamageResistance Resistance = GetResistanceFor (Type->GetClass ());
 
          Amount = Type->CalcDamage (Amount, Resistance);
          Type->BP_AnyDamage (GetOwner (), Resistance, Amount, Causer);
@@ -689,6 +683,11 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
 
       URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
       if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
+
+      if (!Health.Current) {
+         SetDead (true);
+         if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
+      }
    }
 }
 

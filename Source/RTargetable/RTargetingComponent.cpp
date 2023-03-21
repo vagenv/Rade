@@ -3,6 +3,7 @@
 #include "RTargetingComponent.h"
 #include "RTargetableComponent.h"
 #include "RTargetableMgr.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
@@ -92,8 +93,7 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
       float Angle = URTargetableMgr::GetAngle (CurrentDir, TargetDir);
 
       // Transform Angle to Lerp power
-      const FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurveConst ();
-      if (TargetAngleToLerpPowerData) LerpPower = TargetAngleToLerpPowerData->Eval (Angle);
+      LerpPower = URUtilLibrary::GetRuntimeFloatCurveValue (TargetAngleToLerpPower, Angle);
 
       // Remove targeting
       if (!CustomTargetDir.IsNearlyZero () && Angle < TargetStopAngle) CustomTargetDir = FVector::Zero ();

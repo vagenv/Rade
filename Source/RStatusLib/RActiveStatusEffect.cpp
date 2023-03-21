@@ -2,7 +2,7 @@
 
 #include "RActiveStatusEffect.h"
 #include "RStatusMgrComponent.h"
-#include "RDamageMgr.h"
+#include "RDamageLib/RDamageMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
@@ -90,10 +90,8 @@ void URActiveStatusEffect::Refresh_Implementation ()
       StackCurrent = FMath::Clamp (StackCurrent + 1, 1, StackMax);
 
       // // --- For debug
-      // const FRichCurve* StackToScaleData = StackToScale.GetRichCurveConst ();
-      // if (!ensure (StackToScaleData))  return;
-      // float StackLastScale    = StackToScaleData->Eval (StackLast);
-      // float StackCurrentScale = StackToScaleData->Eval (StackCurrent);
+      // float StackLastScale    = URUtilLibrary::GetRuntimeFloatCurveValue (StackToScale, StackLast);
+      // float StackCurrentScale = URUtilLibrary::GetRuntimeFloatCurveValue (StackToScale, StackCurrent);
 
       // R_LOG_PRINTF ("[%s] Effect stack increased [%d %.1f%] => [%d %.1f]",
       //    *GetName (),
@@ -160,9 +158,7 @@ bool URActiveStatusEffect::GetIsRunning () const
 float URActiveStatusEffect::GetStackScale (int Stack) const
 {
    if (Stack < 1) Stack = StackCurrent;
-   const FRichCurve* StackToScaleData = StackToScale.GetRichCurveConst ();
-   if (!ensure (StackToScaleData))  return 1;
-   return StackToScaleData->Eval (Stack);
+   return URUtilLibrary::GetRuntimeFloatCurveValue (StackToScale, Stack);
 }
 
 //=============================================================================
