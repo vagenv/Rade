@@ -8,7 +8,7 @@
 //                   Status Effect Scale (FLAT/PERCENT)
 // ============================================================================
 
-UENUM(BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ERStatusEffectScale : uint8
 {
    None UMETA (DisplayName = "Please select"),
@@ -21,7 +21,7 @@ enum class ERStatusEffectScale : uint8
 //                   Status Effect Target
 // ============================================================================
 
-UENUM(BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ERStatusEffectTarget : uint8
 {
    None UMETA (DisplayName = "Please select"),
