@@ -85,22 +85,16 @@ void UREquipmentMgrComponent::CalcWeight ()
    URStatusMgrComponent *StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (!StatusMgr) return;
 
-   const FRichCurve* WeightToEvasionData   = WeightToEvasion.GetRichCurveConst ();
-   const FRichCurve* WeightToMoveSpeedData = WeightToMoveSpeed.GetRichCurveConst ();
-
-   if (!ensure (WeightToEvasionData))    return;
-   if (!ensure (WeightToMoveSpeedData))  return;
-
    float EquipLoad = WeightCurrent * 100. / WeightMax;
    FRPassiveStatusEffect EvasionEffect;
    EvasionEffect.Scale  = ERStatusEffectScale::PERCENT;
    EvasionEffect.Target = ERStatusEffectTarget::Evasion;
-   EvasionEffect.Value  = WeightToEvasionData->Eval (EquipLoad);
+   EvasionEffect.Value  = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
 
    FRPassiveStatusEffect MoveSpeedEffect;
    MoveSpeedEffect.Scale  = ERStatusEffectScale::PERCENT;
    MoveSpeedEffect.Target = ERStatusEffectTarget::MoveSpeed;
-   MoveSpeedEffect.Value  = WeightToMoveSpeedData->Eval (EquipLoad);
+   MoveSpeedEffect.Value  = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
 
    TArray<FRPassiveStatusEffect> Effects;
    Effects.Add (EvasionEffect);
@@ -111,13 +105,10 @@ void UREquipmentMgrComponent::CalcWeight ()
 
 void UREquipmentMgrComponent::OnStatsUpdated ()
 {
-   const FRichCurve* StrToWeightMaxData = StrToWeightMax.GetRichCurveConst ();
-   if (!ensure (StrToWeightMaxData)) return;
-
    URStatusMgrComponent *StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
       FRCoreStats StatsTotal = StatusMgr->GetCoreStats_Total ();
-      WeightMax = StrToWeightMaxData->Eval (StatsTotal.STR);
+      WeightMax = URUtilLibrary::GetRuntimeFloatCurveValue (StrToWeightMax, StatsTotal.STR);
       if (LastWeightMax != WeightMax) {
          LastWeightMax = WeightMax;
          CalcWeight ();

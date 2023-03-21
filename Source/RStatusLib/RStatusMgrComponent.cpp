@@ -327,17 +327,11 @@ void URStatusMgrComponent::RecalcCoreStats ()
 void URStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   const FRichCurve* AgiToEvasionData     = AgiToEvasion.GetRichCurveConst ();
-   const FRichCurve* AgiToCriticalData    = AgiToCritical.GetRichCurveConst ();
-   const FRichCurve* AgiToAttackSpeedData = AgiToAttackSpeed.GetRichCurveConst ();
-
-   if (!ensure (AgiToEvasionData))  return;
-   if (!ensure (AgiToCriticalData)) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   float EvasionTotal     = AgiToEvasionData->Eval (StatsTotal.AGI);
-   float CriticalTotal    = AgiToCriticalData->Eval (StatsTotal.AGI);
-   float AttackSpeedTotal = AgiToAttackSpeedData->Eval (StatsTotal.AGI);
+   float EvasionTotal     = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasion,     StatsTotal.AGI);
+   float CriticalTotal    = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCritical,    StatsTotal.AGI);
+   float AttackSpeedTotal = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeed, StatsTotal.AGI);
    float MoveSpeedTotal   = 0;
 
    // Flat
@@ -360,11 +354,11 @@ void URStatusMgrComponent::RecalcSubStats ()
    }
 
    FRCoreStats StatsCurrent = GetCoreStats_Base ();
-   SubStats_Base.Evasion      = AgiToEvasionData->Eval (StatsCurrent.AGI);
+   SubStats_Base.Evasion      = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasion,     StatsCurrent.AGI);
    SubStats_Added.Evasion     = EvasionTotal - SubStats_Base.Evasion;
-   SubStats_Base.Critical     = AgiToCriticalData->Eval (StatsCurrent.AGI);
+   SubStats_Base.Critical     = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCritical,    StatsCurrent.AGI);
    SubStats_Added.Critical    = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.AttackSpeed  = AgiToAttackSpeedData->Eval (StatsCurrent.AGI);
+   SubStats_Base.AttackSpeed  = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeed, StatsCurrent.AGI);
    SubStats_Added.AttackSpeed = CriticalTotal - SubStats_Base.Critical;
    SubStats_Base.MoveSpeed    = MoveSpeedTotal;
    SubStats_Added.MoveSpeed   = 0;
@@ -389,12 +383,12 @@ void URStatusMgrComponent::RecalcStatusValues ()
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   Health.Max     = StrToHealthMaxData->Eval    (StatsTotal.STR);
-   Health.Regen   = StrToHealthRegenData->Eval  (StatsTotal.STR);
-   Stamina.Max    = AgiToStaminaMaxData->Eval   (StatsTotal.AGI);
-   Stamina.Regen  = AgiToStaminaRegenData->Eval (StatsTotal.AGI);
-   Mana.Max       = IntToManaMaxData->Eval      (StatsTotal.INT);
-   Mana.Regen     = IntToManaRegenData->Eval    (StatsTotal.INT);
+   Health.Max     = URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthMax,    StatsTotal.STR);
+   Health.Regen   = URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthRegen,  StatsTotal.STR);
+   Stamina.Max    = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaMax,   StatsTotal.AGI);
+   Stamina.Regen  = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaRegen, StatsTotal.AGI);
+   Mana.Max       = URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaMax,      StatsTotal.INT);
+   Mana.Regen     = URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaRegen,    StatsTotal.INT);
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {

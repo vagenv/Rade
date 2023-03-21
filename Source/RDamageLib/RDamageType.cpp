@@ -40,8 +40,6 @@ float URDamageType::CalcDamage (float Damage, const FRDamageResistance &Resistan
 
    return FMath::Clamp (NewDamage, MinDamage , MaxDamage);
 
-   // const FRichCurve* ResistanceToDamageCurveData = ResistanceToDamage.GetRichCurveConst ();
-   // if (!ensure (ResistanceToDamageCurveData)) return Damage;
-   // return (100 - ResistanceToDamageCurveData->Eval (Resistance)) * Damage / 100;
+   // return (100 - URUtilLibrary::GetRuntimeFloatCurveValue (ResistanceToDamage, Resistance)) * Damage / 100;
 }
 
