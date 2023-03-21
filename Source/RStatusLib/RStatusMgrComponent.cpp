@@ -7,7 +7,7 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 #include "RDamageLib/RDamageType.h"
-#include "RDamageLib/RDamageMgr.h"
+#include "RDamageLib/RWorldDamageMgr.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -198,7 +198,7 @@ void URStatusMgrComponent::SetDead (bool Dead)
    bool WasDead = bDead;
    bDead = Dead;
 
-   URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
 
    // Broadcast only after value has been changed;
    if (WasDead && !Dead) {
@@ -681,7 +681,7 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
 
       ReportRDamage (Amount, Type, Causer);
 
-      URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
+      URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
       if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
 
       if (!Health.Current) {

@@ -9,7 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetingEvent);
 
 class URTargetableComponent;
-class URTargetableMgr;
+class URWorldTargetMgr;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RTARGETABLELIB_API URTargetingComponent : public USceneComponent
@@ -81,7 +81,7 @@ protected:
 
    // Manager containing all available targets
    UPROPERTY()
-      URTargetableMgr* TargetMgr = nullptr;
+      URWorldTargetMgr* TargetMgr = nullptr;
 
 	// Current focus target
    UPROPERTY()

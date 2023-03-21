@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RSaveInterface.h"
-#include "RSaveMgr.h"
+#include "RWorldSaveMgr.h"
 #include "RUtilLib/RLog.h"
 
 void IRSaveInterface::Init_Save (UObject* WorldContextObject, const FString &SaveId)
@@ -11,7 +11,7 @@ void IRSaveInterface::Init_Save (UObject* WorldContextObject, const FString &Sav
 
    UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (World_)) return;
-   URSaveMgr *SaveMgr_ = URSaveMgr::GetInstance (WorldContextObject);
+   URWorldSaveMgr *SaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
    if (!ensure (SaveMgr_)) return;
 
    ObjectSaveId = SaveId;

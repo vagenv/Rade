@@ -3,7 +3,7 @@
 #include "RInventoryComponent.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RSaveLib/RSaveMgr.h"
+#include "RSaveLib/RWorldSaveMgr.h"
 
 #include "RItemPickup.h"
 #include "Net/UnrealNetwork.h"

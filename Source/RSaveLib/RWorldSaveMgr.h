@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "RSaveMgr.generated.h"
+#include "RWorldSaveMgr.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
 
@@ -11,12 +11,12 @@ class USaveGame;
 class URSaveGame;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent) )
-class RSAVELIB_API URSaveMgr : public UActorComponent
+class RSAVELIB_API URWorldSaveMgr : public UActorComponent
 {
    GENERATED_BODY()
 public:
 
-   URSaveMgr();
+   URWorldSaveMgr();
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Save");
       TObjectPtr<URSaveGame> SaveFile;
@@ -59,7 +59,7 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Save", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Save Mgr", CompactNodeTitle = "Save Mgr"))
-      static URSaveMgr* GetInstance (UObject* WorldContextObject);
+      static URWorldSaveMgr* GetInstance (UObject* WorldContextObject);
 
    //==========================================================================
    //                  Subscribers

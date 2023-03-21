@@ -1,6 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RDamageMgr.h"
+#include "RWorldDamageMgr.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
@@ -8,7 +8,7 @@
 //                   Static calls
 //=============================================================================
 
-URDamageMgr* URDamageMgr::GetInstance (UObject* WorldContextObject)
+URWorldDamageMgr* URWorldDamageMgr::GetInstance (UObject* WorldContextObject)
 {
    if (!ensure (WorldContextObject)) return nullptr;
 
@@ -18,7 +18,7 @@ URDamageMgr* URDamageMgr::GetInstance (UObject* WorldContextObject)
    AGameStateBase *GameState = World->GetGameState ();
    if (!ensure (GameState)) return nullptr;
 
-   URDamageMgr* DamageMgr = GameState->FindComponentByClass<URDamageMgr>();
+   URWorldDamageMgr* DamageMgr = GameState->FindComponentByClass<URWorldDamageMgr>();
    return DamageMgr;
 }
 
@@ -26,11 +26,11 @@ URDamageMgr* URDamageMgr::GetInstance (UObject* WorldContextObject)
 //                   Member calls
 //=============================================================================
 
-URDamageMgr::URDamageMgr ()
+URWorldDamageMgr::URWorldDamageMgr ()
 {
 }
 
-void URDamageMgr::ReportDamage (AActor* DamageTarget,
+void URWorldDamageMgr::ReportDamage (AActor* DamageTarget,
                                 float Damage,
                                 const URDamageType* DamageType,
                                 AActor* DamageCauser)
@@ -39,7 +39,7 @@ void URDamageMgr::ReportDamage (AActor* DamageTarget,
    OnAnyRDamage.Broadcast (DamageTarget, Damage, DamageType, DamageCauser);
 }
 
-void URDamageMgr::ReportDeath (AActor* Victim,
+void URWorldDamageMgr::ReportDeath (AActor* Victim,
                                AActor* Causer,
                                const URDamageType* DamageType)
 {
@@ -47,13 +47,13 @@ void URDamageMgr::ReportDeath (AActor* Victim,
    OnDeath.Broadcast (Victim, Causer, DamageType);
 }
 
-void URDamageMgr::ReportRevive (AActor* WhoRevived)
+void URWorldDamageMgr::ReportRevive (AActor* WhoRevived)
 {
    R_RETURN_IF_NOT_ADMIN;
    OnRevive.Broadcast (WhoRevived);
 }
 
-void URDamageMgr::ReportStatusEffect (UActorComponent* Effect, AActor* Causer, AActor* Target)
+void URWorldDamageMgr::ReportStatusEffect (UActorComponent* Effect, AActor* Causer, AActor* Target)
 {
    R_RETURN_IF_NOT_ADMIN;
    OnStatusEffect.Broadcast (Effect, Causer, Target);

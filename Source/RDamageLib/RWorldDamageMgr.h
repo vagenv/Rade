@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "RDamageMgr.generated.h"
+#include "RWorldDamageMgr.generated.h"
 
 class URDamageType;
 class UActorComponent;
@@ -28,12 +28,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
                                                 AActor*,             Target);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RDAMAGELIB_API URDamageMgr : public UActorComponent
+class RDAMAGELIB_API URWorldDamageMgr : public UActorComponent
 {
    GENERATED_BODY()
 public:
 
-   URDamageMgr ();
+   URWorldDamageMgr ();
 
    // --- When someone took damage
    UFUNCTION()
@@ -78,6 +78,6 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Damage", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Damage Mgr", CompactNodeTitle = "Damage Mgr"))
-      static URDamageMgr* GetInstance (UObject* WorldContextObject);
+      static URWorldDamageMgr* GetInstance (UObject* WorldContextObject);
 };
 

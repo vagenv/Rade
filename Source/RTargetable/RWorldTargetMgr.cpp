@@ -1,6 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RTargetableMgr.h"
+#include "RWorldTargetMgr.h"
 #include "RTargetableComponent.h"
 #include "RTargetingComponent.h"
 #include "RUtilLib/RLog.h"
@@ -11,7 +11,7 @@
 //                   Static calls
 //=============================================================================
 
-URTargetableMgr* URTargetableMgr::GetInstance (UObject* WorldContextObject)
+URWorldTargetMgr* URWorldTargetMgr::GetInstance (UObject* WorldContextObject)
 {
    if (!ensure (WorldContextObject)) return nullptr;
 
@@ -21,7 +21,7 @@ URTargetableMgr* URTargetableMgr::GetInstance (UObject* WorldContextObject)
    AGameStateBase *GameState = World->GetGameState ();
    if (!ensure (GameState)) return nullptr;
 
-   URTargetableMgr* TargetableMgr = GameState->FindComponentByClass<URTargetableMgr>();
+   URWorldTargetMgr* TargetableMgr = GameState->FindComponentByClass<URWorldTargetMgr>();
    return TargetableMgr;
 }
 
@@ -29,25 +29,25 @@ URTargetableMgr* URTargetableMgr::GetInstance (UObject* WorldContextObject)
 //                   Member calls
 //=============================================================================
 
-URTargetableMgr::URTargetableMgr ()
+URWorldTargetMgr::URWorldTargetMgr ()
 {
 }
 
-void URTargetableMgr::AddTarget (URTargetableComponent * Target)
+void URWorldTargetMgr::AddTarget (URTargetableComponent * Target)
 {
    if (!ensure (Target)) return;
    TargetableList.Add (Target);
    OnListUpdated.Broadcast ();
 }
 
-void URTargetableMgr::RmTarget  (URTargetableComponent * Target)
+void URWorldTargetMgr::RmTarget  (URTargetableComponent * Target)
 {
    if (!ensure (Target)) return;
    TargetableList.Remove (Target);
    OnListUpdated.Broadcast ();
 }
 
-URTargetableComponent* URTargetableMgr::Find (URTargetingComponent*          Targeter,
+URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,
                                               TArray<AActor*>                FilterOutActors,
                                               TArray<URTargetableComponent*> FilterOutTargets)
 {
@@ -77,7 +77,7 @@ URTargetableComponent* URTargetableMgr::Find (URTargetingComponent*          Tar
       // --- Check angle
       FVector ItDir = ItTarget->GetComponentLocation () - Origin;
       ItDir.Normalize ();
-      float ItAngle = URTargetableMgr::GetAngle (SearchDir, ItDir);
+      float ItAngle = URWorldTargetMgr::GetAngle (SearchDir, ItDir);
       if (ItAngle > SearchAngle) continue;
 
       // First target
@@ -89,7 +89,7 @@ URTargetableComponent* URTargetableMgr::Find (URTargetingComponent*          Tar
       // --- Check if smaller angle
       FVector CurrentDir = CurrentTarget->GetComponentLocation () - Origin;
       CurrentDir.Normalize ();
-      float CurrentAngle = URTargetableMgr::GetAngle (SearchDir, CurrentDir);
+      float CurrentAngle = URWorldTargetMgr::GetAngle (SearchDir, CurrentDir);
 
       if (ItAngle < CurrentAngle) CurrentTarget = ItTarget;
    }
@@ -97,7 +97,7 @@ URTargetableComponent* URTargetableMgr::Find (URTargetingComponent*          Tar
    return CurrentTarget;
 }
 
-URTargetableComponent* URTargetableMgr::FindNear (URTargetingComponent*          Targeter,
+URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Targeter,
                                                   URTargetableComponent*         CurrentTarget,
                                                   float                          InputOffsetX,
                                                   float                          InputOffsetY,
@@ -145,7 +145,7 @@ URTargetableComponent* URTargetableMgr::FindNear (URTargetingComponent*         
       // --- Check angle respect to camera
       FVector ItDir = ItTarget->GetComponentLocation () - Origin;
       ItDir.Normalize ();
-      if (URTargetableMgr::GetAngle (ForwardDir, ItDir) > SearchAngle) continue;
+      if (URWorldTargetMgr::GetAngle (ForwardDir, ItDir) > SearchAngle) continue;
 
       // Direction with respect to current target
       ItDir = ItTarget->GetComponentLocation () - TargetLoc;
@@ -177,7 +177,7 @@ URTargetableComponent* URTargetableMgr::FindNear (URTargetingComponent*         
    return NewTarget;
 }
 
-float URTargetableMgr::GetAngle (FVector v1, FVector v2)
+float URWorldTargetMgr::GetAngle (FVector v1, FVector v2)
 {
    v1.Normalize ();
    v2.Normalize ();
