@@ -46,7 +46,7 @@ DamageMgr to separate library
 Damage Resistance : Flat vs Percent
 Resistance stats
 
-
+Replace all eval with URUtilLibrary::GetRuntimeFloatCurveValue
 =================================================
    Experience Manager
 =================================================

@@ -139,7 +139,7 @@ protected:
    // --- Resistance
    // Should be Map of FRResistanceStat, but for replication -> Array
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      TArray<FRResistanceStatWithTag> Resistence;
+      TArray<FRDamageResistanceWithTag> Resistence;
 
    UFUNCTION()
       void OnRep_Stats ();
@@ -255,19 +255,19 @@ public:
    //==========================================================================
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      void AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues);
+      void AddResistance (const FString &Tag, const TArray<FRDamageResistance> &AddValues);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       void RmResistance (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      TArray<FRResistanceStat> GetResistance () const;
+      TArray<FRDamageResistance> GetResistance () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      TArray<FRResistanceStatWithTag> GetResistanceWithTag () const;
+      TArray<FRDamageResistanceWithTag> GetResistanceWithTag () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      float GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const;
+      FRDamageResistance GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const;
 
    //==========================================================================
    //                 Events

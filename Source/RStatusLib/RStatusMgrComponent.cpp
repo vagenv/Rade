@@ -2,12 +2,12 @@
 
 #include "RStatusMgrComponent.h"
 #include "RActiveStatusEffect.h"
-#include "RDamageType.h"
-#include "RDamageMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RDamageLib/RDamageType.h"
+#include "RDamageLib/RDamageMgr.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -576,16 +576,17 @@ bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclas
 //                 Resistance Funcs
 //=============================================================================
 
-TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
+TArray<FRDamageResistance> URStatusMgrComponent::GetResistance () const
 {
-   TArray<FRResistanceStat> Result;
-   for (const FRResistanceStatWithTag& ItResistance : Resistence) {
+   TArray<FRDamageResistance> Result;
+   for (const FRDamageResistanceWithTag& ItResistance : Resistence) {
       bool found = false;
       // Combine
-      for (FRResistanceStat& ItRes : Result) {
+      for (FRDamageResistance& ItRes : Result) {
          if (ItRes.DamageType == ItResistance.Value.DamageType) {
             found = true;
-            ItRes.Value += ItResistance.Value.Value;
+            ItRes.Flat    += ItResistance.Value.Flat;
+            ItRes.Percent += ItResistance.Value.Percent;
             break;
          }
       }
@@ -595,24 +596,25 @@ TArray<FRResistanceStat> URStatusMgrComponent::GetResistance () const
    return Result;
 }
 
-TArray<FRResistanceStatWithTag> URStatusMgrComponent::GetResistanceWithTag () const
+TArray<FRDamageResistanceWithTag> URStatusMgrComponent::GetResistanceWithTag () const
 {
    return Resistence;
 }
 
-float URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
+FRDamageResistance URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
 {
-   if (!ensure (DamageType)) return 0;
-   float Result = 0;
-   for (const FRResistanceStatWithTag& ItResistance : Resistence) {
+   FRDamageResistance Result;
+   if (!ensure (DamageType)) return Result;
+   for (const FRDamageResistanceWithTag& ItResistance : Resistence) {
       if (DamageType == ItResistance.Value.DamageType) {
-         Result += ItResistance.Value.Value;
+         Result.Flat    += ItResistance.Value.Flat;
+         Result.Percent += ItResistance.Value.Percent;
       }
    }
    return Result;
 }
 
-void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRResistanceStat> &AddValues)
+void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRDamageResistance> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN;
    if (!ensure (!Tag.IsEmpty ()))  return;
@@ -621,8 +623,8 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRRes
    RmResistance (Tag);
 
    // Add again
-   for (const FRResistanceStat& ItAddValue : AddValues) {
-      FRResistanceStatWithTag newRes;
+   for (const FRDamageResistance& ItAddValue : AddValues) {
+      FRDamageResistanceWithTag newRes;
       newRes.Tag   = Tag;
       newRes.Value = ItAddValue;
       Resistence.Add (newRes);
@@ -637,7 +639,7 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
 
    TArray<int32> ToRemove;
    for (int32 iResistance = 0; iResistance < Resistence.Num (); iResistance++) {
-      const FRResistanceStatWithTag& ItResistance = Resistence[iResistance];
+      const FRDamageResistanceWithTag& ItResistance = Resistence[iResistance];
       if (ItResistance.Tag == Tag) ToRemove.Add (iResistance);
    }
    // Nothing to remove
@@ -672,7 +674,7 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
             return;
          }
 
-         float Resistance = GetResistanceFor (Type->GetClass ());
+         FRDamageResistance Resistance = GetResistanceFor (Type->GetClass ());
 
          Amount = Type->CalcDamage (Amount, Resistance);
          Type->BP_AnyDamage (GetOwner (), Resistance, Amount, Causer);

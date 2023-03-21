@@ -2,7 +2,7 @@
 
 #include "RActiveStatusEffect.h"
 #include "RStatusMgrComponent.h"
-#include "RDamageMgr.h"
+#include "RDamageLib/RDamageMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"

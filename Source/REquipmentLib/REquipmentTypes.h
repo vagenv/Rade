@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RInventoryLib/RItemTypes.h"
-#include "RStatusLib/RDamageType.h"
+#include "RDamageLib/RDamageType.h"
 #include "RStatusLib/RStatusTypes.h"
 #include "RStatusLib/RPassiveStatusEffect.h"
 #include "REquipmentTypes.generated.h"
@@ -68,7 +68,7 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
       float MaxDurability = 100;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<FRResistanceStat> Resistence;
+      TArray<FRDamageResistance> Resistence;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;

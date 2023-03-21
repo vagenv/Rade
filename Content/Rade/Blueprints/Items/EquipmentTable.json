@@ -9,7 +9,8 @@
 		"Resistence": [
 			{
 				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Pierce.RDamageType_Pierce_C'",
-				"Value": 30
+				"Flat": 10,
+				"Percent": 1
 			}
 		],
 		"PassiveEffects": [
@@ -233,8 +234,9 @@
 		"MaxDurability": 100,
 		"Resistence": [
 			{
-				"DamageType": "/Script/CoreUObject.Class'/Script/RStatusLib.RDamageType_Fall'",
-				"Value": 20
+				"DamageType": "None",
+				"Flat": 0,
+				"Percent": 0
 			}
 		],
 		"PassiveEffects": [
@@ -314,7 +316,18 @@
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
-		"Resistence": [],
+		"Resistence": [
+			{
+				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Fire.RDamageType_Fire_C'",
+				"Flat": 0,
+				"Percent": -20
+			},
+			{
+				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Light.RDamageType_Light_C'",
+				"Flat": 0,
+				"Percent": -20
+			}
+		],
 		"PassiveEffects": [
 			{
 				"Scale": "FLAT",

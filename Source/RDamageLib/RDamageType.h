@@ -10,12 +10,46 @@ struct FDamageEvent;
 class AController;
 class AActor;
 
+
+// ============================================================================
+//                   Resistance
+// ============================================================================
+
+USTRUCT(BlueprintType)
+struct RDAMAGELIB_API FRDamageResistance
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TSubclassOf<URDamageType> DamageType;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      float Flat = 0;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      float Percent = 0;
+};
+
+USTRUCT(BlueprintType)
+struct RDAMAGELIB_API FRDamageResistanceWithTag
+{
+   GENERATED_BODY()
+
+   // Who or What is applying Resistance
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FString Tag;
+
+   // What value is added
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FRDamageResistance Value;
+};
+
 // ============================================================================
 //                   RDamageType
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RSTATUSLIB_API URDamageType : public UDamageType
+class RDAMAGELIB_API URDamageType : public UDamageType
 {
    GENERATED_BODY()
 public:
@@ -28,16 +62,16 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve ResistanceToDamage;
+   // UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+   //    FRuntimeFloatCurve ResistanceToDamage;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
-      virtual float CalcDamage (float Damage, float Resistance) const;
+      virtual float CalcDamage (float Damage, const FRDamageResistance& Resistance) const;
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Status")
-      void BP_AnyDamage (AActor* DamageVictim,
-                         float Resistance,
-                         float DamageAmount,
-                         AActor* DamageCauser) const;
+      void BP_AnyDamage (AActor*            DamageVictim,
+                         FRDamageResistance Resistance,
+                         float              DamageAmount,
+                         AActor*            DamageCauser) const;
 };
 

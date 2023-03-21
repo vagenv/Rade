@@ -15,6 +15,7 @@ public class REquipmentLib : ModuleRules
          "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
+         "RDamageLib",
          "RInventoryLib",
          "RStatusLib"
       });
