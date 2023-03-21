@@ -12,24 +12,20 @@ Fix Click/Hover zones overlap of button / border
 
 Blurred border corners?
 
-
 =======
 Network
 =======
 Stress test low bandwidth and lagging.
-
 
 =======
 Cleanup
 =======
 Remove blueprintevent / add everywhere for events
 
-
 =======
 Camera
 =======
 Turn to move direction automatically after n seconds of moving
-
 
 =======
 Other
@@ -38,15 +34,6 @@ Other
 - Table with Skill Level vs Stack vs Damage
 
 
-=================================================
-   DamageMgr
-=================================================
-
-DamageMgr to separate library
-Damage Resistance : Flat vs Percent
-Resistance stats
-
-Replace all eval with URUtilLibrary::GetRuntimeFloatCurveValue
 =================================================
    Experience Manager
 =================================================
