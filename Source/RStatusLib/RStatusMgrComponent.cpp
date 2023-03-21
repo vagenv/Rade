@@ -201,13 +201,12 @@ void URStatusMgrComponent::SetDead (bool Dead)
    URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
 
    // Broadcast only after value has been changed;
-   if (WasDead  && !Dead) {
+   if (WasDead && !Dead) {
       OnRevive.Broadcast ();
       if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
    }
-   if (!WasDead &&  Dead) {
+   if (!WasDead && Dead) {
       OnDeath.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportDeath (GetOwner ());
    }
 }
 
@@ -238,7 +237,6 @@ void URStatusMgrComponent::UseHealth (float Amount)
 {
    R_RETURN_IF_NOT_ADMIN;
    Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
-   if (!Health.Current) SetDead (true);
    SetHealth (Health);
 }
 
@@ -689,6 +687,11 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
 
       URDamageMgr *DamageMgr = URDamageMgr::GetInstance (this);
       if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
+
+      if (!Health.Current) {
+         SetDead (true);
+         if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
+      }
    }
 }
 

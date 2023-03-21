@@ -14,8 +14,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams (FRAnyDamageEvent,
                                                const URDamageType*, Type,
                                                AActor*,             Causer);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRDeathEvent,
-                                             AActor*, WhoDied);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRDeathEvent,
+                                                AActor*, Victim,
+                                                AActor*, Causer,
+                                                const URDamageType*, DamageType);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRReviveEvent,
                                              AActor*, WhoRevived);
@@ -46,7 +48,9 @@ public:
 
    // --- When someone died
    UFUNCTION()
-      void ReportDeath (AActor* WhoDied);
+      void ReportDeath (AActor* Victim,
+                        AActor* Causer,
+                        const URDamageType* DamageType);
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRDeathEvent OnDeath;
@@ -54,7 +58,7 @@ public:
 
    // --- When someone revived
    UFUNCTION()
-      void ReportRevive (AActor* WhoDied);
+      void ReportRevive (AActor* WhoRevived);
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRReviveEvent OnRevive;

@@ -39,10 +39,12 @@ void URDamageMgr::ReportDamage (AActor* DamageTarget,
    OnAnyRDamage.Broadcast (DamageTarget, Damage, DamageType, DamageCauser);
 }
 
-void URDamageMgr::ReportDeath (AActor* WhoDied)
+void URDamageMgr::ReportDeath (AActor* Victim,
+                               AActor* Causer,
+                               const URDamageType* DamageType)
 {
    R_RETURN_IF_NOT_ADMIN;
-   OnDeath.Broadcast (WhoDied);
+   OnDeath.Broadcast (Victim, Causer, DamageType);
 }
 
 void URDamageMgr::ReportRevive (AActor* WhoRevived)
