@@ -10,6 +10,8 @@ Option Menu / Status
 
 Fix Click/Hover zones overlap of button / border
 
+Blurred border corners?
+
 
 =======
 Network
@@ -35,31 +37,79 @@ Other
 - Magnetic pickup
 - Table with Skill Level vs Stack vs Damage
 
+
+=================================================
+   DamageMgr
+=================================================
+
+DamageMgr to separate library
+Damage Resistance : Flat vs Percent
+Resistance stats
+
+
 =================================================
    Experience Manager
 =================================================
 
+=======
+StatusMgr
+=======
+- AddBaseStat (Save in new list for tracking?)
 
+=======
+ExperienceMgr
+=======
+
+- Connect to RDamageMgr OnDeath to provide exp
+- Connect to RDamageMgr OnDamage to provide exp
+
+
+Exp calculation from UDataTable* ExpDataTable;
+
+USTRUCT(BlueprintType)
+struct FRDeathExp : public FTableRowBase
+{
+   TSubClassOf<Character> Target
+   int                    Experience;
+}
+
+USTRUCT(BlueprintType)
+struct FRTaskExp : public FTableRowBase
+{
+   TSubClassOf<Character> Target
+   int                    Experience;
+}
+
+Internal for quick search
 TMap<TSubClass<ACharacter>, int> ExpMap
-Connects to RDamageMgr OnDeath to provide exp
 
 
+=======
 LevelMgr
+=======
+Only a container
+
 - Exp points
 - Exp for each Level (FRuntimeFloatCurve? X:Level -> Y:Exp Required)
 
-OnExpGained
-
-OnLevelUp
+Events for Blueprint and UI
+- OnExpGained
+- OnLevelUp
 
 Level up reward:
 - Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase) [Fractional? +10 -> +2]
 - Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
 
+=======
 UI
-- Get current extra core and skill stats
-- SKill list, with + next to them
-- Core stats, with + next to them
+=======
+Core Stats
+- Get Current Base Stats
+- Get Available LevelUp Stats
+
+Skill stats
+- Skill list, with "+" next to them
+- Core stats, with "+" next to them
 
 
 =================================================
