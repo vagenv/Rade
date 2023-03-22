@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "RWorldExperienceMgr.generated.h"
 
+class URDamageType;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class REXPERIENCELIB_API URWorldExperienceMgr : public UActorComponent
@@ -14,6 +15,22 @@ public:
 
    URWorldExperienceMgr ();
 
+   virtual void BeginPlay () override;
+
+
+   //==========================================================================
+   //          Subscribe to DamageMgr
+   //==========================================================================
+protected:
+   UFUNCTION()
+      void OnDamage (AActor*             Victim,
+                     float               Amount,
+                     const URDamageType* Type,
+                     AActor*             Causer);
+   UFUNCTION()
+      void OnDeath (AActor*             Victim,
+                    AActor*             Causer,
+                    const URDamageType* Type);
 
    //==========================================================================
    //                  Get instance -> GameState component
