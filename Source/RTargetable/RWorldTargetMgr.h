@@ -77,7 +77,7 @@ public:
       static float GetAngle (FVector v1, FVector v2);
 
    //==========================================================================
-   //                  Get instamce -> GameState component
+   //                  Get instance -> GameState component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Target Mgr", CompactNodeTitle = "Target Mgr"))

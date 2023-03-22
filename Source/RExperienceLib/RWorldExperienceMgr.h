@@ -14,6 +14,12 @@ public:
 
    URWorldExperienceMgr ();
 
+
+   //==========================================================================
+   //                  Get instance -> GameState component
+   //==========================================================================
+public:
+
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Experience", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Target Mgr", CompactNodeTitle = "Target Mgr"))
       static URWorldExperienceMgr* GetInstance (UObject* WorldContextObject);
 };

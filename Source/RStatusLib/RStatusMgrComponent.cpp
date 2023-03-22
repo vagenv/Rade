@@ -658,6 +658,10 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
                                       AActor*            Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
+   if (!ensure (Target)) return;
+   if (!ensure (Type_))  return;
+   if (!ensure (Causer)) return;
+
    const URDamageType* Type = Cast<URDamageType>(Type_);
 
    if (!IsDead ()) {

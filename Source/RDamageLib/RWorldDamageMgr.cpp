@@ -30,31 +30,42 @@ URWorldDamageMgr::URWorldDamageMgr ()
 {
 }
 
-void URWorldDamageMgr::ReportDamage (AActor* DamageTarget,
-                                float Damage,
-                                const URDamageType* DamageType,
-                                AActor* DamageCauser)
+void URWorldDamageMgr::ReportDamage (AActor*             Victim,
+                                     float               Amount,
+                                     const URDamageType* Type,
+                                     AActor*             Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   OnAnyRDamage.Broadcast (DamageTarget, Damage, DamageType, DamageCauser);
+   if (!ensure (Victim)) return;
+   if (!ensure (Type))   return;
+   if (!ensure (Causer)) return;
+   OnAnyRDamage.Broadcast (Victim, Amount, Type, Causer);
 }
 
-void URWorldDamageMgr::ReportDeath (AActor* Victim,
-                               AActor* Causer,
-                               const URDamageType* DamageType)
+void URWorldDamageMgr::ReportDeath (AActor*             Victim,
+                                    AActor*             Causer,
+                                    const URDamageType* Type)
 {
    R_RETURN_IF_NOT_ADMIN;
-   OnDeath.Broadcast (Victim, Causer, DamageType);
+   if (!ensure (Victim)) return;
+   if (!ensure (Causer)) return;
+   if (!ensure (Type))   return;
+   OnDeath.Broadcast (Victim, Causer, Type);
 }
 
-void URWorldDamageMgr::ReportRevive (AActor* WhoRevived)
+void URWorldDamageMgr::ReportRevive (AActor* Victim)
 {
    R_RETURN_IF_NOT_ADMIN;
-   OnRevive.Broadcast (WhoRevived);
+   if (!ensure (Victim)) return;
+   OnRevive.Broadcast (Victim);
 }
 
-void URWorldDamageMgr::ReportStatusEffect (UActorComponent* Effect, AActor* Causer, AActor* Target)
+void URWorldDamageMgr::ReportStatusEffect (UActorComponent* Effect, AActor* Causer, AActor* Victim)
 {
    R_RETURN_IF_NOT_ADMIN;
-   OnStatusEffect.Broadcast (Effect, Causer, Target);
+   if (!ensure (Effect)) return;
+   if (!ensure (Causer)) return;
+   if (!ensure (Victim)) return;
+   OnStatusEffect.Broadcast (Effect, Causer, Victim);
 }
+

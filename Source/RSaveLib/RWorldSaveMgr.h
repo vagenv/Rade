@@ -55,7 +55,7 @@ public:
       bool Set (const FString &key, const TArray<uint8> &data);
 
    //==========================================================================
-   //                  Get instamce -> GameState component
+   //                  Get instance -> GameState component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Save", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Save Mgr", CompactNodeTitle = "Save Mgr"))
