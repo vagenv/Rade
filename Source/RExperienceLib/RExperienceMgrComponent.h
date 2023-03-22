@@ -3,12 +3,12 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "RExperienceComponent.generated.h"
+#include "RExperienceMgrComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRExperienceEvent);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class REXPERIENCELIB_API URExperienceComponent : public UActorComponent
+class REXPERIENCELIB_API URExperienceMgrComponent : public UActorComponent
 {
    GENERATED_BODY()
 public:

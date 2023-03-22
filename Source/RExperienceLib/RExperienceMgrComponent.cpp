@@ -1,18 +1,14 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RExperienceComponent.h"
-// #include "RTargetableMgr.h"
+#include "RExperienceMgrComponent.h"
 #include "RUtilLib/RLog.h"
 
-void URExperienceComponent::BeginPlay ()
+void URExperienceMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   // if (URTargetableMgr *Mgr = URTargetableMgr::GetInstance (this)) {
-   //    Mgr->AddTarget (this);
-   // }
 }
 
-void URExperienceComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
+void URExperienceMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
 }

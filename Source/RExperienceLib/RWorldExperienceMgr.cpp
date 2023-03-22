@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RWorldExperienceMgr.h"
+#include "RExperienceMgrComponent.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
