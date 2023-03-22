@@ -15,5 +15,18 @@ public:
 
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+
+protected:
+   UPROPERTY()
+      int64 ExperiencePoints = 0;
+
+public:
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual void AddExperiencePoints (float ExpPoint);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      virtual int64 GetExperiencePoints () const;
+
 };
 

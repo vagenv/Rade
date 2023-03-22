@@ -37,13 +37,25 @@ void URWorldExperienceMgr::BeginPlay ()
    Super::BeginPlay ();
 
    if (R_IS_NET_ADMIN) {
+      // --- Subscribe to Damage and Death Events
       if (URWorldDamageMgr *DamageMgr = URUtil::GetComponent<URWorldDamageMgr> (GetOwner ())) {
          DamageMgr->OnAnyRDamage.AddDynamic (this, &URWorldExperienceMgr::OnDamage);
          DamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
       }
+
+      // --- Parse Table and create Map for fast search
+      if (EnemyExpTable) {
+         FString ContextString;
+         TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
+         for (const FName& ItRowName : RowNames) {
+            FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
+            if (ItRow && ItRow->Target) {
+               MapEnemyExp.Add (ItRow->Target, *ItRow);
+            }
+         }
+      }
    }
 }
-
 
 void URWorldExperienceMgr::OnDamage (AActor*             Victim,
                                      float               Amount,
@@ -54,6 +66,12 @@ void URWorldExperienceMgr::OnDamage (AActor*             Victim,
    if (!ensure (Victim)) return;
    if (!ensure (Type))   return;
    if (!ensure (Causer)) return;
+
+   URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
+   if (!ExpMgr) return;
+
+   if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
+   ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDamage * Amount);
 }
 
 void URWorldExperienceMgr::OnDeath (AActor* Victim,
@@ -64,5 +82,11 @@ void URWorldExperienceMgr::OnDeath (AActor* Victim,
    if (!ensure (Victim)) return;
    if (!ensure (Causer)) return;
    if (!ensure (Type))   return;
+
+   URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
+   if (!ExpMgr) return;
+
+   if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
+   ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDeath);
 }
 

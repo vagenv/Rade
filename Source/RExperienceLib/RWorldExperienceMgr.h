@@ -45,6 +45,10 @@ public:
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RExperienceLib.REnemyExp"))
       UDataTable* EnemyExpTable = nullptr;
 
+private:
+   UPROPERTY ()
+      TMap<UClass *, FREnemyExp> MapEnemyExp;
+
    //==========================================================================
    //          Subscribe to DamageMgr
    //==========================================================================
