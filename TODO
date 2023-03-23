@@ -32,64 +32,43 @@ Other
 =======
 - Magnetic pickup
 - Table with Skill Level vs Stack vs Damage
-
+- Table for ability damage
+- DDC
 
 =================================================
    Experience Manager
 =================================================
 
 =======
-StatusMgr
+WorldStatusMgr
 =======
-- AddBaseStat (Save in new list for tracking?)
-
-=======
-ExperienceMgr
-=======
-
-- Connect to RDamageMgr OnDeath to provide exp
-- Connect to RDamageMgr OnDamage to provide exp
-
-
-Exp calculation from UDataTable* ExpDataTable;
-
-USTRUCT(BlueprintType)
-struct FRDeathExp : public FTableRowBase
-{
-   TSubClassOf<Character> Target
-   int                    Experience;
-}
-
-USTRUCT(BlueprintType)
-struct FRTaskExp : public FTableRowBase
-{
-   TSubClassOf<Character> Target
-   int                    Experience;
-}
-
-Internal for quick search
-TMap<TSubClass<ACharacter>, int> ExpMap
-
-
-=======
-LevelMgr
-=======
-Only a container
-
-- Exp points
-- Exp for each Level (FRuntimeFloatCurve? X:Level -> Y:Exp Required)
-
-Events for Blueprint and UI
-- OnExpGained
-- OnLevelUp
+For All balancing.
 
 Level up reward:
 - Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase) [Fractional? +10 -> +2]
 - Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
 
+Move all FRuntimeFloatCurve from StatusMgr
+
+
+=======
+StatusMgr
+=======
+- AddBaseStat (Save in new list for tracking?)
+
+
+=======
+ExperienceMgr
+=======
+Network replication
+
+
 =======
 UI
 =======
+Exp Bar
+Current Level
+
 Core Stats
 - Get Current Base Stats
 - Get Available LevelUp Stats
@@ -630,6 +609,18 @@ Dedicated server instance
 
 
 =================================================
+   Procedural Content
+=================================================
+PCG
+Level
+Terrain
+Buildings
+Trees (With animation of wind)
+Grass (With animation of wind)
+Dyanmic Time of Day
+
+
+=================================================
    Nanite and lumen
 =================================================
 - Load high detail models on demand
@@ -685,6 +676,14 @@ Battles
 - Change terrain?
 - Hire more NPCs and upgrade them.
 - Select team
+
+
+=======
+Events
+=======
+
+Random Events to protect Village from attacks.
+Another Player can be summoned for help
 
 =======
 Random Content

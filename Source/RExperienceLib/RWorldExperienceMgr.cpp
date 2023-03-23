@@ -30,15 +30,6 @@ URWorldExperienceMgr* URWorldExperienceMgr::GetInstance (UObject* WorldContextOb
 
 URWorldExperienceMgr::URWorldExperienceMgr ()
 {
-   // --- For presentation
-   // FRichCurve* LevelToExperienceCurveData = LevelToExperienceCurve.GetRichCurve ();
-   // LevelToExperienceCurveData->AddKey (0, 0);
-   // for (int i = 1; i < 100; i++) {
-   //    LevelToExperienceCurveData->AddKey (i, LevelToExperience (i));
-   // }
-   // // LevelToExperienceCurveData->AddKey (  20, LevelToExperience (  20));
-   // // LevelToExperienceCurveData->AddKey ( 100, LevelToExperience ( 100));
-   // // LevelToExperienceCurveData->AddKey (1000, LevelToExperience (1000));
 }
 
 int URWorldExperienceMgr::ExperienceToLevel (int64 ExpPoints) const
