@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RStatusMgrComponent.h"
+#include "RWorldStatusMgr.h"
 #include "RActiveStatusEffect.h"
 
 #include "RUtilLib/RUtil.h"
@@ -25,93 +26,6 @@ URStatusMgrComponent::URStatusMgrComponent ()
 
    // Default
    CoreStats_Base = FRCoreStats (10);
-
-   //==========================================================================
-   //                 Status Value Curves
-   //==========================================================================
-
-   // Health MAX
-   FRichCurve* StrToHealthMaxData = StrToHealthMax.GetRichCurve ();
-   StrToHealthMaxData->AddKey (   0,  200); // Minimum
-   StrToHealthMaxData->AddKey (   1,  210);
-   StrToHealthMaxData->AddKey (  10,  300);
-   StrToHealthMaxData->AddKey ( 100, 1000);
-   StrToHealthMaxData->AddKey (1000, 5000);
-   StrToHealthMaxData->AddKey (5000, 9999);
-
-   // Health Regen
-   FRichCurve* StrToHealthRegenData = StrToHealthRegen.GetRichCurve ();
-   StrToHealthRegenData->AddKey (   0,   1  ); // Minimum
-   StrToHealthRegenData->AddKey (   1,   1.1);
-   StrToHealthRegenData->AddKey (  10,   2  );
-   StrToHealthRegenData->AddKey ( 100,  10  );
-   StrToHealthRegenData->AddKey (1000,  50  );
-   StrToHealthRegenData->AddKey (5000, 100  );
-
-   // Stamina MAX
-   FRichCurve* AgiToStaminaMaxData = AgiToStaminaMax.GetRichCurve ();
-   AgiToStaminaMaxData->AddKey (   0, 100); // Minimum
-   AgiToStaminaMaxData->AddKey (   1, 102);
-   AgiToStaminaMaxData->AddKey (  10, 120);
-   AgiToStaminaMaxData->AddKey ( 100, 200);
-   AgiToStaminaMaxData->AddKey (1000, 400);
-   AgiToStaminaMaxData->AddKey (5000, 500);
-
-   // Stamina Regen
-   FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurve ();
-   AgiToStaminaRegenData->AddKey (   0,   10  ); // Minimum
-   AgiToStaminaRegenData->AddKey (   1,   10.2);
-   AgiToStaminaRegenData->AddKey (  10,   12  );
-   AgiToStaminaRegenData->AddKey ( 100,   20  );
-   AgiToStaminaRegenData->AddKey (1000,   40  );
-   AgiToStaminaRegenData->AddKey (5000,   50  );
-
-   // Mana MAX
-   FRichCurve* IntToManaMaxData = IntToManaMax.GetRichCurve ();
-   IntToManaMaxData->AddKey (   0,   50); // Minimum
-   IntToManaMaxData->AddKey (   1,   60);
-   IntToManaMaxData->AddKey (  10,  150);
-   IntToManaMaxData->AddKey ( 100, 1000);
-   IntToManaMaxData->AddKey (1000, 5000);
-   IntToManaMaxData->AddKey (5000, 9999);
-
-   // Mana Regen
-   FRichCurve* IntToManaRegenData = IntToManaRegen.GetRichCurve ();
-   IntToManaRegenData->AddKey (   0,   0  ); // Minimum
-   IntToManaRegenData->AddKey (   1,   0.1);
-   IntToManaRegenData->AddKey (  10,   1  );
-   IntToManaRegenData->AddKey ( 100,  10  );
-   IntToManaRegenData->AddKey (1000,  50  );
-   IntToManaRegenData->AddKey (5000, 100  );
-
-   //==========================================================================
-   //                 Extra Stat Curves
-   //==========================================================================
-
-   // Critical
-   FRichCurve* AgiToCriticalData = AgiToCritical.GetRichCurve ();
-   AgiToCriticalData->AddKey (   0,   0); // Minimum
-   AgiToCriticalData->AddKey (   1,   1);
-   AgiToCriticalData->AddKey (  10,   5);
-   AgiToCriticalData->AddKey ( 100,  20);
-   AgiToCriticalData->AddKey (1000,  30);
-   AgiToCriticalData->AddKey (5000,  40);
-
-   // Evasion
-   FRichCurve* AgiToEvasionData = AgiToEvasion.GetRichCurve ();
-   AgiToEvasionData->AddKey (   0,    0); // Minimum
-   AgiToEvasionData->AddKey (   1,    1);
-   AgiToEvasionData->AddKey (  10,    5);
-   AgiToEvasionData->AddKey ( 100,   20);
-   AgiToEvasionData->AddKey (1000,   35);
-   AgiToEvasionData->AddKey (5000,   40);
-
-   // Attack Speed.
-   // Per weapon curve for AttackSpeed -> AttacksPerSecond?
-   // Min/Max for each weapon.
-   FRichCurve* AgiToAttackSpeedData = AgiToAttackSpeed.GetRichCurve ();
-   AgiToAttackSpeedData->AddKey (0,       0); // Minimum
-   AgiToAttackSpeedData->AddKey (5000, 5000); // Maximum
 }
 
 // Replication
@@ -142,12 +56,14 @@ void URStatusMgrComponent::OnRep_Stats ()
 void URStatusMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   const UWorld *world = GetWorld ();
-   if (!ensure (world)) return;
 
+   // Character Movement
    if (ACharacter *Character = Cast<ACharacter> (GetOwner ())) {
       MovementComponent = Character->GetCharacterMovement ();
    }
+
+   // Balancing Mgr
+   WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
 
    if (R_IS_NET_ADMIN) {
       bDead = false;
@@ -327,11 +243,12 @@ void URStatusMgrComponent::RecalcCoreStats ()
 void URStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
+   if (!ensure (WorldStatusMgr)) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   float EvasionTotal     = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasion,     StatsTotal.AGI);
-   float CriticalTotal    = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCritical,    StatsTotal.AGI);
-   float AttackSpeedTotal = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeed, StatsTotal.AGI);
+   float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
+   float CriticalTotal    = WorldStatusMgr->GetAgiToCritical    (StatsTotal.AGI);
+   float AttackSpeedTotal = WorldStatusMgr->GetAgiToAttackSpeed (StatsTotal.AGI);
    float MoveSpeedTotal   = 0;
 
    // Flat
@@ -354,11 +271,11 @@ void URStatusMgrComponent::RecalcSubStats ()
    }
 
    FRCoreStats StatsCurrent = GetCoreStats_Base ();
-   SubStats_Base.Evasion      = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasion,     StatsCurrent.AGI);
+   SubStats_Base.Evasion      = WorldStatusMgr->GetAgiToEvasion     (StatsCurrent.AGI);
    SubStats_Added.Evasion     = EvasionTotal - SubStats_Base.Evasion;
-   SubStats_Base.Critical     = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCritical,    StatsCurrent.AGI);
+   SubStats_Base.Critical     = WorldStatusMgr->GetAgiToCritical    (StatsCurrent.AGI);
    SubStats_Added.Critical    = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.AttackSpeed  = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeed, StatsCurrent.AGI);
+   SubStats_Base.AttackSpeed  = WorldStatusMgr->GetAgiToAttackSpeed (StatsCurrent.AGI);
    SubStats_Added.AttackSpeed = CriticalTotal - SubStats_Base.Critical;
    SubStats_Base.MoveSpeed    = MoveSpeedTotal;
    SubStats_Added.MoveSpeed   = 0;
@@ -367,28 +284,16 @@ void URStatusMgrComponent::RecalcSubStats ()
 void URStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   const FRichCurve* StrToHealthMaxData    = StrToHealthMax.GetRichCurveConst ();
-   const FRichCurve* StrToHealthRegenData  = StrToHealthRegen.GetRichCurveConst ();
-   const FRichCurve* AgiToStaminaMaxData   = AgiToStaminaMax.GetRichCurveConst ();
-   const FRichCurve* AgiToStaminaRegenData = AgiToStaminaRegen.GetRichCurveConst ();
-   const FRichCurve* IntToManaMaxData      = IntToManaMax.GetRichCurveConst ();
-   const FRichCurve* IntToManaRegenData    = IntToManaRegen.GetRichCurveConst ();
-
-   if (!ensure (StrToHealthMaxData))    return;
-   if (!ensure (StrToHealthRegenData))  return;
-   if (!ensure (AgiToStaminaMaxData))   return;
-   if (!ensure (AgiToStaminaRegenData)) return;
-   if (!ensure (IntToManaMaxData))      return;
-   if (!ensure (IntToManaRegenData))    return;
+   if (!ensure (WorldStatusMgr)) return;
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();
-   Health.Max     = URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthMax,    StatsTotal.STR);
-   Health.Regen   = URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthRegen,  StatsTotal.STR);
-   Stamina.Max    = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaMax,   StatsTotal.AGI);
-   Stamina.Regen  = URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaRegen, StatsTotal.AGI);
-   Mana.Max       = URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaMax,      StatsTotal.INT);
-   Mana.Regen     = URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaRegen,    StatsTotal.INT);
+   Health.Max     = WorldStatusMgr->GetStrToHealthMax    (StatsTotal.STR);
+   Health.Regen   = WorldStatusMgr->GetStrToHealthRegen  (StatsTotal.STR);
+   Stamina.Max    = WorldStatusMgr->GetAgiToStaminaMax   (StatsTotal.AGI);
+   Stamina.Regen  = WorldStatusMgr->GetAgiToStaminaRegen (StatsTotal.AGI);
+   Mana.Max       = WorldStatusMgr->GetIntToManaMax      (StatsTotal.INT);
+   Mana.Regen     = WorldStatusMgr->GetIntToManaRegen    (StatsTotal.INT);
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {

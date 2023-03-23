@@ -10,6 +10,7 @@
 class URDamageType;
 class URActiveStatusEffect;
 class URInventoryComponent;
+class URWorldStatusMgr;
 class UCharacterMovementComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
@@ -33,9 +34,16 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-   // Owners Movement Component. For stamina Regen.
+
 private:
-      UCharacterMovementComponent *MovementComponent = nullptr;
+
+   // Owners Movement Component. For stamina Regen.
+   UPROPERTY()
+      UCharacterMovementComponent* MovementComponent = nullptr;
+
+   // For stat curve calculations
+   UPROPERTY()
+      URWorldStatusMgr* WorldStatusMgr = nullptr;
 
    //==========================================================================
    //                 Dead
@@ -191,40 +199,6 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool RollEvasion () const;
 
-   //==========================================================================
-   //                 Status Value Curves
-   //==========================================================================
-protected:
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve StrToHealthMax;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve StrToHealthRegen;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve AgiToStaminaMax;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve AgiToStaminaRegen;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve IntToManaMax;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve IntToManaRegen;
-
-   //==========================================================================
-   //                 Extra Stat Curves
-   //==========================================================================
-protected:
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve AgiToCritical;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve AgiToEvasion;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve AgiToAttackSpeed;
 
    //==========================================================================
    //                 Passive Effect Funcs
@@ -293,6 +267,7 @@ public:
       FRTakeDamageEvent OnEvadeRDamage;
 
 private:
+
    // Connected to AActor::OnTakeAnyDamage event
    UFUNCTION()
       void AnyDamage (AActor*            Target,

@@ -22,6 +22,71 @@ public:
    URWorldStatusMgr ();
    virtual void BeginPlay () override;
 
+
+   //==========================================================================
+   //                Balance Function
+   //==========================================================================
+
+   // --- STR
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetStrToHealthMax    (float STR) const;
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetStrToHealthRegen  (float STR) const;
+
+   // --- AGI
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetAgiToStaminaMax   (float AGI) const;
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetAgiToStaminaRegen (float AGI) const;
+
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetAgiToEvasion      (float AGI) const;
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetAgiToCritical     (float AGI) const;
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetAgiToAttackSpeed  (float AGI) const;
+
+   // --- INT
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetIntToManaMax      (float INT) const;
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetIntToManaRegen    (float INT) const;
+
+   //==========================================================================
+   //                 Status Value Curves
+   //==========================================================================
+protected:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve StrToHealthMaxCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve StrToHealthRegenCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToStaminaMaxCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToStaminaRegenCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve IntToManaMaxCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve IntToManaRegenCurve;
+
+   //==========================================================================
+   //                 Extra Stat Curves
+   //==========================================================================
+protected:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToCriticalCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToEvasionCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve AgiToAttackSpeedCurve;
+
    //==========================================================================
    //          Subscribe to DamageMgr
    //==========================================================================
