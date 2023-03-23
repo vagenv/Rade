@@ -22,10 +22,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRDeathEvent,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRReviveEvent,
                                              AActor*, WhoRevived);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
-                                                UActorComponent*,    Effect, // Cast to URActiveStatusEffect
-                                                AActor*,             Causer,
-                                                AActor*,             Victim);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RDAMAGELIB_API URWorldDamageMgr : public UActorComponent
@@ -62,16 +58,6 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Damage")
       FRReviveEvent OnRevive;
-
-
-   // --- When status Effect was applied
-   UFUNCTION()
-      void ReportStatusEffect (UActorComponent* Effect,
-                               AActor*          Causer,
-                               AActor*          Victim);
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Damage")
-      FRStatusEffectEvent OnStatusEffect;
 
    //==========================================================================
    //                  Get instamce -> GameState component

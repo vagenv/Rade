@@ -60,12 +60,3 @@ void URWorldDamageMgr::ReportRevive (AActor* Victim)
    OnRevive.Broadcast (Victim);
 }
 
-void URWorldDamageMgr::ReportStatusEffect (UActorComponent* Effect, AActor* Causer, AActor* Victim)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (Effect)) return;
-   if (!ensure (Causer)) return;
-   if (!ensure (Victim)) return;
-   OnStatusEffect.Broadcast (Effect, Causer, Victim);
-}
-

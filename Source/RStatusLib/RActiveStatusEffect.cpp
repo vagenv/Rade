@@ -2,7 +2,7 @@
 
 #include "RActiveStatusEffect.h"
 #include "RStatusMgrComponent.h"
-#include "RDamageLib/RWorldDamageMgr.h"
+#include "RWorldStatusMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
@@ -122,8 +122,8 @@ void URActiveStatusEffect::Apply ()
          StatusMgr->SetPassiveEffects (UIName, CopyPassiveEffects);
       }
 
-      URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
-      if (DamageMgr) DamageMgr->ReportStatusEffect (this, Causer, GetOwner ());
+      if (URWorldStatusMgr *WorldStatusMgr = URWorldStatusMgr::GetInstance (this))
+         WorldStatusMgr->ReportStatusEffect (this, Causer, GetOwner ());
    }
 
    if (Duration > 0) {
