@@ -4,6 +4,26 @@
 #include "RWorldExperienceMgr.h"
 #include "RUtilLib/RLog.h"
 
+#include "Net/UnrealNetwork.h"
+
+URExperienceMgrComponent::URExperienceMgrComponent ()
+{
+   SetIsReplicatedByDefault (true);
+}
+
+// Replication
+void URExperienceMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+   Super::GetLifetimeReplicatedProps (OutLifetimeProps);
+   DOREPLIFETIME (URExperienceMgrComponent, ExperiencePoints);
+}
+
+void URExperienceMgrComponent::OnRep_Exp ()
+{
+   OnExperienceChange.Broadcast ();
+   CheckLevel ();
+}
+
 void URExperienceMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
@@ -25,7 +45,6 @@ void URExperienceMgrComponent::AddExperiencePoints (int64 ExpPoint)
 
    ExperiencePoints += ExpPoint;
    OnExperienceChange.Broadcast ();
-
    CheckLevel ();
 }
 

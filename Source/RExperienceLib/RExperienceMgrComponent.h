@@ -15,6 +15,8 @@ class REXPERIENCELIB_API URExperienceMgrComponent : public UActorComponent
    GENERATED_BODY()
 public:
 
+   URExperienceMgrComponent ();
+   virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
@@ -22,7 +24,11 @@ public:
    //          Experience
    //==========================================================================
 protected:
-   UPROPERTY()
+   // Network call when Item list has been updated
+   UFUNCTION()
+      virtual void OnRep_Exp ();
+
+   UPROPERTY(ReplicatedUsing = "OnRep_Exp", Replicated)
       int64 ExperiencePoints = 0;
 public:
 
@@ -39,7 +45,7 @@ protected:
    UPROPERTY()
       int CurrentLevel = 0;
 public:
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Experience")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Experience")
       virtual void CheckLevel ();
 
    UFUNCTION(BlueprintPure, Category = "Rade|Experience")
