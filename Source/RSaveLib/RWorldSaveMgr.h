@@ -58,7 +58,12 @@ public:
    //                  Get instance -> GameState component
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Save", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Save Mgr", CompactNodeTitle = "Save Mgr"))
+   UFUNCTION(BlueprintCallable, BlueprintPure,
+             Category = "Rade|Save",
+             meta = (HidePin          = "WorldContextObject",
+                     DefaultToSelf    = "WorldContextObject",
+                     DisplayName      = "Get Save Mgr",
+                     CompactNodeTitle = "Save Mgr"))
       static URWorldSaveMgr* GetInstance (UObject* WorldContextObject);
 
    //==========================================================================

@@ -63,7 +63,12 @@ public:
    //                  Get instamce -> GameState component
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Damage", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Damage Mgr", CompactNodeTitle = "Damage Mgr"))
+   UFUNCTION(BlueprintCallable, BlueprintPure,
+             Category = "Rade|Damage",
+             meta = (HidePin          = "WorldContextObject",
+                     DefaultToSelf    = "WorldContextObject",
+                     DisplayName      = "Get Damage Mgr",
+                     CompactNodeTitle = "Damage Mgr"))
       static URWorldDamageMgr* GetInstance (UObject* WorldContextObject);
 };
 

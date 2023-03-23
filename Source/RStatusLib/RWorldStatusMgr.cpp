@@ -128,7 +128,7 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
    if (!ensure (Effect)) return;
    // if (!ensure (Causer)) return;
    if (!ensure (Victim)) return;
-   OnStatusEffect.Broadcast (Effect, Causer, Victim);
+   OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
 }
 
 //=============================================================================

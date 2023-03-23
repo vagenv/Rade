@@ -98,14 +98,19 @@ public:
                                AActor*               Causer,
                                AActor*               Victim);
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Damage")
-      FRStatusEffectEvent OnStatusEffect;
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusEffectEvent OnStatusEffectApplied;
 
    //==========================================================================
    //           Get instance -> GameState component
    //==========================================================================
 public:
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Target Mgr", CompactNodeTitle = "Target Mgr"))
+   UFUNCTION(BlueprintCallable, BlueprintPure,
+             Category = "Rade|Status",
+             meta = (HidePin          = "WorldContextObject",
+                     DefaultToSelf    = "WorldContextObject",
+                     DisplayName      = "Get Status Mgr",
+                     CompactNodeTitle = "Status Mgr"))
       static URWorldStatusMgr* GetInstance (UObject* WorldContextObject);
 };
 
