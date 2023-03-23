@@ -94,6 +94,9 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       FString Type;
 
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      TArray<FString> CastType;
+
    // --- Base data every item should have
 
    // Rarity

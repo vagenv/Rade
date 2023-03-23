@@ -1,7 +1,10 @@
 [
 	{
 		"Name": "Stick",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "F",
 		"Description":
 		{
@@ -19,7 +22,10 @@
 	},
 	{
 		"Name": "Wood",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -37,7 +43,10 @@
 	},
 	{
 		"Name": "AnimalHide",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -55,7 +64,10 @@
 	},
 	{
 		"Name": "Leather",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -73,7 +85,10 @@
 	},
 	{
 		"Name": "Bone",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -91,7 +106,10 @@
 	},
 	{
 		"Name": "RawIron",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -109,7 +127,10 @@
 	},
 	{
 		"Name": "IronIngot",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "D",
 		"Description":
 		{
@@ -127,7 +148,10 @@
 	},
 	{
 		"Name": "SteelIngot",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -145,7 +169,10 @@
 	},
 	{
 		"Name": "RawCopper",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -163,7 +190,10 @@
 	},
 	{
 		"Name": "CopperIngot",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "D",
 		"Description":
 		{
@@ -181,7 +211,10 @@
 	},
 	{
 		"Name": "RawSilver",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -199,7 +232,10 @@
 	},
 	{
 		"Name": "SilverIngot",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "B",
 		"Description":
 		{
@@ -217,7 +253,10 @@
 	},
 	{
 		"Name": "RawGold",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "B",
 		"Description":
 		{
@@ -235,7 +274,10 @@
 	},
 	{
 		"Name": "GoldIngot",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "A",
 		"Description":
 		{
@@ -253,7 +295,10 @@
 	},
 	{
 		"Name": "ManaStone_Small",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -271,7 +316,10 @@
 	},
 	{
 		"Name": "ManaStone_Medium",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "B",
 		"Description":
 		{
@@ -289,7 +337,10 @@
 	},
 	{
 		"Name": "ManaStone_Big",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "A",
 		"Description":
 		{
@@ -307,7 +358,10 @@
 	},
 	{
 		"Name": "Sand",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -325,7 +379,10 @@
 	},
 	{
 		"Name": "Glass",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "C",
 		"Description":
 		{

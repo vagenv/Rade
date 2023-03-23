@@ -6,7 +6,12 @@
 		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C'",
 		"DestroyOnAction": true,
-		"Type": "struct FRConsumableItemData",
+		"Type": "FRConsumableItemData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FRConsumableItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -29,7 +34,12 @@
 		],
 		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C'",
 		"DestroyOnAction": true,
-		"Type": "struct FRConsumableItemData",
+		"Type": "FRConsumableItemData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FRConsumableItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
