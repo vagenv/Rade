@@ -29,32 +29,44 @@ URWorldStatusMgr* URWorldStatusMgr::GetInstance (UObject* WorldContextObject)
 URWorldStatusMgr::URWorldStatusMgr ()
 {
    //==========================================================================
-   //                 Stat growth
+   //                   Stat growth
    //==========================================================================
 
-   FRichCurve* LvlStrGainCurveData = LvlStrGainCurve.GetRichCurve ();
-   LvlStrGainCurveData->AddKey (  0, 3.0);
-   LvlStrGainCurveData->AddKey ( 10, 2.8);
-   LvlStrGainCurveData->AddKey ( 20, 2.5);
-   LvlStrGainCurveData->AddKey ( 50, 2.0);
-   LvlStrGainCurveData->AddKey (100, 1.5);
-   LvlStrGainCurveData->AddKey (200, 1.0);
+   FRichCurve* LevelUpStrGainCurveData = LevelUpStrGainCurve.GetRichCurve ();
+   LevelUpStrGainCurveData->AddKey (  0, 3.0);
+   LevelUpStrGainCurveData->AddKey ( 10, 2.8);
+   LevelUpStrGainCurveData->AddKey ( 20, 2.5);
+   LevelUpStrGainCurveData->AddKey ( 50, 2.0);
+   LevelUpStrGainCurveData->AddKey (100, 1.5);
+   LevelUpStrGainCurveData->AddKey (200, 1.0);
 
-   FRichCurve* LvlAgiGainCurveData = LvlAgiGainCurve.GetRichCurve ();
-   LvlAgiGainCurveData->AddKey (  0, 3.0);
-   LvlAgiGainCurveData->AddKey ( 10, 2.8);
-   LvlAgiGainCurveData->AddKey ( 20, 2.5);
-   LvlAgiGainCurveData->AddKey ( 50, 2.0);
-   LvlAgiGainCurveData->AddKey (100, 1.5);
-   LvlAgiGainCurveData->AddKey (200, 1.0);
+   FRichCurve* LevelUpAgiGainCurveData = LevelUpAgiGainCurve.GetRichCurve ();
+   LevelUpAgiGainCurveData->AddKey (  0, 3.0);
+   LevelUpAgiGainCurveData->AddKey ( 10, 2.8);
+   LevelUpAgiGainCurveData->AddKey ( 20, 2.5);
+   LevelUpAgiGainCurveData->AddKey ( 50, 2.0);
+   LevelUpAgiGainCurveData->AddKey (100, 1.5);
+   LevelUpAgiGainCurveData->AddKey (200, 1.0);
 
-   FRichCurve* LvlIntGainCurveData = LvlIntGainCurve.GetRichCurve ();
-   LvlIntGainCurveData->AddKey (  0, 3.0);
-   LvlIntGainCurveData->AddKey ( 10, 2.8);
-   LvlIntGainCurveData->AddKey ( 20, 2.5);
-   LvlIntGainCurveData->AddKey ( 50, 2.0);
-   LvlIntGainCurveData->AddKey (100, 1.5);
-   LvlIntGainCurveData->AddKey (200, 1.0);
+   FRichCurve* LevelUpIntGainCurveData = LevelUpIntGainCurve.GetRichCurve ();
+   LevelUpIntGainCurveData->AddKey (  0, 3.0);
+   LevelUpIntGainCurveData->AddKey ( 10, 2.8);
+   LevelUpIntGainCurveData->AddKey ( 20, 2.5);
+   LevelUpIntGainCurveData->AddKey ( 50, 2.0);
+   LevelUpIntGainCurveData->AddKey (100, 1.5);
+   LevelUpIntGainCurveData->AddKey (200, 1.0);
+
+   //==========================================================================
+   //                 Extra Stat
+   //==========================================================================
+
+   FRichCurve* LevelUpExtraStatGainCurveData = LevelUpExtraStatGainCurve.GetRichCurve ();
+   LevelUpExtraStatGainCurveData->AddKey (  0, 3.0);
+   LevelUpExtraStatGainCurveData->AddKey ( 10, 2.8);
+   LevelUpExtraStatGainCurveData->AddKey ( 20, 2.5);
+   LevelUpExtraStatGainCurveData->AddKey ( 50, 2.0);
+   LevelUpExtraStatGainCurveData->AddKey (100, 1.5);
+   LevelUpExtraStatGainCurveData->AddKey (200, 1.0);
 
    //==========================================================================
    //                 Status Value Curves
@@ -167,13 +179,17 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
 //                Level Function
 //=============================================================================
 
+float URWorldStatusMgr::GetLevelUpExtraStatGain (int CurrentLevel) const
+{
+   return URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpExtraStatGainCurve, CurrentLevel);
+}
 
 FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
 {
    FRCoreStats DeltaStat;
-   DeltaStat.STR = URUtilLibrary::GetRuntimeFloatCurveValue (LvlStrGainCurve, CurrentLevel);
-   DeltaStat.AGI = URUtilLibrary::GetRuntimeFloatCurveValue (LvlAgiGainCurve, CurrentLevel);
-   DeltaStat.INT = URUtilLibrary::GetRuntimeFloatCurveValue (LvlIntGainCurve, CurrentLevel);
+   DeltaStat.STR = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel);
+   DeltaStat.AGI = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel);
+   DeltaStat.INT = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel);
    return DeltaStat;
 }
 

@@ -144,6 +144,9 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
       FRCoreStats CoreStats_Added;
 
+   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+      float CoreStats_Extra = 0;
+
    // --- Extra Stats
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
       FRSubStats SubStats_Base;

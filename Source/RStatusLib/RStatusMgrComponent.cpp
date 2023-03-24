@@ -149,12 +149,19 @@ void URStatusMgrComponent::OnLevelUp ()
    if (!ensure (WorldStatusMgr)) return;
    if (!ensure (ExperienceMgr))  return;
 
+   float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
+
+   if (ExtraStats) CoreStats_Extra += ExtraStats;
+
    FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
-   if (DeltaStats.Empty ()) return;
-   CoreStats_Base.STR += DeltaStats.STR;
-   CoreStats_Base.AGI += DeltaStats.AGI;
-   CoreStats_Base.INT += DeltaStats.INT;
-   RecalcStatus ();
+   if (!DeltaStats.Empty ()) {
+      CoreStats_Base.STR += DeltaStats.STR;
+      CoreStats_Base.AGI += DeltaStats.AGI;
+      CoreStats_Base.INT += DeltaStats.INT;
+   }
+
+   if (!DeltaStats.Empty () || ExtraStats)
+      RecalcStatus ();
 }
 
 //=============================================================================

@@ -23,11 +23,11 @@ public:
    URWorldStatusMgr ();
    virtual void BeginPlay () override;
 
-public:
+
    //==========================================================================
    //                Get stat growth functions
    //==========================================================================
-
+public:
    // Gets delta stats growth per level
    UFUNCTION (BlueprintPure, Category = "Rade|Status")
       FRCoreStats GetLevelUpStatGain (int CurrentLevel) const;
@@ -37,13 +37,27 @@ public:
    //==========================================================================
 protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve LvlStrGainCurve;
+      FRuntimeFloatCurve LevelUpStrGainCurve;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve LvlAgiGainCurve;
+      FRuntimeFloatCurve LevelUpAgiGainCurve;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve LvlIntGainCurve;
+      FRuntimeFloatCurve LevelUpIntGainCurve;
+
+   //==========================================================================
+   //                Extra stat functions
+   //==========================================================================
+public:
+   // Gets delta stats growth per level
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      float GetLevelUpExtraStatGain (int CurrentLevel) const;
+   //==========================================================================
+   //                Extram stat Curves
+   //==========================================================================
+protected:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve LevelUpExtraStatGainCurve;
 
    //==========================================================================
    //                Get stat effect functions
