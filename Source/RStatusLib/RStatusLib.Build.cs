@@ -16,6 +16,7 @@ public class RStatusLib : ModuleRules
          "RUtilLib",
          "RSaveLib",
          "RDamageLib",
+         "RExperienceLib",
       });
    }
 }

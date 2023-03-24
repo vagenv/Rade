@@ -9,6 +9,7 @@
 #include "RUtilLib/RCheck.h"
 #include "RDamageLib/RDamageType.h"
 #include "RDamageLib/RWorldDamageMgr.h"
+#include "RExperienceLib/RExperienceMgrComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -65,6 +66,9 @@ void URStatusMgrComponent::BeginPlay ()
    // Balancing Mgr
    WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
 
+   // Exp Mgr
+   ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
+
    if (R_IS_NET_ADMIN) {
       bDead = false;
 
@@ -84,6 +88,10 @@ void URStatusMgrComponent::BeginPlay ()
                                                      &URStatusMgrComponent::RecalcStatus,
                                                      1,
                                                      false);
+
+      if (ExperienceMgr) {
+         ExperienceMgr->OnLevelUp.AddDynamic (this, &URStatusMgrComponent::OnLevelUp);
+      }
    }
 }
 
@@ -129,6 +137,24 @@ void URStatusMgrComponent::SetDead (bool Dead)
 bool URStatusMgrComponent::IsDead () const
 {
    return bDead;
+}
+
+//=============================================================================
+//                 Level up
+//=============================================================================
+
+void URStatusMgrComponent::OnLevelUp ()
+{
+   R_RETURN_IF_NOT_ADMIN;
+   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (ExperienceMgr))  return;
+
+   FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
+   if (DeltaStats.Empty ()) return;
+   CoreStats_Base.STR += DeltaStats.STR;
+   CoreStats_Base.AGI += DeltaStats.AGI;
+   CoreStats_Base.INT += DeltaStats.INT;
+   RecalcStatus ();
 }
 
 //=============================================================================

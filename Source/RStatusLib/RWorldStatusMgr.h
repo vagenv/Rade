@@ -4,6 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
+#include "RStatusTypes.h"
 #include "RWorldStatusMgr.generated.h"
 
 class URActiveStatusEffect;
@@ -22,11 +23,32 @@ public:
    URWorldStatusMgr ();
    virtual void BeginPlay () override;
 
+public:
+   //==========================================================================
+   //                Get stat growth functions
+   //==========================================================================
+
+   // Gets delta stats growth per level
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      FRCoreStats GetLevelUpStatGain (int CurrentLevel) const;
 
    //==========================================================================
-   //                Balance Function
+   //                Stat growth Curves
    //==========================================================================
+protected:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve LvlStrGainCurve;
 
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve LvlAgiGainCurve;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      FRuntimeFloatCurve LvlIntGainCurve;
+
+   //==========================================================================
+   //                Get stat effect functions
+   //==========================================================================
+public:
    // --- STR
    UFUNCTION (BlueprintPure, Category = "Rade|Status")
       float GetStrToHealthMax    (float STR) const;

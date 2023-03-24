@@ -28,6 +28,33 @@ URWorldStatusMgr* URWorldStatusMgr::GetInstance (UObject* WorldContextObject)
 
 URWorldStatusMgr::URWorldStatusMgr ()
 {
+   //==========================================================================
+   //                 Stat growth
+   //==========================================================================
+
+   FRichCurve* LvlStrGainCurveData = LvlStrGainCurve.GetRichCurve ();
+   LvlStrGainCurveData->AddKey (  0, 3.0);
+   LvlStrGainCurveData->AddKey ( 10, 2.8);
+   LvlStrGainCurveData->AddKey ( 20, 2.5);
+   LvlStrGainCurveData->AddKey ( 50, 2.0);
+   LvlStrGainCurveData->AddKey (100, 1.5);
+   LvlStrGainCurveData->AddKey (200, 1.0);
+
+   FRichCurve* LvlAgiGainCurveData = LvlAgiGainCurve.GetRichCurve ();
+   LvlAgiGainCurveData->AddKey (  0, 3.0);
+   LvlAgiGainCurveData->AddKey ( 10, 2.8);
+   LvlAgiGainCurveData->AddKey ( 20, 2.5);
+   LvlAgiGainCurveData->AddKey ( 50, 2.0);
+   LvlAgiGainCurveData->AddKey (100, 1.5);
+   LvlAgiGainCurveData->AddKey (200, 1.0);
+
+   FRichCurve* LvlIntGainCurveData = LvlIntGainCurve.GetRichCurve ();
+   LvlIntGainCurveData->AddKey (  0, 3.0);
+   LvlIntGainCurveData->AddKey ( 10, 2.8);
+   LvlIntGainCurveData->AddKey ( 20, 2.5);
+   LvlIntGainCurveData->AddKey ( 50, 2.0);
+   LvlIntGainCurveData->AddKey (100, 1.5);
+   LvlIntGainCurveData->AddKey (200, 1.0);
 
    //==========================================================================
    //                 Status Value Curves
@@ -122,6 +149,11 @@ void URWorldStatusMgr::BeginPlay ()
    Super::BeginPlay ();
 }
 
+//=============================================================================
+//                Status Effect
+//=============================================================================
+
+
 void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor* Causer, AActor* Victim)
 {
    R_RETURN_IF_NOT_ADMIN;
@@ -129,6 +161,20 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
    // if (!ensure (Causer)) return;
    if (!ensure (Victim)) return;
    OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
+}
+
+//=============================================================================
+//                Level Function
+//=============================================================================
+
+
+FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
+{
+   FRCoreStats DeltaStat;
+   DeltaStat.STR = URUtilLibrary::GetRuntimeFloatCurveValue (LvlStrGainCurve, CurrentLevel);
+   DeltaStat.AGI = URUtilLibrary::GetRuntimeFloatCurveValue (LvlAgiGainCurve, CurrentLevel);
+   DeltaStat.INT = URUtilLibrary::GetRuntimeFloatCurveValue (LvlIntGainCurve, CurrentLevel);
+   return DeltaStat;
 }
 
 //=============================================================================

@@ -11,6 +11,7 @@ class URDamageType;
 class URActiveStatusEffect;
 class URInventoryComponent;
 class URWorldStatusMgr;
+class URExperienceMgrComponent;
 class UCharacterMovementComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
@@ -45,6 +46,10 @@ private:
    UPROPERTY()
       URWorldStatusMgr* WorldStatusMgr = nullptr;
 
+   // Experience
+   UPROPERTY()
+      URExperienceMgrComponent* ExperienceMgr = nullptr;
+
    //==========================================================================
    //                 Dead
    //==========================================================================
@@ -65,6 +70,13 @@ public:
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       void SetDead (bool Dead);
+
+   //==========================================================================
+   //                 Status
+   //==========================================================================
+protected:
+   UFUNCTION()
+      void OnLevelUp ();
 
    //==========================================================================
    //                 Status
