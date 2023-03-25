@@ -14,6 +14,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
                                                 AActor*,               Causer,
                                                 AActor*,               Victim);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRStatusEffectStartEvent,
+                                             URActiveStatusEffect*, Effect);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRStatusEffectRefreshEvent,
+                                             URActiveStatusEffect*, Effect);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRStatusEffectEndEvent,
+                                             URActiveStatusEffect*, Effect);
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RSTATUSLIB_API URWorldStatusMgr : public UActorComponent
 {
@@ -128,7 +137,7 @@ protected:
    //==========================================================================
 public:
 
-   // --- When status Effect was applied
+   // --- Server applied
    UFUNCTION()
       void ReportStatusEffect (URActiveStatusEffect* Effect,
                                AActor*               Causer,
@@ -136,6 +145,27 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusEffectEvent OnStatusEffectApplied;
+
+   // --- Start
+   UFUNCTION()
+      void ReportStatusEffectStart (URActiveStatusEffect* Effect);
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusEffectStartEvent OnStatusEffectStart;
+
+   // --- Refresh
+   UFUNCTION()
+      void ReportStatusEffectRefresh (URActiveStatusEffect* Effect);
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusEffectRefreshEvent OnStatusEffectRefresh;
+
+   // --- End
+   UFUNCTION()
+      void ReportStatusEffectEnd (URActiveStatusEffect* Effect);
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusEffectEndEvent OnStatusEffectEnd;
 
    //==========================================================================
    //           Get instance -> GameState component

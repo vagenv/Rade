@@ -24,6 +24,7 @@ public:
 
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
+   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    virtual void OnComponentCreated () override;
    virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
@@ -105,9 +106,19 @@ public:
 
 protected:
 
-   virtual void Apply ();
-   virtual void Started ();
-   virtual void Ended ();
+   UFUNCTION()
+      virtual void Started ();
+
+   // Called by Started and Refresh
+   UFUNCTION()
+      virtual void Apply ();
+
+   // On server when timer ended
+   UFUNCTION()
+      virtual void Timeout ();
+
+   UFUNCTION()
+      virtual void Ended ();
 
    UPROPERTY()
       FTimerHandle TimerToEnd;

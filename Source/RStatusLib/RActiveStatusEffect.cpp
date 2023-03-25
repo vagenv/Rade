@@ -2,6 +2,7 @@
 
 #include "RActiveStatusEffect.h"
 #include "RStatusMgrComponent.h"
+#include "RWorldStatusMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
@@ -33,6 +34,10 @@ void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
    DOREPLIFETIME (URActiveStatusEffect, Causer);
 }
 
+//=============================================================================
+//                 System hooks
+//=============================================================================
+
 void URActiveStatusEffect::OnComponentCreated ()
 {
    Super::OnComponentCreated ();
@@ -54,6 +59,16 @@ void URActiveStatusEffect::BeginPlay ()
    Started ();
 }
 
+void URActiveStatusEffect::EndPlay (const EEndPlayReason::Type EndPlayReason)
+{
+   Ended ();
+   Super::EndPlay (EndPlayReason);
+}
+
+//=============================================================================
+//                 Start/Stop/Refresh/End
+//=============================================================================
+
 void URActiveStatusEffect::Started ()
 {
    // --- Check Values
@@ -65,7 +80,12 @@ void URActiveStatusEffect::Started ()
    IsRunning = true;
 
    Apply ();
+
+   // --- Report
    if (StatusMgr) StatusMgr->OnActiveEffectsUpdated.Broadcast ();
+   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
+      WorldMgr->ReportStatusEffectStart (this);
+   }
    OnStart.Broadcast ();
 }
 
@@ -101,7 +121,27 @@ void URActiveStatusEffect::Refresh_Implementation ()
    }
 
    Apply ();
+
+   // --- Report
+   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
+      WorldMgr->ReportStatusEffectRefresh (this);
+   }
    OnRefresh.Broadcast ();
+}
+
+void URActiveStatusEffect::Ended ()
+{
+   IsRunning = false;
+
+   // --- Report
+   if (StatusMgr) {
+      if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (UIName);
+      StatusMgr->OnActiveEffectsUpdated.Broadcast ();
+   }
+   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
+      WorldMgr->ReportStatusEffectEnd (this);
+   }
+   OnEnd.Broadcast ();
 }
 
 void URActiveStatusEffect::Apply ()
@@ -122,22 +162,18 @@ void URActiveStatusEffect::Apply ()
       }
    }
 
-   if (Duration > 0) {
-      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Ended, Duration, false);
+   if (R_IS_NET_ADMIN && Duration > 0) {
+      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Timeout, Duration, false);
    }
 }
-
-void URActiveStatusEffect::Ended ()
+void URActiveStatusEffect::Timeout ()
 {
-   IsRunning = false;
-
-   if (StatusMgr) {
-      if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (UIName);
-      StatusMgr->OnActiveEffectsUpdated.Broadcast ();
-   }
-   OnEnd.Broadcast ();
-   if (R_IS_NET_ADMIN) DestroyComponent ();
+   DestroyComponent ();
 }
+
+//=============================================================================
+//                 Status Functions
+//=============================================================================
 
 double URActiveStatusEffect::GetDurationLeft () const
 {

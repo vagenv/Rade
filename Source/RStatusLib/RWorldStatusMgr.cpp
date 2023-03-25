@@ -167,6 +167,24 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
    OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
 }
 
+void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
+{
+   if (!ensure (Effect)) return;
+   OnStatusEffectStart.Broadcast (Effect);
+}
+
+void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
+{
+   if (!ensure (Effect)) return;
+   OnStatusEffectRefresh.Broadcast (Effect);
+}
+
+void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
+{
+   if (!ensure (Effect)) return;
+   OnStatusEffectStart.Broadcast (Effect);
+}
+
 //=============================================================================
 //                Level Function
 //=============================================================================
