@@ -1,7 +1,10 @@
 [
 	{
 		"Name": "Rock",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -19,7 +22,10 @@
 	},
 	{
 		"Name": "MusicNotes",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "QUEST",
 		"Description":
 		{
@@ -37,7 +43,10 @@
 	},
 	{
 		"Name": "HeavyRocks",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "MAINQUEST",
 		"Description":
 		{
@@ -55,7 +64,10 @@
 	},
 	{
 		"Name": "Gold",
-		"Type": "struct FRItemData",
+		"Type": "FRItemData",
+		"CastType": [
+			"FRItemData"
+		],
 		"Rarity": "E",
 		"Description":
 		{

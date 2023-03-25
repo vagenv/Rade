@@ -31,72 +31,80 @@ Turn to move direction automatically after n seconds of moving
 Other
 =======
 - Magnetic pickup
-- Table with Skill Level vs Stack vs Damage
+- DDC
 
 
 =================================================
-   Experience Manager
+   First Enemy Character
 =================================================
-
-=======
-StatusMgr
-=======
-- AddBaseStat (Save in new list for tracking?)
-
-=======
-ExperienceMgr
-=======
-
-- Connect to RDamageMgr OnDeath to provide exp
-- Connect to RDamageMgr OnDamage to provide exp
+- Animation
+- Material
+- Character blueprint
+- Basic AI
 
 
-Exp calculation from UDataTable* ExpDataTable;
-
-USTRUCT(BlueprintType)
-struct FRDeathExp : public FTableRowBase
-{
-   TSubClassOf<Character> Target
-   int                    Experience;
-}
-
-USTRUCT(BlueprintType)
-struct FRTaskExp : public FTableRowBase
-{
-   TSubClassOf<Character> Target
-   int                    Experience;
-}
-
-Internal for quick search
-TMap<TSubClass<ACharacter>, int> ExpMap
+=================================================
+   World*Mgr
+=================================================
+Pipe all events through them. Both client and server must get events (NetMulticast event.)
 
 
-=======
-LevelMgr
-=======
-Only a container
+=================================================
+   Major cleanup. Remove all float and int
+=================================================
+May cause problems down the line.
+Float point error and size limit.
 
-- Exp points
-- Exp for each Level (FRuntimeFloatCurve? X:Level -> Y:Exp Required)
+Replace int with int32
+Replace float with int64 * 100
 
-Events for Blueprint and UI
-- OnExpGained
-- OnLevelUp
 
-Level up reward:
-- Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase) [Fractional? +10 -> +2]
-- Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
+=================================================
+   Ability / Stat Level up page
+=================================================
 
 =======
 UI
 =======
-Core Stats
-- Get Current Base Stats
-- Get Available LevelUp Stats
+ReadOnly compact for info about current and other players
+Exp as number
 
-Skill stats
-- Skill list, with "+" next to them
+Popup for slot equip / item action / select Ability with custom widget type
+
+
+=======
+WorldAbilityMgr
+=======
+Contains the list of all available abilities user can learn.
+
+Pointer to DataTable with:
+- Ability Level table and effect
+- Ability Stack table and effect.
+
+=======
+Ability
+=======
+LevelUp
+- Can learn a new Ability (FRuntimeFloatCurve X:Level Y:AbilityToLearn)
+
+Ability level increase by using it?
+
+=======
+Stat
+=======
+- AddBaseStat (Save in new list for tracking?)
+
+Core Stats
+- Get Available LevelUp Stats
 - Core stats, with "+" next to them
+
+=======
+UI
+=======
+
+New UI page with:
+- Stat change with fractions (either +)
+- Ability learn list/level up, with "+" next to them
 
 
 =================================================
@@ -114,17 +122,16 @@ Redesign SaveMgr for blueprint support.
 UI
 Save/Load By slots.
 
+
 =================================================
    Ability
 =================================================
-
 - Chance to apply active status effect. (Burning / Poisoned)
 
 
 =================================================
    Weapons
 =================================================
-
 ItemData uniqueID?
 - Differentiate Dublicates
 - Equiped/busy?
@@ -184,7 +191,6 @@ For ranged / consuable weapons
 =================================================
    UI
 =================================================
-
 
 =======
 Crafting
@@ -630,6 +636,18 @@ Dedicated server instance
 
 
 =================================================
+   Procedural Content
+=================================================
+PCG
+Level
+Terrain
+Buildings
+Trees (With animation of wind)
+Grass (With animation of wind)
+Dyanmic Time of Day
+
+
+=================================================
    Nanite and lumen
 =================================================
 - Load high detail models on demand
@@ -685,6 +703,14 @@ Battles
 - Change terrain?
 - Hire more NPCs and upgrade them.
 - Select team
+
+
+=======
+Events
+=======
+
+Random Events to protect Village from attacks.
+Another Player can be summoned for help
 
 =======
 Random Content

@@ -1,11 +1,12 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RInventoryComponent.h"
+#include "RItemPickup.h"
+
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RSaveLib/RSaveMgr.h"
+#include "RSaveLib/RWorldSaveMgr.h"
 
-#include "RItemPickup.h"
 #include "Net/UnrealNetwork.h"
 
 //=============================================================================

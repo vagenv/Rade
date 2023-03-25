@@ -1,6 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RSaveMgr.h"
+#include "RWorldSaveMgr.h"
 #include "RSaveGame.h"
 
 #include "RUtilLib/RLog.h"
@@ -9,7 +9,7 @@
 //                   Static calls
 //=============================================================================
 
-URSaveMgr* URSaveMgr::GetInstance (UObject* WorldContextObject)
+URWorldSaveMgr* URWorldSaveMgr::GetInstance (UObject* WorldContextObject)
 {
    if (!ensure (WorldContextObject)) return nullptr;
 
@@ -19,7 +19,7 @@ URSaveMgr* URSaveMgr::GetInstance (UObject* WorldContextObject)
    AGameStateBase *GameState = World->GetGameState ();
    if (!ensure (GameState)) return nullptr;
 
-   URSaveMgr* SaveMgr = GameState->FindComponentByClass<URSaveMgr>();
+   URWorldSaveMgr* SaveMgr = GameState->FindComponentByClass<URWorldSaveMgr>();
    return SaveMgr;
 }
 
@@ -27,11 +27,11 @@ URSaveMgr* URSaveMgr::GetInstance (UObject* WorldContextObject)
 //                   Member calls
 //=============================================================================
 
-URSaveMgr::URSaveMgr ()
+URWorldSaveMgr::URWorldSaveMgr ()
 {
 }
 
-void URSaveMgr::CheckSaveFile ()
+void URWorldSaveMgr::CheckSaveFile ()
 {
    if (SaveFile) return;
 
@@ -43,7 +43,7 @@ void URSaveMgr::CheckSaveFile ()
 //                   Save
 //=============================================================================
 
-bool URSaveMgr::SaveSync ()
+bool URWorldSaveMgr::SaveSync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
@@ -52,7 +52,7 @@ bool URSaveMgr::SaveSync ()
    return UGameplayStatics::SaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
 }
 
-bool URSaveMgr::SaveASync ()
+bool URWorldSaveMgr::SaveASync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
@@ -60,7 +60,7 @@ bool URSaveMgr::SaveASync ()
 
    // Setup save complete delegate.
    FAsyncSaveGameToSlotDelegate SavedDelegate;
-   SavedDelegate.BindUObject (this, &URSaveMgr::SaveComplete);
+   SavedDelegate.BindUObject (this, &URWorldSaveMgr::SaveComplete);
    UGameplayStatics::AsyncSaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex, SavedDelegate);
    return true;
 }
@@ -69,7 +69,7 @@ bool URSaveMgr::SaveASync ()
 //                   Load
 //=============================================================================
 
-bool URSaveMgr::LoadSync ()
+bool URWorldSaveMgr::LoadSync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
@@ -78,7 +78,7 @@ bool URSaveMgr::LoadSync ()
    return (SaveFile != nullptr);
 }
 
-bool URSaveMgr::LoadASync ()
+bool URWorldSaveMgr::LoadASync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
@@ -86,12 +86,12 @@ bool URSaveMgr::LoadASync ()
    FAsyncLoadGameFromSlotDelegate LoadedDelegate;
 
    // Setup load complete delegate.
-   LoadedDelegate.BindUObject (this, &URSaveMgr::LoadComplete);
+   LoadedDelegate.BindUObject (this, &URWorldSaveMgr::LoadComplete);
    UGameplayStatics::AsyncLoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex, LoadedDelegate);
    return true;
 }
 
-void URSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
+void URWorldSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
 {
    if (!bSuccess) {
       R_LOG_PRINTF ("Saving [%s] [%lld] failed", *SaveSlot, PlayerIndex);
@@ -99,7 +99,7 @@ void URSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool b
    }
 }
 
-void URSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class USaveGame *SaveGame)
+void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class USaveGame *SaveGame)
 {
    SaveFile = Cast<URSaveGame> (SaveGame);
    if (!SaveFile) {
@@ -114,7 +114,7 @@ void URSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class 
 //=============================================================================
 
 
-bool URSaveMgr::Set (const FString &key, const TArray<uint8> &data)
+bool URWorldSaveMgr::Set (const FString &key, const TArray<uint8> &data)
 {
    CheckSaveFile ();
 
@@ -124,7 +124,7 @@ bool URSaveMgr::Set (const FString &key, const TArray<uint8> &data)
    return true;
 }
 
-bool URSaveMgr::Get (const FString &key, TArray<uint8> &data)
+bool URWorldSaveMgr::Get (const FString &key, TArray<uint8> &data)
 {
    CheckSaveFile ();
 

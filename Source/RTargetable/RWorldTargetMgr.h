@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "RTargetableMgr.generated.h"
+#include "RWorldTargetMgr.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableMgrEvent);
 
@@ -11,12 +11,12 @@ class URTargetableComponent;
 class URTargetingComponent;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RTARGETABLELIB_API URTargetableMgr : public UActorComponent
+class RTARGETABLELIB_API URWorldTargetMgr : public UActorComponent
 {
    GENERATED_BODY()
 public:
 
-   URTargetableMgr ();
+   URWorldTargetMgr ();
 
    //==========================================================================
    //                  Params
@@ -77,10 +77,10 @@ public:
       static float GetAngle (FVector v1, FVector v2);
 
    //==========================================================================
-   //                  Get instamce -> GameState component
+   //                  Get instance -> GameState component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Target Mgr", CompactNodeTitle = "Target Mgr"))
-      static URTargetableMgr* GetInstance (UObject* WorldContextObject);
+      static URWorldTargetMgr* GetInstance (UObject* WorldContextObject);
 };
 

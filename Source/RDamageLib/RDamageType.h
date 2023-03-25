@@ -10,7 +10,6 @@ struct FDamageEvent;
 class AController;
 class AActor;
 
-
 // ============================================================================
 //                   Resistance
 // ============================================================================
@@ -61,9 +60,6 @@ public:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;
-
-   // UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-   //    FRuntimeFloatCurve ResistanceToDamage;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       virtual float CalcDamage (float Damage, const FRDamageResistance& Resistance) const;

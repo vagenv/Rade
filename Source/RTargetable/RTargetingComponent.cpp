@@ -2,7 +2,7 @@
 
 #include "RTargetingComponent.h"
 #include "RTargetableComponent.h"
-#include "RTargetableMgr.h"
+#include "RWorldTargetMgr.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
@@ -28,7 +28,7 @@ void URTargetingComponent::BeginPlay ()
 {
 	Super::BeginPlay ();
 
-   TargetMgr = URTargetableMgr::GetInstance (this);
+   TargetMgr = URWorldTargetMgr::GetInstance (this);
 
 	GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle, this, &URTargetingComponent::TargetCheck, 1, true);
 }
@@ -90,7 +90,7 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
       // Camera lerp speed
       float LerpPower = 4;
 
-      float Angle = URTargetableMgr::GetAngle (CurrentDir, TargetDir);
+      float Angle = URWorldTargetMgr::GetAngle (CurrentDir, TargetDir);
 
       // Transform Angle to Lerp power
       LerpPower = URUtilLibrary::GetRuntimeFloatCurveValue (TargetAngleToLerpPower, Angle);

@@ -53,7 +53,8 @@ bool FRItemDataHandle::ToItem (FRItemData &dst) const
 
 FRItemData::FRItemData ()
 {
-   Type = FString (typeid (FRItemData).name ());
+   Type = FString (__func__);
+   CastType.AddUnique (Type);
 }
 
 bool FRItemData::ReadJSON ()
@@ -90,9 +91,10 @@ bool FRItemData::WriteJSON ()
 //                      FRActionItemData
 // ============================================================================
 
-FRActionItemData::FRActionItemData()
+FRActionItemData::FRActionItemData ()
 {
-   Type = FString (typeid (FRActionItemData).name ());
+   Type = FString (__func__);
+   CastType.AddUnique (Type);
 }
 
 bool FRActionItemData::ReadJSON ()
@@ -126,7 +128,7 @@ bool FRActionItemData::WriteJSON ()
 
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
-   if (src.Type != FString (typeid (FRActionItemData).name ())) return false;
+   if (!src.CastType.Contains (dst.Type)) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
@@ -162,5 +164,4 @@ void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src, FRActionItemD
    if (res) Branches = ERActionResult::Success;
    else     Branches = ERActionResult::Failure;
 }
-
 

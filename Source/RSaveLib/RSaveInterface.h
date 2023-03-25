@@ -11,7 +11,7 @@
 #include "RSaveInterface.generated.h"
 
 class UWorld;
-class URSaveMgr;
+class URWorldSaveMgr;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -46,6 +46,6 @@ private:
 	// Values for internal tracking
 	FString    ObjectSaveId;
 	UWorld 	 *World   = nullptr;
-	URSaveMgr *SaveMgr = nullptr;
+	URWorldSaveMgr *SaveMgr = nullptr;
 };
 

@@ -38,7 +38,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -71,7 +76,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "E",
 		"Description":
 		{
@@ -104,7 +114,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "D",
 		"Description":
 		{
@@ -137,7 +152,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -170,7 +190,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -209,7 +234,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -254,7 +284,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -293,7 +328,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -358,7 +398,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -397,7 +442,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{
@@ -436,7 +486,12 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
-		"Type": "struct FREquipmentData",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
 		"Rarity": "C",
 		"Description":
 		{

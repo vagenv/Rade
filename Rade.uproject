@@ -15,6 +15,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RExperienceLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "RTargetableLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
