@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RWorldDamageMgr.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
@@ -10,16 +11,7 @@
 
 URWorldDamageMgr* URWorldDamageMgr::GetInstance (UObject* WorldContextObject)
 {
-   if (!ensure (WorldContextObject)) return nullptr;
-
-   UWorld *World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return nullptr;
-
-   AGameStateBase *GameState = World->GetGameState ();
-   if (!ensure (GameState)) return nullptr;
-
-   URWorldDamageMgr* DamageMgr = GameState->FindComponentByClass<URWorldDamageMgr>();
-   return DamageMgr;
+   return URUtil::GetWorldInstance<URWorldDamageMgr> (WorldContextObject);
 }
 
 //=============================================================================

@@ -60,7 +60,7 @@ public:
       FRReviveEvent OnRevive;
 
    //==========================================================================
-   //                  Get instamce -> GameState component
+   //                  Get instance -> GameState component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure,

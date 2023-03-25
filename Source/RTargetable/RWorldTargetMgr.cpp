@@ -3,9 +3,8 @@
 #include "RWorldTargetMgr.h"
 #include "RTargetableComponent.h"
 #include "RTargetingComponent.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
-
-#include "DrawDebugHelpers.h"
 
 //=============================================================================
 //                   Static calls
@@ -13,16 +12,7 @@
 
 URWorldTargetMgr* URWorldTargetMgr::GetInstance (UObject* WorldContextObject)
 {
-   if (!ensure (WorldContextObject)) return nullptr;
-
-   UWorld *World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return nullptr;
-
-   AGameStateBase *GameState = World->GetGameState ();
-   if (!ensure (GameState)) return nullptr;
-
-   URWorldTargetMgr* TargetableMgr = GameState->FindComponentByClass<URWorldTargetMgr>();
-   return TargetableMgr;
+   return URUtil::GetWorldInstance<URWorldTargetMgr> (WorldContextObject);
 }
 
 //=============================================================================

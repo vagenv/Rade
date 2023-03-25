@@ -16,10 +16,15 @@ public:
 
    template<typename T>
    static T* AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass);
+
+
+   template<typename T>
+   static T* GetWorldInstance (const UObject* WorldContextObject);
+
 };
 
 template<typename T>
-T* URUtil::GetComponent (const AActor * Target)
+T* URUtil::GetComponent (const AActor* Target)
 {
    if (!ensure (Target)) return nullptr;
    T* CompObj = nullptr;
@@ -44,6 +49,25 @@ T* URUtil::AddComponent (AActor * Target, const TSubclassOf<UActorComponent> Com
    T *TargetComp = Cast<T>(NewComp);
    ensure (NewComp);
    return TargetComp;
+}
+
+template<typename T>
+T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
+{
+   if (!ensure (WorldContextObject)) return nullptr;
+
+   const UWorld *World = WorldContextObject->GetWorld ();
+   if (!ensure (World)) return nullptr;
+
+   // All world instances should be kept in game state.
+   const AGameStateBase *GameState = World->GetGameState ();
+   if (!ensure (GameState)) return nullptr;
+
+   T* WorldInstance = GameState->FindComponentByClass<T>();
+
+   // Instance was not added to GameState object
+   ensure (WorldInstance);
+   return WorldInstance;
 }
 
 
