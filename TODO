@@ -31,51 +31,80 @@ Turn to move direction automatically after n seconds of moving
 Other
 =======
 - Magnetic pickup
-- Table with Skill Level vs Stack vs Damage
-- Table for ability damage
 - DDC
 
+
 =================================================
-   Experience Manager
+   First Enemy Character
 =================================================
-
-=======
-WorldStatusMgr
-=======
-For All balancing.
-
-Level up reward:
-- Core Stats increase (FRuntimeFloatCurve X:Level Y:Stat increase) [Fractional? +10 -> +2]
-- Skill Stat increase (FRuntimeFloatCurve X:Level Y:Skill level up?)
-
-Move all FRuntimeFloatCurve from StatusMgr
+- Animation
+- Material
+- Character blueprint
+- Basic AI
 
 
-=======
-StatusMgr
-=======
-- AddBaseStat (Save in new list for tracking?)
+=================================================
+   World*Mgr
+=================================================
+Pipe all events through them. Both client and server must get events (NetMulticast event.)
 
 
-=======
-ExperienceMgr
-=======
-Network replication
+=================================================
+   Major cleanup. Remove all float and int
+=================================================
+May cause problems down the line.
+Float point error and size limit.
 
+Replace int with int32
+Replace float with int64 * 100
+
+
+=================================================
+   Ability / Stat Level up page
+=================================================
 
 =======
 UI
 =======
-Exp Bar
-Current Level
+ReadOnly compact for info about current and other players
+Exp as number
+
+Popup for slot equip / item action / select Ability with custom widget type
+
+
+=======
+WorldAbilityMgr
+=======
+Contains the list of all available abilities user can learn.
+
+Pointer to DataTable with:
+- Ability Level table and effect
+- Ability Stack table and effect.
+
+=======
+Ability
+=======
+LevelUp
+- Can learn a new Ability (FRuntimeFloatCurve X:Level Y:AbilityToLearn)
+
+Ability level increase by using it?
+
+=======
+Stat
+=======
+- AddBaseStat (Save in new list for tracking?)
 
 Core Stats
-- Get Current Base Stats
 - Get Available LevelUp Stats
-
-Skill stats
-- Skill list, with "+" next to them
 - Core stats, with "+" next to them
+
+=======
+UI
+=======
+
+New UI page with:
+- Stat change with fractions (either +)
+- Ability learn list/level up, with "+" next to them
 
 
 =================================================
@@ -93,17 +122,16 @@ Redesign SaveMgr for blueprint support.
 UI
 Save/Load By slots.
 
+
 =================================================
    Ability
 =================================================
-
 - Chance to apply active status effect. (Burning / Poisoned)
 
 
 =================================================
    Weapons
 =================================================
-
 ItemData uniqueID?
 - Differentiate Dublicates
 - Equiped/busy?
@@ -163,7 +191,6 @@ For ranged / consuable weapons
 =================================================
    UI
 =================================================
-
 
 =======
 Crafting
