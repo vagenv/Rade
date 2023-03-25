@@ -2,6 +2,7 @@
 
 #include "RAbilityTypes.h"
 #include "RAbilityMgrComponent.h"
+#include "RWorldAbilityMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
@@ -14,6 +15,21 @@
 URAbility::URAbility ()
 {
    SetIsReplicatedByDefault (true);
+}
+
+void URAbility::BeginPlay ()
+{
+   Super::BeginPlay ();
+   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
+      WorldMgr->ReportAddAbility (this);
+   }
+}
+void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
+{
+   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
+      WorldMgr->ReportRmAbility (this);
+   }
+   Super::EndPlay (EndPlayReason);
 }
 
 void URAbility::OnComponentCreated ()
@@ -159,6 +175,10 @@ void URAbility_Active::Use_Global_Implementation ()
    UseLastTime     = World->GetTimeSeconds ();
    UseCooldownLeft = Cooldown;
    IsUseable       = false;
+
+   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
+      WorldMgr->ReportUseAbility (this);
+   }
 
    // Broadcast event
    OnAbilityUsed.Broadcast ();

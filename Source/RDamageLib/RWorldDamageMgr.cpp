@@ -27,7 +27,6 @@ void URWorldDamageMgr::ReportDamage (AActor*             Victim,
                                      const URDamageType* Type,
                                      AActor*             Causer)
 {
-   R_RETURN_IF_NOT_ADMIN;
    if (!ensure (Victim)) return;
    if (!ensure (Type))   return;
    if (!ensure (Causer)) return;
@@ -38,7 +37,6 @@ void URWorldDamageMgr::ReportDeath (AActor*             Victim,
                                     AActor*             Causer,
                                     const URDamageType* Type)
 {
-   R_RETURN_IF_NOT_ADMIN;
    if (!ensure (Victim)) return;
    if (!ensure (Causer)) return;
    if (!ensure (Type))   return;
@@ -47,7 +45,6 @@ void URWorldDamageMgr::ReportDeath (AActor*             Victim,
 
 void URWorldDamageMgr::ReportRevive (AActor* Victim)
 {
-   R_RETURN_IF_NOT_ADMIN;
    if (!ensure (Victim)) return;
    OnRevive.Broadcast (Victim);
 }

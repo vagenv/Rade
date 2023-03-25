@@ -79,6 +79,7 @@ void URStatusMgrComponent::BeginPlay ()
          Init_Save (this, UniqueSaveId);
       }
 
+
       // Bind To AActor::OnTakeAnyDamage
       GetOwner ()->OnTakeAnyDamage.AddDynamic (this, &URStatusMgrComponent::AnyDamage);
 
@@ -184,9 +185,8 @@ FRStatusValue URStatusMgrComponent::GetHealth () const
 
 void URStatusMgrComponent::UseHealth (float Amount)
 {
-   R_RETURN_IF_NOT_ADMIN;
    Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
-   SetHealth (Health);
+   if (R_IS_NET_ADMIN) SetHealth (Health);
 }
 
 FRStatusValue URStatusMgrComponent::GetStamina () const
@@ -196,9 +196,8 @@ FRStatusValue URStatusMgrComponent::GetStamina () const
 
 void URStatusMgrComponent::UseStamina (float Amount)
 {
-   R_RETURN_IF_NOT_ADMIN;
    Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
-   SetStamina (Stamina);
+   if (R_IS_NET_ADMIN) SetStamina (Stamina);
 }
 
 FRStatusValue URStatusMgrComponent::GetMana () const
@@ -208,9 +207,8 @@ FRStatusValue URStatusMgrComponent::GetMana () const
 
 void URStatusMgrComponent::UseMana (float Amount)
 {
-   R_RETURN_IF_NOT_ADMIN;
    Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
-   SetMana (Mana);
+   if (R_IS_NET_ADMIN) SetMana (Mana);
 }
 
 void URStatusMgrComponent::SetHealth_Implementation (FRStatusValue Health_)
@@ -602,36 +600,19 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
    if (!ensure (Type_))  return;
    if (!ensure (Causer)) return;
 
-   const URDamageType* Type = Cast<URDamageType>(Type_);
-
    if (!IsDead ()) {
+      const URDamageType* Type = Cast<URDamageType>(Type_);
+      // Check evasion
       if (Type) {
-
+         // Check if evaded
          if (Type->Evadeable && RollEvasion ()) {
-            OnEvadeRDamage.Broadcast (Amount, Type, Causer);
+            ReportREvade (Amount, Type, Causer);
             return;
          }
-
-         FRDamageResistance Resistance = GetResistanceFor (Type->GetClass ());
-
-         Amount = Type->CalcDamage (Amount, Resistance);
-         Type->BP_AnyDamage (GetOwner (), Resistance, Amount, Causer);
-         //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", Amount, Resistance);
       } else {
          R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", Amount);
       }
-
-      UseHealth (Amount);
-
       ReportRDamage (Amount, Type, Causer);
-
-      URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
-      if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
-
-      if (!Health.Current) {
-         SetDead (true);
-         if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
-      }
    }
 }
 
@@ -639,7 +620,35 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
                                                          const URDamageType* Type,
                                                          AActor*             Causer)
 {
+   if (!ensure (Causer)) return;
+
+   if (Type) {
+      FRDamageResistance Resistance = GetResistanceFor (Type->GetClass ());
+
+      Amount = Type->CalcDamage (Amount, Resistance);
+      Type->BP_AnyDamage (GetOwner (), Resistance, Amount, Causer);
+      //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", Amount, Resistance);
+   }
+
+   UseHealth (Amount);
+
+   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
+   if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
+
+   if (!Health.Current) {
+      if (R_IS_NET_ADMIN) SetDead (true);
+      if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
+   }
+
    OnAnyRDamage.Broadcast (Amount, Type, Causer);
+}
+
+void URStatusMgrComponent::ReportREvade_Implementation (float               Amount,
+                                                        const URDamageType* Type,
+                                                        AActor*             Causer)
+{
+   if (!ensure (Causer)) return;
+   OnEvadeRDamage.Broadcast (Amount, Type, Causer);
 }
 
 //=============================================================================
