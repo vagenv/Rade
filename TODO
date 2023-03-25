@@ -43,11 +43,6 @@ Other
 - Basic AI
 
 
-=================================================
-   World*Mgr
-=================================================
-Pipe all events through them. Both client and server must get events (NetMulticast event.)
-
 
 =================================================
    Major cleanup. Remove all float and int
