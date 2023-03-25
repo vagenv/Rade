@@ -33,9 +33,6 @@ void URAbilityMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty
 void URAbilityMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   const UWorld *world = GetWorld ();
-   if (!ensure (world)) return;
-
 
    if (R_IS_NET_ADMIN) {
 
