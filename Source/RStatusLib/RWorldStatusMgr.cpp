@@ -11,15 +11,7 @@
 
 URWorldStatusMgr* URWorldStatusMgr::GetInstance (UObject* WorldContextObject)
 {
-   if (!ensure (WorldContextObject)) return nullptr;
-
-   UWorld *World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return nullptr;
-
-   AGameStateBase *GameState = World->GetGameState ();
-   if (!ensure (GameState)) return nullptr;
-
-   return GameState->FindComponentByClass<URWorldStatusMgr>();
+   return URUtil::GetWorldInstance<URWorldStatusMgr> (WorldContextObject);
 }
 
 //=============================================================================
@@ -173,6 +165,24 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
    if (!ensure (Causer)) return;
    if (!ensure (Victim)) return;
    OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
+}
+
+void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
+{
+   if (!ensure (Effect)) return;
+   OnStatusEffectStart.Broadcast (Effect);
+}
+
+void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
+{
+   if (!ensure (Effect)) return;
+   OnStatusEffectRefresh.Broadcast (Effect);
+}
+
+void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
+{
+   if (!ensure (Effect)) return;
+   OnStatusEffectStart.Broadcast (Effect);
 }
 
 //=============================================================================

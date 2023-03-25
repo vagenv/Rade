@@ -117,19 +117,19 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRStatusValue GetHealth () const;
 
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void UseHealth (float Amount);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRStatusValue GetStamina () const;
 
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void UseStamina (float Amount);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRStatusValue GetMana () const;
 
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void UseMana (float Amount);
 
    //==========================================================================
@@ -284,6 +284,7 @@ public:
 private:
 
    // Connected to AActor::OnTakeAnyDamage event
+   // Called only on server
    UFUNCTION()
       void AnyDamage (AActor*            Target,
                       float              Amount,
@@ -291,6 +292,7 @@ private:
                       AController*       InstigatedBy,
                       AActor*            Causer);
 
+   // Unreliable -> to save bandwidth
    UFUNCTION (NetMulticast, Unreliable)
       void ReportRDamage                (float               Amount,
                                          const URDamageType* Type,
@@ -298,6 +300,14 @@ private:
       void ReportRDamage_Implementation (float               Amount,
                                          const URDamageType* Type,
                                          AActor*             Causer);
+
+   UFUNCTION (NetMulticast, Unreliable)
+      void ReportREvade                (float               Amount,
+                                        const URDamageType* Type,
+                                        AActor*             Causer);
+      void ReportREvade_Implementation (float               Amount,
+                                        const URDamageType* Type,
+                                        AActor*             Causer);
 
    //==========================================================================
    //                 Save/Load

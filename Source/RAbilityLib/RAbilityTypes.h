@@ -20,6 +20,10 @@ public:
 
    URAbility ();
 
+   virtual void BeginPlay () override;
+   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+
+   // --- For editor instance tracking
    virtual void OnComponentCreated () override;
    virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
 

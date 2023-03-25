@@ -31,7 +31,11 @@ public:
 
    URWorldDamageMgr ();
 
-   // --- When someone took damage
+   //==========================================================================
+   //                  Events
+   //==========================================================================
+
+   // --- Take Damage
    UFUNCTION()
       void ReportDamage (AActor*             Victim,
                          float               Amount,
@@ -42,7 +46,7 @@ public:
       FRAnyDamageEvent OnAnyRDamage;
 
 
-   // --- When someone died
+   // --- Died
    UFUNCTION()
       void ReportDeath (AActor*             Victim,
                         AActor*             Causer,
@@ -52,7 +56,7 @@ public:
       FRDeathEvent OnDeath;
 
 
-   // --- When someone revived
+   // --- Revived
    UFUNCTION()
       void ReportRevive (AActor* Victim);
 
@@ -60,7 +64,7 @@ public:
       FRReviveEvent OnRevive;
 
    //==========================================================================
-   //                  Get instamce -> GameState component
+   //                  Get instance -> GameState component
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure,

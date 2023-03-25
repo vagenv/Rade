@@ -2,7 +2,7 @@
 
 #include "RWorldSaveMgr.h"
 #include "RSaveGame.h"
-
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 
 //=============================================================================
@@ -11,16 +11,7 @@
 
 URWorldSaveMgr* URWorldSaveMgr::GetInstance (UObject* WorldContextObject)
 {
-   if (!ensure (WorldContextObject)) return nullptr;
-
-   UWorld *World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return nullptr;
-
-   AGameStateBase *GameState = World->GetGameState ();
-   if (!ensure (GameState)) return nullptr;
-
-   URWorldSaveMgr* SaveMgr = GameState->FindComponentByClass<URWorldSaveMgr>();
-   return SaveMgr;
+   return URUtil::GetWorldInstance<URWorldSaveMgr> (WorldContextObject);
 }
 
 //=============================================================================
