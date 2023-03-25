@@ -170,7 +170,7 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
 {
    R_RETURN_IF_NOT_ADMIN;
    if (!ensure (Effect)) return;
-   // if (!ensure (Causer)) return;
+   if (!ensure (Causer)) return;
    if (!ensure (Victim)) return;
    OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
 }
