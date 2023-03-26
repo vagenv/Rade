@@ -20,36 +20,29 @@ URAbility::URAbility ()
 void URAbility::BeginPlay ()
 {
    Super::BeginPlay ();
+
+   if (GetWorld () && !GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->AddInstanceComponent (this);
+
+   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      Mgr->OnAbilityListUpdated.Broadcast ();
+
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportAddAbility (this);
    }
 }
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
+   if (GetWorld () && GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->RemoveInstanceComponent (this);
+
+   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      Mgr->OnAbilityListUpdated.Broadcast ();
+
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportRmAbility (this);
    }
    Super::EndPlay (EndPlayReason);
-}
-
-void URAbility::OnComponentCreated ()
-{
-   Super::OnComponentCreated ();
-
-   if (!GetOwner ()->GetInstanceComponents ().Contains (this))
-      GetOwner ()->AddInstanceComponent (this);
-
-   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->OnAbilityListUpdated.Broadcast ();
-}
-void URAbility::OnComponentDestroyed (bool bDestroyingHierarchy)
-{
-   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->OnAbilityListUpdated.Broadcast ();
-
-   if (GetOwner ()->GetInstanceComponents ().Contains (this))
-      GetOwner ()->RemoveInstanceComponent (this);
-   Super::OnComponentDestroyed (bDestroyingHierarchy);
 }
 
 void URAbility::SetIsEnabled (bool IsEnabled_)

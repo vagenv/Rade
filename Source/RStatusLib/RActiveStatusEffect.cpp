@@ -32,29 +32,30 @@ void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 //                 System hooks
 //=============================================================================
 
-void URActiveStatusEffect::OnComponentCreated ()
-{
-   Super::OnComponentCreated ();
-
-   if (!GetOwner ()->GetInstanceComponents ().Contains (this))
-      GetOwner ()->AddInstanceComponent (this);
-}
-void URActiveStatusEffect::OnComponentDestroyed (bool bDestroyingHierarchy)
-{
-   if (GetOwner ()->GetInstanceComponents ().Contains (this))
-      GetOwner ()->RemoveInstanceComponent (this);
-
-   Super::OnComponentDestroyed (bDestroyingHierarchy);
-}
-
 void URActiveStatusEffect::BeginPlay ()
 {
    Super::BeginPlay ();
+
+   if (!GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->AddInstanceComponent (this);
+
+   // Find instance data on balancer
+   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
+      EffectInfo = WorldMgr->GetEffectInfo (this);
+   }
+
+   if (!EffectInfo.IsValid ()) {
+      R_LOG_PRINTF ("Error. [%s] Effect info is invalid.", *GetPathName ());
+   }
+
    Started ();
 }
 
 void URActiveStatusEffect::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
+   if (GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->RemoveInstanceComponent (this);
+
    Ended ();
    Super::EndPlay (EndPlayReason);
 }
