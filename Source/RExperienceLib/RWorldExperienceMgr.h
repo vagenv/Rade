@@ -31,6 +31,8 @@ class REXPERIENCELIB_API URWorldExperienceMgr : public UActorComponent
 public:
 
    URWorldExperienceMgr ();
+   // Read table before begin play
+   virtual void InitializeComponent () override;
    virtual void BeginPlay () override;
 
    //==========================================================================

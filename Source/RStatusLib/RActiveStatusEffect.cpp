@@ -205,6 +205,8 @@ float URActiveStatusEffect::GetStackScale (int Stack) const
 {
    float Result = 1.;
    if (Stack < 0) Stack = GetStackCurrent ();
+   Stack--;
+
    if (EffectInfo.StackScaling.IsValidIndex (Stack))
       Result = EffectInfo.StackScaling[Stack];
    return Result;

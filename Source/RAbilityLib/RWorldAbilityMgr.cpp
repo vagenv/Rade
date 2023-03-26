@@ -20,6 +20,44 @@ URWorldAbilityMgr* URWorldAbilityMgr::GetInstance (UObject* WorldContextObject)
 
 URWorldAbilityMgr::URWorldAbilityMgr ()
 {
+   bWantsInitializeComponent = true;
+}
+
+void URWorldAbilityMgr::InitializeComponent ()
+{
+   Super::InitializeComponent ();
+
+   // --- Parse Table and create Map for fast search
+   if (AbilityTable) {
+      MapAbility.Empty ();
+      FString ContextString;
+      TArray<FName> RowNames = AbilityTable->GetRowNames ();
+      for (const FName& ItRowName : RowNames) {
+         FRAbilityInfo* ItRow = AbilityTable->FindRow<FRAbilityInfo> (ItRowName, ContextString);
+         if (ItRow && ItRow->AbilityClass) {
+            MapAbility.Add (ItRow->AbilityClass, *ItRow);
+         }
+      }
+   }
+}
+
+void URWorldAbilityMgr::BeginPlay ()
+{
+   Super::BeginPlay ();
+}
+
+FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo (const URAbility* Ability) const
+{
+   FRAbilityInfo Result;
+   if (ensure (Ability)) {
+      if (MapAbility.Contains (Ability->GetClass ())) {
+         Result = MapAbility[Ability->GetClass ()];
+      } else {
+         R_LOG_PRINTF ("Error. [%s] Ability not found in [AbilityTable]", *Ability->GetPathName ());
+      }
+   }
+
+   return Result;
 }
 
 void URWorldAbilityMgr::ReportAddAbility (URAbility* Ability)

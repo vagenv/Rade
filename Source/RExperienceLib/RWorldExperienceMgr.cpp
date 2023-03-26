@@ -22,6 +22,7 @@ URWorldExperienceMgr* URWorldExperienceMgr::GetInstance (UObject* WorldContextOb
 
 URWorldExperienceMgr::URWorldExperienceMgr ()
 {
+   bWantsInitializeComponent = true;
 }
 
 int URWorldExperienceMgr::ExperienceToLevel (int64 ExpPoints) const
@@ -120,6 +121,24 @@ int64 URWorldExperienceMgr::LevelToExperience (int Level) const
    }
 }
 
+void URWorldExperienceMgr::InitializeComponent ()
+{
+   Super::InitializeComponent ();
+
+   // --- Parse Table and create Map for fast search
+   if (EnemyExpTable) {
+      MapEnemyExp.Empty ();
+      FString ContextString;
+      TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
+      for (const FName& ItRowName : RowNames) {
+         FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
+         if (ItRow && ItRow->TargetClass) {
+            MapEnemyExp.Add (ItRow->TargetClass, *ItRow);
+         }
+      }
+   }
+}
+
 void URWorldExperienceMgr::BeginPlay ()
 {
    Super::BeginPlay ();
@@ -129,18 +148,6 @@ void URWorldExperienceMgr::BeginPlay ()
       if (URWorldDamageMgr *DamageMgr = URUtil::GetComponent<URWorldDamageMgr> (GetOwner ())) {
          DamageMgr->OnAnyRDamage.AddDynamic (this, &URWorldExperienceMgr::OnDamage);
          DamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
-      }
-
-      // --- Parse Table and create Map for fast search
-      if (EnemyExpTable) {
-         FString ContextString;
-         TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
-         for (const FName& ItRowName : RowNames) {
-            FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
-            if (ItRow && ItRow->TargetClass) {
-               MapEnemyExp.Add (ItRow->TargetClass, *ItRow);
-            }
-         }
       }
    }
 }

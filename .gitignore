@@ -85,3 +85,6 @@ DerivedDataCache/*
 # Starter Content
 Content/__ExternalActors__/*
 Content/__ExternalObjects__/*
+
+
+Concepts/*

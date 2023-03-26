@@ -20,6 +20,8 @@ URWorldStatusMgr* URWorldStatusMgr::GetInstance (UObject* WorldContextObject)
 
 URWorldStatusMgr::URWorldStatusMgr ()
 {
+   bWantsInitializeComponent = true;
+
    //==========================================================================
    //                   Stat growth
    //==========================================================================
@@ -148,12 +150,14 @@ URWorldStatusMgr::URWorldStatusMgr ()
    AgiToAttackSpeedData->AddKey (5000, 5000); // Maximum
 }
 
-void URWorldStatusMgr::BeginPlay ()
+
+void URWorldStatusMgr::InitializeComponent ()
 {
-   Super::BeginPlay ();
+   Super::InitializeComponent ();
 
    // --- Parse Table and create Map for fast search
    if (StatusEffectTable) {
+      MapStatusEffect.Empty ();
       FString ContextString;
       TArray<FName> RowNames = StatusEffectTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
@@ -165,7 +169,12 @@ void URWorldStatusMgr::BeginPlay ()
    }
 }
 
-FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect * StatusEffect) const
+void URWorldStatusMgr::BeginPlay ()
+{
+   Super::BeginPlay ();
+}
+
+FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect* StatusEffect) const
 {
    FRActiveStatusEffectInfo Result;
    if (ensure (StatusEffect)) {

@@ -29,6 +29,11 @@ void URAbility::BeginPlay ()
 
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportAddAbility (this);
+      AbilityInfo = WorldMgr->GetAbilityInfo (this);
+   }
+
+   if (!AbilityInfo.IsValid ()) {
+      R_LOG_PRINTF ("Error. [%s] Ability info is invalid.", *GetPathName ());
    }
 }
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -54,6 +59,17 @@ bool URAbility::GetIsEnabled () const
 {
    return IsEnabled;
 }
+
+FRAbilityInfo URAbility::GetAbilityInfo () const
+{
+   return AbilityInfo;
+}
+
+FRUIDescription URAbility::GetDescription () const
+{
+   return AbilityInfo.Description;
+}
+
 
 //=============================================================================
 //                 Passsive Ability

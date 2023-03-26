@@ -29,6 +29,8 @@ class RSTATUSLIB_API URWorldStatusMgr : public UActorComponent
 public:
 
    URWorldStatusMgr ();
+   // Read table before begin play
+   virtual void InitializeComponent () override;
    virtual void BeginPlay () override;
 
    //==========================================================================
@@ -37,13 +39,13 @@ public:
 private:
    UPROPERTY ()
       TMap<UClass *, FRActiveStatusEffectInfo> MapStatusEffect;
-public:
+protected:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RStatusLib.RActiveStatusEffectInfo"))
       UDataTable* StatusEffectTable = nullptr;
-
-   // Gets delta stats growth per level
+public:
+   // Gets Effect info and scaling
    UFUNCTION (BlueprintPure, Category = "Rade|Status")
       FRActiveStatusEffectInfo GetEffectInfo (const URActiveStatusEffect * StatusEffect) const;
 
