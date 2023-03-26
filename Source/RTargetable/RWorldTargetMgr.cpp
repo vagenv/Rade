@@ -3,6 +3,7 @@
 #include "RWorldTargetMgr.h"
 #include "RTargetableComponent.h"
 #include "RTargetingComponent.h"
+#include "RUtilLib/RCheck.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 
@@ -27,14 +28,14 @@ void URWorldTargetMgr::AddTarget (URTargetableComponent * Target)
 {
    if (!ensure (Target)) return;
    TargetableList.Add (Target);
-   OnListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnListUpdated.Broadcast ();
 }
 
 void URWorldTargetMgr::RmTarget  (URTargetableComponent * Target)
 {
    if (!ensure (Target)) return;
    TargetableList.Remove (Target);
-   OnListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnListUpdated.Broadcast ();
 }
 
 URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,

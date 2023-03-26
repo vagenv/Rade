@@ -2,6 +2,7 @@
 
 #include "RGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
 const FName theSessionName ("RadeSessionName");
@@ -84,7 +85,7 @@ void URGameInstance::UpdateSessionList()
       FRAvaiableSessionsData NewData(SessionSearch->SearchResults[i]);
       CurrentSessionSearch.Add(NewData);
    }
-   OnSessionListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnSessionListUpdated.Broadcast ();
 }
 
 // Join Any Available Online Game

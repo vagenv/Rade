@@ -2,6 +2,7 @@
 
 #include "RTargetableComponent.h"
 #include "RWorldTargetMgr.h"
+#include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
 void URTargetableComponent::BeginPlay ()
@@ -27,7 +28,7 @@ void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URTargetableComponent::SetIsTargetable (bool CanFind)
 {
    IsTargetable = CanFind;
-   OnIsTargetable.Broadcast ();
+   if (R_IS_VALID_WORLD) OnIsTargetable.Broadcast ();
 }
 
 bool URTargetableComponent::GetIsTargetable () const
@@ -42,7 +43,7 @@ bool URTargetableComponent::GetIsTargetable () const
 void URTargetableComponent::SetIsTargeted (bool CanTarget)
 {
    IsTargeted = CanTarget;
-   OnIsTargeted.Broadcast ();
+   if (R_IS_VALID_WORLD) OnIsTargeted.Broadcast ();
 }
 
 bool URTargetableComponent::GetIsTargeted () const

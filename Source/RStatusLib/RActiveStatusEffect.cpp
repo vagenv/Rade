@@ -77,11 +77,14 @@ void URActiveStatusEffect::Started ()
    Apply ();
 
    // --- Report
-   if (StatusMgr) StatusMgr->OnActiveEffectsUpdated.Broadcast ();
+
    if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
       WorldMgr->ReportStatusEffectStart (this);
    }
-   OnStart.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      if (StatusMgr) StatusMgr->OnActiveEffectsUpdated.Broadcast ();
+      OnStart.Broadcast ();
+   }
 }
 
 void URActiveStatusEffect::Stop ()
@@ -89,7 +92,7 @@ void URActiveStatusEffect::Stop ()
    UWorld* World = GetWorld ();
    if (!ensure (World)) return;
    if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
-   OnCancel.Broadcast ();
+   if (R_IS_VALID_WORLD) OnCancel.Broadcast ();
    Ended ();
 }
 
@@ -122,7 +125,7 @@ void URActiveStatusEffect::Refresh_Implementation ()
    if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
       WorldMgr->ReportStatusEffectRefresh (this);
    }
-   OnRefresh.Broadcast ();
+   if (R_IS_VALID_WORLD) OnRefresh.Broadcast ();
 }
 
 void URActiveStatusEffect::Ended ()
@@ -130,14 +133,17 @@ void URActiveStatusEffect::Ended ()
    IsRunning = false;
 
    // --- Report
-   if (StatusMgr) {
-      if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (UIName);
-      StatusMgr->OnActiveEffectsUpdated.Broadcast ();
-   }
+
    if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
       WorldMgr->ReportStatusEffectEnd (this);
    }
-   OnEnd.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      OnEnd.Broadcast ();
+      if (StatusMgr) {
+         if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (EffectInfo.Description.Label);
+         StatusMgr->OnActiveEffectsUpdated.Broadcast ();
+      }
+   }
 }
 
 void URActiveStatusEffect::Apply ()

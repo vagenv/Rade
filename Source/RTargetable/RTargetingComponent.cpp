@@ -155,7 +155,7 @@ void URTargetingComponent::TargetCheck ()
          TargetCurrent->SetIsTargeted (false);
          TargetCurrent = nullptr;
          if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
-         OnTargetUpdated.Broadcast ();
+         if (R_IS_VALID_WORLD) OnTargetUpdated.Broadcast ();
          SearchNewTarget ();
       }
    }
@@ -202,7 +202,7 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
       TargetCurrent = TargetNew;
       TargetCurrent->SetIsTargeted (true);
       if (!R_IS_NET_ADMIN) SetTarget_Server (TargetCurrent);
-      OnTargetUpdated.Broadcast ();
+      if (R_IS_VALID_WORLD) OnTargetUpdated.Broadcast ();
    }
 }
 

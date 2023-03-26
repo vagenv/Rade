@@ -47,7 +47,7 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 
 void URStatusMgrComponent::OnRep_Stats ()
 {
-   OnStatsUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -113,6 +113,7 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 
 void URStatusMgrComponent::OnRep_Dead ()
 {
+   if (!R_IS_VALID_WORLD) return;
    if (bDead) OnDeath.Broadcast ();
    else       OnRevive.Broadcast ();
 }
@@ -127,11 +128,11 @@ void URStatusMgrComponent::SetDead (bool Dead)
 
    // Broadcast only after value has been changed;
    if (WasDead && !Dead) {
-      OnRevive.Broadcast ();
+      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
       if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
    }
    if (!WasDead && Dead) {
-      OnDeath.Broadcast ();
+      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
    }
 }
 
@@ -244,7 +245,7 @@ void URStatusMgrComponent::RecalcStatus ()
    SetStamina (Stamina);
    SetMana (Mana);
 
-   OnStatsUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
 }
 
 void URStatusMgrComponent::RecalcCoreStats ()
@@ -640,7 +641,7 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
       if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
    }
 
-   OnAnyRDamage.Broadcast (Amount, Type, Causer);
+   if (R_IS_VALID_WORLD) OnAnyRDamage.Broadcast (Amount, Type, Causer);
 }
 
 void URStatusMgrComponent::ReportREvade_Implementation (float               Amount,
@@ -648,7 +649,7 @@ void URStatusMgrComponent::ReportREvade_Implementation (float               Amou
                                                         AActor*             Causer)
 {
    if (!ensure (Causer)) return;
-   OnEvadeRDamage.Broadcast (Amount, Type, Causer);
+   if (R_IS_VALID_WORLD) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
 }
 
 //=============================================================================

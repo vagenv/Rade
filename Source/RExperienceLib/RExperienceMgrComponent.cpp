@@ -2,6 +2,7 @@
 
 #include "RExperienceMgrComponent.h"
 #include "RWorldExperienceMgr.h"
+#include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
 #include "Net/UnrealNetwork.h"
@@ -20,7 +21,7 @@ void URExperienceMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimePrope
 
 void URExperienceMgrComponent::OnRep_Exp ()
 {
-   OnExperienceChange.Broadcast ();
+   if (R_IS_VALID_WORLD) OnExperienceChange.Broadcast ();
    CheckLevel ();
 }
 
@@ -44,7 +45,7 @@ void URExperienceMgrComponent::AddExperiencePoints (int64 ExpPoint)
    //       ExperiencePoints + ExpPoint);
 
    ExperiencePoints += ExpPoint;
-   OnExperienceChange.Broadcast ();
+   if (R_IS_VALID_WORLD) OnExperienceChange.Broadcast ();
    CheckLevel ();
 }
 
@@ -84,6 +85,6 @@ void URExperienceMgrComponent::LeveledUp ()
 {
    // R_LOG_PRINTF ("Leveled up!!! [%d => %d]", CurrentLevel, CurrentLevel + 1);
    CurrentLevel++;
-   OnLevelUp.Broadcast ();
+   if (R_IS_VALID_WORLD) OnLevelUp.Broadcast ();
 }
 

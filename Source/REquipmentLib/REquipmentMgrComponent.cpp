@@ -249,8 +249,10 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
    // --- Update slot data
    EquipmentSlot->EquipmentData = EquipmentData;
    EquipmentSlot->Busy = true;
-   EquipmentSlot->OnSlotUpdated.Broadcast ();
-   OnEquipmentUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      EquipmentSlot->OnSlotUpdated.Broadcast ();
+      OnEquipmentUpdated.Broadcast ();
+   }
    return true;
 }
 
@@ -267,8 +269,10 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
-   EquipmentSlot->OnSlotUpdated.Broadcast ();
-   OnEquipmentUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      EquipmentSlot->OnSlotUpdated.Broadcast ();
+      OnEquipmentUpdated.Broadcast ();
+   }
    return true;
 }
 

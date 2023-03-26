@@ -75,7 +75,7 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 
 void URInventoryComponent::OnRep_Items ()
 {
-   OnInventoryUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -195,7 +195,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
          if (NewItem.Count <= ItItemCountLeft) {
             ItItem.Count += NewItem.Count;
             CalcWeight ();
-            OnInventoryUpdated.Broadcast ();
+            if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
             return true;
          }
 
@@ -223,14 +223,14 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    // Limit number of slots used
    if (Items.Num () >= SlotsMax) {
       CalcWeight ();
-      OnInventoryUpdated.Broadcast ();
+      if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
       R_LOG ("Maximum number of inventory slots reached");
       return false;
    }
 
    Items.Add (NewItem);
    CalcWeight ();
-   OnInventoryUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
    return true;
 }
 
@@ -263,7 +263,7 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
    }
 
    CalcWeight ();
-   OnInventoryUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
    return true;
 }
 
@@ -543,7 +543,7 @@ bool URInventoryComponent::Pickup_Add (const ARItemPickup* Pickup)
 {
    if (Pickup == nullptr) return false;
    CurrentPickups.Add (Pickup);
-   OnPickupListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnPickupListUpdated.Broadcast ();
    return true;
 }
 
@@ -551,7 +551,7 @@ bool URInventoryComponent::Pickup_Rm (const ARItemPickup* Pickup)
 {
    if (Pickup == nullptr) return false;
    CurrentPickups.RemoveSingle (Pickup);
-   OnPickupListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnPickupListUpdated.Broadcast ();
    return true;
 }
 
@@ -585,7 +585,7 @@ void URInventoryComponent::CheckClosestPickup ()
 
    if (newClosestPickup != ClosestPickup) {
       ClosestPickup = newClosestPickup;
-      OnClosestPickupUpdated.Broadcast ();
+      if (R_IS_VALID_WORLD) OnClosestPickupUpdated.Broadcast ();
    }
 }
 
@@ -624,6 +624,6 @@ void URInventoryComponent::OnLoad (FMemoryReader &LoadData)
 
    // Update inventory
    Items = LoadedItems;
-   OnInventoryUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
 }
 

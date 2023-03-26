@@ -25,7 +25,7 @@ void URAbility::BeginPlay ()
       GetOwner ()->AddInstanceComponent (this);
 
    if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->OnAbilityListUpdated.Broadcast ();
+      if (R_IS_VALID_WORLD) Mgr->OnAbilityListUpdated.Broadcast ();
 
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportAddAbility (this);
@@ -37,7 +37,7 @@ void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
       GetOwner ()->RemoveInstanceComponent (this);
 
    if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->OnAbilityListUpdated.Broadcast ();
+      if (R_IS_VALID_WORLD) Mgr->OnAbilityListUpdated.Broadcast ();
 
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportRmAbility (this);
@@ -99,7 +99,7 @@ void URAbility_Aura::CheckRange ()
 
    AffectedActors = Result;
 
-   OnUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -126,7 +126,7 @@ void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType,
       // Can be used
       if (UseCooldownLeft == 0 && GetIsEnabled ()) {
          IsUseable = true;
-         OnAbilityStatusUpdated.Broadcast ();
+         if (R_IS_VALID_WORLD) OnAbilityStatusUpdated.Broadcast ();
       }
    }
 }
@@ -174,7 +174,9 @@ void URAbility_Active::Use_Global_Implementation ()
    }
 
    // Broadcast event
-   OnAbilityUsed.Broadcast ();
-   OnAbilityStatusUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      OnAbilityUsed.Broadcast ();
+      OnAbilityStatusUpdated.Broadcast ();
+   }
 }
 

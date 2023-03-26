@@ -25,18 +25,18 @@ URWorldAbilityMgr::URWorldAbilityMgr ()
 void URWorldAbilityMgr::ReportAddAbility (URAbility* Ability)
 {
    if (!ensure (Ability)) return;
-   OnAddAbility.Broadcast (Ability);
+   if (R_IS_VALID_WORLD) OnAddAbility.Broadcast (Ability);
 }
 
 void URWorldAbilityMgr::ReportRmAbility (URAbility* Ability)
 {
    if (!ensure (Ability)) return;
-   OnRmAbility.Broadcast (Ability);
+   if (R_IS_VALID_WORLD) OnRmAbility.Broadcast (Ability);
 }
 
 void URWorldAbilityMgr::ReportUseAbility (URAbility* Ability)
 {
    if (!ensure (Ability)) return;
-   OnUseAbility.Broadcast (Ability);
+   if (R_IS_VALID_WORLD) OnUseAbility.Broadcast (Ability);
 }
 

@@ -2,6 +2,7 @@
 
 #include "REquipmentSlotComponent.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 #include "Net/UnrealNetwork.h"
 
 //=============================================================================
@@ -22,7 +23,7 @@ void UREquipmentSlotComponent::GetLifetimeReplicatedProps (TArray<FLifetimePrope
 
 void UREquipmentSlotComponent::OnRep_Slot ()
 {
-   OnSlotUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnSlotUpdated.Broadcast ();
 }
 
 void UREquipmentSlotComponent::BeginPlay()
