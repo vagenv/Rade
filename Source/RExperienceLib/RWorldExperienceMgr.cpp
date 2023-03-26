@@ -137,8 +137,8 @@ void URWorldExperienceMgr::BeginPlay ()
          TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
          for (const FName& ItRowName : RowNames) {
             FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
-            if (ItRow && ItRow->Target) {
-               MapEnemyExp.Add (ItRow->Target, *ItRow);
+            if (ItRow && ItRow->TargetClass) {
+               MapEnemyExp.Add (ItRow->TargetClass, *ItRow);
             }
          }
       }

@@ -15,7 +15,7 @@ struct REXPERIENCELIB_API FREnemyExp : public FTableRowBase
    GENERATED_BODY()
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<ACharacter> Target;
+      TSubclassOf<ACharacter> TargetClass;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float PerDamage = 1;
