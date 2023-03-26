@@ -5,9 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "RStatusTypes.h"
+#include "RActiveStatusEffect.h"
 #include "RWorldStatusMgr.generated.h"
-
-class URActiveStatusEffect;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
                                                 URActiveStatusEffect*, Effect,
@@ -32,6 +31,21 @@ public:
    URWorldStatusMgr ();
    virtual void BeginPlay () override;
 
+   //==========================================================================
+   //             Effect table
+   //==========================================================================
+private:
+   UPROPERTY ()
+      TMap<UClass *, FRActiveStatusEffectInfo> MapStatusEffect;
+public:
+   // List of Enemies and experience for attacking / killing them
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status",
+            meta=(RequiredAssetDataTags = "RowStructure=/Script/RStatusLib.RActiveStatusEffectInfo"))
+      UDataTable* StatusEffectTable = nullptr;
+
+   // Gets delta stats growth per level
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      FRActiveStatusEffectInfo GetEffectInfo (const URActiveStatusEffect * StatusEffect) const;
 
    //==========================================================================
    //                Get stat growth functions

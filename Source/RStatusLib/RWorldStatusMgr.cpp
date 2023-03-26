@@ -151,6 +151,32 @@ URWorldStatusMgr::URWorldStatusMgr ()
 void URWorldStatusMgr::BeginPlay ()
 {
    Super::BeginPlay ();
+
+   // --- Parse Table and create Map for fast search
+   if (StatusEffectTable) {
+      FString ContextString;
+      TArray<FName> RowNames = StatusEffectTable->GetRowNames ();
+      for (const FName& ItRowName : RowNames) {
+         FRActiveStatusEffectInfo* ItRow = StatusEffectTable->FindRow<FRActiveStatusEffectInfo> (ItRowName, ContextString);
+         if (ItRow && ItRow->EffectClass) {
+            MapStatusEffect.Add (ItRow->EffectClass, *ItRow);
+         }
+      }
+   }
+}
+
+FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect * StatusEffect) const
+{
+   FRActiveStatusEffectInfo Result;
+   if (ensure (StatusEffect)) {
+      if (MapStatusEffect.Contains (StatusEffect->GetClass ())) {
+         Result = MapStatusEffect[StatusEffect->GetClass ()];
+      } else {
+         R_LOG_PRINTF ("Error. [%s] Effect not found in [StatusEffectTable]", *StatusEffect->GetPathName ());
+      }
+   }
+
+   return Result;
 }
 
 //=============================================================================

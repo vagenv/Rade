@@ -20,12 +20,6 @@ URActiveStatusEffect::URActiveStatusEffect ()
    PrimaryComponentTick.bCanEverTick = false;
    PrimaryComponentTick.bStartWithTickEnabled = false;
    bAutoRegister = true;
-
-   FRichCurve* StackToScaleData = StackToScale.GetRichCurve ();
-   StackToScaleData->AddKey (  1,   1); // Minimum
-   StackToScaleData->AddKey ( 10,   5);
-   StackToScaleData->AddKey ( 50,  15);
-   StackToScaleData->AddKey (100,  20); // Maximum
 }
 
 void URActiveStatusEffect::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -104,6 +98,7 @@ void URActiveStatusEffect::Refresh_Implementation ()
    if (!ensure (World)) return;
    if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
 
+   int StackMax = GetStackMax ();
    if (StackMax > 1 && StackCurrent < StackMax) {
       // int StackLast = StackCurrent;
       StackCurrent = FMath::Clamp (StackCurrent + 1, 1, StackMax);
@@ -154,16 +149,16 @@ void URActiveStatusEffect::Apply ()
       if (StatusMgr) {
 
          float StackScale = GetStackScale ();
-         TArray<FRPassiveStatusEffect> CopyPassiveEffects = PassiveEffects;
+         TArray<FRPassiveStatusEffect> CopyPassiveEffects = EffectInfo.PassiveEffects;
          for (FRPassiveStatusEffect &ItPassiveEffect : CopyPassiveEffects) {
             ItPassiveEffect.Value = ItPassiveEffect.Value * StackScale;
          }
-         StatusMgr->SetPassiveEffects (UIName, CopyPassiveEffects);
+         StatusMgr->SetPassiveEffects (EffectInfo.Description.Label, CopyPassiveEffects);
       }
    }
 
-   if (R_IS_NET_ADMIN && Duration > 0) {
-      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Timeout, Duration, false);
+   if (R_IS_NET_ADMIN && EffectInfo.Duration > 0) {
+      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Timeout, EffectInfo.Duration, false);
    }
 }
 void URActiveStatusEffect::Timeout ()
@@ -179,7 +174,7 @@ double URActiveStatusEffect::GetDurationLeft () const
 {
    UWorld* World = GetWorld ();
    if (!ensure (World)) return 0;
-   return FMath::Clamp (StartTime + Duration - World->GetTimeSeconds (), 0, Duration);
+   return FMath::Clamp (StartTime + EffectInfo.Duration - World->GetTimeSeconds (), 0, EffectInfo.Duration);
 }
 
 bool URActiveStatusEffect::GetIsRunning () const
@@ -187,10 +182,34 @@ bool URActiveStatusEffect::GetIsRunning () const
    return IsRunning;
 }
 
+int URActiveStatusEffect::GetStackCurrent () const
+{
+   return StackCurrent;
+}
+
+int URActiveStatusEffect::GetStackMax () const
+{
+   int Result = 1;
+   if (EffectInfo.StackScaling.Num () > 1) Result = EffectInfo.StackScaling.Num ();
+   return Result;
+}
+
 float URActiveStatusEffect::GetStackScale (int Stack) const
 {
-   if (Stack < 1) Stack = StackCurrent;
-   return URUtilLibrary::GetRuntimeFloatCurveValue (StackToScale, Stack);
+   float Result = 1.;
+   if (Stack < 0) Stack = GetStackCurrent ();
+   if (EffectInfo.StackScaling.IsValidIndex (Stack))
+      Result = EffectInfo.StackScaling[Stack];
+   return Result;
+}
+FRActiveStatusEffectInfo URActiveStatusEffect::GetEffectInfo () const
+{
+   return EffectInfo;
+}
+
+FRUIDescription URActiveStatusEffect::GetDescription () const
+{
+   return EffectInfo.Description;
 }
 
 //=============================================================================
