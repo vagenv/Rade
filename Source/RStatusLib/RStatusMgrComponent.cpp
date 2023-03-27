@@ -23,18 +23,14 @@ URStatusMgrComponent::URStatusMgrComponent ()
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
 
-   // NetUpdateFrequency
-
-   // Default
    CoreStats_Base = FRCoreStats (10);
 }
 
-// Replication
 void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 
-   // --- Status
+
    DOREPLIFETIME (URStatusMgrComponent, bDead);
    DOREPLIFETIME (URStatusMgrComponent, CoreStats_Base);
    DOREPLIFETIME (URStatusMgrComponent, CoreStats_Added);
@@ -105,129 +101,6 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
    StatusRegen (DeltaTime);
-}
-
-//=============================================================================
-//                 Dead
-//=============================================================================
-
-void URStatusMgrComponent::OnRep_Dead ()
-{
-   if (!R_IS_VALID_WORLD) return;
-   if (bDead) OnDeath.Broadcast ();
-   else       OnRevive.Broadcast ();
-}
-
-void URStatusMgrComponent::SetDead (bool Dead)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   bool WasDead = bDead;
-   bDead = Dead;
-
-   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
-
-   // Broadcast only after value has been changed;
-   if (WasDead && !Dead) {
-      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
-   }
-   if (!WasDead && Dead) {
-      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
-   }
-}
-
-bool URStatusMgrComponent::IsDead () const
-{
-   return bDead;
-}
-
-//=============================================================================
-//                 Level up
-//=============================================================================
-
-void URStatusMgrComponent::OnLevelUp ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
-   if (!ensure (ExperienceMgr))  return;
-
-   float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
-
-   if (ExtraStats) CoreStats_Extra += ExtraStats;
-
-   FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
-   if (!DeltaStats.Empty ()) {
-      CoreStats_Base.STR += DeltaStats.STR;
-      CoreStats_Base.AGI += DeltaStats.AGI;
-      CoreStats_Base.INT += DeltaStats.INT;
-   }
-
-   if (!DeltaStats.Empty () || ExtraStats)
-      RecalcStatus ();
-}
-
-//=============================================================================
-//                 Status
-//=============================================================================
-
-void URStatusMgrComponent::StatusRegen (float DeltaTime)
-{
-   if (IsDead ()) return;
-   Health.Tick (DeltaTime);
-   Mana.Tick (DeltaTime);
-
-   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
-}
-
-FRStatusValue URStatusMgrComponent::GetHealth () const
-{
-   return Health;
-}
-
-void URStatusMgrComponent::UseHealth (float Amount)
-{
-   Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
-   if (R_IS_NET_ADMIN) SetHealth (Health);
-}
-
-FRStatusValue URStatusMgrComponent::GetStamina () const
-{
-   return Stamina;
-}
-
-void URStatusMgrComponent::UseStamina (float Amount)
-{
-   Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
-   if (R_IS_NET_ADMIN) SetStamina (Stamina);
-}
-
-FRStatusValue URStatusMgrComponent::GetMana () const
-{
-   return Mana;
-}
-
-void URStatusMgrComponent::UseMana (float Amount)
-{
-   Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
-   if (R_IS_NET_ADMIN) SetMana (Mana);
-}
-
-void URStatusMgrComponent::SetHealth_Implementation (FRStatusValue Health_)
-{
-   if (R_IS_NET_ADMIN) return;
-   Health = Health_;
-}
-
-void URStatusMgrComponent::SetMana_Implementation (FRStatusValue Mana_)
-{
-   if (R_IS_NET_ADMIN) return;
-   Mana = Mana_;
-}
-
-void URStatusMgrComponent::SetStamina_Implementation (FRStatusValue Stamina_)
-{
-   if (R_IS_NET_ADMIN) return;
-   Stamina = Stamina_;
 }
 
 //=============================================================================
@@ -350,9 +223,164 @@ void URStatusMgrComponent::RecalcStatusValues ()
       }
    }
 }
+//=============================================================================
+//                 Dead
+//=============================================================================
+
+void URStatusMgrComponent::OnRep_Dead ()
+{
+   if (!R_IS_VALID_WORLD) return;
+   if (bDead) OnDeath.Broadcast ();
+   else       OnRevive.Broadcast ();
+}
+
+void URStatusMgrComponent::SetDead (bool Dead)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   bool WasDead = bDead;
+   bDead = Dead;
+
+   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
+
+   // Broadcast only after value has been changed;
+   if (WasDead && !Dead) {
+      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
+      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+   }
+   if (!WasDead && Dead) {
+      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
+   }
+}
+
+bool URStatusMgrComponent::IsDead () const
+{
+   return bDead;
+}
 
 //=============================================================================
-//                 Get Core Stats
+//                 Level up
+//=============================================================================
+
+void URStatusMgrComponent::OnLevelUp ()
+{
+   R_RETURN_IF_NOT_ADMIN;
+   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (ExperienceMgr))  return;
+
+   float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
+
+   if (ExtraStats) CoreStats_Extra += ExtraStats;
+
+   FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
+   if (!DeltaStats.Empty ()) CoreStats_Base += DeltaStats;
+   if (!DeltaStats.Empty () || ExtraStats)
+      RecalcStatus ();
+
+   AddAbilityPoint ();
+}
+
+//=============================================================================
+//                 Status
+//=============================================================================
+
+void URStatusMgrComponent::StatusRegen (float DeltaTime)
+{
+   if (IsDead ()) return;
+   Health.Tick (DeltaTime);
+   Mana.Tick (DeltaTime);
+
+   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
+}
+
+FRStatusValue URStatusMgrComponent::GetHealth () const
+{
+   return Health;
+}
+
+void URStatusMgrComponent::UseHealth (float Amount)
+{
+   Health.Current = FMath::Clamp (Health.Current - Amount, 0, Health.Max);
+   if (R_IS_NET_ADMIN) SetHealth (Health);
+}
+
+FRStatusValue URStatusMgrComponent::GetStamina () const
+{
+   return Stamina;
+}
+
+void URStatusMgrComponent::UseStamina (float Amount)
+{
+   Stamina.Current = FMath::Clamp (Stamina.Current - Amount, 0, Stamina.Max);
+   if (R_IS_NET_ADMIN) SetStamina (Stamina);
+}
+
+FRStatusValue URStatusMgrComponent::GetMana () const
+{
+   return Mana;
+}
+
+void URStatusMgrComponent::UseMana (float Amount)
+{
+   Mana.Current = FMath::Clamp (Mana.Current - Amount, 0, Mana.Max);
+   if (R_IS_NET_ADMIN) SetMana (Mana);
+}
+
+void URStatusMgrComponent::SetHealth_Implementation (FRStatusValue Health_)
+{
+   if (R_IS_NET_ADMIN) return;
+   Health = Health_;
+}
+
+void URStatusMgrComponent::SetMana_Implementation (FRStatusValue Mana_)
+{
+   if (R_IS_NET_ADMIN) return;
+   Mana = Mana_;
+}
+
+void URStatusMgrComponent::SetStamina_Implementation (FRStatusValue Stamina_)
+{
+   if (R_IS_NET_ADMIN) return;
+   Stamina = Stamina_;
+}
+
+//=============================================================================
+//                 Ability Points
+//=============================================================================
+
+int URStatusMgrComponent::GetAbilityPoint () const
+{
+   return AbilityPoints;
+}
+void URStatusMgrComponent::AddAbilityPoint ()
+{
+   AbilityPoints++;
+}
+void URStatusMgrComponent::RmAbilityPoint ()
+{
+   AbilityPoints--;
+}
+
+//=============================================================================
+//                 Extra stat Points
+//=============================================================================
+
+float URStatusMgrComponent::GetCoreStats_Extra () const
+{
+   return CoreStats_Extra;
+}
+
+bool URStatusMgrComponent::AddExtraStat (FRCoreStats ExtraStat)
+{
+   float TotalUse = ExtraStat.STR + ExtraStat.AGI + ExtraStat.INT;
+   if (TotalUse > GetCoreStats_Extra ()) return false;
+
+   CoreStats_Base  += ExtraStat;
+   CoreStats_Extra -= TotalUse;
+   return true;
+}
+
+//=============================================================================
+//                 Core and Sub Stats
 //=============================================================================
 
 FRCoreStats URStatusMgrComponent::GetCoreStats_Base () const
@@ -368,10 +396,6 @@ FRCoreStats URStatusMgrComponent::GetCoreStats_Total () const
    return GetCoreStats_Base () + GetCoreStats_Added ();
 }
 
-//=============================================================================
-//                 Get Sub Stats
-//=============================================================================
-
 FRSubStats URStatusMgrComponent::GetSubStats_Base () const
 {
    return SubStats_Base;
@@ -384,10 +408,6 @@ FRSubStats URStatusMgrComponent::GetSubStats_Total () const
 {
    return GetSubStats_Base () + GetSubStats_Added ();
 }
-
-//=============================================================================
-//                 Stat functions
-//=============================================================================
 
 bool URStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) const
 {
@@ -404,9 +424,8 @@ bool URStatusMgrComponent::RollEvasion () const
    return ((FMath::Rand () % 100) <= GetSubStats_Total ().Evasion);
 }
 
-
 //==========================================================================
-//                 Passive Effect Funcs
+//                 Passive Effect
 //==========================================================================
 
 TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects () const
@@ -476,7 +495,7 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 }
 
 //==========================================================================
-//                 Active Effect Funcs
+//                 Active Effect
 //==========================================================================
 
 bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect_)
@@ -506,7 +525,7 @@ bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclas
 }
 
 //=============================================================================
-//                 Resistance Funcs
+//                 Resistance
 //=============================================================================
 
 TArray<FRDamageResistance> URStatusMgrComponent::GetResistance () const
