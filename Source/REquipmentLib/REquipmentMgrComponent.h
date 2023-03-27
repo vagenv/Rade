@@ -24,20 +24,64 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   // Check if item equip
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
+      UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> Type) const;
+
+   //==========================================================================
+   //                 Use / Drop override. Check if Item equiped.
+   //==========================================================================
    virtual bool          UseItem  (int32 ItemIdx) override;
    virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0) override;
 
-   virtual bool Equip   (const FREquipmentData    &EquipmentData);
-   virtual bool Equip   (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData);
-   virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
+   //==========================================================================
+   //                 Equip/unequip
+   //==========================================================================
+public:
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool EquipItem (const FREquipmentData &EquipmentData);
 
-   virtual void CalcWeight ();
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
+
+   //==========================================================================
+   //                 Server versions of the functions
+   //==========================================================================
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void EquipItem_Server                (const FREquipmentData &EquipmentData);
+      virtual void EquipItem_Server_Implementation (const FREquipmentData &EquipmentData);
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void Equip_Server                (UREquipmentSlotComponent *EquipmentSlot,
+                                                const FREquipmentData    &EquipmentData);
+      virtual void Equip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot,
+                                                const FREquipmentData    &EquipmentData);
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void UnEquip_Server                (UREquipmentSlotComponent *EquipmentSlot);
+      virtual void UnEquip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot);
+
+   //==========================================================================
+   //                 Weight calculation
+   //==========================================================================
+protected:
+   virtual void CalcWeight () override;
+
+   // When status mgr stat values updated
+   UFUNCTION()
+      void OnStatsUpdated ();
 private:
    // To evade endless when:
    // OnStatusUpdated -> CalcWeight -> SetEffect -> OnStatusUpdated
    int32 LastWeightMax = 0;
 
+   //==========================================================================
+   //                 Balanacing
+   //==========================================================================
 protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRuntimeFloatCurve StrToWeightMax;
@@ -48,19 +92,17 @@ protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRuntimeFloatCurve WeightToMoveSpeed;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> Type) const;
+   //==========================================================================
+   //                 Events
+   //==========================================================================
 public:
-
    // Delegate when equipment updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
       FREquipmentMgrEvent OnEquipmentUpdated;
 
-protected:
-   // When status mgr stat values updated
-   UFUNCTION()
-      void OnStatsUpdated ();
-
+   //==========================================================================
+   //                 Save / Load
+   //==========================================================================
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
    virtual void OnLoad (FMemoryReader &LoadData) override;

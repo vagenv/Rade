@@ -73,6 +73,30 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
+UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
+{
+   if (!ensure (SlotClass)) return nullptr;
+   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
+   GetOwner ()->GetComponents (CurrentEquipmentSlots);
+
+   UREquipmentSlotComponent *EquipmentSlot = nullptr;
+
+   // --- Find equip slot
+   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (ItSlot->GetClass () == SlotClass) {
+
+         // First slot available
+         if (!EquipmentSlot) EquipmentSlot = ItSlot;
+
+         // Empty Slot found
+         if (!ItSlot->Busy) {
+            EquipmentSlot = ItSlot;
+            break;
+         }
+      }
+   }
+   return EquipmentSlot;
+}
 //=============================================================================
 //           Weight penalty using Inventory and StatusMgr
 //=============================================================================
@@ -117,7 +141,7 @@ void UREquipmentMgrComponent::OnStatsUpdated ()
 }
 
 //=============================================================================
-//                 Use/Drop override
+//                 Use / Drop override
 //=============================================================================
 
 bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
@@ -147,7 +171,7 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return Super::UseItem (ItemIdx);
    }
 
-   bool success = Equip (ItemData);
+   bool success = EquipItem (ItemData);
 
    // --- If Custom Action is defined
    if (success && ItemData.Action) {
@@ -182,10 +206,10 @@ ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
 }
 
 //=============================================================================
-//                 Equip/Unequip
+//                 Equip / Unequip
 //=============================================================================
 
-bool UREquipmentMgrComponent::Equip (const FREquipmentData &EquipmentData)
+bool UREquipmentMgrComponent::EquipItem (const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!EquipmentData.EquipmentSlot) {
@@ -276,33 +300,27 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    return true;
 }
 
-// ============================================================================
-//                      Get Components
-// ============================================================================
-
-UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
+//=============================================================================
+//                 Equip / Unequip server version
+//=============================================================================
+void UREquipmentMgrComponent::EquipItem_Server_Implementation (const FREquipmentData &EquipmentData)
 {
-   if (!SlotClass) return nullptr;
-   TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
-   GetOwner ()->GetComponents (CurrentEquipmentSlots);
+   EquipItem (EquipmentData);
+}
 
-   UREquipmentSlotComponent *EquipmentSlot = nullptr;
-
-   // --- Find equip slot
-   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
-      if (ItSlot->GetClass () == SlotClass) {
-
-         // First slot available
-         if (!EquipmentSlot) EquipmentSlot = ItSlot;
-
-         // Empty Slot found
-         if (!ItSlot->Busy) {
-            EquipmentSlot = ItSlot;
-            break;
-         }
-      }
+void UREquipmentMgrComponent::Equip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot,
+                                                           const FREquipmentData    &EquipmentData)
+{
+   if (!EquipmentSlot) {
+      R_LOG ("Invalid EquipmentSlot");
+      return;
    }
-   return EquipmentSlot;
+   Equip (EquipmentSlot, EquipmentData);
+}
+
+void UREquipmentMgrComponent::UnEquip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot)
+{
+   UnEquip (EquipmentSlot);
 }
 
 //=============================================================================
@@ -344,7 +362,7 @@ void UREquipmentMgrComponent::OnLoad (FMemoryReader &LoadData)
    // --- Equip Items
    for (const FString &ItRaw : EquipedItemsRaw) {
       FREquipmentData EquipData;
-      if (RJSON::ToStruct (ItRaw, EquipData)) Equip (EquipData);
+      if (RJSON::ToStruct (ItRaw, EquipData)) EquipItem (EquipData);
    }
 }
 
