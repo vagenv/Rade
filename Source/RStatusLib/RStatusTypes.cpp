@@ -52,6 +52,13 @@ FRCoreStats FRCoreStats::operator - (const FRCoreStats &stat) const
    return res;
 }
 
+FRCoreStats& FRCoreStats::operator += (const FRCoreStats &stat)
+{
+   FRCoreStats &Current = *this;
+   Current = Current + stat;
+   return Current;
+}
+
 //=============================================================================
 //                 Extra Stats
 //=============================================================================
@@ -76,6 +83,13 @@ FRSubStats FRSubStats::operator - (const FRSubStats &stat) const
    res.AttackSpeed = AttackSpeed - stat.AttackSpeed;
    res.AttackPower = AttackPower - stat.AttackPower;
    return res;
+}
+
+FRSubStats& FRSubStats::operator += (const FRSubStats &stat)
+{
+   FRSubStats &Current = *this;
+   Current = Current + stat;
+   return Current;
 }
 
 //=============================================================================
