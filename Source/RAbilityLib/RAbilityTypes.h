@@ -21,7 +21,7 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRUIDescription Description;
 
-   // Scaling info?
+   // Level -> scaling info?
 
    bool IsValid () const {
       return AbilityClass != nullptr && !Description.Label.IsEmpty ();

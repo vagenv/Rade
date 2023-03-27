@@ -54,7 +54,7 @@
 		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Target_Fireball_BP.Ability_Target_Fireball_BP_C'",
 		"Description":
 		{
-			"Label": "Firebasll",
+			"Label": "Fireball",
 			"Tooltip": "Let's share heat",
 			"Icon": "/Game/Rade/Sprites/Icons/campfire.campfire"
 		}
