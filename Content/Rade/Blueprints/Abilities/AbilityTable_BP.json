@@ -50,7 +50,7 @@
 		}
 	},
 	{
-		"Name": "NewRow_0",
+		"Name": "Fireball",
 		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Target_Fireball_BP.Ability_Target_Fireball_BP_C'",
 		"Description":
 		{
@@ -60,13 +60,23 @@
 		}
 	},
 	{
-		"Name": "NewRow",
+		"Name": "HealingAura",
 		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Aura_HealthRegen_BP.Ability_Aura_HealthRegen_BP_C'",
 		"Description":
 		{
 			"Label": "Healing Aura",
 			"Tooltip": "Get better everyone!",
 			"Icon": "/Game/Rade/Sprites/Icons/heart-plus.heart-plus"
+		}
+	},
+	{
+		"Name": "OnDamageManaRegen",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_OnDamageManaRestore_BP.Ability_OnDamageManaRestore_BP_C'",
+		"Description":
+		{
+			"Label": "Mana Regen on Damage",
+			"Tooltip": "Chance to cause mana regen",
+			"Icon": "/Game/Rade/Sprites/Icons/beer.beer"
 		}
 	}
 ]

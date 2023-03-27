@@ -1,8 +1,14 @@
 [
 	{
 		"Name": "DummyEnemy",
-		"Target": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Enemies/DummyEnemy_BP.DummyEnemy_BP_C'",
-		"PerDamage": 1,
-		"PerDeath": 500
+		"TargetClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Enemies/DummyEnemy_BP.DummyEnemy_BP_C'",
+		"PerDamage": 0.1,
+		"PerDeath": 50
+	},
+	{
+		"Name": "SimpleEnemy",
+		"TargetClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Enemies/SimpleEnemy_BP.SimpleEnemy_BP_C'",
+		"PerDamage": 0.5,
+		"PerDeath": 100
 	}
 ]
