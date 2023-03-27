@@ -191,8 +191,8 @@ public:
              Category = "Rade|Status",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get Status Mgr",
-                     CompactNodeTitle = "Status Mgr"))
+                     DisplayName      = "World Status Mgr",
+                     CompactNodeTitle = "World Status Mgr"))
       static URWorldStatusMgr* GetInstance (UObject* WorldContextObject);
 };
 

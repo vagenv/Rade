@@ -78,8 +78,8 @@ public:
              Category = "Rade|Experience",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get EXP Mgr",
-                     CompactNodeTitle = "EXP Mgr"))
+                     DisplayName      = "World EXP Mgr",
+                     CompactNodeTitle = "World EXP Mgr"))
       static URWorldExperienceMgr* GetInstance (UObject* WorldContextObject);
 };
 
