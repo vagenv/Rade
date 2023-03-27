@@ -79,8 +79,8 @@ public:
              Category = "Rade|Ability",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get Ability Mgr",
-                     CompactNodeTitle = "Ability Mgr"))
+                     DisplayName      = "World Ability Mgr",
+                     CompactNodeTitle = "World Ability Mgr"))
       static URWorldAbilityMgr* GetInstance (UObject* WorldContextObject);
 };
 
