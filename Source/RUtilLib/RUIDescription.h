@@ -17,5 +17,20 @@ struct RUTILLIB_API FRUIDescription
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TSoftObjectPtr<UTexture2D> Icon;
+
+   bool operator == (const FRUIDescription &res) const noexcept;
 };
 
+// ============================================================================
+//                   Util Library
+// ============================================================================
+
+UCLASS()
+class RUTILLIB_API URUIDescriptionUtilLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Util", meta=(DisplayName="Equal (FRUIDescription)", CompactNodeTitle="=="))
+	   static bool FRUIDescription_EqualEqual (const FRUIDescription& A, const FRUIDescription& B);
+};
