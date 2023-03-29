@@ -87,7 +87,7 @@ void URStatusMgrComponent::BeginPlay ()
                                                      false);
 
       if (ExperienceMgr) {
-         ExperienceMgr->OnLevelUp.AddDynamic (this, &URStatusMgrComponent::OnLevelUp);
+         ExperienceMgr->OnLevelUp.AddDynamic (this, &URStatusMgrComponent::LeveledUp);
       }
    }
 }
@@ -261,7 +261,7 @@ bool URStatusMgrComponent::IsDead () const
 //                 Level up
 //=============================================================================
 
-void URStatusMgrComponent::OnLevelUp ()
+void URStatusMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
    if (!ensure (WorldStatusMgr)) return;
@@ -277,6 +277,8 @@ void URStatusMgrComponent::OnLevelUp ()
       RecalcStatus ();
 
    AddAbilityPoint ();
+
+   OnLevelUp.Broadcast ();
 }
 
 //=============================================================================
@@ -376,6 +378,8 @@ bool URStatusMgrComponent::AddExtraStat (FRCoreStats ExtraStat)
 
    CoreStats_Base  += ExtraStat;
    CoreStats_Extra -= TotalUse;
+
+   RecalcStatus ();
    return true;
 }
 

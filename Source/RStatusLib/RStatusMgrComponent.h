@@ -90,7 +90,8 @@ public:
    //==========================================================================
 protected:
    UFUNCTION()
-      void OnLevelUp ();
+      void LeveledUp ();
+public:
 
    //==========================================================================
    //                 Status
@@ -291,6 +292,9 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnActiveEffectsUpdated;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnLevelUp;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnDeath;
