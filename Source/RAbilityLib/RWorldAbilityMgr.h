@@ -43,8 +43,11 @@ protected:
 public:
 
    // Get ability info and scaling.
-   UFUNCTION (BlueprintPure, Category = "Rade|Ability")
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       FRAbilityInfo GetAbilityInfo (const URAbility* Ability) const;
+
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      TArray<FRAbilityInfo> GetAllAbilities () const;
 
    //==========================================================================
    //                  Events

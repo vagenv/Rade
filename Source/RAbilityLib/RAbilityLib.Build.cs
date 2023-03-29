@@ -15,6 +15,8 @@ public class RAbilityLib : ModuleRules
          "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
+         "RDamageLib",
+         "RExperienceLib",
       });
    }
 }

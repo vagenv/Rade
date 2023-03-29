@@ -60,6 +60,15 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo (const URAbility* Ability) const
    return Result;
 }
 
+TArray<FRAbilityInfo> URWorldAbilityMgr::GetAllAbilities () const
+{
+   TArray<FRAbilityInfo> Result;
+   for (const auto& ItAbility : MapAbility) {
+      Result.Add (ItAbility.Value);
+   }
+   return Result;
+}
+
 void URWorldAbilityMgr::ReportAddAbility (URAbility* Ability)
 {
    if (!ensure (Ability)) return;

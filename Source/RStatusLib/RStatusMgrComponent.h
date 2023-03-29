@@ -145,22 +145,6 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void UseMana (float Amount);
 
-   //==========================================================================
-   //                 Ability Points
-   //==========================================================================
-protected:
-   // --- Core Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      int AbilityPoints = 0;
-public:
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      int GetAbilityPoint () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      void AddAbilityPoint ();
-
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      void RmAbilityPoint ();
 
    //==========================================================================
    //                 Extra stat Points
@@ -292,9 +276,6 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnActiveEffectsUpdated;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusMgrEvent OnLevelUp;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnDeath;

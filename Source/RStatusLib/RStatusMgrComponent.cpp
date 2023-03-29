@@ -275,10 +275,6 @@ void URStatusMgrComponent::LeveledUp ()
    if (!DeltaStats.Empty ()) CoreStats_Base += DeltaStats;
    if (!DeltaStats.Empty () || ExtraStats)
       RecalcStatus ();
-
-   AddAbilityPoint ();
-
-   OnLevelUp.Broadcast ();
 }
 
 //=============================================================================
@@ -343,23 +339,6 @@ void URStatusMgrComponent::SetStamina_Implementation (FRStatusValue Stamina_)
 {
    if (R_IS_NET_ADMIN) return;
    Stamina = Stamina_;
-}
-
-//=============================================================================
-//                 Ability Points
-//=============================================================================
-
-int URStatusMgrComponent::GetAbilityPoint () const
-{
-   return AbilityPoints;
-}
-void URStatusMgrComponent::AddAbilityPoint ()
-{
-   AbilityPoints++;
-}
-void URStatusMgrComponent::RmAbilityPoint ()
-{
-   AbilityPoints--;
 }
 
 //=============================================================================
