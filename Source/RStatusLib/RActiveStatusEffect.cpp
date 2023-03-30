@@ -93,7 +93,7 @@ void URActiveStatusEffect::Stop ()
    if (!ensure (World)) return;
    if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
    if (R_IS_VALID_WORLD) OnCancel.Broadcast ();
-   Ended ();
+   DestroyComponent ();
 }
 
 void URActiveStatusEffect::Refresh_Implementation ()
