@@ -64,7 +64,13 @@ void UREquipmentMgrComponent::BeginPlay ()
       if (URStatusMgrComponent *StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ())) {
          StatusMgr->OnStatsUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatsUpdated);
       }
-      OnStatsUpdated ();
+
+      FTimerHandle MyHandle;
+      GetOwner ()->GetWorldTimerManager ().SetTimer (MyHandle,
+                                                     this,
+                                                     &UREquipmentMgrComponent::OnStatsUpdated,
+                                                     1,
+                                                     false);
    }
 }
 
