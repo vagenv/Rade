@@ -23,7 +23,6 @@ URStatusMgrComponent::URStatusMgrComponent ()
    PrimaryComponentTick.bStartWithTickEnabled = true;
    SetIsReplicatedByDefault (true);
 
-   CoreStats_Base = FRCoreStats (10);
    Health.Current =  90.;
    Health.Max     = 100.;
    Health.Regen   =   2.;
@@ -41,20 +40,9 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 
-
    DOREPLIFETIME (URStatusMgrComponent, bDead);
-   DOREPLIFETIME (URStatusMgrComponent, CoreStats_Base);
-   DOREPLIFETIME (URStatusMgrComponent, CoreStats_Added);
-   DOREPLIFETIME (URStatusMgrComponent, SubStats_Base);
-   DOREPLIFETIME (URStatusMgrComponent, SubStats_Added);
-
    DOREPLIFETIME (URStatusMgrComponent, PassiveEffects);
    DOREPLIFETIME (URStatusMgrComponent, Resistence);
-}
-
-void URStatusMgrComponent::OnRep_Stats ()
-{
-   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -75,36 +63,14 @@ void URStatusMgrComponent::BeginPlay ()
       MovementComponent = Character->GetCharacterMovement ();
    }
 
-   // Balancing Mgr
+   // For reporting applied status effect
    WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
-
-   // Exp Mgr
-   ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
 
    if (R_IS_NET_ADMIN) {
       bDead = false;
 
-      // Save/Load Status
-      if (bSaveLoad) {
-         // Careful with collision of 'UniqueSaveId'
-         FString UniqueSaveId = GetOwner ()->GetName () + "_StatusMgr";
-         Init_Save (this, UniqueSaveId);
-      }
-
-
       // Bind To AActor::OnTakeAnyDamage
       GetOwner ()->OnTakeAnyDamage.AddDynamic (this, &URStatusMgrComponent::AnyDamage);
-
-      FTimerHandle MyHandle;
-      GetOwner ()->GetWorldTimerManager ().SetTimer (MyHandle,
-                                                     this,
-                                                     &URStatusMgrComponent::RecalcStatus,
-                                                     1,
-                                                     false);
-
-      if (ExperienceMgr) {
-         ExperienceMgr->OnLevelUp.AddDynamic (this, &URStatusMgrComponent::LeveledUp);
-      }
    }
 }
 
@@ -120,86 +86,72 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 }
 
 //=============================================================================
+//                 Dead
+//=============================================================================
+
+void URStatusMgrComponent::SetDead (bool Dead)
+{
+   R_RETURN_IF_NOT_ADMIN;
+   bool WasDead = bDead;
+   bDead = Dead;
+
+   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
+
+   // Broadcast only after value has been changed;
+   if (WasDead && !Dead) {
+      // --- Reset to original values
+      Health  = Start_Health;
+      Mana    = Start_Mana;
+      Stamina = Start_Stamina;
+
+      // Stop active effects
+      TArray<URActiveStatusEffect*> StillActiveEffects;
+      GetOwner ()->GetComponents (StillActiveEffects);
+      for (URActiveStatusEffect* ItEffect : StillActiveEffects) {
+         ItEffect->Stop ();
+      }
+
+      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
+      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+   }
+   if (!WasDead && Dead) {
+      Health.Current = 0;
+      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
+   }
+}
+
+bool URStatusMgrComponent::IsDead () const
+{
+   return bDead;
+}
+
+void URStatusMgrComponent::OnRep_Dead ()
+{
+   if (!R_IS_VALID_WORLD) return;
+   if (bDead) {
+      Health.Current = 0;
+      OnDeath.Broadcast ();
+   } else {
+      // --- Reset to original values
+      Health  = Start_Health;
+      Mana    = Start_Mana;
+      Stamina = Start_Stamina;
+      OnRevive.Broadcast ();
+   }
+}
+
+//=============================================================================
 //                 Recalc stats
 //=============================================================================
 
 void URStatusMgrComponent::RecalcStatus ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   RecalcCoreStats ();
-   RecalcSubStats ();
    RecalcStatusValues ();
 
    SetHealth (Health);
    SetStamina (Stamina);
    SetMana (Mana);
-
-   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
-}
-
-void URStatusMgrComponent::RecalcCoreStats ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
-
-   // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += ItEffect.Value.Value;
-      }
-   }
-   // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + ItEffect.Value.Value) / 100.);
-      }
-   }
-   CoreStats_Added = CoreStats_Total_New - GetCoreStats_Base ();
-}
-
-void URStatusMgrComponent::RecalcSubStats ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
-
-   FRCoreStats StatsTotal = GetCoreStats_Total ();
-   float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
-   float CriticalTotal    = WorldStatusMgr->GetAgiToCritical    (StatsTotal.AGI);
-   float AttackSpeedTotal = WorldStatusMgr->GetAgiToAttackSpeed (StatsTotal.AGI);
-   float MoveSpeedTotal   = 0;
-
-   // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   += ItEffect.Value.Value;
-      }
-   }
-   // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   *= ((100. + ItEffect.Value.Value) / 100.);
-      }
-   }
-
-   FRCoreStats StatsCurrent = GetCoreStats_Base ();
-   SubStats_Base.Evasion      = WorldStatusMgr->GetAgiToEvasion     (StatsCurrent.AGI);
-   SubStats_Added.Evasion     = EvasionTotal - SubStats_Base.Evasion;
-   SubStats_Base.Critical     = WorldStatusMgr->GetAgiToCritical    (StatsCurrent.AGI);
-   SubStats_Added.Critical    = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.AttackSpeed  = WorldStatusMgr->GetAgiToAttackSpeed (StatsCurrent.AGI);
-   SubStats_Added.AttackSpeed = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.MoveSpeed    = MoveSpeedTotal;
-   SubStats_Added.MoveSpeed   = 0;
 }
 
 void URStatusMgrComponent::RecalcStatusValues ()
@@ -208,13 +160,9 @@ void URStatusMgrComponent::RecalcStatusValues ()
    if (!ensure (WorldStatusMgr)) return;
 
    // --- Status
-   FRCoreStats StatsTotal = GetCoreStats_Total ();
-   Health.Max     = WorldStatusMgr->GetStrToHealthMax    (StatsTotal.STR);
-   Health.Regen   = WorldStatusMgr->GetStrToHealthRegen  (StatsTotal.STR);
-   Stamina.Max    = WorldStatusMgr->GetAgiToStaminaMax   (StatsTotal.AGI);
-   Stamina.Regen  = WorldStatusMgr->GetAgiToStaminaRegen (StatsTotal.AGI);
-   Mana.Max       = WorldStatusMgr->GetIntToManaMax      (StatsTotal.INT);
-   Mana.Regen     = WorldStatusMgr->GetIntToManaRegen    (StatsTotal.INT);
+   Health  = Start_Health;
+   Mana    = Start_Mana;
+   Stamina = Start_Stamina;
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
@@ -238,59 +186,6 @@ void URStatusMgrComponent::RecalcStatusValues ()
          if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Value) / 100.);
       }
    }
-}
-//=============================================================================
-//                 Dead
-//=============================================================================
-
-void URStatusMgrComponent::OnRep_Dead ()
-{
-   if (!R_IS_VALID_WORLD) return;
-   if (bDead) OnDeath.Broadcast ();
-   else       OnRevive.Broadcast ();
-}
-
-void URStatusMgrComponent::SetDead (bool Dead)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   bool WasDead = bDead;
-   bDead = Dead;
-
-   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
-
-   // Broadcast only after value has been changed;
-   if (WasDead && !Dead) {
-      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
-   }
-   if (!WasDead && Dead) {
-      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
-   }
-}
-
-bool URStatusMgrComponent::IsDead () const
-{
-   return bDead;
-}
-
-//=============================================================================
-//                 Level up
-//=============================================================================
-
-void URStatusMgrComponent::LeveledUp ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
-   if (!ensure (ExperienceMgr))  return;
-
-   float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
-
-   if (ExtraStats) CoreStats_Extra += ExtraStats;
-
-   FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
-   if (!DeltaStats.Empty ()) CoreStats_Base += DeltaStats;
-   if (!DeltaStats.Empty () || ExtraStats)
-      RecalcStatus ();
 }
 
 //=============================================================================
@@ -358,69 +253,17 @@ void URStatusMgrComponent::SetStamina_Implementation (FRStatusValue Stamina_)
 }
 
 //=============================================================================
-//                 Extra stat Points
+//                 Critical / Evasion
 //=============================================================================
-
-float URStatusMgrComponent::GetCoreStats_Extra () const
-{
-   return CoreStats_Extra;
-}
-
-bool URStatusMgrComponent::AddExtraStat (FRCoreStats ExtraStat)
-{
-   float TotalUse = ExtraStat.STR + ExtraStat.AGI + ExtraStat.INT;
-   if (TotalUse > GetCoreStats_Extra ()) return false;
-
-   CoreStats_Base  += ExtraStat;
-   CoreStats_Extra -= TotalUse;
-
-   RecalcStatus ();
-   return true;
-}
-
-//=============================================================================
-//                 Core and Sub Stats
-//=============================================================================
-
-FRCoreStats URStatusMgrComponent::GetCoreStats_Base () const
-{
-   return CoreStats_Base;
-}
-FRCoreStats URStatusMgrComponent::GetCoreStats_Added () const
-{
-   return CoreStats_Added;
-}
-FRCoreStats URStatusMgrComponent::GetCoreStats_Total () const
-{
-   return GetCoreStats_Base () + GetCoreStats_Added ();
-}
-
-FRSubStats URStatusMgrComponent::GetSubStats_Base () const
-{
-   return SubStats_Base;
-}
-FRSubStats URStatusMgrComponent::GetSubStats_Added () const
-{
-   return SubStats_Added;
-}
-FRSubStats URStatusMgrComponent::GetSubStats_Total () const
-{
-   return GetSubStats_Base () + GetSubStats_Added ();
-}
-
-bool URStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) const
-{
-   return GetCoreStats_Total ().MoreThan (RequiredStats);
-}
 
 bool URStatusMgrComponent::RollCritical () const
 {
-   return ((FMath::Rand () % 100) <= GetSubStats_Total ().Critical);
+   return ((FMath::Rand () % 100) <= CriticalChance);
 }
 
 bool URStatusMgrComponent::RollEvasion () const
 {
-   return ((FMath::Rand () % 100) <= GetSubStats_Total ().Evasion);
+   return ((FMath::Rand () % 100) <= EvasionChance);
 }
 
 //==========================================================================
@@ -469,6 +312,7 @@ bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<F
    }
 
    RecalcStatus ();
+   OnPassiveEffectsUpdated.Broadcast ();
    return true;
 }
 
@@ -490,7 +334,13 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
    }
 
    RecalcStatus ();
+   OnPassiveEffectsUpdated.Broadcast ();
    return true;
+}
+
+void URStatusMgrComponent::OnRep_PassiveEffects ()
+{
+   OnPassiveEffectsUpdated.Broadcast ();
 }
 
 //==========================================================================
@@ -580,7 +430,7 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRDam
       newRes.Value = ItAddValue;
       Resistence.Add (newRes);
    }
-   RecalcStatus ();
+   OnResistanceUpdated.Broadcast ();
 }
 
 void URStatusMgrComponent::RmResistance (const FString &Tag)
@@ -600,8 +450,12 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
    for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
       Resistence.RemoveAt (ToRemove[iToRemove]);
    }
+   OnResistanceUpdated.Broadcast ();
+}
 
-   RecalcStatus ();
+void URStatusMgrComponent::OnRep_Resistence ()
+{
+   OnResistanceUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -668,21 +522,5 @@ void URStatusMgrComponent::ReportREvade_Implementation (float               Amou
 {
    if (!ensure (Causer)) return;
    if (R_IS_VALID_WORLD) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
-}
-
-//=============================================================================
-//                 Save / Load
-//=============================================================================
-
-void URStatusMgrComponent::OnSave (FBufferArchive &SaveData)
-{
-   SaveData << Health << Mana << Stamina;
-   SaveData << CoreStats_Base;
-}
-
-void URStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
-{
-   LoadData << Health << Mana << Stamina;
-   LoadData << CoreStats_Base;
 }
 

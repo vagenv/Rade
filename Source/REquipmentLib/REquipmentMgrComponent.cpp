@@ -9,7 +9,7 @@
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RJson.h"
 
-#include "RStatusLib/RStatusMgrComponent.h"
+#include "RStatusLib/RPlayerStatusMgrComponent.h"
 #include "RInventoryLib/RItemAction.h"
 
 //=============================================================================
@@ -61,7 +61,7 @@ void UREquipmentMgrComponent::BeginPlay ()
    Super::BeginPlay ();
 
    if (R_IS_NET_ADMIN) {
-      if (URStatusMgrComponent *StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ())) {
+      if (URPlayerStatusMgrComponent *StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ())) {
          StatusMgr->OnStatsUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatsUpdated);
       }
 
@@ -135,7 +135,7 @@ void UREquipmentMgrComponent::CalcWeight ()
 
 void UREquipmentMgrComponent::OnStatsUpdated ()
 {
-   URStatusMgrComponent *StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   URPlayerStatusMgrComponent *StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
       FRCoreStats StatsTotal = StatusMgr->GetCoreStats_Total ();
       WeightMax = URUtilLibrary::GetRuntimeFloatCurveValue (StrToWeightMax, StatsTotal.STR);
@@ -250,7 +250,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
          );
    }
 
-   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+   URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
    if (!EquipmentData.RequiredStats.Empty ()) {
       if (!StatusMgr) {
          R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.Name);

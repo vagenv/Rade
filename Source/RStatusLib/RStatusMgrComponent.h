@@ -4,14 +4,12 @@
 
 #include "RStatusTypes.h"
 #include "RPassiveStatusEffect.h"
-#include "RSaveLib/RSaveInterface.h"
 #include "RStatusMgrComponent.generated.h"
 
 class URDamageType;
 class URActiveStatusEffect;
 class URInventoryComponent;
 class URWorldStatusMgr;
-class URExperienceMgrComponent;
 class UCharacterMovementComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRStatusMgrEvent);
@@ -23,7 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRTakeDamageEvent,
 
 // Status Manager Component.
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent, public IRSaveInterface
+class RSTATUSLIB_API URStatusMgrComponent : public UActorComponent
 {
    GENERATED_BODY()
 public:
@@ -40,34 +38,14 @@ public:
    //==========================================================================
    //                 Stored pointers
    //==========================================================================
-private:
+protected:
    // Owners Movement Component. For stamina Regen.
    UPROPERTY()
       UCharacterMovementComponent* MovementComponent = nullptr;
 
-   // For stat curve calculations
+   // For reporting applied status effects
    UPROPERTY()
       URWorldStatusMgr* WorldStatusMgr = nullptr;
-
-   // Experience
-   UPROPERTY()
-      URExperienceMgrComponent* ExperienceMgr = nullptr;
-
-   //==========================================================================
-   //                 Recalc status
-   //==========================================================================
-private:
-   UFUNCTION()
-      void RecalcStatus ();
-
-   UFUNCTION()
-      void RecalcCoreStats ();
-
-   UFUNCTION()
-      void RecalcSubStats ();
-
-   UFUNCTION()
-      void RecalcStatusValues ();
 
    //==========================================================================
    //                 Dead
@@ -86,12 +64,14 @@ public:
       void SetDead (bool Dead);
 
    //==========================================================================
-   //                 Level Up
+   //                 Recalc status
    //==========================================================================
-protected:
+private:
    UFUNCTION()
-      void LeveledUp ();
-public:
+      virtual void RecalcStatus ();
+
+   UFUNCTION()
+      virtual void RecalcStatusValues ();
 
    //==========================================================================
    //                 Status
@@ -153,65 +133,14 @@ public:
 
 
    //==========================================================================
-   //                 Extra stat Points
+   //                 Evasion / Critical
    //==========================================================================
 protected:
-   // To be assigned to core stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      float CoreStats_Extra = 0;
-public:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      float EvasionChance = 0.;
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      float GetCoreStats_Extra () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool AddExtraStat (FRCoreStats ExtraStat);
-
-   //==========================================================================
-   //                 Core and Sub Stats
-   //==========================================================================
-protected:
-
-   // --- Core Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      FRCoreStats CoreStats_Base;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      FRCoreStats CoreStats_Added;
-
-   // --- Extra Stats
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      FRSubStats SubStats_Base;
-
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      FRSubStats SubStats_Added;
-
-   UFUNCTION()
-      void OnRep_Stats ();
-public:
-   // --- Get Core Stats
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRCoreStats GetCoreStats_Base () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRCoreStats GetCoreStats_Added () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRCoreStats GetCoreStats_Total () const;
-
-   // --- Get Extra Stats
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRSubStats GetSubStats_Base () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRSubStats GetSubStats_Added () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRSubStats GetSubStats_Total () const;
-
-   // --- Stats functions
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      bool HasStats (const FRCoreStats &RequiredStats) const;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+      float CriticalChance = 0.;
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool RollCritical () const;
@@ -224,9 +153,11 @@ public:
    //==========================================================================
 protected:
    // Should be a Map of FRSubStats, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+   UPROPERTY(ReplicatedUsing = "OnRep_PassiveEffects", Replicated)
       TArray<FRPassiveStatusEffectWithTag> PassiveEffects;
 
+   UFUNCTION()
+      void OnRep_PassiveEffects ();
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
@@ -251,10 +182,12 @@ public:
    //                 Resistance
    //==========================================================================
 protected:
-
    // Should be Map of FRResistanceStat, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
+   UPROPERTY(ReplicatedUsing = "OnRep_Resistence", Replicated)
       TArray<FRDamageResistanceWithTag> Resistence;
+
+   UFUNCTION()
+      void OnRep_Resistence ();
 
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
@@ -276,12 +209,15 @@ public:
    //                 Events
    //==========================================================================
 public:
-   // Delegate when status updated
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusMgrEvent OnStatsUpdated;
+      FRStatusMgrEvent OnPassiveEffectsUpdated;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnActiveEffectsUpdated;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnResistanceUpdated;
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnDeath;
@@ -326,17 +262,5 @@ private:
       void ReportREvade_Implementation (float               Amount,
                                         const URDamageType* Type,
                                         AActor*             Causer);
-
-   //==========================================================================
-   //                 Save/Load
-   //==========================================================================
-public:
-   // Status Saved / Loaded between sessions.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      bool bSaveLoad = false;
-
-protected:
-   virtual void OnSave (FBufferArchive &SaveData) override;
-   virtual void OnLoad (FMemoryReader &LoadData) override;
 };
 
