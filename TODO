@@ -12,6 +12,8 @@ Fix Click/Hover zones overlap of button / border
 
 Blurred border corners?
 
+Easy list switch
+
 =======
 Cleanup
 =======
@@ -27,7 +29,8 @@ Other
 =======
 - Magnetic pickup
 - DDC
-
+- FWeakObjectPtr for pointer to object
+- Unique Item/Ability equip
 
 =================================================
    First Enemy Character
@@ -91,6 +94,8 @@ New UI page with:
    Save/Load
 =================================================
 
+Freeze world while saving.
+
 Redesign SaveMgr for blueprint support.
 
 - Ability List
@@ -98,6 +103,10 @@ Redesign SaveMgr for blueprint support.
 - Equipment
 - ActiveStatusEffects?
 - Experience
+
+Save/Load SetPending (FString ObjectId)
+
+Ensure everything is saved before continue.
 
 UI
 Save/Load By slots.
