@@ -97,15 +97,25 @@ public:
    //                 Status
    //==========================================================================
 protected:
-   UPROPERTY()
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Health;
 
-   UPROPERTY()
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Mana;
 
-   UPROPERTY()
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRStatusValue Stamina;
 
+private:
+   // Backup of initial value.
+   FRStatusValue Start_Health;
+   FRStatusValue Start_Mana;
+   FRStatusValue Start_Stamina;
+
+   //==========================================================================
+   //                 Status Func
+   //==========================================================================
+protected:
    // Called by Tick
    virtual void StatusRegen (float DeltaTime);
 
@@ -122,11 +132,7 @@ protected:
       void SetStamina                (FRStatusValue Stamina_);
       void SetStamina_Implementation (FRStatusValue Stamina_);
 
-   //==========================================================================
-   //                 Status Func
-   //==========================================================================
 public:
-
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRStatusValue GetHealth () const;
 

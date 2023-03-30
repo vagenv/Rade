@@ -24,6 +24,17 @@ URStatusMgrComponent::URStatusMgrComponent ()
    SetIsReplicatedByDefault (true);
 
    CoreStats_Base = FRCoreStats (10);
+   Health.Current =  90.;
+   Health.Max     = 100.;
+   Health.Regen   =   2.;
+
+   Stamina.Current =  50.;
+   Stamina.Max     = 100.;
+   Stamina.Regen   =  20.;
+
+   Mana.Current = 30.;
+   Mana.Max     = 50.;
+   Mana.Regen   =  5.;
 }
 
 void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -53,6 +64,11 @@ void URStatusMgrComponent::OnRep_Stats ()
 void URStatusMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
+
+   // --- Create a backup of initial value
+   Start_Health  = Health;
+   Start_Mana    = Mana;
+   Start_Stamina = Stamina;
 
    // Character Movement
    if (ACharacter *Character = Cast<ACharacter> (GetOwner ())) {

@@ -99,7 +99,7 @@ struct RSTATUSLIB_API FRStatusValue
 
    // Per second
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float Regen = 0;
+      float Regen = 1;
 
    void Tick (float DeltaTime);
 
