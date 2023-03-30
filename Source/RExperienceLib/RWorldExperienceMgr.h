@@ -15,7 +15,7 @@ struct REXPERIENCELIB_API FREnemyExp : public FTableRowBase
    GENERATED_BODY()
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<ACharacter> Target;
+      TSubclassOf<ACharacter> TargetClass;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float PerDamage = 1;
@@ -31,6 +31,8 @@ class REXPERIENCELIB_API URWorldExperienceMgr : public UActorComponent
 public:
 
    URWorldExperienceMgr ();
+   // Read table before begin play
+   virtual void InitializeComponent () override;
    virtual void BeginPlay () override;
 
    //==========================================================================
@@ -76,8 +78,8 @@ public:
              Category = "Rade|Experience",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get EXP Mgr",
-                     CompactNodeTitle = "EXP Mgr"))
+                     DisplayName      = "World EXP Mgr",
+                     CompactNodeTitle = "World EXP Mgr"))
       static URWorldExperienceMgr* GetInstance (UObject* WorldContextObject);
 };
 

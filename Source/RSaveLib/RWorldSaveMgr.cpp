@@ -3,6 +3,7 @@
 #include "RWorldSaveMgr.h"
 #include "RSaveGame.h"
 #include "RUtilLib/RUtil.h"
+#include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
 //=============================================================================
@@ -38,7 +39,7 @@ bool URWorldSaveMgr::SaveSync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-   OnSave.Broadcast ();
+   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
    return UGameplayStatics::SaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
 }
@@ -47,7 +48,7 @@ bool URWorldSaveMgr::SaveASync ()
 {
    CheckSaveFile ();
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-   OnSave.Broadcast ();
+   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
    // Setup save complete delegate.
    FAsyncSaveGameToSlotDelegate SavedDelegate;
@@ -65,7 +66,7 @@ bool URWorldSaveMgr::LoadSync ()
    CheckSaveFile ();
    R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
    SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex));
-   if (SaveFile != nullptr) OnLoad.Broadcast ();
+   if (R_IS_VALID_WORLD && SaveFile != nullptr) OnLoad.Broadcast ();
    return (SaveFile != nullptr);
 }
 
@@ -97,7 +98,7 @@ void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, c
       R_LOG_PRINTF ("Loading [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
-   OnLoad.Broadcast ();
+   if (R_IS_VALID_WORLD) OnLoad.Broadcast ();
 }
 
 //=============================================================================

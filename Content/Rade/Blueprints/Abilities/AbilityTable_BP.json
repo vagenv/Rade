@@ -1,0 +1,82 @@
+[
+	{
+		"Name": "Heal",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Heal_BP.Ability_Heal_BP_C'",
+		"Description":
+		{
+			"Label": "Heal",
+			"Tooltip": "Healing is good!",
+			"Icon": "/Game/Rade/Sprites/Icons/heart-plus.heart-plus"
+		}
+	},
+	{
+		"Name": "Jump",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Jump_BP.Ability_Jump_BP_C'",
+		"Description":
+		{
+			"Label": "Jump",
+			"Tooltip": "???",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-up.arrow-badge-up"
+		}
+	},
+	{
+		"Name": "DoubleJump",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_DoubleJump_BP.Ability_DoubleJump_BP_C'",
+		"Description":
+		{
+			"Label": "Double Jump",
+			"Tooltip": "Ignore physics! Just jump again.",
+			"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-up.arrow-badge-up"
+		}
+	},
+	{
+		"Name": "PoisonAura",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Aura_ActiveStatusEffect_Poison_BP.Ability_Aura_ActiveStatusEffect_Poison_BP_C'",
+		"Description":
+		{
+			"Label": "Poison Aura",
+			"Tooltip": "Everything around decays",
+			"Icon": "/Game/Rade/Sprites/Icons/alarm.alarm"
+		}
+	},
+	{
+		"Name": "Pull",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Pull_BP.Ability_Pull_BP_C'",
+		"Description":
+		{
+			"Label": "Pull",
+			"Tooltip": "Why is everything so far away? Come closer!",
+			"Icon": "/Game/Rade/Sprites/Icons/arrows-minimize.arrows-minimize"
+		}
+	},
+	{
+		"Name": "Fireball",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Target_Fireball_BP.Ability_Target_Fireball_BP_C'",
+		"Description":
+		{
+			"Label": "Fireball",
+			"Tooltip": "Let's share heat",
+			"Icon": "/Game/Rade/Sprites/Icons/campfire.campfire"
+		}
+	},
+	{
+		"Name": "HealingAura",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_Aura_HealthRegen_BP.Ability_Aura_HealthRegen_BP_C'",
+		"Description":
+		{
+			"Label": "Healing Aura",
+			"Tooltip": "Get better everyone!",
+			"Icon": "/Game/Rade/Sprites/Icons/heart-plus.heart-plus"
+		}
+	},
+	{
+		"Name": "OnDamageManaRegen",
+		"AbilityClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Abilities/Ability_OnDamageManaRestore_BP.Ability_OnDamageManaRestore_BP_C'",
+		"Description":
+		{
+			"Label": "Mana Regen on Damage",
+			"Tooltip": "Chance to cause mana regen",
+			"Icon": "/Game/Rade/Sprites/Icons/beer.beer"
+		}
+	}
+]

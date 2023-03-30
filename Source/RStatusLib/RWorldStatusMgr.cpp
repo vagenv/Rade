@@ -20,6 +20,8 @@ URWorldStatusMgr* URWorldStatusMgr::GetInstance (UObject* WorldContextObject)
 
 URWorldStatusMgr::URWorldStatusMgr ()
 {
+   bWantsInitializeComponent = true;
+
    //==========================================================================
    //                   Stat growth
    //==========================================================================
@@ -148,15 +150,47 @@ URWorldStatusMgr::URWorldStatusMgr ()
    AgiToAttackSpeedData->AddKey (5000, 5000); // Maximum
 }
 
+
+void URWorldStatusMgr::InitializeComponent ()
+{
+   Super::InitializeComponent ();
+
+   // --- Parse Table and create Map for fast search
+   if (StatusEffectTable) {
+      MapStatusEffect.Empty ();
+      FString ContextString;
+      TArray<FName> RowNames = StatusEffectTable->GetRowNames ();
+      for (const FName& ItRowName : RowNames) {
+         FRActiveStatusEffectInfo* ItRow = StatusEffectTable->FindRow<FRActiveStatusEffectInfo> (ItRowName, ContextString);
+         if (ItRow && ItRow->EffectClass) {
+            MapStatusEffect.Add (ItRow->EffectClass, *ItRow);
+         }
+      }
+   }
+}
+
 void URWorldStatusMgr::BeginPlay ()
 {
    Super::BeginPlay ();
 }
 
+FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect* StatusEffect) const
+{
+   FRActiveStatusEffectInfo Result;
+   if (ensure (StatusEffect)) {
+      if (MapStatusEffect.Contains (StatusEffect->GetClass ())) {
+         Result = MapStatusEffect[StatusEffect->GetClass ()];
+      } else {
+         R_LOG_PRINTF ("Error. [%s] Effect not found in [StatusEffectTable]", *StatusEffect->GetPathName ());
+      }
+   }
+
+   return Result;
+}
+
 //=============================================================================
 //                Status Effect
 //=============================================================================
-
 
 void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor* Causer, AActor* Victim)
 {
@@ -164,25 +198,25 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
    if (!ensure (Effect)) return;
    if (!ensure (Causer)) return;
    if (!ensure (Victim)) return;
-   OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
+   if (R_IS_VALID_WORLD) OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
 }
 
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
    if (!ensure (Effect)) return;
-   OnStatusEffectStart.Broadcast (Effect);
+   if (R_IS_VALID_WORLD) OnStatusEffectStart.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
 {
    if (!ensure (Effect)) return;
-   OnStatusEffectRefresh.Broadcast (Effect);
+   if (R_IS_VALID_WORLD) OnStatusEffectRefresh.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 {
    if (!ensure (Effect)) return;
-   OnStatusEffectStart.Broadcast (Effect);
+   if (R_IS_VALID_WORLD) OnStatusEffectStart.Broadcast (Effect);
 }
 
 //=============================================================================

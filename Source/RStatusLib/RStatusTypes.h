@@ -31,8 +31,10 @@ struct RSTATUSLIB_API FRCoreStats
    // All values are higher than
    bool MoreThan (const FRCoreStats &stat) const;
 
-   FRCoreStats operator + (const FRCoreStats &stat) const;
-   FRCoreStats operator - (const FRCoreStats &stat) const;
+   FRCoreStats  operator +  (const FRCoreStats &stat) const;
+   FRCoreStats  operator -  (const FRCoreStats &stat) const;
+   FRCoreStats& operator += (const FRCoreStats &stat);
+
 
    friend FArchive& operator << (FArchive& Ar, FRCoreStats &Data) {
       Ar << Data.STR;
@@ -66,8 +68,9 @@ struct RSTATUSLIB_API FRSubStats
    UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
       float AttackPower = 0;
 
-   FRSubStats operator + (const FRSubStats &stat) const;
-   FRSubStats operator - (const FRSubStats &stat) const;
+   FRSubStats  operator +  (const FRSubStats &stat) const;
+   FRSubStats  operator -  (const FRSubStats &stat) const;
+   FRSubStats& operator += (const FRSubStats &stat);
 
    friend FArchive& operator << (FArchive& Ar, FRSubStats &Value) {
       Ar << Value.Evasion;
@@ -96,7 +99,7 @@ struct RSTATUSLIB_API FRStatusValue
 
    // Per second
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float Regen = 0;
+      float Regen = 1;
 
    void Tick (float DeltaTime);
 

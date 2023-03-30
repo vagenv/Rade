@@ -3,12 +3,45 @@
 #pragma once
 
 #include "RPassiveStatusEffect.h"
+#include "RUtilLib/RUIDescription.h"
+#include "Engine/DataTable.h"
 #include "RActiveStatusEffect.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRActiveStatusEffectEvent);
 
 class AActor;
 class URStatusMgrComponent;
+class URActiveStatusEffect;
+
+// ============================================================================
+//                   Active Status Effect Info
+// ============================================================================
+
+USTRUCT(BlueprintType)
+struct RSTATUSLIB_API FRActiveStatusEffectInfo : public FTableRowBase
+{
+   GENERATED_BODY()
+public:
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TSubclassOf<URActiveStatusEffect> EffectClass;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FRUIDescription Description;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      float Duration = 5;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TArray<FRPassiveStatusEffect> PassiveEffects;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TArray<float> StackScaling;
+
+   bool IsValid () const {
+      return EffectClass != nullptr && !Description.Label.IsEmpty ();
+   };
+};
 
 // ============================================================================
 //                   Active Status Effect
@@ -25,9 +58,6 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
-
-   virtual void OnComponentCreated () override;
-   virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
 
    //==========================================================================
    //                 Functions
@@ -49,37 +79,32 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       bool GetIsRunning () const;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      int GetStackCurrent () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      int GetStackMax () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       float GetStackScale (int Stack = -1) const;
+
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRActiveStatusEffectInfo GetEffectInfo () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRUIDescription GetDescription () const;
 
    //==========================================================================
    //                 Values
    //==========================================================================
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FString UIName;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      float Duration = 5;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      int StackMax = 1;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      int StackCurrent = 1;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffect> PassiveEffects;
 
    // Must be set by server
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       AActor* Causer = nullptr;
 
 protected:
-
-   // How stacks are scaling passive effect
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve StackToScale;
 
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
       URStatusMgrComponent* StatusMgr = nullptr;
@@ -119,6 +144,13 @@ protected:
 
    UFUNCTION()
       virtual void Ended ();
+
+   // Value must be defined in table
+   UPROPERTY()
+      FRActiveStatusEffectInfo EffectInfo;
+
+   UPROPERTY()
+      int StackCurrent = 1;
 
    UPROPERTY()
       FTimerHandle TimerToEnd;

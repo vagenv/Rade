@@ -71,8 +71,8 @@ public:
              Category = "Rade|Damage",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get Damage Mgr",
-                     CompactNodeTitle = "Damage Mgr"))
+                     DisplayName      = "World Damage Mgr",
+                     CompactNodeTitle = "World Damage Mgr"))
       static URWorldDamageMgr* GetInstance (UObject* WorldContextObject);
 };
 

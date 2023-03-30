@@ -12,10 +12,7 @@ Fix Click/Hover zones overlap of button / border
 
 Blurred border corners?
 
-=======
-Network
-=======
-Stress test low bandwidth and lagging.
+Easy list switch
 
 =======
 Cleanup
@@ -32,7 +29,10 @@ Other
 =======
 - Magnetic pickup
 - DDC
-
+- FWeakObjectPtr for pointer to object
+- SoftPtr to SubClass (will not create dependency)
+- Unique Item/Ability equip
+- PreBeginPlay / Post begin play init order linking
 
 =================================================
    First Enemy Character
@@ -40,71 +40,15 @@ Other
 - Animation
 - Material
 - Character blueprint
+- Attack
 - Basic AI
-
-
-
-=================================================
-   Major cleanup. Remove all float and int
-=================================================
-May cause problems down the line.
-Float point error and size limit.
-
-Replace int with int32
-Replace float with int64 * 100
-
-
-=================================================
-   Ability / Stat Level up page
-=================================================
-
-=======
-UI
-=======
-ReadOnly compact for info about current and other players
-Exp as number
-
-Popup for slot equip / item action / select Ability with custom widget type
-
-
-=======
-WorldAbilityMgr
-=======
-Contains the list of all available abilities user can learn.
-
-Pointer to DataTable with:
-- Ability Level table and effect
-- Ability Stack table and effect.
-
-=======
-Ability
-=======
-LevelUp
-- Can learn a new Ability (FRuntimeFloatCurve X:Level Y:AbilityToLearn)
-
-Ability level increase by using it?
-
-=======
-Stat
-=======
-- AddBaseStat (Save in new list for tracking?)
-
-Core Stats
-- Get Available LevelUp Stats
-- Core stats, with "+" next to them
-
-=======
-UI
-=======
-
-New UI page with:
-- Stat change with fractions (either +)
-- Ability learn list/level up, with "+" next to them
 
 
 =================================================
    Save/Load
 =================================================
+
+Freeze world while saving.
 
 Redesign SaveMgr for blueprint support.
 
@@ -113,6 +57,10 @@ Redesign SaveMgr for blueprint support.
 - Equipment
 - ActiveStatusEffects?
 - Experience
+
+Save/Load SetPending (FString ObjectId)
+
+Ensure everything is saved before continue.
 
 UI
 Save/Load By slots.
@@ -603,15 +551,17 @@ Determine bottlenecks. (240+ FPS)
 - CPU
 - GPU
 
-RAM / VRAM tracing and balancing.
+RAM / VRAM measuring and balancing.
 
 
 =================================================
    Online
 =================================================
 
-Database
-- Local Mysql for storing information
+Stress test low bandwidth and lagging.
+
+Database / storing user session
+- Local Mysql for storing information?
 
 External Network API
 - For optional data.
@@ -647,6 +597,25 @@ Dyanmic Time of Day
 =================================================
 - Load high detail models on demand
 - Analyse budget, resource usage and disk read pattern
+
+
+
+
+=================================================
+   Remove all float and int?
+=================================================
+
+For now ok.
+
+Others cases are not as a big of an issue because:
+- Mostly whole decimal (0.1, 0.2) will encounter rounding error.
+- float is enough precision for stats, except maybe 1M+ StatusValues
+
+float -> double:
+- StatusValues
+- GetRuntimeFloatCurveValue used for balancing
+
+int -> int32
 
 
 =================================================

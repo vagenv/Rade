@@ -5,9 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "RStatusTypes.h"
+#include "RActiveStatusEffect.h"
 #include "RWorldStatusMgr.generated.h"
-
-class URActiveStatusEffect;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams (FRStatusEffectEvent,
                                                 URActiveStatusEffect*, Effect,
@@ -30,8 +29,25 @@ class RSTATUSLIB_API URWorldStatusMgr : public UActorComponent
 public:
 
    URWorldStatusMgr ();
+   // Read table before begin play
+   virtual void InitializeComponent () override;
    virtual void BeginPlay () override;
 
+   //==========================================================================
+   //             Effect table
+   //==========================================================================
+private:
+   UPROPERTY ()
+      TMap<UClass *, FRActiveStatusEffectInfo> MapStatusEffect;
+protected:
+   // List of Enemies and experience for attacking / killing them
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status",
+            meta=(RequiredAssetDataTags = "RowStructure=/Script/RStatusLib.RActiveStatusEffectInfo"))
+      UDataTable* StatusEffectTable = nullptr;
+public:
+   // Gets Effect info and scaling
+   UFUNCTION (BlueprintPure, Category = "Rade|Status")
+      FRActiveStatusEffectInfo GetEffectInfo (const URActiveStatusEffect * StatusEffect) const;
 
    //==========================================================================
    //                Get stat growth functions
@@ -175,8 +191,8 @@ public:
              Category = "Rade|Status",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get Status Mgr",
-                     CompactNodeTitle = "Status Mgr"))
+                     DisplayName      = "World Status Mgr",
+                     CompactNodeTitle = "World Status Mgr"))
       static URWorldStatusMgr* GetInstance (UObject* WorldContextObject);
 };
 

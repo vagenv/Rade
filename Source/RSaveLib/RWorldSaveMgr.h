@@ -62,8 +62,8 @@ public:
              Category = "Rade|Save",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get Save Mgr",
-                     CompactNodeTitle = "Save Mgr"))
+                     DisplayName      = "World Save Mgr",
+                     CompactNodeTitle = "World Save Mgr"))
       static URWorldSaveMgr* GetInstance (UObject* WorldContextObject);
 
    //==========================================================================

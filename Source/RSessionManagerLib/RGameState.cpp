@@ -2,6 +2,7 @@
 
 #include "RGameState.h"
 #include "Engine.h"
+#include "RUtilLib/RCheck.h"
 #include "Net/UnrealNetwork.h"
 
 //  Online Message Data Constructor
@@ -31,7 +32,7 @@ void ARGameState::BeginPlay ()
 // Called On Client to Update HUD when message list updated
 void ARGameState::OnRep_MessagesList ()
 {
-   ChatUpdateDelegate.Broadcast ();
+   if (R_IS_VALID_WORLD) ChatUpdateDelegate.Broadcast ();
 }
 
 // Called on server to add new message
@@ -41,7 +42,7 @@ void ARGameState::AddChatMessage (FString Message_, FString Owner_, FColor Color
    Messages.Add (FROnineMessageData (Message_, Owner_, Color_));
 
    // Update HUD on server
-   ChatUpdateDelegate.Broadcast ();
+   if (R_IS_VALID_WORLD) ChatUpdateDelegate.Broadcast ();
 }
 
 // Replication of data

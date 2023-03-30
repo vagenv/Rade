@@ -3,6 +3,8 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Engine/DataTable.h"
+#include "RAbilityTypes.h"
 #include "RWorldAbilityMgr.generated.h"
 
 class URAbility;
@@ -23,6 +25,29 @@ class RABILITYLIB_API URWorldAbilityMgr : public UActorComponent
 public:
 
    URWorldAbilityMgr ();
+   // Read table before begin play
+   virtual void InitializeComponent () override;
+   virtual void BeginPlay () override;
+
+   //==========================================================================
+   //             Ability table
+   //==========================================================================
+private:
+   UPROPERTY ()
+      TMap<UClass *, FRAbilityInfo> MapAbility;
+protected:
+   // List of abilties
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability",
+            meta=(RequiredAssetDataTags = "RowStructure=/Script/RAbilityLib.RAbilityInfo"))
+      UDataTable* AbilityTable = nullptr;
+public:
+
+   // Get ability info and scaling.
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      FRAbilityInfo GetAbilityInfo (const URAbility* Ability) const;
+
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      TArray<FRAbilityInfo> GetAllAbilities () const;
 
    //==========================================================================
    //                  Events
@@ -57,8 +82,8 @@ public:
              Category = "Rade|Ability",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
-                     DisplayName      = "Get Ability Mgr",
-                     CompactNodeTitle = "Ability Mgr"))
+                     DisplayName      = "World Ability Mgr",
+                     CompactNodeTitle = "World Ability Mgr"))
       static URWorldAbilityMgr* GetInstance (UObject* WorldContextObject);
 };
 

@@ -3,10 +3,30 @@
 #pragma once
 
 #include "RUtilLib/RUIDescription.h"
+#include "Engine/DataTable.h"
 #include "RAbilityTypes.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
 
+class URAbility;
+
+USTRUCT(BlueprintType)
+struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
+{
+   GENERATED_BODY()
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TSubclassOf<URAbility> AbilityClass;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FRUIDescription Description;
+
+   // Level -> scaling info?
+
+   bool IsValid () const {
+      return AbilityClass != nullptr && !Description.Label.IsEmpty ();
+   };
+};
 
 // ============================================================================
 //                   Ability Component
@@ -23,16 +43,15 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   // --- For editor instance tracking
-   virtual void OnComponentCreated () override;
-   virtual void OnComponentDestroyed (bool bDestroyingHierarchy) override;
-
    //==========================================================================
    //                 Core Params
    //==========================================================================
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
-      FRUIDescription Description;
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      FRAbilityInfo GetAbilityInfo () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      FRUIDescription GetDescription () const;
 
    //==========================================================================
    //                 Core Functions
@@ -49,6 +68,10 @@ private:
 
    UPROPERTY()
       bool IsEnabled = true;
+
+   // Value must be defined in table
+   UPROPERTY()
+      FRAbilityInfo AbilityInfo;
 };
 
 

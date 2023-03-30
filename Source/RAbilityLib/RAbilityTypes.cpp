@@ -20,36 +20,34 @@ URAbility::URAbility ()
 void URAbility::BeginPlay ()
 {
    Super::BeginPlay ();
+
+   if (GetWorld () && !GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->AddInstanceComponent (this);
+
+   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      if (R_IS_VALID_WORLD) Mgr->OnAbilityListUpdated.Broadcast ();
+
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportAddAbility (this);
+      AbilityInfo = WorldMgr->GetAbilityInfo (this);
+   }
+
+   if (!AbilityInfo.IsValid ()) {
+      R_LOG_PRINTF ("Error. [%s] Ability info is invalid.", *GetPathName ());
    }
 }
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
+   if (GetWorld () && GetOwner ()->GetInstanceComponents ().Contains (this))
+      GetOwner ()->RemoveInstanceComponent (this);
+
+   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      if (R_IS_VALID_WORLD) Mgr->OnAbilityListUpdated.Broadcast ();
+
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportRmAbility (this);
    }
    Super::EndPlay (EndPlayReason);
-}
-
-void URAbility::OnComponentCreated ()
-{
-   Super::OnComponentCreated ();
-
-   if (!GetOwner ()->GetInstanceComponents ().Contains (this))
-      GetOwner ()->AddInstanceComponent (this);
-
-   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->OnAbilityListUpdated.Broadcast ();
-}
-void URAbility::OnComponentDestroyed (bool bDestroyingHierarchy)
-{
-   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->OnAbilityListUpdated.Broadcast ();
-
-   if (GetOwner ()->GetInstanceComponents ().Contains (this))
-      GetOwner ()->RemoveInstanceComponent (this);
-   Super::OnComponentDestroyed (bDestroyingHierarchy);
 }
 
 void URAbility::SetIsEnabled (bool IsEnabled_)
@@ -61,6 +59,17 @@ bool URAbility::GetIsEnabled () const
 {
    return IsEnabled;
 }
+
+FRAbilityInfo URAbility::GetAbilityInfo () const
+{
+   return AbilityInfo;
+}
+
+FRUIDescription URAbility::GetDescription () const
+{
+   return AbilityInfo.Description;
+}
+
 
 //=============================================================================
 //                 Passsive Ability
@@ -106,7 +115,7 @@ void URAbility_Aura::CheckRange ()
 
    AffectedActors = Result;
 
-   OnUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) OnUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -133,7 +142,7 @@ void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType,
       // Can be used
       if (UseCooldownLeft == 0 && GetIsEnabled ()) {
          IsUseable = true;
-         OnAbilityStatusUpdated.Broadcast ();
+         if (R_IS_VALID_WORLD) OnAbilityStatusUpdated.Broadcast ();
       }
    }
 }
@@ -181,7 +190,9 @@ void URAbility_Active::Use_Global_Implementation ()
    }
 
    // Broadcast event
-   OnAbilityUsed.Broadcast ();
-   OnAbilityStatusUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      OnAbilityUsed.Broadcast ();
+      OnAbilityStatusUpdated.Broadcast ();
+   }
 }
 
