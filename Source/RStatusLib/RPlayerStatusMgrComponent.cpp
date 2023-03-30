@@ -24,6 +24,7 @@ void URPlayerStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimePro
 
    DOREPLIFETIME (URPlayerStatusMgrComponent, CoreStats_Base);
    DOREPLIFETIME (URPlayerStatusMgrComponent, CoreStats_Added);
+   DOREPLIFETIME (URPlayerStatusMgrComponent, CoreStats_Extra);
    DOREPLIFETIME (URPlayerStatusMgrComponent, SubStats_Base);
    DOREPLIFETIME (URPlayerStatusMgrComponent, SubStats_Added);
 }
@@ -228,6 +229,11 @@ bool URPlayerStatusMgrComponent::AddExtraStat (FRCoreStats ExtraStat)
 
    RecalcStatus ();
    return true;
+}
+
+void URPlayerStatusMgrComponent::AddExtraStat_Server_Implementation (FRCoreStats ExtraStat)
+{
+   AddExtraStat (ExtraStat);
 }
 
 //=============================================================================

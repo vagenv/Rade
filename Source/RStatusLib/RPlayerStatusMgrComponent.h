@@ -61,6 +61,10 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool AddExtraStat (FRCoreStats ExtraStat);
 
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Status")
+      void AddExtraStat_Server                (FRCoreStats ExtraStat);
+      void AddExtraStat_Server_Implementation (FRCoreStats ExtraStat);
+
    //==========================================================================
    //                 Core and Sub Stats
    //==========================================================================

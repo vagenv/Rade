@@ -26,6 +26,7 @@ URAbilityMgrComponent::URAbilityMgrComponent ()
 void URAbilityMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
+   DOREPLIFETIME (URAbilityMgrComponent, AbilityPoints);
 }
 
 //=============================================================================
@@ -81,7 +82,6 @@ void URAbilityMgrComponent::LeveledUp ()
    OnAbilityPointUpdated.Broadcast ();
 }
 
-
 //=============================================================================
 //                 Ability Points
 //=============================================================================
@@ -89,6 +89,11 @@ void URAbilityMgrComponent::LeveledUp ()
 int URAbilityMgrComponent::GetAbilityPoint () const
 {
    return AbilityPoints;
+}
+
+void URAbilityMgrComponent::OnRep_Points ()
+{
+   OnAbilityPointUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -129,7 +134,7 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
    return Ability != nullptr;
 }
 
-bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
+bool URAbilityMgrComponent::RmAbility (const TSubclassOf<URAbility> Ability_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (Ability_)) return false;
@@ -141,6 +146,20 @@ bool URAbilityMgrComponent::RMAbility (const TSubclassOf<URAbility> Ability_)
 
    Ability->DestroyComponent ();
    return true;
+}
+
+
+//=============================================================================
+//                 Server versions of the functions
+//=============================================================================
+void URAbilityMgrComponent::AddAbility_Server_Implementation (TSubclassOf<URAbility> Ability)
+{
+   AddAbility (Ability);
+}
+
+void URAbilityMgrComponent::RmAbility_Server_Implementation (TSubclassOf<URAbility> Ability)
+{
+   RmAbility (Ability);
 }
 
 //=============================================================================

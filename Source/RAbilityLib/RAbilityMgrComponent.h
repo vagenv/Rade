@@ -49,8 +49,11 @@ protected:
    //==========================================================================
 protected:
    // --- Core Stats
-   UPROPERTY(Replicated)
+   UPROPERTY(ReplicatedUsing = "OnRep_Points", Replicated)
       int AbilityPoints = 0;
+
+   UFUNCTION()
+      void OnRep_Points ();
 public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       int GetAbilityPoint () const;
@@ -66,7 +69,19 @@ public:
       bool AddAbility (const TSubclassOf<URAbility> Ability);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
-      bool RMAbility  (const TSubclassOf<URAbility> Ability);
+      bool RmAbility  (const TSubclassOf<URAbility> Ability);
+
+   //==========================================================================
+   //                 Server versions of the functions
+   //==========================================================================
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
+      void AddAbility_Server                (TSubclassOf<URAbility> Ability);
+      void AddAbility_Server_Implementation (TSubclassOf<URAbility> Ability);
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
+      void RmAbility_Server                (TSubclassOf<URAbility> Ability);
+      void RmAbility_Server_Implementation (TSubclassOf<URAbility> Ability);
 
    //==========================================================================
    //                 Events
