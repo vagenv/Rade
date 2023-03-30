@@ -44,12 +44,6 @@ void URAbilityMgrComponent::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
 
-      for (const TSubclassOf<URAbility> It : DefaultAbilities) {
-         AbilityPoints++;
-         AddAbility (It);
-      }
-
-
       if (ExperienceMgr) {
          ExperienceMgr->OnLevelUp.AddDynamic (this, &URAbilityMgrComponent::LeveledUp);
       }

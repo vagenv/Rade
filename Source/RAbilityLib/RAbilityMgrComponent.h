@@ -36,13 +36,6 @@ private:
    // Experience
    UPROPERTY()
       URExperienceMgrComponent* ExperienceMgr = nullptr;
-   //==========================================================================
-   //                 Core
-   //==========================================================================
-public:
-   // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
-      TArray<TSubclassOf<URAbility> > DefaultAbilities;
 
    //==========================================================================
    //                 Level Up
