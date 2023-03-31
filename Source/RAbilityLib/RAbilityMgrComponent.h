@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Components/ActorComponent.h"
 #include "RSaveLib/RSaveInterface.h"
 #include "RAbilityMgrComponent.generated.h"
 

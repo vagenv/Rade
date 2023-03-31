@@ -9,6 +9,7 @@
 #include "RUtilLib/RCheck.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
 
+#include "EditorClassUtils.h"
 #include "Net/UnrealNetwork.h"
 
 //=============================================================================
@@ -107,7 +108,7 @@ URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Abili
    if (Ability_) {
       TArray<URAbility*> AbilityList;
       GetOwner ()->GetComponents (AbilityList);
-      for (URAbility *ItAbility : AbilityList) {
+      for (URAbility* ItAbility : AbilityList) {
          if (ItAbility->GetClass () == Ability_) {
             Result = ItAbility;
             break;
@@ -168,11 +169,43 @@ void URAbilityMgrComponent::RmAbility_Server_Implementation (TSubclassOf<URAbili
 
 void URAbilityMgrComponent::OnSave (FBufferArchive &SaveData)
 {
+   TArray<FString> SaveAbiltities;
 
+   // --- Get list of abilities as FString
+   TArray<URAbility*> AbilityList;
+   GetOwner ()->GetComponents (AbilityList);
+   for (URAbility* ItAbility : AbilityList) {
+      SaveAbiltities.Add (ItAbility->GetClass ()->GetPathName ());
+   }
+
+   // Serialize Data
+   SaveData << SaveAbiltities;
 }
 
 void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
+   // Remove all current Abilities
+   TArray<URAbility*> AbilityList;
+   GetOwner ()->GetComponents (AbilityList);
+   for (URAbility* ItAbility : AbilityList) {
+      ItAbility->DestroyComponent ();
+   }
 
+   // Serialize Data
+   TArray<FString> LoadAbiltities;
+   LoadData << LoadAbiltities;
+
+   // --- Create Abilities of Class.
+   for (FString ItAbility : LoadAbiltities) {
+      // --- Copied from FEditorClassUtils::GetClassFromString
+      UClass* Class = FindObject<UClass> (nullptr, *ItAbility);
+      if (!Class) {
+         Class = LoadObject<UClass> (nullptr, *ItAbility);
+      }
+      if (Class) {
+         AbilityPoints++;
+         AddAbility (Class);
+      }
+   }
 }
 
