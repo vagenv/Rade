@@ -11,8 +11,6 @@ public class RAbilityLib : ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
-         "Json",
-         "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
          "RDamageLib",
