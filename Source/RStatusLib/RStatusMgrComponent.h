@@ -131,7 +131,6 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Status")
       void UseMana (float Amount);
 
-
    //==========================================================================
    //                 Evasion / Critical
    //==========================================================================
