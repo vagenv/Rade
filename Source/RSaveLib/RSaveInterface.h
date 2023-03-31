@@ -14,7 +14,7 @@ class UWorld;
 class URWorldSaveMgr;
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, NotBlueprintable)
 class URSaveInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -30,7 +30,7 @@ protected:
 	UFUNCTION()
 		virtual void Init_Save (UObject* WorldContextObject, const FString &SaveId);
 
-	// Must be implemented
+	// --- Must be implemented
 	virtual void OnSave (FBufferArchive &SaveData) = 0;
 	virtual void OnLoad (FMemoryReader  &LoadData) = 0;
 
@@ -44,8 +44,8 @@ protected:
 private:
 
 	// Values for internal tracking
-	FString    ObjectSaveId;
-	UWorld 	 *World   = nullptr;
-	URWorldSaveMgr *SaveMgr = nullptr;
+	FString  	    ObjectSaveId;
+	UWorld*         World   = nullptr;
+	URWorldSaveMgr* SaveMgr = nullptr;
 };
 
