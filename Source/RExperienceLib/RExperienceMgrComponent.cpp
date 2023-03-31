@@ -29,6 +29,16 @@ void URExperienceMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
    GlobalMgr = URWorldExperienceMgr::GetInstance (this);
+
+   if (R_IS_NET_ADMIN) {
+
+      // Save/Load Status
+      if (bSaveLoad) {
+         // Careful with collision of 'UniqueSaveId'
+         FString UniqueSaveId = GetOwner ()->GetName () + "_ExperienceMgr";
+         Init_Save (this, UniqueSaveId);
+      }
+   }
 }
 
 void URExperienceMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -88,3 +98,17 @@ void URExperienceMgrComponent::LeveledUp ()
    if (R_IS_VALID_WORLD) OnLevelUp.Broadcast ();
 }
 
+void URExperienceMgrComponent::OnSave (FBufferArchive &SaveData)
+{
+   SaveData << ExperiencePoints;
+   SaveData << CurrentLevel;
+}
+
+void URExperienceMgrComponent::OnLoad (FMemoryReader &LoadData)
+{
+   LoadData << ExperiencePoints;
+   LoadData << CurrentLevel;
+   if (R_IS_VALID_WORLD) {
+      OnExperienceChange.Broadcast ();
+   }
+}

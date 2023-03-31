@@ -11,6 +11,7 @@ public class RExperienceLib: ModuleRules
          "CoreUObject",
          "Engine",
          "RUtilLib",
+         "RSaveLib",
          "RDamageLib",
       });
    }
