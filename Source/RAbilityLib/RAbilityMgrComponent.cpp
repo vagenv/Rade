@@ -180,6 +180,7 @@ void URAbilityMgrComponent::OnSave (FBufferArchive &SaveData)
 
    // Serialize Data
    SaveData << SaveAbiltities;
+   SaveData << AbilityPoints;
 }
 
 void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
@@ -194,6 +195,7 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
    // Serialize Data
    TArray<FString> LoadAbiltities;
    LoadData << LoadAbiltities;
+   LoadData << AbilityPoints;
 
    // --- Create Abilities of Class.
    for (FString ItAbility : LoadAbiltities) {
