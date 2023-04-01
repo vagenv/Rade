@@ -30,7 +30,7 @@ void IRSaveInterface::OnSave_Internal ()
    OnSave (ToBinary);
 
    // Set binary data to save file
-   if (!ensure (SaveMgr->Set (ObjectSaveId, ToBinary))) return;
+   if (!ensure (SaveMgr->SetBuffer (ObjectSaveId, ToBinary))) return;
 }
 
 void IRSaveInterface::OnLoad_Internal ()
@@ -38,7 +38,7 @@ void IRSaveInterface::OnLoad_Internal ()
    if (!SaveMgr) return;
    // Get binary data from save file
    TArray<uint8> BinaryArray;
-   if (!ensure (SaveMgr->Get (ObjectSaveId, BinaryArray))) return;
+   if (!ensure (SaveMgr->GetBuffer (ObjectSaveId, BinaryArray))) return;
 
    FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
    FromBinary.Seek(0);

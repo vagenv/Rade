@@ -106,25 +106,57 @@ void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, c
 //=============================================================================
 
 
-bool URWorldSaveMgr::Set (const FString &key, const TArray<uint8> &data)
+bool URWorldSaveMgr::SetBuffer (const FString &Key, const TArray<uint8> &Data)
 {
    CheckSaveFile ();
 
    FRSaveData RawData;
-   RawData.Data = data;
-   SaveFile->RawData.Add (key, RawData);
+   RawData.Data = Data;
+   SaveFile->RawData.Add (Key, RawData);
    return true;
 }
 
-bool URWorldSaveMgr::Get (const FString &key, TArray<uint8> &data)
+bool URWorldSaveMgr::SetString (const FString &Key, const TArray<FString> &Data)
 {
    CheckSaveFile ();
 
-   if (!SaveFile->RawData.Contains (key)) return false;
-   FRSaveData RawData = SaveFile->RawData[key];
-   data = RawData.Data;
+   // Transform to binary
+   TArray<FString> DataCopy (Data);
+   FBufferArchive ToBinary;
+   ToBinary << DataCopy;
+
+   FRSaveData RawData;
+   RawData.Data = ToBinary;
+   SaveFile->RawData.Add (Key, RawData);
    return true;
 }
+
+
+bool URWorldSaveMgr::GetBuffer (const FString &Key, TArray<uint8> &Data)
+{
+   CheckSaveFile ();
+
+   if (!SaveFile->RawData.Contains (Key)) return false;
+   FRSaveData RawData = SaveFile->RawData[Key];
+   Data = RawData.Data;
+   return true;
+}
+
+bool URWorldSaveMgr::GetString (const FString &Key, TArray<FString> &Data)
+{
+   CheckSaveFile ();
+
+   if (!SaveFile->RawData.Contains (Key)) return false;
+   FRSaveData RawData = SaveFile->RawData[Key];
+
+   FMemoryReader FromBinary = FMemoryReader (RawData.Data, true);
+   FromBinary.Seek(0);
+
+   FromBinary << Data;
+   return true;
+}
+
+
 
 /*
 // Read from file

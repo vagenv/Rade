@@ -45,14 +45,20 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-      bool Get (const FString &key, TArray<uint8> &data);
+      bool GetBuffer (const FString &key, TArray<uint8> &data);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool GetString (const FString &key, TArray<FString> &data);
 
    //==========================================================================
    //                  Set Data
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-      bool Set (const FString &key, const TArray<uint8> &data);
+      bool SetBuffer (const FString &key, const TArray<uint8> &data);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool SetString (const FString &key, const TArray<FString> &data);
 
    //==========================================================================
    //                  Get instance -> GameState component
