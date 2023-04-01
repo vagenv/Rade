@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "RSaveTypes.h"
 #include "RWorldSaveMgr.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
@@ -18,8 +19,11 @@ public:
 
    URWorldSaveMgr();
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Save");
-      TObjectPtr<URSaveGame> SaveFile;
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly,
+             Category = "Rade|Save",
+               meta = (HidePin          = "WorldContextObject",
+                       DefaultToSelf    = "WorldContextObject"))
+		static TArray<FRSaveGameMeta> GetAllSaveGameSlots (UObject* WorldContextObject);
 
    //==========================================================================
    //                  Save data to disk
@@ -35,10 +39,10 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-      bool LoadSync ();
+      bool LoadSync (const FRSaveGameMeta &SlotMeta);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-      bool LoadASync ();
+      bool LoadASync (const FRSaveGameMeta &SlotMeta);
 
    //==========================================================================
    //                 Get Data
@@ -84,6 +88,9 @@ public:
 
 protected:
 
+   // Current Save/Load file
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Save");
+      TObjectPtr<URSaveGame> SaveFile;
 
    // Check if save file is valid, if not use default
    void CheckSaveFile ();

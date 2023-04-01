@@ -2,9 +2,3 @@
 
 #include "RSaveGame.h"
 
-URSaveGame::URSaveGame ()
-{
-   SaveSlotName = TEXT ("RadeSaveSlot");
-   UserIndex    = 0;
-}
-

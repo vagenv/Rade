@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RWorldSaveMgr.h"
+#include "RSaveTypes.h"
 #include "RSaveGame.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
@@ -13,6 +14,36 @@
 URWorldSaveMgr* URWorldSaveMgr::GetInstance (UObject* WorldContextObject)
 {
    return URUtil::GetWorldInstance<URWorldSaveMgr> (WorldContextObject);
+}
+
+TArray<FRSaveGameMeta> URWorldSaveMgr::GetAllSaveGameSlots (UObject* WorldContextObject)
+{
+   TArray<FRSaveGameMeta> Result;
+   if (!ensure (WorldContextObject)) return Result;
+
+   // File Mgr
+   IFileManager& FileMgr = IFileManager::Get ();
+
+   // Const variables
+   const FString Empty      = TEXT ("");
+   const FString DirName    = "SaveGames";
+   const FString RelPath    = FPaths::ProjectSavedDir () + DirName;
+   const FString AbsPath    = FileMgr.ConvertToAbsolutePathForExternalAppForRead (*(RelPath));
+   const FString FileExt    = "sav";
+   const FString FileExtDot = TEXT (".") + FileExt;
+
+   // Get save slots
+   TArray<FString> SlotNames;
+   FileMgr.FindFiles (SlotNames, *AbsPath, *FileExt);
+   SlotNames.Sort ();
+
+   // --- Iterate in reverse order
+   for (int i = SlotNames.Num () - 1; i >= 0; i--) {
+      FString &ItFile = SlotNames[i];
+      ItFile = ItFile.Replace (*FileExtDot, *Empty);
+      Result.Add (FRSaveGameMeta::Read (AbsPath, ItFile));
+   }
+   return Result;
 }
 
 //=============================================================================
@@ -38,22 +69,26 @@ void URWorldSaveMgr::CheckSaveFile ()
 bool URWorldSaveMgr::SaveSync ()
 {
    CheckSaveFile ();
-   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
+   FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
+
+   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveMeta.SlotName, SaveMeta.UserIndex);
    if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
-   return UGameplayStatics::SaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
+   return UGameplayStatics::SaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex);
 }
 
 bool URWorldSaveMgr::SaveASync ()
 {
    CheckSaveFile ();
-   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
+   FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
+
+   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveMeta.SlotName, SaveMeta.UserIndex);
    if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
    // Setup save complete delegate.
    FAsyncSaveGameToSlotDelegate SavedDelegate;
    SavedDelegate.BindUObject (this, &URWorldSaveMgr::SaveComplete);
-   UGameplayStatics::AsyncSaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex, SavedDelegate);
+   UGameplayStatics::AsyncSaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex, SavedDelegate);
    return true;
 }
 
@@ -61,25 +96,25 @@ bool URWorldSaveMgr::SaveASync ()
 //                   Load
 //=============================================================================
 
-bool URWorldSaveMgr::LoadSync ()
+bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SlotMeta)
 {
    CheckSaveFile ();
-   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-   SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex));
+   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SlotMeta.SlotName, SlotMeta.UserIndex);
+   SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SlotMeta.SlotName, SlotMeta.UserIndex));
    if (R_IS_VALID_WORLD && SaveFile != nullptr) OnLoad.Broadcast ();
    return (SaveFile != nullptr);
 }
 
-bool URWorldSaveMgr::LoadASync ()
+bool URWorldSaveMgr::LoadASync (const FRSaveGameMeta &SlotMeta)
 {
    CheckSaveFile ();
-   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
+   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SlotMeta.SlotName, SlotMeta.UserIndex);
 
    FAsyncLoadGameFromSlotDelegate LoadedDelegate;
 
    // Setup load complete delegate.
    LoadedDelegate.BindUObject (this, &URWorldSaveMgr::LoadComplete);
-   UGameplayStatics::AsyncLoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex, LoadedDelegate);
+   UGameplayStatics::AsyncLoadGameFromSlot (SlotMeta.SlotName, SlotMeta.UserIndex, LoadedDelegate);
    return true;
 }
 
@@ -165,7 +200,7 @@ bool URWorldSaveMgr::GetString (const FString &Key, TArray<FString> &Data)
 
    TArray<uint8> BinaryArray;
 
-   if (!FFileHelper::LoadFileToArray(BinaryArray, *savePath)){
+   if (!FFileHelper::LoadFileToArray (BinaryArray, *savePath)){
       rlog("Corrupted File. [FFILEHELPER:>> Invalid File]");
       return ;
    }
