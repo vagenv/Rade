@@ -150,18 +150,18 @@ bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 // ============================================================================
 
 void URItemUtilLibrary::ItemHandle_To_Item (const FRItemDataHandle &src, FRItemData &dst,
-                                            ERActionResult &Branches)
+                                            ERActionResult &Outcome)
 {
    bool res = src.ToItem (dst);
-   if (res) Branches = ERActionResult::Success;
-   else     Branches = ERActionResult::Failure;
+   if (res) Outcome = ERActionResult::Success;
+   else     Outcome = ERActionResult::Failure;
 }
 
 void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src, FRActionItemData &dst,
-                                            ERActionResult &Branches)
+                                            ERActionResult &Outcome)
 {
    bool res = FRActionItemData::Cast (src, dst);
-   if (res) Branches = ERActionResult::Success;
-   else     Branches = ERActionResult::Failure;
+   if (res) Outcome = ERActionResult::Success;
+   else     Outcome = ERActionResult::Failure;
 }
 
