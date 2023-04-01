@@ -51,5 +51,8 @@ struct RSAVELIB_API FRSaveGameMeta
 
    // Loads data from disk if available.
    static FRSaveGameMeta Read   (const FString &SaveDirPath,  const FString &SlotName);
+
+   // Remove save from disk if available.
+   static void           Remove (const FRSaveGameMeta &SaveMeta);
 };
 

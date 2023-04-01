@@ -45,6 +45,12 @@ public:
       bool LoadASync (const FRSaveGameMeta &SlotMeta);
 
    //==========================================================================
+   //                  Remove data from disk
+   //==========================================================================
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
+      void RemoveSync (const FRSaveGameMeta &SlotMeta);
+
+   //==========================================================================
    //                 Get Data
    //==========================================================================
 
@@ -85,6 +91,9 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
       FRSaveEvent OnLoad;
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
+      FRSaveEvent OnSaveListUpdated;
 
 protected:
 

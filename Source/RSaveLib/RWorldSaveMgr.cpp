@@ -74,7 +74,9 @@ bool URWorldSaveMgr::SaveSync ()
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveMeta.SlotName, SaveMeta.UserIndex);
    if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
-   return UGameplayStatics::SaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex);
+   bool Result = UGameplayStatics::SaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex);
+   if (Result && R_IS_VALID_WORLD) OnSaveListUpdated.Broadcast ();
+   return Result;
 }
 
 bool URWorldSaveMgr::SaveASync ()
@@ -83,7 +85,10 @@ bool URWorldSaveMgr::SaveASync ()
    FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
 
    R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveMeta.SlotName, SaveMeta.UserIndex);
-   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
+   if (R_IS_VALID_WORLD) {
+      OnSaveListUpdated.Broadcast ();
+      OnSave.Broadcast ();
+   }
 
    // Setup save complete delegate.
    FAsyncSaveGameToSlotDelegate SavedDelegate;
@@ -118,12 +123,17 @@ bool URWorldSaveMgr::LoadASync (const FRSaveGameMeta &SlotMeta)
    return true;
 }
 
+//=============================================================================
+//                   Completed Async operation
+//=============================================================================
+
 void URWorldSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
 {
    if (!bSuccess) {
       R_LOG_PRINTF ("Saving [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
+   if (R_IS_VALID_WORLD) OnSaveListUpdated.Broadcast ();
 }
 
 void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class USaveGame *SaveGame)
@@ -134,6 +144,18 @@ void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, c
       return;
    }
    if (R_IS_VALID_WORLD) OnLoad.Broadcast ();
+}
+
+//=============================================================================
+//                   Remove
+//=============================================================================
+
+void URWorldSaveMgr::RemoveSync (const FRSaveGameMeta &SlotMeta)
+{
+   FRSaveGameMeta::Remove (SlotMeta);
+   if (R_IS_VALID_WORLD) {
+      OnSaveListUpdated.Broadcast ();
+   }
 }
 
 //=============================================================================

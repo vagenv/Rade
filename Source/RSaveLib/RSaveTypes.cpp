@@ -66,3 +66,17 @@ FRSaveGameMeta FRSaveGameMeta::Read (const FString &SaveDirPath, const FString &
    return Result;
 }
 
+void FRSaveGameMeta::Remove (const FRSaveGameMeta &SaveMeta)
+{
+   // File Mgr
+   IFileManager& FileMgr = IFileManager::Get ();
+   const FString DirName = "SaveGames";
+   const FString RelPath = FPaths::ProjectSavedDir () + DirName;
+   const FString AbsPath = FileMgr.ConvertToAbsolutePathForExternalAppForRead (*(RelPath));
+
+   const FString SavePath = AbsPath + "/" + SaveMeta.SlotName + ".sav";
+   const FString MetaPath = SavePath + "meta";
+   if (FileMgr.FileExists (*SavePath)) FileMgr.Delete (*SavePath);
+   if (FileMgr.FileExists (*MetaPath)) FileMgr.Delete (*MetaPath);
+}
+
