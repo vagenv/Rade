@@ -36,15 +36,20 @@ struct RSAVELIB_API FRSaveGameMeta
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<uint8> BinaryTexture;
 
+   // For serialization of data
+   friend FArchive& operator << (FArchive& Ar, FRSaveGameMeta &MetaData) {
+      Ar << MetaData.SlotName;
+      Ar << MetaData.UserIndex;
+      Ar << MetaData.Map;
+      Ar << MetaData.Date;
+      Ar << MetaData.BinaryTexture;
+      return Ar;
+   }
 
-   bool IsValid () const;
-
-
+   // Creates a New instance with current date as name.
    static FRSaveGameMeta Create (UObject* WorldContextObject);
+
+   // Loads data from disk if available.
    static FRSaveGameMeta Read   (const FString &SaveDirPath,  const FString &SlotName);
-
-
-   // UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-   //    FRDescription Description;
 };
 
