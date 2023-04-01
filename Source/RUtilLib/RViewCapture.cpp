@@ -84,10 +84,12 @@ TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
 
    // 1. Create a temporary actor to capture the player's view.
    ARViewCapture* ViewCaptureActor = World->SpawnActor<ARViewCapture>();
+
    // 2. Get the player's view as a BGRA8 array of colors.
-   static int32 Resolution = 512;
+   static int32 Resolution = 256;
    TArray<FColor> ColorArray;
    ViewCaptureActor->CapturePlayersView (Resolution, ColorArray);
+
    // 3. Actors do not get garbage collected automatically since the level is keeping them in GC graph.
    ViewCaptureActor->Destroy ();
 
@@ -95,11 +97,11 @@ TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
    // Calculate the total number of bytes we will copy. Every color is represented by 4 bytes: R, G, B, A.
    static int32 BufferSize = ColorArray.Num () * 4;
 
-
    // Pre-allocate enough memory to fit our data. We reserve space before adding uninitialized elements to avoid array
    // growth operations and we add uninitialized elements to increase array element count properly.
    Result.Reserve (BufferSize);
    Result.AddUninitialized (BufferSize);
+
    // Copy BufferSize number of bytes starting from the memory address where ColorArray's bulk data starts,
    // to a space in memory starting from the memory address where BinaryTexture's bulk data starts.
    FMemory::Memcpy (Result.GetData (), ColorArray.GetData (), BufferSize);
@@ -107,3 +109,40 @@ TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
    return Result;
 }
 
+UTexture2D* ARViewCapture::Create8BitTextureAtRuntime (const TArray<uint8> &BGRA8PixelData)
+{
+   if (!BGRA8PixelData.Num ()) return nullptr;
+
+   // 1. Create a new texture of the right size, and get reference to the first MIP for convenience.
+   // Calculate the resolution from a number of pixels in our array (bytes / 4).
+   const float Resolution = FMath::Sqrt (BGRA8PixelData.Num () / 4.);
+
+   // Create a new transient UTexture2D in a desired pixel format for byte order: B, G, R, A.
+   UTexture2D* Texture = UTexture2D::CreateTransient (Resolution, Resolution, PF_B8G8R8A8);
+   if (!ensure (Texture)) return nullptr;
+
+   // Get a reference to MIP 0, for convenience.
+   FTexture2DMipMap &Mip = Texture->GetPlatformData ()->Mips[0];
+
+   // 2. Memcpy operation.
+   // Calculate the number of bytes we will copy.
+   const int32 BufferSize = BGRA8PixelData.Num ();
+
+   // Mutex lock the MIP's data, not letting any other thread read or write it now.
+   void* MipBulkData = Mip.BulkData.Lock (LOCK_READ_WRITE);
+
+   // Pre-allocate enough space to copy our bytes into the MIP's bulk data.
+   Mip.BulkData.Realloc(BufferSize);
+
+   // Copy BufferSize number of bytes starting from BGRA8PixelData's bulk data address in memory to
+   // a block of memory starting from the memory address MipBulkData.
+   FMemory::Memcpy (MipBulkData, BGRA8PixelData.GetData (), BufferSize);
+
+   // Mutex unlock the MIP's data, letting all other threads read or lock for writing.
+   Mip.BulkData.Unlock ();
+
+   // 3. Let the engine process new data.
+   Texture->UpdateResource ();
+
+   return Texture;
+}
