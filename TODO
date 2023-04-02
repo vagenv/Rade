@@ -45,34 +45,6 @@ Other
 
 
 =================================================
-   Save/Load
-=================================================
-
-Freeze world while saving.
-
-Redesign SaveMgr for blueprint support.
-
-- Ability List
-- Ability Slots
-- Equipment
-- ActiveStatusEffects?
-- Experience
-
-Save/Load SetPending (FString ObjectId)
-
-Ensure everything is saved before continue.
-
-UI
-Save/Load By slots.
-
-
-=================================================
-   Ability
-=================================================
-- Chance to apply active status effect. (Burning / Poisoned)
-
-
-=================================================
    Weapons
 =================================================
 ItemData uniqueID?
@@ -291,6 +263,8 @@ FriendlyFire enabled/disabled
    Abilities
 =================================================
 
+- Chance to apply active status effect. (Burning / Poisoned)
+
 ======
 Group
 ======
@@ -313,6 +287,17 @@ Emotions
 - Character animation
 
 Audio Messages?
+
+=================================================
+   Save/Load Advanced
+=================================================
+
+Async Save/Load
+- SetPending (FString ObjectId)
+
+Freeze world while saving.
+
+Ensure everything is saved before continue.
 
 =================================================
    Animation

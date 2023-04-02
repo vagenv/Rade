@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/DataTable.h"
+#include "RUtilLib/RUtilTypes.h"
 #include "RUtilLib/RUIDescription.h"
 #include "RItemTypes.generated.h"
 
@@ -195,25 +196,18 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 //          Blueprint Library
 // ============================================================================
 
-UENUM(BlueprintType)
-enum class ERActionResult : uint8
-{
-   Success UMETA (DisplayName = "Success"),
-   Failure UMETA (DisplayName = "Failure")
-};
-
 UCLASS(ClassGroup=(_Rade))
 class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
       static void ItemHandle_To_Item (const FRItemDataHandle &src, FRItemData &ItemData,
-                                      ERActionResult &Branches);
+                                      ERActionResult &Outcome);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Branches"))
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
       static void Item_To_ActionItem (const FRItemData &src, FRActionItemData &ItemData,
-                                      ERActionResult &Branches);
+                                      ERActionResult &Outcome);
 };
 

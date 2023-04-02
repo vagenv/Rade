@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RWorldSaveMgr.h"
+#include "RSaveTypes.h"
 #include "RSaveGame.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
@@ -15,20 +16,44 @@ URWorldSaveMgr* URWorldSaveMgr::GetInstance (UObject* WorldContextObject)
    return URUtil::GetWorldInstance<URWorldSaveMgr> (WorldContextObject);
 }
 
+TArray<FRSaveGameMeta> URWorldSaveMgr::GetAllSaveGameSlots (UObject* WorldContextObject)
+{
+   TArray<FRSaveGameMeta> Result;
+   if (!ensure (WorldContextObject)) return Result;
+
+   // File Mgr
+   IFileManager& FileMgr = IFileManager::Get ();
+
+   // Const variables
+   const FString Empty      = TEXT ("");
+   const FString DirName    = "SaveGames";
+   const FString RelPath    = FPaths::ProjectSavedDir () + DirName;
+   const FString AbsPath    = FileMgr.ConvertToAbsolutePathForExternalAppForRead (*(RelPath));
+   const FString FileExt    = "sav";
+   const FString FileExtDot = TEXT (".") + FileExt;
+
+   // Get save slots
+   TArray<FString> SlotNames;
+   FileMgr.FindFiles (SlotNames, *AbsPath, *FileExt);
+   SlotNames.Sort ();
+
+   // --- Iterate in reverse order
+   for (int i = SlotNames.Num () - 1; i >= 0; i--) {
+      FString &ItFile = SlotNames[i];
+      ItFile = ItFile.Replace (*FileExtDot, *Empty);
+      Result.Add (FRSaveGameMeta::Read (AbsPath, ItFile));
+   }
+   return Result;
+}
+
 //=============================================================================
 //                   Member calls
 //=============================================================================
 
 URWorldSaveMgr::URWorldSaveMgr ()
 {
-}
-
-void URWorldSaveMgr::CheckSaveFile ()
-{
-   if (SaveFile) return;
-
-   // Generate default Save File
-   SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
+   OnAsyncSaveDelegate.BindUObject (this, &URWorldSaveMgr::AsyncSaveComplete);
+   OnAsyncLoadDelegate.BindUObject (this, &URWorldSaveMgr::AsyncLoadComplete);
 }
 
 //=============================================================================
@@ -37,61 +62,53 @@ void URWorldSaveMgr::CheckSaveFile ()
 
 bool URWorldSaveMgr::SaveSync ()
 {
-   CheckSaveFile ();
-   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
+   // Generate new Save File
+   SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
 
-   return UGameplayStatics::SaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex);
+   FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
+   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
+   bool Result = UGameplayStatics::SaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex);
+   return Result;
 }
 
 bool URWorldSaveMgr::SaveASync ()
 {
-   CheckSaveFile ();
-   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
+   // Generate new Save File
+   SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
+
+   FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
    if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
-   // Setup save complete delegate.
-   FAsyncSaveGameToSlotDelegate SavedDelegate;
-   SavedDelegate.BindUObject (this, &URWorldSaveMgr::SaveComplete);
-   UGameplayStatics::AsyncSaveGameToSlot (SaveFile, SaveFile->SaveSlotName, SaveFile->UserIndex, SavedDelegate);
+   UGameplayStatics::AsyncSaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex, OnAsyncSaveDelegate);
    return true;
 }
 
-//=============================================================================
-//                   Load
-//=============================================================================
-
-bool URWorldSaveMgr::LoadSync ()
-{
-   CheckSaveFile ();
-   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-   SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex));
-   if (R_IS_VALID_WORLD && SaveFile != nullptr) OnLoad.Broadcast ();
-   return (SaveFile != nullptr);
-}
-
-bool URWorldSaveMgr::LoadASync ()
-{
-   CheckSaveFile ();
-   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SaveFile->SaveSlotName, SaveFile->UserIndex);
-
-   FAsyncLoadGameFromSlotDelegate LoadedDelegate;
-
-   // Setup load complete delegate.
-   LoadedDelegate.BindUObject (this, &URWorldSaveMgr::LoadComplete);
-   UGameplayStatics::AsyncLoadGameFromSlot (SaveFile->SaveSlotName, SaveFile->UserIndex, LoadedDelegate);
-   return true;
-}
-
-void URWorldSaveMgr::SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
+void URWorldSaveMgr::AsyncSaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess)
 {
    if (!bSuccess) {
       R_LOG_PRINTF ("Saving [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
+   if (R_IS_VALID_WORLD) OnSaveListUpdated.Broadcast ();
+}
+//=============================================================================
+//                   Load
+//=============================================================================
+
+bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SlotMeta)
+{
+   SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SlotMeta.SlotName, SlotMeta.UserIndex));
+   if (R_IS_VALID_WORLD) OnLoad.Broadcast ();
+   return (SaveFile != nullptr);
 }
 
-void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, class USaveGame *SaveGame)
+bool URWorldSaveMgr::LoadASync (const FRSaveGameMeta &SlotMeta)
+{
+   UGameplayStatics::AsyncLoadGameFromSlot (SlotMeta.SlotName, SlotMeta.UserIndex, OnAsyncLoadDelegate);
+   return true;
+}
+
+void URWorldSaveMgr::AsyncLoadComplete (const FString &SaveSlot, int32 PlayerIndex, class USaveGame *SaveGame)
 {
    SaveFile = Cast<URSaveGame> (SaveGame);
    if (!SaveFile) {
@@ -102,54 +119,67 @@ void URWorldSaveMgr::LoadComplete (const FString &SaveSlot, int32 PlayerIndex, c
 }
 
 //=============================================================================
+//                   Remove
+//=============================================================================
+
+void URWorldSaveMgr::RemoveSync (const FRSaveGameMeta &SlotMeta)
+{
+   FRSaveGameMeta::Remove (SlotMeta);
+   if (R_IS_VALID_WORLD) OnSaveListUpdated.Broadcast ();
+}
+
+//=============================================================================
 //                   Data management
 //=============================================================================
 
 
-bool URWorldSaveMgr::Set (const FString &key, const TArray<uint8> &data)
+bool URWorldSaveMgr::SetBuffer (const FString &Key, const TArray<uint8> &Data)
 {
-   CheckSaveFile ();
+   if (!ensure (SaveFile)) return false;
 
    FRSaveData RawData;
-   RawData.Data = data;
-   SaveFile->RawData.Add (key, RawData);
+   RawData.Data = Data;
+   SaveFile->RawData.Add (Key, RawData);
    return true;
 }
 
-bool URWorldSaveMgr::Get (const FString &key, TArray<uint8> &data)
+bool URWorldSaveMgr::SetString (const FString &Key, const TArray<FString> &Data)
 {
-   CheckSaveFile ();
+   if (!ensure (SaveFile)) return false;
 
-   if (!SaveFile->RawData.Contains (key)) return false;
-   FRSaveData RawData = SaveFile->RawData[key];
-   data = RawData.Data;
+   // Transform to binary
+   TArray<FString> DataCopy (Data);
+   FBufferArchive ToBinary;
+   ToBinary << DataCopy;
+
+   FRSaveData RawData;
+   RawData.Data = ToBinary;
+   SaveFile->RawData.Add (Key, RawData);
    return true;
 }
 
-/*
-// Read from file
 
-   FVector SaveData;
+bool URWorldSaveMgr::GetBuffer (const FString &Key, TArray<uint8> &Data)
+{
+   if (!ensure (SaveFile)) return false;
 
-   TArray<uint8> BinaryArray;
+   if (!SaveFile->RawData.Contains (Key)) return false;
+   FRSaveData RawData = SaveFile->RawData[Key];
+   Data = RawData.Data;
+   return true;
+}
 
-   if (!FFileHelper::LoadFileToArray(BinaryArray, *savePath)){
-      rlog("Corrupted File. [FFILEHELPER:>> Invalid File]");
-      return ;
-   }
+bool URWorldSaveMgr::GetString (const FString &Key, TArray<FString> &Data)
+{
+   if (!ensure (SaveFile)) return false;
 
-   if (BinaryArray.Num() <= 0) return ;
+   if (!SaveFile->RawData.Contains (Key)) return false;
+   FRSaveData RawData = SaveFile->RawData[Key];
 
-
-   FMemoryReader FromBinary = FMemoryReader(BinaryArray, true); //true, free data after done
+   FMemoryReader FromBinary = FMemoryReader (RawData.Data, true);
    FromBinary.Seek(0);
-   FromBinary << SaveData;
 
-   R_LOG (SaveData.ToString ());
-
-
-   FromBinary.FlushCache();
-
-   BinaryArray.Empty();
-*/
+   FromBinary << Data;
+   return true;
+}
 

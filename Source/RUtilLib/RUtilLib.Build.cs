@@ -11,8 +11,6 @@ public class RUtilLib : ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
-         "Json",
-         "JsonUtilities",
       });
    }
 }

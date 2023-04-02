@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "RSaveLib/RSaveInterface.h"
 #include "RExperienceMgrComponent.generated.h"
 
 class URWorldExperienceMgr;
@@ -10,7 +11,7 @@ class URWorldExperienceMgr;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRExperienceEvent);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class REXPERIENCELIB_API URExperienceMgrComponent : public UActorComponent
+class REXPERIENCELIB_API URExperienceMgrComponent : public UActorComponent, public IRSaveInterface
 {
    GENERATED_BODY()
 public:
@@ -65,6 +66,16 @@ protected:
    UFUNCTION()
       void LeveledUp ();
 
-   URWorldExperienceMgr* GlobalMgr = nullptr;
+   UPROPERTY()
+      URWorldExperienceMgr* GlobalMgr = nullptr;
+
+
+   // Status Saved / Loaded between sessions.
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Experience")
+      bool bSaveLoad = false;
+
+protected:
+   virtual void OnSave (FBufferArchive &SaveData) override;
+   virtual void OnLoad (FMemoryReader &LoadData) override;
 };
 

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "RSaveTypes.h"
+#include "Kismet/GameplayStatics.h"
 #include "RWorldSaveMgr.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
@@ -16,10 +18,15 @@ class RSAVELIB_API URWorldSaveMgr : public UActorComponent
    GENERATED_BODY()
 public:
 
-   URWorldSaveMgr();
+   URWorldSaveMgr ();
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Save");
-      TObjectPtr<URSaveGame> SaveFile;
+
+   // Get Save slots list
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly,
+             Category = "Rade|Save",
+               meta = (HidePin          = "WorldContextObject",
+                       DefaultToSelf    = "WorldContextObject"))
+		static TArray<FRSaveGameMeta> GetAllSaveGameSlots (UObject* WorldContextObject);
 
    //==========================================================================
    //                  Save data to disk
@@ -35,24 +42,36 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-      bool LoadSync ();
+      bool LoadSync (const FRSaveGameMeta &SlotMeta);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-      bool LoadASync ();
+      bool LoadASync (const FRSaveGameMeta &SlotMeta);
+
+   //==========================================================================
+   //                  Remove data from disk
+   //==========================================================================
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
+      void RemoveSync (const FRSaveGameMeta &SlotMeta);
 
    //==========================================================================
    //                 Get Data
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-      bool Get (const FString &key, TArray<uint8> &data);
+      bool GetBuffer (const FString &key, TArray<uint8> &data);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool GetString (const FString &key, TArray<FString> &data);
 
    //==========================================================================
    //                  Set Data
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
-      bool Set (const FString &key, const TArray<uint8> &data);
+      bool SetBuffer (const FString &key, const TArray<uint8> &data);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool SetString (const FString &key, const TArray<FString> &data);
 
    //==========================================================================
    //                  Get instance -> GameState component
@@ -67,29 +86,44 @@ public:
       static URWorldSaveMgr* GetInstance (UObject* WorldContextObject);
 
    //==========================================================================
-   //                  Subscribers
-   //==========================================================================
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
-      FRSaveEvent OnSave;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
-      FRSaveEvent OnLoad;
-
-protected:
-
-
-   // Check if save file is valid, if not use default
-   void CheckSaveFile ();
-
-   //==========================================================================
    //                  Events
    //==========================================================================
 
+   // Save started. Data must be set at this point
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
+      FRSaveEvent OnSave;
+
+   // Load Ended. Data Must be retrieved at this point
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
+      FRSaveEvent OnLoad;
+
+   // List of Save Slots has changed. (Save/Delete)
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
+      FRSaveEvent OnSaveListUpdated;
+
+   //==========================================================================
+   //                  Async Callback
+   //==========================================================================
+private:
+
+   // Async Save
+   FAsyncSaveGameToSlotDelegate OnAsyncSaveDelegate;
+
    // Called after write of save file finished
-   void SaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess);
+   UFUNCTION()
+      void AsyncSaveComplete (const FString &SaveSlot, int32 PlayerIndex, bool bSuccess);
+
+   // Async Load
+   FAsyncLoadGameFromSlotDelegate OnAsyncLoadDelegate;
 
    // Called after read of save file finished
-   void LoadComplete (const FString &SaveSlot, int32 PlayerIndex, USaveGame *SaveGame);
+   UFUNCTION()
+      void AsyncLoadComplete (const FString &SaveSlot, int32 PlayerIndex, USaveGame *SaveGame);
+
+protected:
+
+   // Current Save/Load file
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Save");
+      TObjectPtr<URSaveGame> SaveFile;
 };
 

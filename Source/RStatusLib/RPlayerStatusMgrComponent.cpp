@@ -277,13 +277,15 @@ bool URPlayerStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) con
 
 void URPlayerStatusMgrComponent::OnSave (FBufferArchive &SaveData)
 {
-   // SaveData << Health << Mana << Stamina;
-   // SaveData << CoreStats_Base;
+   SaveData << Health << Mana << Stamina;
+   SaveData << CoreStats_Base << CoreStats_Extra;
 }
 
 void URPlayerStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
-   // LoadData << Health << Mana << Stamina;
-   // LoadData << CoreStats_Base;
+   LoadData << Health << Mana << Stamina;
+   LoadData << CoreStats_Base << CoreStats_Extra;
+
+   OnStatsUpdated.Broadcast ();
 }
 

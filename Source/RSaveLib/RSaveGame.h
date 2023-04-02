@@ -3,38 +3,16 @@
 #pragma once
 
 #include "GameFramework/SaveGame.h"
+#include "RSaveTypes.h"
 #include "RSaveGame.generated.h"
 
-USTRUCT(BlueprintType)
-struct RSAVELIB_API FRSaveData
-{
-   GENERATED_BODY()
-
-   UPROPERTY(VisibleAnywhere)
-      TArray<uint8> Data;
-};
-
-// Save Game File
-UCLASS(ClassGroup=(_Rade))
+UCLASS(BlueprintType, ClassGroup=(_Rade))
 class RSAVELIB_API URSaveGame : public USaveGame
 {
    GENERATED_BODY()
 public:
 
-   URSaveGame ();
-
-   // --- Default Save Slot Info
-
-   // Save Slot Name
-   UPROPERTY(EditAnywhere, Category = "Rade|Save")
-      FString SaveSlotName;
-
-   // User Index
-   UPROPERTY(EditAnywhere, Category = "Rade|Save")
-      uint32 UserIndex;
-
-   // --- Save Data
-   UPROPERTY(EditAnywhere, Category = "Rade|Save")
+   UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Rade|Save")
       TMap<FString, FRSaveData> RawData;
 };
 

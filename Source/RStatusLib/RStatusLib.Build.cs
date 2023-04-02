@@ -11,8 +11,6 @@ public class RStatusLib : ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
-         "Json",
-         "JsonUtilities",
          "RUtilLib",
          "RSaveLib",
          "RDamageLib",

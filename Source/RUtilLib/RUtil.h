@@ -12,15 +12,18 @@ class RUTILLIB_API URUtil
 {
 public:
    template<typename T>
-   static T* GetComponent (const AActor* Target);
+   static FORCEINLINE T* GetComponent (const AActor* Target);
 
    template<typename T>
-   static T* AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass);
+   static FORCEINLINE T* AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass);
 
 
    template<typename T>
-   static T* GetWorldInstance (const UObject* WorldContextObject);
+   static FORCEINLINE T* GetWorldInstance (const UObject* WorldContextObject);
 
+
+   template <typename T>
+   static FORCEINLINE T* LoadObjFromPath (const FString& Path);
 };
 
 template<typename T>
@@ -70,6 +73,15 @@ T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
    return WorldInstance;
 }
 
+template<typename T>
+T* URUtil::LoadObjFromPath (const FString& Path)
+{
+   if (Path == NAME_None) return NULL;
+
+   // TODO. Add checks that path is valid and file exists.
+
+   return Cast<T> (StaticLoadObject (T::StaticClass (), NULL, *Path));
+}
 
 UCLASS()
 class RUTILLIB_API URUtilLibrary : public UBlueprintFunctionLibrary
