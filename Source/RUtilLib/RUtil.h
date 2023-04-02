@@ -76,7 +76,7 @@ T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
 template<typename T>
 T* URUtil::LoadObjFromPath (const FString& Path)
 {
-   if (Path == NAME_None) return NULL;
+   if (Path.IsEmpty ()) return nullptr;
 
    // TODO. Add checks that path is valid and file exists.
 
