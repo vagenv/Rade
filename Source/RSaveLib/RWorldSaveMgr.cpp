@@ -70,8 +70,6 @@ bool URWorldSaveMgr::SaveSync ()
 {
    CheckSaveFile ();
    FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
-
-   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveMeta.SlotName, SaveMeta.UserIndex);
    if (R_IS_VALID_WORLD) OnSave.Broadcast ();
 
    bool Result = UGameplayStatics::SaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex);
@@ -83,10 +81,7 @@ bool URWorldSaveMgr::SaveASync ()
 {
    CheckSaveFile ();
    FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
-
-   R_LOG_PRINTF ("Saving to [%s] [%lld]", *SaveMeta.SlotName, SaveMeta.UserIndex);
    if (R_IS_VALID_WORLD) {
-      OnSaveListUpdated.Broadcast ();
       OnSave.Broadcast ();
    }
 
@@ -104,7 +99,6 @@ bool URWorldSaveMgr::SaveASync ()
 bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SlotMeta)
 {
    CheckSaveFile ();
-   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SlotMeta.SlotName, SlotMeta.UserIndex);
    SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SlotMeta.SlotName, SlotMeta.UserIndex));
    if (R_IS_VALID_WORLD && SaveFile != nullptr) OnLoad.Broadcast ();
    return (SaveFile != nullptr);
@@ -113,7 +107,6 @@ bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SlotMeta)
 bool URWorldSaveMgr::LoadASync (const FRSaveGameMeta &SlotMeta)
 {
    CheckSaveFile ();
-   R_LOG_PRINTF ("Loading from [%s] [%lld]", *SlotMeta.SlotName, SlotMeta.UserIndex);
 
    FAsyncLoadGameFromSlotDelegate LoadedDelegate;
 

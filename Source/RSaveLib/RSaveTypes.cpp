@@ -14,6 +14,7 @@ FRSaveGameMeta FRSaveGameMeta::Create (UObject* WorldContextObject)
 
    if (WorldContextObject) {
       Result.BinaryTexture = ARViewCapture::GetScreenShot (WorldContextObject);
+      Result.Map = WorldContextObject->GetWorld ()->GetMapName ();
    }
 
    // File Mgr
