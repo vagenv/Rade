@@ -78,7 +78,9 @@ bool UROptionManager::GetSupportedScreenResolutions (TArray<FRScreenResolution>&
 {
    FScreenResolutionArray ResolutionsArray;
    if (RHIGetAvailableResolutions (ResolutionsArray, true)){
-      for (const FScreenResolutionRHI& ItResolution : ResolutionsArray){
+      for (const FScreenResolutionRHI& ItResolution : ResolutionsArray) {
+         // Hard limit for 1280 x 720 minimum screen resolution.
+         if (ItResolution.Width < 1280 || ItResolution.Height < 720) continue;
          FRScreenResolution res;
          res.Height = ItResolution.Height;
          res.Width  = ItResolution.Width;
