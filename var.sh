@@ -23,6 +23,10 @@ resolve_relative_path() (
 ROOTDIR=$(pwd)
 UE_DIR=$(resolve_relative_path $(pwd)/../UE_LINUX)
 
+BUILD_PLATFORM=Linux
+BUILD_CONFIGURATION=Development
+OS_TARGET=Linux
+
 PROJECT=Rade
 PROJECT_DIR=$ROOTDIR
 UPROJECT_PATH=$PROJECT_DIR/$PROJECT.uproject
@@ -31,4 +35,5 @@ UE_EDITOR_EXE=$UE_DIR/Engine/Binaries/Linux/./UnrealEditor
 UE_EDITOR_CMD=$UE_DIR/Engine/Binaries/Linux/./UnrealEditor-Cmd
 UE_BUILD_TOOL=$UE_DIR/Engine/Binaries/DotNET/AutomationTool/UnrealBuildTool
 UE_BUILD_BAT=$UE_DIR/Engine/Build/BatchFiles/Linux/Build.sh
+UE_BUILD_UAT=$UE_DIR/Engine/Build/BatchFiles/RunUAT.sh
 

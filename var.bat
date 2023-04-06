@@ -4,6 +4,10 @@ set ROOTDIR=%~dp0
 set ROOTDIR=%ROOTDIR:~0,-1%
 set UE_DIR=%~dp0/../../Games/UE_5.1
 
+set BUILD_PLATFORM=Win64
+set BUILD_CONFIGURATION=Development
+set OS_TARGET=Windows
+
 set PROJECT=Rade
 set PROJECT_DIR=%ROOTDIR%
 set UPROJECT_PATH=%PROJECT_DIR%/%PROJECT%.uproject
