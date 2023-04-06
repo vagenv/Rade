@@ -46,34 +46,32 @@ Other
    UI Fix (PC)
 =================================================
 
+==============
+General
+==============
 Easy and Intuitive Mouse + Keyboard  / Gamepad UI Input
 
-Remove / Replace all Option Menu Native Button Image with RUI objects
 
-Fix Click / Hover zones overlap of RUI Border and it's internal component
-
+==============
+Border
+==============
 Simplify Border design.
-
 Blurred border corners?
 
-Easy list of lists transition switch:
-[[1,2,3] [4,5]]
-
 
 ==============
-   Scrolling List
+Header Item
 ==============
-Header / Graphics Option
 
-Prev < Current > Next
-Animation?
+    Selected : Bold white text with underline.
+Not Selected : Plain gray text
 
 
 ==============
    UI User Action (Bottom Center)
 ==============
 
-Global Popup UI
+Global Action Popup UI
 
 - Short Press / Long Press (With Circle progress bar)
 - With Animation
@@ -94,6 +92,10 @@ Ability Slots by button press mode:
 - Long hold
 - Double Tap
 
+==============
+Select List
+==============
+Animation?
 
 =================================================
    Performance
@@ -656,6 +658,12 @@ ApplyRDamage (based on what body part was hit) (bone name?):
 - Audio line to mouth movement.
 - Expression
 
+=================================================
+   Chaos System
+=================================================
+Destructable Level
+- Trees
+- Walls
 
 
 =================================================
