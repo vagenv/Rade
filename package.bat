@@ -2,5 +2,38 @@
 
 call %~dp0\var.bat
 
-set PACKAGE_DIR=%PROJECT_DIR%/Build/Windows/
-call %UE_BUILD_UAT% -ScriptsForProject="%UPROJECT_PATH%" Turnkey -command=VerifySdk -platform=Win64 -UpdateIfNeeded -EditorIO -EditorIOPort=65065  -project="E:/unreal/Rade/Rade.uproject" BuildCookRun -nop4 -utf8output -nocompileeditor -skipbuildeditor -cook  -project="E:/unreal/Rade/Rade.uproject" -target=Rade  -unrealexe="E:\Games\UE_5.1\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" -platform=Win64 -installed -stage -archive -package -build -pak -iostore -compressed -prereqs -archivedirectory="%PACKAGE_DIR%" -CrashReporter -clientconfig=Development -nocompile -nocompileuat
+set PACKAGE_DIR=%PROJECT_DIR%/Build/%OS_TARGET%/
+
+call "%UE_BUILD_UAT%"                    ^
+   -ScriptsForProject="%UPROJECT_PATH%"  ^
+   Turnkey                               ^
+   -command=VerifySdk                    ^
+   -platform=%BUILD_PLATFORM%            ^
+   -UpdateIfNeeded                       ^
+   -EditorIO                             ^
+   -EditorIOPort=49968                   ^
+   -project="%UPROJECT_PATH%"            ^
+   BuildCookRun                          ^
+   -nop4                                 ^
+   -utf8output                           ^
+   -nocompileeditor                      ^
+   -skipbuildeditor                      ^
+   -cook                                 ^
+   -project="%UPROJECT_PATH%"            ^
+   -target=%PROJECT%                     ^
+   -unrealexe="%UE_EDITOR_CMD%"          ^
+   -platform=%BUILD_PLATFORM%            ^
+   -installed                            ^
+   -stage                                ^
+   -archive                              ^
+   -package                              ^
+   -build                                ^
+   -pak                                  ^
+   -iostore                              ^
+   -compressed                           ^
+   -prereqs                              ^
+   -archivedirectory="%PACKAGE_DIR%"     ^
+   -CrashReporter                        ^
+   -clientconfig="%BUILD_CONFIGURATION%" ^
+   -nocompile                            ^
+   -nocompileuat
