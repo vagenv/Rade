@@ -50,21 +50,55 @@ Other
 General
 ==============
 Easy and Intuitive Mouse + Keyboard  / Gamepad UI Input
+Less is more.
 
 
 ==============
 Border
 ==============
-Simplify Border design.
-Blurred border corners?
+
+Cleanup.
+
 
 
 ==============
-Header Item
+Sidebar
 ==============
+start ->
+- equipment
+- inventory
+- status
+- abilities
+- level up
+- messages
+- options
 
-    Selected : Bold white text with underline.
-Not Selected : Plain gray text
+
+==============
+Inventory
+==============
+With Tabs on top as bookmarks for types
+
+
+==============
+Grid Inventory
+==============
+- Box with icon
+- Separate widget with detailed description
+
+
+==============
+Back button
+==============
+Close / cancel current menu
+
+
+==============
+Select
+==============
+Spell / Ability / Action
+
+Drop Down menu over the old widget
 
 
 ==============
@@ -92,10 +126,15 @@ Ability Slots by button press mode:
 - Long hold
 - Double Tap
 
+
 ==============
-Select List
+   Other
 ==============
-Animation?
+
+Hide Status / Abilities if not in fight
+
+UI Scale 100% - 300% / SizeBox
+
 
 =================================================
    Performance
