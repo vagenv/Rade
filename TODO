@@ -60,18 +60,31 @@ Border
 Cleanup.
 
 
-
 ==============
 Sidebar
 ==============
-start ->
-- equipment
-- inventory
-- status
-- abilities
-- level up
-- messages
-- options
+
+
+- Status
+[Info] [Equipment] [Abilities] [Level up] [Class?]
+
+- Inventory
+[All] [Weapons] [Consumables] [Armor] [Craft] [Other] [Quest]
+
+- Multiplayer
+[Session] [Team] [Chat]
+
+- World
+[Map] [Mission/Task] [Character] [Enemies]
+
+- System
+[Save/Load] [Gameplay] [Audio] [Graphics] [Controls] [Quit]
+
+Hidden:
+- Target - Center, Widget - Right.
+[Store] [Craft] [Dialogue]
+
+
 
 
 ==============
@@ -134,6 +147,8 @@ Ability Slots by button press mode:
 Hide Status / Abilities if not in fight
 
 UI Scale 100% - 300% / SizeBox
+
+MiniMap
 
 
 =================================================
