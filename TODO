@@ -42,57 +42,19 @@ Other
 - SoftPtr to SubClass (will not create dependency)
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
 
-=================================================
-   UI Fix (PC)
-=================================================
-
-Easy and Intuitive Mouse + Keyboard  / Gamepad UI Input
-
-Remove / Replace all Option Menu Native Button Image with RUI objects
-
-Fix Click / Hover zones overlap of RUI Border and it's internal component
-
-Simplify Border design.
-
-Blurred border corners?
-
-Easy list of lists transition switch:
-[[1,2,3] [4,5]]
-
+==============
+Fixes
+==============
+Craft/Break item on server
 
 ==============
-   Scrolling List
+Input
 ==============
-Header / Graphics Option
-
-Prev < Current > Next
-Animation?
-
-
-==============
-   UI User Action (Bottom Center)
-==============
-
-Global Popup UI
-
-- Short Press / Long Press (With Circle progress bar)
-- With Animation
-
-Map
-- TSubClass<RUI_Input>
-- Action Name
-- Action Icon
-SetFocused -> Set Actions (RUI_Input , FString)
-
-Example :
-- [X] : Open chest
-- [Y] : Interact
-- [A] : Pickup everything
-
-Ability Slots by button press mode:
-- Short press
-- Long hold
-- Double Tap
+R1 + L1 Super Action?
+R2 + L2 Mega Action?
+- Short press?
+- Long hold?
+- Double Tap?
 
 
 =================================================
@@ -469,12 +431,30 @@ Settings
 - Audio channels with Persistent Audio Settings
 - Input
 
+==============
+Other
+==============
+
+Hide Status / Abilities if not in fight
+
+UI Scale 100% - 300% / SizeBox
+
+MiniMap
+
+Action Popup redesign
+- On top of select widget
+
+Remove / Replace borders
+
+Drop down list for selection
+
 
 ==============
-Inventory
+Grid Inventory
 ==============
-Tab by types (Items / Consumable / Equipment / Weapon)
-Sort by types / rarity / types / price
+- Box with icon
+- Separate widget with detailed description
+- Sort by types / rarity / types / price
 
 
 =================================================
@@ -656,6 +636,12 @@ ApplyRDamage (based on what body part was hit) (bone name?):
 - Audio line to mouth movement.
 - Expression
 
+=================================================
+   Chaos System
+=================================================
+Destructable Level
+- Trees
+- Walls
 
 
 =================================================

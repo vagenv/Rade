@@ -213,6 +213,10 @@
 			"SupportedTargetPlatforms": [
 				"Mac"
 			]
+		},
+		{
+			"Name": "EditorTests",
+			"Enabled": true
 		}
 	]
 }

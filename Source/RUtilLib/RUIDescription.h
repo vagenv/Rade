@@ -9,13 +9,13 @@ struct RUTILLIB_API FRUIDescription
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString Label = FString ("?");
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FString Tooltip = FString ("???");
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSoftObjectPtr<UTexture2D> Icon;
 
    bool operator == (const FRUIDescription &res) const noexcept;
@@ -31,6 +31,6 @@ class RUTILLIB_API URUIDescriptionUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintPure, Category = "Rade|Util", meta=(DisplayName="Equal (FRUIDescription)", CompactNodeTitle="=="))
+   UFUNCTION(BlueprintPure, Category = "Rade|Util", meta=(DisplayName="==", CompactNodeTitle="=="))
 	   static bool FRUIDescription_EqualEqual (const FRUIDescription& A, const FRUIDescription& B);
 };

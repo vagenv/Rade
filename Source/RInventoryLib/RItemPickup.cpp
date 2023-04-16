@@ -20,12 +20,11 @@ ARItemPickup::ARItemPickup ()
    MeshComponent->SetSimulatePhysics (true);
    MeshComponent->SetIsReplicated (true);
    MeshComponent->bAutoActivate = true;
-   SetRootComponent (RootComponent);
+   SetRootComponent (MeshComponent);
 
    static ConstructorHelpers::FObjectFinder<UStaticMesh>
       defaultMesh (TEXT("StaticMesh'/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cube.Shape_Cube'"));
    MeshComponent->SetStaticMesh (defaultMesh.Object);
-   MeshComponent->SetupAttachment (RootComponent);
 
    // Set Trigger Component
    TriggerSphere = CreateDefaultSubobject<USphereComponent> (TEXT("TriggerSphere"));
