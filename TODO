@@ -42,113 +42,19 @@ Other
 - SoftPtr to SubClass (will not create dependency)
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
 
-=================================================
-   UI Fix (PC)
-=================================================
+==============
+Fixes
+==============
+Craft/Break item on server
 
 ==============
-General
+Input
 ==============
-Easy and Intuitive Mouse + Keyboard  / Gamepad UI Input
-Less is more.
-
-
-==============
-Border
-==============
-
-Cleanup.
-
-
-==============
-Sidebar
-==============
-
-
-- Status
-[Info] [Equipment] [Abilities] [Level up] [Class?]
-
-- Inventory
-[All] [Weapons] [Consumables] [Armor] [Craft] [Other] [Quest]
-
-- Multiplayer
-[Session] [Team] [Chat]
-
-- World
-[Map] [Mission/Task] [Character] [Enemies]
-
-- System
-[Save/Load] [Gameplay] [Audio] [Graphics] [Controls] [Quit]
-
-Hidden:
-- Target - Center, Widget - Right.
-[Store] [Craft] [Dialogue]
-
-
-
-
-==============
-Inventory
-==============
-With Tabs on top as bookmarks for types
-
-
-==============
-Grid Inventory
-==============
-- Box with icon
-- Separate widget with detailed description
-
-
-==============
-Back button
-==============
-Close / cancel current menu
-
-
-==============
-Select
-==============
-Spell / Ability / Action
-
-Drop Down menu over the old widget
-
-
-==============
-   UI User Action (Bottom Center)
-==============
-
-Global Action Popup UI
-
-- Short Press / Long Press (With Circle progress bar)
-- With Animation
-
-Map
-- TSubClass<RUI_Input>
-- Action Name
-- Action Icon
-SetFocused -> Set Actions (RUI_Input , FString)
-
-Example :
-- [X] : Open chest
-- [Y] : Interact
-- [A] : Pickup everything
-
-Ability Slots by button press mode:
-- Short press
-- Long hold
-- Double Tap
-
-
-==============
-   Other
-==============
-
-Hide Status / Abilities if not in fight
-
-UI Scale 100% - 300% / SizeBox
-
-MiniMap
+R1 + L1 Super Action?
+R2 + L2 Mega Action?
+- Short press?
+- Long hold?
+- Double Tap?
 
 
 =================================================
@@ -525,12 +431,30 @@ Settings
 - Audio channels with Persistent Audio Settings
 - Input
 
+==============
+Other
+==============
+
+Hide Status / Abilities if not in fight
+
+UI Scale 100% - 300% / SizeBox
+
+MiniMap
+
+Action Popup redesign
+- On top of select widget
+
+Remove / Replace borders
+
+Drop down list for selection
+
 
 ==============
-Inventory
+Grid Inventory
 ==============
-Tab by types (Items / Consumable / Equipment / Weapon)
-Sort by types / rarity / types / price
+- Box with icon
+- Separate widget with detailed description
+- Sort by types / rarity / types / price
 
 
 =================================================
