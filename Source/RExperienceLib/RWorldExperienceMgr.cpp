@@ -11,7 +11,7 @@
 //                   Static calls
 //=============================================================================
 
-URWorldExperienceMgr* URWorldExperienceMgr::GetInstance (UObject* WorldContextObject)
+URWorldExperienceMgr* URWorldExperienceMgr::GetInstance (const UObject* WorldContextObject)
 {
    return URUtil::GetWorldInstance<URWorldExperienceMgr> (WorldContextObject);
 }

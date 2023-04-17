@@ -83,7 +83,7 @@ public:
                      DefaultToSelf    = "WorldContextObject",
                      DisplayName      = "World Save Mgr",
                      CompactNodeTitle = "World Save Mgr"))
-      static URWorldSaveMgr* GetInstance (UObject* WorldContextObject);
+      static URWorldSaveMgr* GetInstance (const UObject* WorldContextObject);
 
    //==========================================================================
    //                  Events

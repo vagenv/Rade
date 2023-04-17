@@ -4,12 +4,12 @@
 #include "RWorldSaveMgr.h"
 #include "RUtilLib/RLog.h"
 
-void IRSaveInterface::Init_Save (UObject* WorldContextObject, const FString &SaveId)
+void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId)
 {
    if (!ensure (WorldContextObject)) return;
    if (!ensure (!SaveId.IsEmpty ())) return;
 
-   UWorld *World_ = WorldContextObject->GetWorld ();
+   const UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (World_)) return;
    URWorldSaveMgr *SaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
    if (!ensure (SaveMgr_)) return;

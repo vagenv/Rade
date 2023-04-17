@@ -9,7 +9,7 @@
 //                   Static calls
 //=============================================================================
 
-URWorldAbilityMgr* URWorldAbilityMgr::GetInstance (UObject* WorldContextObject)
+URWorldAbilityMgr* URWorldAbilityMgr::GetInstance (const UObject* WorldContextObject)
 {
    return URUtil::GetWorldInstance<URWorldAbilityMgr> (WorldContextObject);
 }

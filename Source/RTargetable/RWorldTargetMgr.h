@@ -86,6 +86,6 @@ public:
                      DefaultToSelf    = "WorldContextObject",
                      DisplayName      = "World Target Mgr",
                      CompactNodeTitle = "World Target Mgr"))
-      static URWorldTargetMgr* GetInstance (UObject* WorldContextObject);
+      static URWorldTargetMgr* GetInstance (const UObject* WorldContextObject);
 };
 

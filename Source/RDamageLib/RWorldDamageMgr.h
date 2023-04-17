@@ -73,6 +73,6 @@ public:
                      DefaultToSelf    = "WorldContextObject",
                      DisplayName      = "World Damage Mgr",
                      CompactNodeTitle = "World Damage Mgr"))
-      static URWorldDamageMgr* GetInstance (UObject* WorldContextObject);
+      static URWorldDamageMgr* GetInstance (const UObject* WorldContextObject);
 };
 

@@ -11,7 +11,7 @@
 //                   Static calls
 //=============================================================================
 
-URWorldSaveMgr* URWorldSaveMgr::GetInstance (UObject* WorldContextObject)
+URWorldSaveMgr* URWorldSaveMgr::GetInstance (const UObject* WorldContextObject)
 {
    return URUtil::GetWorldInstance<URWorldSaveMgr> (WorldContextObject);
 }
