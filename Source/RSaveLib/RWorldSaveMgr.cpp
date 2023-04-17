@@ -8,6 +8,31 @@
 #include "RUtilLib/RLog.h"
 
 //=============================================================================
+//                   Async task
+//=============================================================================
+
+URGetSaveGameSlotsAsync* URGetSaveGameSlotsAsync::GetAllSaveGameSlotsAsync ()
+{
+	URGetSaveGameSlotsAsync* BlueprintNode = NewObject<URGetSaveGameSlotsAsync>();
+	return BlueprintNode;
+}
+
+void URGetSaveGameSlotsAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+
+      // Perform long sync operation
+      TArray<FRSaveGameMeta> Result = URWorldSaveMgr::GetAllSaveGameSlotsSync ();
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this, Result] () {
+         this->Loaded.Broadcast (Result);
+      });
+   });
+}
+
+//=============================================================================
 //                   Static calls
 //=============================================================================
 
@@ -16,10 +41,9 @@ URWorldSaveMgr* URWorldSaveMgr::GetInstance (const UObject* WorldContextObject)
    return URUtil::GetWorldInstance<URWorldSaveMgr> (WorldContextObject);
 }
 
-TArray<FRSaveGameMeta> URWorldSaveMgr::GetAllSaveGameSlots (UObject* WorldContextObject)
+TArray<FRSaveGameMeta> URWorldSaveMgr::GetAllSaveGameSlotsSync ()
 {
    TArray<FRSaveGameMeta> Result;
-   if (!ensure (WorldContextObject)) return Result;
 
    // File Mgr
    IFileManager& FileMgr = IFileManager::Get ();
