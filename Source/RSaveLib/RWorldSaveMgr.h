@@ -6,15 +6,13 @@
 #include "RSaveTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
-
 #include "RWorldSaveMgr.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
 
 class USaveGame;
 class URSaveGame;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsOutputPin, const TArray<FRSaveGameMeta>&, SaveSlotsList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRSaveEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
 
 UCLASS()
 class RSAVELIB_API URGetSaveGameSlotsAsync : public UBlueprintAsyncActionBase
@@ -29,13 +27,11 @@ public:
 
    // Called when all save game slots have been read
 	UPROPERTY(BlueprintAssignable)
-	   FGetSaveSlotsOutputPin Loaded;
+	   FGetSaveSlotsEvent Loaded;
 
    // Execution point
 	virtual void Activate () override;
 };
-
-
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RSAVELIB_API URWorldSaveMgr : public UActorComponent
