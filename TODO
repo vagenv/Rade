@@ -23,16 +23,7 @@ Pickup
 - Magentic
 - [Open/Close/Take All]
 
-==============
-Async Task
-==============
-UBlueprintAsyncActionBase
 
-- Thread
-- Read / Write to file
-- Complete Pin
-
-Save / Load Task
 
 ==============
 Other
