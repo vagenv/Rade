@@ -73,6 +73,11 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 
 void URInventoryComponent::OnRep_Items ()
 {
+   ReportInventoryUpdate ();
+}
+
+void URInventoryComponent::ReportInventoryUpdate () const
+{
    if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
 }
 
@@ -193,7 +198,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
          if (NewItem.Count <= ItItemCountLeft) {
             ItItem.Count += NewItem.Count;
             CalcWeight ();
-            if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+            ReportInventoryUpdate ();
             return true;
          }
 
@@ -221,14 +226,14 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    // Limit number of slots used
    if (Items.Num () >= SlotsMax) {
       CalcWeight ();
-      if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+      ReportInventoryUpdate ();
       R_LOG ("Maximum number of inventory slots reached");
       return false;
    }
 
    Items.Add (NewItem);
    CalcWeight ();
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
    return true;
 }
 
@@ -261,7 +266,7 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
    }
 
    CalcWeight ();
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
    return true;
 }
 
@@ -622,6 +627,6 @@ void URInventoryComponent::OnLoad (FMemoryReader &LoadData)
 
    // Update inventory
    Items = LoadedItems;
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
 }
 

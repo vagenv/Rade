@@ -68,10 +68,14 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnInventoryUpdated;
 
+protected:
+   UFUNCTION()
+      void ReportInventoryUpdate () const;
+
    //==========================================================================
    //                 Check if contains
    //==========================================================================
-
+public:
    // --- Check if Inventory contains.
    //     Convenience functions
 
