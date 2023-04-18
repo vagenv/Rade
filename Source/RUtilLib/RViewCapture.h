@@ -43,6 +43,6 @@ public:
 
    UFUNCTION(BlueprintCallable,
              Category = "Rade|Util")
-      static UTexture2D* Create8BitTextureAtRuntime (const TArray<uint8> &BGRA8PixelData);
+      static UTexture2D* Create8BitTextureSync (const TArray<uint8> &BGRA8PixelData);
 };
 

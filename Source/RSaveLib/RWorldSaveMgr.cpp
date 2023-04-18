@@ -27,6 +27,8 @@ void URGetSaveGameSlotsAsync::Activate ()
 
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, Result] () {
+
+         // Report operation end
          this->Loaded.Broadcast (Result);
       });
    });

@@ -2,8 +2,8 @@
 
 #include "RViewCapture.h"
 #include "Components/SceneCaptureComponent2D.h"
-#include "Engine/TextureRenderTarget2D.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -22,11 +22,11 @@ ARViewCapture::ARViewCapture ()
 
 bool ARViewCapture::SetCameraToPlayerView ()
 {
-   APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+   APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager (GetWorld (), 0);
    if (!ensure (PlayerCamera)) return false;
 
-   const FVector  CameraLocation = PlayerCamera->GetCameraLocation();
-   const FRotator CameraRotation = PlayerCamera->GetCameraRotation();
+   const FVector  CameraLocation = PlayerCamera->GetCameraLocation ();
+   const FRotator CameraRotation = PlayerCamera->GetCameraRotation ();
 
    SetActorLocationAndRotation (CameraLocation, CameraRotation);
    Camera->SetWorldLocationAndRotation (CameraLocation, CameraRotation);
@@ -109,7 +109,7 @@ TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
    return Result;
 }
 
-UTexture2D* ARViewCapture::Create8BitTextureAtRuntime (const TArray<uint8> &BGRA8PixelData)
+UTexture2D* ARViewCapture::Create8BitTextureSync (const TArray<uint8> &BGRA8PixelData)
 {
    if (!BGRA8PixelData.Num ()) return nullptr;
 
@@ -146,3 +146,4 @@ UTexture2D* ARViewCapture::Create8BitTextureAtRuntime (const TArray<uint8> &BGRA
 
    return Texture;
 }
+
