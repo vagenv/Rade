@@ -97,6 +97,13 @@ void URAbility_Aura::BeginPlay ()
                                              this, &URAbility_Aura::CheckRange,
                                              CheckRangeInterval, true);
 }
+
+void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
+{
+   GetWorld ()->GetTimerManager ().ClearTimer (TimerCheckRange);
+   Super::EndPlay (EndPlayReason);
+}
+
 void URAbility_Aura::CheckRange ()
 {
    if (!AffectedType) return;

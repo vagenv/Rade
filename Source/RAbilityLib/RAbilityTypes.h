@@ -101,6 +101,7 @@ public:
    URAbility_Aura ();
 
    virtual void BeginPlay () override;
+   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    // Called in interval to create AffectedActirs list
    virtual void CheckRange ();

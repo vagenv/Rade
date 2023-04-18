@@ -33,6 +33,12 @@ void URTargetingComponent::BeginPlay ()
 	GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle, this, &URTargetingComponent::TargetCheck, 1, true);
 }
 
+void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld ()->GetTimerManager ().ClearTimer (TargetCheckHandle);
+   Super::EndPlay (EndPlayReason);
+}
+
 void URTargetingComponent::TickComponent (float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
