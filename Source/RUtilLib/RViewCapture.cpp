@@ -170,7 +170,7 @@ void URCreate8BitTextureAsync::Activate ()
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, Texture] () {
 
-         // 3. Let the engine process new data.
+         // Must be called on game thread to register new texture.
          Texture->UpdateResource ();
 
          // Report operation end
