@@ -142,8 +142,40 @@ UTexture2D* ARViewCapture::Create8BitTextureSync (const TArray<uint8> &BGRA8Pixe
    Mip.BulkData.Unlock ();
 
    // 3. Let the engine process new data.
-   Texture->UpdateResource ();
+   if (IsInGameThread ()) Texture->UpdateResource ();
 
    return Texture;
+}
+
+//=============================================================================
+//                   Async task
+//=============================================================================
+
+URCreate8BitTextureAsync* URCreate8BitTextureAsync::Create8BitTextureAsync (const TArray<uint8> &BGRA8PixelData)
+{
+   if (!BGRA8PixelData.Num ()) return nullptr;
+
+	URCreate8BitTextureAsync* BlueprintNode = NewObject<URCreate8BitTextureAsync>();
+   BlueprintNode->BGRA8PixelData = BGRA8PixelData;
+	return BlueprintNode;
+}
+
+void URCreate8BitTextureAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+
+      UTexture2D* Texture = ARViewCapture::Create8BitTextureSync (this->BGRA8PixelData);
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this, Texture] () {
+
+         // 3. Let the engine process new data.
+         Texture->UpdateResource ();
+
+         // Report operation end
+         this->Loaded.Broadcast (Texture);
+      });
+   });
 }
 

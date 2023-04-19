@@ -4,6 +4,7 @@
 
 #include "GameFramework/Actor.h"
 #include "RUtilLib/RUtilTypes.h"
+#include "Kismet/BlueprintAsyncActionBase.h"
 #include "RViewCapture.generated.h"
 
 class USceneCaptureComponent2D;
@@ -46,3 +47,26 @@ public:
       static UTexture2D* Create8BitTextureSync (const TArray<uint8> &BGRA8PixelData);
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCreate8BitTextureEvent, UTexture2D*, Texture);
+
+UCLASS()
+class RUTILLIB_API URCreate8BitTextureAsync : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+public:
+
+	UFUNCTION(BlueprintCallable,
+             meta = (BlueprintInternalUseOnly = "true",
+                     WorldContext = "WorldContextObject"))
+	   static URCreate8BitTextureAsync* Create8BitTextureAsync (const TArray<uint8> &BGRA8PixelData);
+
+   // Called when all save game slots have been read
+	UPROPERTY(BlueprintAssignable)
+	   FCreate8BitTextureEvent Loaded;
+
+   // Execution point
+	virtual void Activate () override;
+private:
+   UPROPERTY()
+      TArray<uint8> BGRA8PixelData;
+};
