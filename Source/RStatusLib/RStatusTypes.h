@@ -121,5 +121,8 @@ class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="ToString (FRStatusValue)", CompactNodeTitle="ToString"))
+      static FString FRStatusValue_ToString (const FRStatusValue &Value);
 };
 

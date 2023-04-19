@@ -103,3 +103,13 @@ void FRStatusValue::Tick (float DeltaTime)
    Current = FMath::Clamp (Current, 0, Max);
 }
 
+FString URStatusUtilLibrary::FRStatusValue_ToString (const FRStatusValue &Value)
+{
+   return FString::Printf (
+         TEXT("%.1f / %.1f%s"),
+         Value.Current,
+         Value.Max,
+         FMath::Abs (Value.Regen) > 0.01 ? (*FString::Printf (TEXT (" (%+.1f)"), Value.Regen)) : TEXT ("")
+      );
+}
+
