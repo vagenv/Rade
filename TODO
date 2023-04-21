@@ -51,16 +51,50 @@ R2 + L2 Mega Action?
 =================================================
    Performance
 =================================================
-Create backup and initial measurement of basic level system idle:
-- FPS
+
+
+==============
+Analyse
+==============
+
+Remove Get All actors of class.
+
+Stutters:
+- Unknown? (Engine::Loop. Conversion of image or load of sames?)
+- Spawn effect
+- Pickup
+
+==============
+UI
+==============
+
+UI stacks
+
+
+Item list not updated on deck
+
+
+Move screenshot to RUI?
+
+==============
+Resource usage
+==============
+
+UI Resource tracking
 - CPU
 - GPU
 - RAM
 - VRAM
 
-PC / Laptop / SteamDeck
+==============
+Laptop
+==============
 
-Determine bottlenecks for 240+ FPS
+Deploy to Laptop
+
+Network trace
+- Connect to laptop
+- start app from steam UI. (Base, RAM trace, time trace)
 
 
 =================================================
