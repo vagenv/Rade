@@ -19,18 +19,18 @@ struct RSAVELIB_API FRSaveGameMeta
    GENERATED_BODY()
 
    // --- Mandatory info
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString SlotName = "";
 
    // Maybe should be hidden/disabled
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       int32 UserIndex = 0;
 
    // UI info
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Map = "???";
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Date = "???";
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
