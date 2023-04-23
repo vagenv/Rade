@@ -34,7 +34,10 @@ struct RSAVELIB_API FRSaveGameMeta
       FString Date = "???";
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<uint8> BinaryTexture;
+      TArray<uint8> SceenshotTextureBinary;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TEnumAsByte<EPixelFormat> SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
 
    // For serialization of data
    friend FArchive& operator << (FArchive& Ar, FRSaveGameMeta &MetaData) {
@@ -42,7 +45,9 @@ struct RSAVELIB_API FRSaveGameMeta
       Ar << MetaData.UserIndex;
       Ar << MetaData.Map;
       Ar << MetaData.Date;
-      Ar << MetaData.BinaryTexture;
+      // Ar << MetaData.SceenshotTextureFormat;
+      Ar << MetaData.SceenshotTextureBinary;
+
       return Ar;
    }
 

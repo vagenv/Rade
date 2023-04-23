@@ -11,6 +11,7 @@ public class RUtilLib : ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
+         "RHI","RenderCore",
       });
    }
 }
