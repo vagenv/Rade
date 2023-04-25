@@ -62,9 +62,12 @@ void URItemPickupMgrComponent::ReportClosestPickupUpdated ()
 
 void URItemPickupMgrComponent::CheckClosestPickup ()
 {
-   FVector PlayerLoc = GetOwner ()->GetActorLocation ();
 
-   FVector              newClosestPickupLoc;
+   FVector  MgrLoc = GetComponentLocation ();
+   FRotator MgrRot = GetComponentRotation ();
+   FVector  MgrDir = MgrRot.Vector ();
+   MgrDir.Normalize ();
+
    const ARItemPickup * newClosestPickup = nullptr;
 
    TArray<const ARItemPickup*> NewList;
@@ -75,16 +78,34 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
       // If valid
       NewList.Add (ItPickup);
 
-      FVector ItLoc = ItPickup->GetActorLocation ();
-
+      // First one
       if (!newClosestPickup) {
-         newClosestPickup    = ItPickup;
-         newClosestPickupLoc = ItLoc;
+         newClosestPickup = ItPickup;
+         continue;
       }
 
-      if (FVector::Distance (PlayerLoc, ItLoc) < FVector::Distance (PlayerLoc, newClosestPickupLoc)) {
-         newClosestPickup    = ItPickup;
-         newClosestPickupLoc = ItLoc;
+      if (SelectionMethod == ERClosestPickupSelectionMethod::Distance) {
+
+         if ( FVector::Distance (MgrLoc,         ItPickup->GetActorLocation ())
+            < FVector::Distance (MgrLoc, newClosestPickup->GetActorLocation ()))
+         {
+            newClosestPickup = ItPickup;
+         }
+
+      } else {
+
+         // --- It Pickup angle
+         FVector ItDir = ItPickup->GetActorLocation () - MgrLoc;
+         ItDir.Normalize ();
+         float ItAngle = URItemPickupMgrComponent::GetAngle (MgrDir, ItDir);
+
+         // --- Selected Pickup Angle
+         FVector CurrentDir = newClosestPickup->GetActorLocation () - MgrLoc;
+         CurrentDir.Normalize ();
+         float CurrentAngle = URItemPickupMgrComponent::GetAngle (MgrDir, CurrentDir);
+
+         // Update selection
+         if (ItAngle < CurrentAngle) newClosestPickup = ItPickup;
       }
    }
 
@@ -95,9 +116,15 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
    }
 
    if (newClosestPickup != ClosestPickup) {
-      R_LOG ("New closest pickup");
       ClosestPickup = newClosestPickup;
       ReportClosestPickupUpdated ();
    }
+}
+
+float URItemPickupMgrComponent::GetAngle (FVector v1, FVector v2)
+{
+   v1.Normalize ();
+   v2.Normalize ();
+   return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
 }
 

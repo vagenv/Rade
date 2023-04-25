@@ -10,9 +10,15 @@ class ARItemPickup;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRItemPickupMgrEvent);
 
-// Inventory Component. Holds all items an actor own
+UENUM(BlueprintType)
+enum class ERClosestPickupSelectionMethod : uint8
+{
+   Direction UMETA (DisplayName = "Direction"),
+   Distance  UMETA (DisplayName = "Distance")
+};
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RINVENTORYLIB_API URItemPickupMgrComponent : public UActorComponent
+class RINVENTORYLIB_API URItemPickupMgrComponent : public USceneComponent
 {
    GENERATED_BODY()
 public:
@@ -66,6 +72,14 @@ protected:
       void CheckClosestPickup ();
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
+      ERClosestPickupSelectionMethod SelectionMethod;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       float CheckClosestDelay = 0.5f;
+
+
+   // Gets angle in degrees between two vectors
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Inventory")
+      static float GetAngle (FVector v1, FVector v2);
 };
 
