@@ -49,17 +49,6 @@ void URInventoryComponent::BeginPlay()
                *ItItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
       }
    }
-
-   if (bCheckClosestPickup) {
-      world->GetTimerManager ().SetTimer (TimerClosestPickup,
-         this, &URInventoryComponent::CheckClosestPickup, CheckClosestDelay, true);
-   }
-}
-
-void URInventoryComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
-{
-	GetWorld ()->GetTimerManager ().ClearTimer (TimerClosestPickup);
-   Super::EndPlay (EndPlayReason);
 }
 
 //=============================================================================
@@ -501,66 +490,6 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 
    return Pickup;
 }
-
-//=============================================================================
-//                 Pickup
-//=============================================================================
-
-bool URInventoryComponent::Pickup_Add (const ARItemPickup* Pickup)
-{
-   if (!ensure (IsValid (Pickup))) return false;
-   CurrentPickups.Add (Pickup);
-   ReportPickupListUpdated ();
-   return true;
-}
-
-bool URInventoryComponent::Pickup_Rm (const ARItemPickup* Pickup)
-{
-   if (!ensure (IsValid (Pickup))) return false;
-   CurrentPickups.RemoveSingle (Pickup);
-   ReportPickupListUpdated ();
-   return true;
-}
-
-void URInventoryComponent::ReportPickupListUpdated ()
-{
-   if (R_IS_VALID_WORLD && OnPickupListUpdated.IsBound ()) OnPickupListUpdated.Broadcast ();
-}
-
-const ARItemPickup* URInventoryComponent::GetClosestPickup () const
-{
-   return ClosestPickup;
-}
-
-void URInventoryComponent::CheckClosestPickup ()
-{
-   FVector PlayerLoc = GetOwner ()->GetActorLocation ();
-
-   FVector              newClosestPickupLoc;
-   const ARItemPickup * newClosestPickup = nullptr;
-
-   for (const ARItemPickup *ItPickup : CurrentPickups) {
-      if (!ensure (IsValid (ItPickup))) continue;
-
-      FVector ItLoc = ItPickup->GetActorLocation ();
-
-      if (!newClosestPickup) {
-         newClosestPickup    = ItPickup;
-         newClosestPickupLoc = ItLoc;
-      }
-
-      if (FVector::Distance (PlayerLoc, ItLoc) < FVector::Distance (PlayerLoc, newClosestPickupLoc)) {
-         newClosestPickup    = ItPickup;
-         newClosestPickupLoc = ItLoc;
-      }
-   }
-
-   if (newClosestPickup != ClosestPickup) {
-      ClosestPickup = newClosestPickup;
-      if (R_IS_VALID_WORLD && OnClosestPickupUpdated.IsBound ()) OnClosestPickupUpdated.Broadcast ();
-   }
-}
-
 
 //=============================================================================
 //                 Save / Load

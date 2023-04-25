@@ -22,7 +22,6 @@ public:
    URInventoryComponent ();
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
-   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    //==========================================================================
    //                 Inventory info
@@ -217,53 +216,6 @@ public:
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
       void BP_Droped (int32 ItemIdx, ARItemPickup *Pickup);
-
-   //==========================================================================
-   //                 Pickups
-   //==========================================================================
-
-protected:
-   // List of currently available pickup
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
-             meta = (GetByRef))
-      TArray<const ARItemPickup*> CurrentPickups;
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      const ARItemPickup* ClosestPickup = nullptr;
-
-
-   UFUNCTION()
-      void ReportPickupListUpdated ();
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInventoryEvent OnPickupListUpdated;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
-      FRInventoryEvent OnClosestPickupUpdated;
-
-   FTimerHandle TimerClosestPickup;
-
-   UFUNCTION()
-      void CheckClosestPickup ();
-
-public:
-
-   // Owner overlaps pickup
-   bool Pickup_Add (const ARItemPickup* Pickup);
-
-   // Owner no longer overlaps
-   bool Pickup_Rm  (const ARItemPickup* Pickup);
-
-   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      const ARItemPickup* GetClosestPickup () const;
-
-protected:
-   // Should be used only for main local Player.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
-      bool bCheckClosestPickup = false;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
-      float CheckClosestDelay = 0.5f;
 
    //==========================================================================
    //                 Save / Load
