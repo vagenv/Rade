@@ -30,14 +30,9 @@ template<typename T>
 T* URUtil::GetComponent (const AActor* Target)
 {
    if (!ensure (IsValid (Target))) return nullptr;
-   T* CompObj = nullptr;
-   {
-      TArray<T*> CompObjList;
-      Target->GetComponents (CompObjList);
-      if (CompObjList.Num ()) CompObj = CompObjList[0];
-   }
-   if (!IsValid (CompObj)) return nullptr;
-   return CompObj;
+   T* ResultObj = Target->FindComponentByClass<T>();
+   if (!IsValid (ResultObj))       return nullptr;
+   return ResultObj;
 }
 
 template<typename T>
