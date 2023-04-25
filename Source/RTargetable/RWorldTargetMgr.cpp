@@ -68,7 +68,7 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
       // --- Check angle
       FVector ItDir = ItTarget->GetComponentLocation () - Origin;
       ItDir.Normalize ();
-      float ItAngle = URWorldTargetMgr::GetAngle (SearchDir, ItDir);
+      float ItAngle = URUtilLibrary::GetAngle (SearchDir, ItDir);
       if (ItAngle > SearchAngle) continue;
 
       // First target
@@ -80,7 +80,7 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
       // --- Check if smaller angle
       FVector CurrentDir = CurrentTarget->GetComponentLocation () - Origin;
       CurrentDir.Normalize ();
-      float CurrentAngle = URWorldTargetMgr::GetAngle (SearchDir, CurrentDir);
+      float CurrentAngle = URUtilLibrary::GetAngle (SearchDir, CurrentDir);
 
       if (ItAngle < CurrentAngle) CurrentTarget = ItTarget;
    }
@@ -136,7 +136,7 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
       // --- Check angle respect to camera
       FVector ItDir = ItTarget->GetComponentLocation () - Origin;
       ItDir.Normalize ();
-      if (URWorldTargetMgr::GetAngle (ForwardDir, ItDir) > SearchAngle) continue;
+      if (URUtilLibrary::GetAngle (ForwardDir, ItDir) > SearchAngle) continue;
 
       // Direction with respect to current target
       ItDir = ItTarget->GetComponentLocation () - TargetLoc;
@@ -168,9 +168,3 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
    return NewTarget;
 }
 
-float URWorldTargetMgr::GetAngle (FVector v1, FVector v2)
-{
-   v1.Normalize ();
-   v2.Normalize ();
-   return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
-}

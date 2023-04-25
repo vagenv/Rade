@@ -4,6 +4,7 @@
 #include "RItemPickup.h"
 
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
 
 //=============================================================================
@@ -97,12 +98,12 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
          // --- It Pickup angle
          FVector ItDir = ItPickup->GetActorLocation () - MgrLoc;
          ItDir.Normalize ();
-         float ItAngle = URItemPickupMgrComponent::GetAngle (MgrDir, ItDir);
+         float ItAngle = URUtilLibrary::GetAngle (MgrDir, ItDir);
 
          // --- Selected Pickup Angle
          FVector CurrentDir = newClosestPickup->GetActorLocation () - MgrLoc;
          CurrentDir.Normalize ();
-         float CurrentAngle = URItemPickupMgrComponent::GetAngle (MgrDir, CurrentDir);
+         float CurrentAngle = URUtilLibrary::GetAngle (MgrDir, CurrentDir);
 
          // Update selection
          if (ItAngle < CurrentAngle) newClosestPickup = ItPickup;
@@ -119,12 +120,5 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
       ClosestPickup = newClosestPickup;
       ReportClosestPickupUpdated ();
    }
-}
-
-float URItemPickupMgrComponent::GetAngle (FVector v1, FVector v2)
-{
-   v1.Normalize ();
-   v2.Normalize ();
-   return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
 }
 

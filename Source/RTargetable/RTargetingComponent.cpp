@@ -96,7 +96,7 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
       // Camera lerp speed
       float LerpPower = 4;
 
-      float Angle = URWorldTargetMgr::GetAngle (CurrentDir, TargetDir);
+      float Angle = URUtilLibrary::GetAngle (CurrentDir, TargetDir);
 
       // Transform Angle to Lerp power
       LerpPower = URUtilLibrary::GetRuntimeFloatCurveValue (TargetAngleToLerpPower, Angle);

@@ -76,10 +76,5 @@ protected:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       float CheckClosestDelay = 0.5f;
-
-
-   // Gets angle in degrees between two vectors
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Inventory")
-      static float GetAngle (FVector v1, FVector v2);
 };
 

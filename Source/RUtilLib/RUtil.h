@@ -91,5 +91,9 @@ public:
    // Uses Eval call of FRuntimeFloatCurve
    UFUNCTION(BlueprintPure, Category = "Rade|Util")
 	   static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime);
+
+   // Gets angle in degrees between two vectors
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Util")
+      static float GetAngle (FVector v1, FVector v2);
 };
 
