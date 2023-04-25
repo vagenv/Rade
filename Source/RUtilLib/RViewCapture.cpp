@@ -111,13 +111,16 @@ TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
    return Result;
 }
 
-
 //=============================================================================
 //                   Async task
 //=============================================================================
 
-
-UTexture2D* URCreateTextureAsync::CreateTextureSync (UObject* Outer, const TArray<uint8>& PixelData, int32 InSizeX, int32 InSizeY, EPixelFormat InFormat)
+UTexture2D* URCreateTextureAsync::CreateTextureSync (
+   UObject*             Outer,
+   const TArray<uint8>& PixelData,
+   int32                InSizeX,
+   int32                InSizeY,
+   EPixelFormat         InFormat)
 {
    // --- Ensure validity of input
    UTexture2D* NewTexture = nullptr;
@@ -210,7 +213,7 @@ void URCreateTextureAsync::Activate ()
       return;
    }
 
- // const int32 NumMips = 1;
+   // const int32 NumMips = 1;
 
    // // Mip0Data
    // const int32 Mip0Size = SizeX * SizeY * GPixelFormats[Format].BlockBytes;
