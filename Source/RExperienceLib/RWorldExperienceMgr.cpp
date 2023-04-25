@@ -145,9 +145,9 @@ void URWorldExperienceMgr::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
       // --- Subscribe to Damage and Death Events
-      if (URWorldDamageMgr *DamageMgr = URUtil::GetComponent<URWorldDamageMgr> (GetOwner ())) {
-         DamageMgr->OnAnyRDamage.AddDynamic (this, &URWorldExperienceMgr::OnDamage);
-         DamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
+      if (URWorldDamageMgr *WorldDamageMgr = URWorldDamageMgr::GetInstance (this)) {
+         WorldDamageMgr->OnAnyRDamage.AddDynamic (this, &URWorldExperienceMgr::OnDamage);
+         WorldDamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
       }
    }
 }
@@ -158,14 +158,15 @@ void URWorldExperienceMgr::OnDamage (AActor*             Victim,
                                      AActor*             Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (Victim)) return;
-   if (!ensure (Type))   return;
-   if (!ensure (Causer)) return;
+   if (!ensure (IsValid (Victim))) return;
+   if (!ensure (Type))             return;
+   if (!ensure (IsValid (Causer))) return;
 
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
    if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
+
    ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDamage * Amount);
 }
 
@@ -174,14 +175,15 @@ void URWorldExperienceMgr::OnDeath (AActor* Victim,
                                     const URDamageType* Type)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (Victim)) return;
-   if (!ensure (Causer)) return;
-   if (!ensure (Type))   return;
+   if (!ensure (IsValid (Victim))) return;
+   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Type))             return;
 
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
    if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
+
    ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDeath);
 }
 

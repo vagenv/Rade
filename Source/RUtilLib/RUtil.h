@@ -29,22 +29,22 @@ public:
 template<typename T>
 T* URUtil::GetComponent (const AActor* Target)
 {
-   if (!ensure (Target)) return nullptr;
+   if (!ensure (IsValid (Target))) return nullptr;
    T* CompObj = nullptr;
    {
       TArray<T*> CompObjList;
       Target->GetComponents (CompObjList);
       if (CompObjList.Num ()) CompObj = CompObjList[0];
    }
-   if (!CompObj) return nullptr;
+   if (!IsValid (CompObj)) return nullptr;
    return CompObj;
 }
 
 template<typename T>
-T* URUtil::AddComponent (AActor * Target, const TSubclassOf<UActorComponent> CompClass)
+T* URUtil::AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass)
 {
-   if (!ensure (Target)) return nullptr;
-   if (!ensure (CompClass)) return nullptr;
+   if (!ensure (IsValid (Target)))    return nullptr;
+   if (!ensure (IsValid (CompClass))) return nullptr;
 
    UActorComponent *NewComp = Target->AddComponentByClass (CompClass, false, FTransform(), false);
    if (!ensure (NewComp)) return nullptr;
@@ -57,7 +57,7 @@ T* URUtil::AddComponent (AActor * Target, const TSubclassOf<UActorComponent> Com
 template<typename T>
 T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
 {
-   if (!ensure (WorldContextObject)) return nullptr;
+   if (!ensure (IsValid (WorldContextObject))) return nullptr;
 
    const UWorld *World = WorldContextObject->GetWorld ();
    if (!ensure (World)) return nullptr;

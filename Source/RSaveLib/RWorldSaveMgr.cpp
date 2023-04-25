@@ -82,6 +82,22 @@ URWorldSaveMgr::URWorldSaveMgr ()
    OnAsyncLoadDelegate.BindUObject (this, &URWorldSaveMgr::AsyncLoadComplete);
 }
 
+void URWorldSaveMgr::ReportSave ()
+{
+   if (R_IS_VALID_WORLD && OnSave.IsBound ()) OnSave.Broadcast ();
+}
+
+void URWorldSaveMgr::ReportLoad ()
+{
+   if (R_IS_VALID_WORLD && OnLoad.IsBound ()) OnLoad.Broadcast ();
+}
+
+void URWorldSaveMgr::ReportSaveListUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnSaveListUpdated.IsBound ()) OnSaveListUpdated.Broadcast ();
+}
+
+
 //=============================================================================
 //                   Save
 //=============================================================================
@@ -92,7 +108,7 @@ bool URWorldSaveMgr::SaveSync ()
    SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
 
    FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
-   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
+   ReportSave ();
    bool Result = UGameplayStatics::SaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex);
    return Result;
 }
@@ -103,7 +119,7 @@ bool URWorldSaveMgr::SaveASync ()
    SaveFile = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (URSaveGame::StaticClass ()));
 
    FRSaveGameMeta SaveMeta = FRSaveGameMeta::Create (this);
-   if (R_IS_VALID_WORLD) OnSave.Broadcast ();
+   ReportSave ();
 
    UGameplayStatics::AsyncSaveGameToSlot (SaveFile, SaveMeta.SlotName, SaveMeta.UserIndex, OnAsyncSaveDelegate);
    return true;
@@ -115,7 +131,7 @@ void URWorldSaveMgr::AsyncSaveComplete (const FString &SaveSlot, int32 PlayerInd
       R_LOG_PRINTF ("Saving [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
-   if (R_IS_VALID_WORLD) OnSaveListUpdated.Broadcast ();
+   ReportSaveListUpdated ();
 }
 //=============================================================================
 //                   Load
@@ -124,7 +140,7 @@ void URWorldSaveMgr::AsyncSaveComplete (const FString &SaveSlot, int32 PlayerInd
 bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SlotMeta)
 {
    SaveFile = Cast<URSaveGame>(UGameplayStatics::LoadGameFromSlot (SlotMeta.SlotName, SlotMeta.UserIndex));
-   if (R_IS_VALID_WORLD) OnLoad.Broadcast ();
+   ReportLoad ();
    return (SaveFile != nullptr);
 }
 
@@ -141,7 +157,7 @@ void URWorldSaveMgr::AsyncLoadComplete (const FString &SaveSlot, int32 PlayerInd
       R_LOG_PRINTF ("Loading [%s] [%lld] failed", *SaveSlot, PlayerIndex);
       return;
    }
-   if (R_IS_VALID_WORLD) OnLoad.Broadcast ();
+   ReportLoad ();
 }
 
 //=============================================================================
@@ -151,7 +167,7 @@ void URWorldSaveMgr::AsyncLoadComplete (const FString &SaveSlot, int32 PlayerInd
 void URWorldSaveMgr::RemoveSync (const FRSaveGameMeta &SlotMeta)
 {
    FRSaveGameMeta::Remove (SlotMeta);
-   if (R_IS_VALID_WORLD) OnSaveListUpdated.Broadcast ();
+   ReportSaveListUpdated ();
 }
 
 //=============================================================================
@@ -161,7 +177,7 @@ void URWorldSaveMgr::RemoveSync (const FRSaveGameMeta &SlotMeta)
 
 bool URWorldSaveMgr::SetBuffer (const FString &Key, const TArray<uint8> &Data)
 {
-   if (!ensure (SaveFile)) return false;
+   if (!ensure (IsValid (SaveFile))) return false;
 
    FRSaveData RawData;
    RawData.Data = Data;
@@ -171,7 +187,7 @@ bool URWorldSaveMgr::SetBuffer (const FString &Key, const TArray<uint8> &Data)
 
 bool URWorldSaveMgr::SetString (const FString &Key, const TArray<FString> &Data)
 {
-   if (!ensure (SaveFile)) return false;
+   if (!ensure (IsValid (SaveFile))) return false;
 
    // Transform to binary
    TArray<FString> DataCopy (Data);
@@ -187,7 +203,7 @@ bool URWorldSaveMgr::SetString (const FString &Key, const TArray<FString> &Data)
 
 bool URWorldSaveMgr::GetBuffer (const FString &Key, TArray<uint8> &Data)
 {
-   if (!ensure (SaveFile)) return false;
+   if (!ensure (IsValid (SaveFile))) return false;
 
    if (!SaveFile->RawData.Contains (Key)) return false;
    FRSaveData RawData = SaveFile->RawData[Key];
@@ -197,7 +213,7 @@ bool URWorldSaveMgr::GetBuffer (const FString &Key, TArray<uint8> &Data)
 
 bool URWorldSaveMgr::GetString (const FString &Key, TArray<FString> &Data)
 {
-   if (!ensure (SaveFile)) return false;
+   if (!ensure (IsValid (SaveFile))) return false;
 
    if (!SaveFile->RawData.Contains (Key)) return false;
    FRSaveData RawData = SaveFile->RawData[Key];

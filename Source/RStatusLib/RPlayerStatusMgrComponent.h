@@ -115,6 +115,9 @@ public:
    //                 Events
    //==========================================================================
 
+   UFUNCTION()
+      void ReportStatsUpdated ();
+
    // Delegate when status updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRPlayerStatusMgrEvent OnStatsUpdated;

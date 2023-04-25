@@ -111,12 +111,13 @@ void URStatusMgrComponent::SetDead (bool Dead)
          ItEffect->Stop ();
       }
 
-      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
+      ReportRevive ();
       if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
    }
+
    if (!WasDead && Dead) {
       Health.Current = 0;
-      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
+      ReportDeath ();
    }
 }
 
@@ -130,14 +131,24 @@ void URStatusMgrComponent::OnRep_Dead ()
    if (!R_IS_VALID_WORLD) return;
    if (bDead) {
       Health.Current = 0;
-      OnDeath.Broadcast ();
+      ReportDeath ();
    } else {
       // --- Reset to original values
       Health  = Start_Health;
       Mana    = Start_Mana;
       Stamina = Start_Stamina;
-      OnRevive.Broadcast ();
+      ReportRevive ();
    }
+}
+
+void URStatusMgrComponent::ReportDeath ()
+{
+   if (R_IS_VALID_WORLD && OnDeath.IsBound ()) OnDeath.Broadcast ();
+}
+
+void URStatusMgrComponent::ReportRevive ()
+{
+   if (R_IS_VALID_WORLD && OnRevive.IsBound ()) OnRevive.Broadcast ();
 }
 
 //=============================================================================
@@ -157,7 +168,7 @@ void URStatusMgrComponent::RecalcStatus ()
 void URStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
 
    // --- Status
    Health  = Start_Health;
@@ -198,7 +209,7 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
 
-   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
+   if (IsValid (MovementComponent) && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
 FRStatusValue URStatusMgrComponent::GetHealth () const
@@ -312,7 +323,7 @@ bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<F
    }
 
    RecalcStatus ();
-   OnPassiveEffectsUpdated.Broadcast ();
+   ReporPassiveEffectsUpdated ();
    return true;
 }
 
@@ -334,13 +345,18 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
    }
 
    RecalcStatus ();
-   OnPassiveEffectsUpdated.Broadcast ();
+   ReporPassiveEffectsUpdated ();
    return true;
 }
 
 void URStatusMgrComponent::OnRep_PassiveEffects ()
 {
-   OnPassiveEffectsUpdated.Broadcast ();
+   ReporPassiveEffectsUpdated ();
+}
+
+void URStatusMgrComponent::ReporPassiveEffectsUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnPassiveEffectsUpdated.IsBound ()) OnPassiveEffectsUpdated.Broadcast ();
 }
 
 //==========================================================================
@@ -350,8 +366,8 @@ void URStatusMgrComponent::OnRep_PassiveEffects ()
 bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (Causer))  return false;
-   if (!ensure (Effect_)) return false;
+   if (!ensure (IsValid (Causer)))  return false;
+   if (!ensure (IsValid (Effect_))) return false;
 
    TArray<URActiveStatusEffect*> CurrentEffects;
    GetOwner()->GetComponents (CurrentEffects);
@@ -366,11 +382,16 @@ bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclas
    URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), Effect_);
    if (Effect) {
       Effect->Causer = Causer;
-      if (WorldStatusMgr)
+      if (IsValid (WorldStatusMgr))
          WorldStatusMgr->ReportStatusEffect (Effect, Causer, GetOwner ());
    }
 
    return Effect != nullptr;
+}
+
+void URStatusMgrComponent::ReportActiveEffectsUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnActiveEffectsUpdated.IsBound ()) OnActiveEffectsUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -430,7 +451,7 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRDam
       newRes.Value = ItAddValue;
       Resistence.Add (newRes);
    }
-   OnResistanceUpdated.Broadcast ();
+   ReportResistanceUpdated ();
 }
 
 void URStatusMgrComponent::RmResistance (const FString &Tag)
@@ -450,12 +471,17 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
    for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
       Resistence.RemoveAt (ToRemove[iToRemove]);
    }
-   OnResistanceUpdated.Broadcast ();
+   ReportResistanceUpdated ();
 }
 
 void URStatusMgrComponent::OnRep_Resistence ()
 {
-   OnResistanceUpdated.Broadcast ();
+   ReportResistanceUpdated ();
+}
+
+void URStatusMgrComponent::ReportResistanceUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnResistanceUpdated.IsBound ()) OnResistanceUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -469,9 +495,9 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
                                       AActor*            Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (Target)) return;
-   if (!ensure (Type_))  return;
-   if (!ensure (Causer)) return;
+   if (!ensure (IsValid (Target))) return;
+   if (!ensure (Type_))            return;
+   if (!ensure (IsValid (Causer))) return;
 
    if (!IsDead ()) {
       const URDamageType* Type = Cast<URDamageType>(Type_);
@@ -493,7 +519,7 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
                                                          const URDamageType* Type,
                                                          AActor*             Causer)
 {
-   if (!ensure (Causer)) return;
+   if (!ensure (IsValid (Causer))) return;
 
    if (Type) {
       FRDamageResistance Resistance = GetResistanceFor (Type->GetClass ());
@@ -513,7 +539,7 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
       if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
    }
 
-   if (R_IS_VALID_WORLD) OnAnyRDamage.Broadcast (Amount, Type, Causer);
+   if (R_IS_VALID_WORLD && OnAnyRDamage.IsBound ()) OnAnyRDamage.Broadcast (Amount, Type, Causer);
 }
 
 void URStatusMgrComponent::ReportREvade_Implementation (float               Amount,
@@ -521,6 +547,6 @@ void URStatusMgrComponent::ReportREvade_Implementation (float               Amou
                                                         AActor*             Causer)
 {
    if (!ensure (Causer)) return;
-   if (R_IS_VALID_WORLD) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
+   if (R_IS_VALID_WORLD && OnEvadeRDamage.IsBound ()) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
 }
 

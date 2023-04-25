@@ -28,7 +28,7 @@ void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URTargetableComponent::SetIsTargetable (bool CanFind)
 {
    IsTargetable = CanFind;
-   if (R_IS_VALID_WORLD) OnIsTargetable.Broadcast ();
+   if (R_IS_VALID_WORLD && OnIsTargetable.IsBound ()) OnIsTargetable.Broadcast ();
 }
 
 bool URTargetableComponent::GetIsTargetable () const
@@ -43,7 +43,7 @@ bool URTargetableComponent::GetIsTargetable () const
 void URTargetableComponent::SetIsTargeted (bool CanTarget)
 {
    IsTargeted = CanTarget;
-   if (R_IS_VALID_WORLD) OnIsTargeted.Broadcast ();
+   if (R_IS_VALID_WORLD && OnIsTargeted.IsBound ()) OnIsTargeted.Broadcast ();
 }
 
 bool URTargetableComponent::GetIsTargeted () const

@@ -96,7 +96,10 @@ protected:
    //                 Events
    //==========================================================================
 public:
-   // Delegate when equipment updated
+
+   UFUNCTION()
+      void ReportEquipmentUpdated ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
       FREquipmentMgrEvent OnEquipmentUpdated;
 

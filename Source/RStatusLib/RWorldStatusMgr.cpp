@@ -177,7 +177,7 @@ void URWorldStatusMgr::BeginPlay ()
 FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect* StatusEffect) const
 {
    FRActiveStatusEffectInfo Result;
-   if (ensure (StatusEffect)) {
+   if (ensure (IsValid (StatusEffect))) {
       if (MapStatusEffect.Contains (StatusEffect->GetClass ())) {
          Result = MapStatusEffect[StatusEffect->GetClass ()];
       } else {
@@ -195,27 +195,27 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor* Causer, AActor* Victim)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (Effect)) return;
-   if (!ensure (Causer)) return;
-   if (!ensure (Victim)) return;
+   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (IsValid (Victim))) return;
    if (R_IS_VALID_WORLD) OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
 }
 
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
-   if (!ensure (Effect)) return;
+   if (!ensure (IsValid (Effect))) return;
    if (R_IS_VALID_WORLD) OnStatusEffectStart.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
 {
-   if (!ensure (Effect)) return;
+   if (!ensure (IsValid (Effect))) return;
    if (R_IS_VALID_WORLD) OnStatusEffectRefresh.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 {
-   if (!ensure (Effect)) return;
+   if (!ensure (IsValid (Effect))) return;
    if (R_IS_VALID_WORLD) OnStatusEffectStart.Broadcast (Effect);
 }
 

@@ -231,7 +231,10 @@ protected:
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       const ARItemPickup* ClosestPickup = nullptr;
 
-   // Delegate when pickup list updated
+
+   UFUNCTION()
+      void ReportPickupListUpdated ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnPickupListUpdated;
 

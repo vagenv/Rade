@@ -35,7 +35,13 @@ public:
    UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       FREquipmentData EquipmentData;
 
-   // Delegate when slot updated
+   //==========================================================================
+   //                 Events
+   //==========================================================================
+
+   UFUNCTION()
+      void ReportOnSlotUpdated ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
       FREquipmentSlotEvent OnSlotUpdated;
 };

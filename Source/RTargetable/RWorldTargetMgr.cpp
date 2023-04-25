@@ -24,25 +24,25 @@ URWorldTargetMgr::URWorldTargetMgr ()
 {
 }
 
-void URWorldTargetMgr::AddTarget (URTargetableComponent * Target)
+void URWorldTargetMgr::AddTarget (URTargetableComponent* Target)
 {
-   if (!ensure (Target)) return;
+   if (!ensure (IsValid (Target))) return;
    TargetableList.Add (Target);
-   if (R_IS_VALID_WORLD) OnListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
-void URWorldTargetMgr::RmTarget  (URTargetableComponent * Target)
+void URWorldTargetMgr::RmTarget  (URTargetableComponent* Target)
 {
-   if (!ensure (Target)) return;
+   if (!ensure (IsValid (Target))) return;
    TargetableList.Remove (Target);
-   if (R_IS_VALID_WORLD) OnListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
 URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,
-                                              TArray<AActor*>                FilterOutActors,
-                                              TArray<URTargetableComponent*> FilterOutTargets)
+                                               TArray<AActor*>                FilterOutActors,
+                                               TArray<URTargetableComponent*> FilterOutTargets)
 {
-   if (!ensure (Targeter)) return nullptr;
+   if (!ensure (IsValid (Targeter))) return nullptr;
    FVector  Origin    = Targeter->GetComponentLocation ();
    FRotator Direction = Targeter->GetComponentRotation ();
 
@@ -53,7 +53,7 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
 
    // --- Iterate over available Targets
    for (URTargetableComponent* ItTarget : TargetableList) {
-      if (!ItTarget) continue;
+      if (!IsValid (ItTarget)) continue;
       if (!ItTarget->GetIsTargetable ()) continue;
 
       // Check blacklist
@@ -72,7 +72,7 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
       if (ItAngle > SearchAngle) continue;
 
       // First target
-      if (!CurrentTarget) {
+      if (!IsValid (CurrentTarget)) {
          CurrentTarget = ItTarget;
          continue;
       }
@@ -89,14 +89,14 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
 }
 
 URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Targeter,
-                                                  URTargetableComponent*         CurrentTarget,
-                                                  float                          InputOffsetX,
-                                                  float                          InputOffsetY,
-                                                  TArray<AActor*>                FilterOutActors,
-                                                  TArray<URTargetableComponent*> FilterOutTargets)
+                                                   URTargetableComponent*         CurrentTarget,
+                                                   float                          InputOffsetX,
+                                                   float                          InputOffsetY,
+                                                   TArray<AActor*>                FilterOutActors,
+                                                   TArray<URTargetableComponent*> FilterOutTargets)
 {
-   if (!ensure (Targeter))      return nullptr;
-   if (!ensure (CurrentTarget)) return nullptr;
+   if (!ensure (IsValid (Targeter)))      return nullptr;
+   if (!ensure (IsValid (CurrentTarget))) return nullptr;
    FVector Origin     = Targeter->GetComponentLocation ();
    FVector ForwardDir = Targeter->GetForwardVector ();
    FVector RightDir   = Targeter->GetRightVector ();
@@ -121,7 +121,7 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
 
    // --- Iterate over available Targets
    for (URTargetableComponent* ItTarget : TargetableList) {
-      if (!ItTarget) continue;
+      if (!IsValid (ItTarget)) continue;
       if (!ItTarget->GetIsTargetable ()) continue;
 
       // Check blacklist

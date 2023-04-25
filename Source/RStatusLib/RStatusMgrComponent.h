@@ -63,6 +63,18 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       void SetDead (bool Dead);
 
+   UFUNCTION()
+      void ReportDeath ();
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnDeath;
+
+   UFUNCTION()
+      void ReportRevive ();
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusMgrEvent OnRevive;
+
    //==========================================================================
    //                 Recalc status
    //==========================================================================
@@ -209,33 +221,30 @@ public:
    //==========================================================================
 public:
 
+   UFUNCTION()
+      void ReporPassiveEffectsUpdated ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnPassiveEffectsUpdated;
+
+   UFUNCTION()
+      void ReportActiveEffectsUpdated ();
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnActiveEffectsUpdated;
 
+   UFUNCTION()
+      void ReportResistanceUpdated ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnResistanceUpdated;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusMgrEvent OnDeath;
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusMgrEvent OnRevive;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRTakeDamageEvent OnAnyRDamage;
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRTakeDamageEvent OnEvadeRDamage;
+   //==========================================================================
+   //                 Damage / Evade (Hooking to AnyDamage)
+   //==========================================================================
 
 private:
-
-   //==========================================================================
-   //                 Damage event hooking
-   //==========================================================================
-
    // Connected to AActor::OnTakeAnyDamage event
    // Called only on server
    UFUNCTION()
@@ -253,7 +262,12 @@ private:
       void ReportRDamage_Implementation (float               Amount,
                                          const URDamageType* Type,
                                          AActor*             Causer);
+public:
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRTakeDamageEvent OnAnyRDamage;
 
+
+private:
    UFUNCTION (NetMulticast, Unreliable)
       void ReportREvade                (float               Amount,
                                         const URDamageType* Type,
@@ -261,5 +275,9 @@ private:
       void ReportREvade_Implementation (float               Amount,
                                         const URDamageType* Type,
                                         AActor*             Causer);
+
+public:
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRTakeDamageEvent OnEvadeRDamage;
 };
 

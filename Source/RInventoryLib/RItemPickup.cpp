@@ -72,7 +72,9 @@ void ARItemPickup::BeginPlay ()
 void ARItemPickup::ActivatePickupOverlap ()
 {
    // Check if Any Player is within the range to pickup this item
-   for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
+   for (TActorIterator<AActor> ActorItr(GetWorld ()); ActorItr; ++ActorItr) {
+
+      if (!IsValid (*ActorItr)) continue;
 
       // Only if actor has Inventory
       if (ActorItr->FindComponentByClass<URInventoryComponent>()) {
@@ -99,12 +101,11 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
    if (OtherActor == nullptr || OtherActor == this) return;
 
    // Only Inventory containing actors
-   URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
-   if (PlayerInventory == nullptr) return;
+   URInventoryComponent* PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
+   if (!IsValid (PlayerInventory)) return;
 
    if (bAutoPickup) {
-      if (HasAuthority ())
-         Inventory->TransferAll (PlayerInventory);
+      if (HasAuthority ()) Inventory->TransferAll (PlayerInventory);
    } else {
       PlayerInventory->Pickup_Add (this);
 
@@ -123,8 +124,8 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
    if (OtherActor == nullptr || OtherActor == this) return;
 
    // Does not have inventory
-   URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
-   if (PlayerInventory == nullptr) return;
+   URInventoryComponent* PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
+   if (!IsValid (PlayerInventory)) return;
 
    PlayerInventory->Pickup_Rm (this);
 

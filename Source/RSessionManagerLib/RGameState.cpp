@@ -32,7 +32,7 @@ void ARGameState::BeginPlay ()
 // Called On Client to Update HUD when message list updated
 void ARGameState::OnRep_MessagesList ()
 {
-   if (R_IS_VALID_WORLD) ChatUpdateDelegate.Broadcast ();
+   if (R_IS_VALID_WORLD && ChatUpdateDelegate.IsBound ()) ChatUpdateDelegate.Broadcast ();
 }
 
 // Called on server to add new message
@@ -42,7 +42,7 @@ void ARGameState::AddChatMessage (FString Message_, FString Owner_, FColor Color
    Messages.Add (FROnineMessageData (Message_, Owner_, Color_));
 
    // Update HUD on server
-   if (R_IS_VALID_WORLD) ChatUpdateDelegate.Broadcast ();
+   if (R_IS_VALID_WORLD && ChatUpdateDelegate.IsBound ()) ChatUpdateDelegate.Broadcast ();
 }
 
 // Replication of data

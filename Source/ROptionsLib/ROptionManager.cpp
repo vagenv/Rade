@@ -13,7 +13,7 @@
 // Get Game User Setting
 UGameUserSettings* UROptionManager::GetGameUserSettings ()
 {
-   return (GEngine != nullptr ? GEngine->GameUserSettings : nullptr);
+   return (IsValid (GEngine) ? GEngine->GameUserSettings : nullptr);
 }
 
 bool FRScreenResolution::operator == (const FRScreenResolution &res) const noexcept

@@ -81,10 +81,9 @@ void URActiveStatusEffect::Started ()
    if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
       WorldMgr->ReportStatusEffectStart (this);
    }
-   if (R_IS_VALID_WORLD) {
-      if (StatusMgr) StatusMgr->OnActiveEffectsUpdated.Broadcast ();
-      OnStart.Broadcast ();
-   }
+
+   StatusMgr->ReportActiveEffectsUpdated ();
+   if (R_IS_VALID_WORLD && OnStart.IsBound ()) OnStart.Broadcast ();
 }
 
 void URActiveStatusEffect::Stop ()
@@ -92,7 +91,7 @@ void URActiveStatusEffect::Stop ()
    UWorld* World = GetWorld ();
    if (!ensure (World)) return;
    if (TimerToEnd.IsValid ()) World->GetTimerManager ().ClearTimer (TimerToEnd);
-   if (R_IS_VALID_WORLD) OnCancel.Broadcast ();
+   if (R_IS_VALID_WORLD && OnCancel.IsBound ()) OnCancel.Broadcast ();
    DestroyComponent ();
 }
 
@@ -125,7 +124,7 @@ void URActiveStatusEffect::Refresh_Implementation ()
    if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
       WorldMgr->ReportStatusEffectRefresh (this);
    }
-   if (R_IS_VALID_WORLD) OnRefresh.Broadcast ();
+   if (R_IS_VALID_WORLD && OnRefresh.IsBound ()) OnRefresh.Broadcast ();
 }
 
 void URActiveStatusEffect::Ended ()
@@ -133,17 +132,15 @@ void URActiveStatusEffect::Ended ()
    IsRunning = false;
 
    // --- Report
-
    if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
       WorldMgr->ReportStatusEffectEnd (this);
    }
-   if (R_IS_VALID_WORLD) {
-      OnEnd.Broadcast ();
-      if (StatusMgr) {
-         if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (EffectInfo.Description.Label);
-         StatusMgr->OnActiveEffectsUpdated.Broadcast ();
-      }
+   if (IsValid (StatusMgr)) {
+      if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (EffectInfo.Description.Label);
+      StatusMgr->ReportActiveEffectsUpdated ();
    }
+
+   if (R_IS_VALID_WORLD && OnEnd.IsBound ()) OnEnd.Broadcast ();
 }
 
 void URActiveStatusEffect::Apply ()
@@ -153,8 +150,7 @@ void URActiveStatusEffect::Apply ()
    StartTime = World->GetTimeSeconds ();
 
    if (R_IS_NET_ADMIN) {
-      if (StatusMgr) {
-
+      if (IsValid (StatusMgr)) {
          float StackScale = GetStackScale ();
          TArray<FRPassiveStatusEffect> CopyPassiveEffects = EffectInfo.PassiveEffects;
          for (FRPassiveStatusEffect &ItPassiveEffect : CopyPassiveEffects) {

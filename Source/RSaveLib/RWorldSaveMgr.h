@@ -110,13 +110,22 @@ public:
    //                  Events
    //==========================================================================
 
+   UFUNCTION()
+      void ReportSave ();
+
    // Save started. Data must be set at this point
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
       FRSaveEvent OnSave;
 
+   UFUNCTION()
+      void ReportLoad ();
+
    // Load Ended. Data Must be retrieved at this point
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
       FRSaveEvent OnLoad;
+
+   UFUNCTION()
+      void ReportSaveListUpdated ();
 
    // List of Save Slots has changed. (Save/Delete)
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")

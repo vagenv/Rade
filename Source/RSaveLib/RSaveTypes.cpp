@@ -12,7 +12,7 @@ FRSaveGameMeta FRSaveGameMeta::Create (UObject* WorldContextObject)
    Result.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));
    Result.Date     = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
 
-   if (WorldContextObject) {
+   if (IsValid (WorldContextObject)) {
       Result.SceenshotTextureBinary = ARViewCapture::GetScreenShot (WorldContextObject);
       Result.SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
       Result.Map = WorldContextObject->GetWorld ()->GetMapName ();

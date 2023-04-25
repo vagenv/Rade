@@ -24,7 +24,6 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
-   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
    //==========================================================================
    //                 Stored pointers
@@ -88,9 +87,15 @@ public:
    //                 Events
    //==========================================================================
 
+   UFUNCTION()
+      void ReportAbilityListUpdated ();
+
    // When Ability list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityMgrEvent OnAbilityListUpdated;
+
+   UFUNCTION()
+      void ReportAbilityPointUpdated ();
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityMgrEvent OnAbilityPointUpdated;

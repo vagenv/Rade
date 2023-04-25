@@ -4,10 +4,10 @@
 
 #include "RLog.h"
 
-#define R_IS_VALID_WORLD (GetWorld () && !GetWorld ()->bIsTearingDown)
+#define R_IS_VALID_WORLD (IsValid (GetWorld ()) && !GetWorld ()->bIsTearingDown)
 
 
-#define R_IS_NET_ADMIN (GetOwner () && GetOwner ()->HasAuthority ())
+#define R_IS_NET_ADMIN (IsValid (GetOwner ()) && GetOwner ()->HasAuthority ())
 
 #define R_RETURN_IF_NOT_ADMIN                                     \
    if (!R_IS_NET_ADMIN) {                                         \

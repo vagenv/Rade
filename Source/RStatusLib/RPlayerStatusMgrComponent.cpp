@@ -30,7 +30,12 @@ void URPlayerStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimePro
 }
 void URPlayerStatusMgrComponent::OnRep_Stats ()
 {
-   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
+   ReportStatsUpdated ();
+}
+
+void URPlayerStatusMgrComponent::ReportStatsUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnStatsUpdated.IsBound ()) OnStatsUpdated.Broadcast ();
 }
 
 void URPlayerStatusMgrComponent::BeginPlay ()
@@ -73,8 +78,8 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 void URPlayerStatusMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
-   if (!ensure (ExperienceMgr))  return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
+   if (!ensure (IsValid (ExperienceMgr)))  return;
 
    float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
 
@@ -101,7 +106,7 @@ void URPlayerStatusMgrComponent::RecalcStatus ()
    SetStamina (Stamina);
    SetMana (Mana);
 
-   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
+   ReportStatsUpdated ();
 }
 
 void URPlayerStatusMgrComponent::RecalcCoreStats ()
@@ -131,7 +136,7 @@ void URPlayerStatusMgrComponent::RecalcCoreStats ()
 void URPlayerStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
    float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
@@ -175,7 +180,7 @@ void URPlayerStatusMgrComponent::RecalcSubStats ()
 void URPlayerStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();
@@ -286,6 +291,6 @@ void URPlayerStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
    LoadData << Health << Mana << Stamina;
    LoadData << CoreStats_Base << CoreStats_Extra;
 
-   OnStatsUpdated.Broadcast ();
+   ReportStatsUpdated ();
 }
 

@@ -81,7 +81,7 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
 {
-   if (!ensure (SlotClass)) return nullptr;
+   if (!ensure (IsValid (SlotClass))) return nullptr;
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
 
@@ -89,6 +89,7 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
 
    // --- Find equip slot
    for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (!IsValid (ItSlot)) continue;
       if (ItSlot->GetClass () == SlotClass) {
 
          // First slot available
@@ -103,6 +104,12 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
    }
    return EquipmentSlot;
 }
+
+void UREquipmentMgrComponent::ReportEquipmentUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnEquipmentUpdated.IsBound ()) OnEquipmentUpdated.Broadcast ();
+}
+
 //=============================================================================
 //           Weight penalty using Inventory and StatusMgr
 //=============================================================================
@@ -235,19 +242,17 @@ bool UREquipmentMgrComponent::EquipItem (const FREquipmentData &EquipmentData)
 bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!EquipmentSlot) {
-      R_LOG ("Invalid Equipment Slot pointer");
-      return false;
-   }
-   if (!EquipmentData.EquipmentSlot.Get ()) {
+   if (!ensure (IsValid (EquipmentSlot)))  return false;
+   if (!ensure (EquipmentData.EquipmentSlot.Get ())) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
       return false;
    }
-   if (EquipmentSlot->GetClass () != EquipmentData.EquipmentSlot) {
+   if (!ensure (EquipmentSlot->GetClass () == EquipmentData.EquipmentSlot)) {
       R_LOG_PRINTF ("Incompatable Equipment Slot and Item Slot Class: Slot [%s] Item [%s]",
          *EquipmentSlot->GetClass ()->GetName (),
          *EquipmentData.EquipmentSlot->GetName ()
          );
+      return false;
    }
 
    URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
@@ -279,10 +284,9 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
    // --- Update slot data
    EquipmentSlot->EquipmentData = EquipmentData;
    EquipmentSlot->Busy = true;
-   if (R_IS_VALID_WORLD) {
-      EquipmentSlot->OnSlotUpdated.Broadcast ();
-      OnEquipmentUpdated.Broadcast ();
-   }
+   EquipmentSlot->ReportOnSlotUpdated ();
+   ReportEquipmentUpdated ();
+
    return true;
 }
 
@@ -299,16 +303,16 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
-   if (R_IS_VALID_WORLD) {
-      EquipmentSlot->OnSlotUpdated.Broadcast ();
-      OnEquipmentUpdated.Broadcast ();
-   }
+   EquipmentSlot->ReportOnSlotUpdated ();
+   ReportEquipmentUpdated ();
+
    return true;
 }
 
 //=============================================================================
 //                 Equip / Unequip server version
 //=============================================================================
+
 void UREquipmentMgrComponent::EquipItem_Server_Implementation (const FREquipmentData &EquipmentData)
 {
    EquipItem (EquipmentData);

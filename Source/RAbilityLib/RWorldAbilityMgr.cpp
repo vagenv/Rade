@@ -49,7 +49,7 @@ void URWorldAbilityMgr::BeginPlay ()
 FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo (const URAbility* Ability) const
 {
    FRAbilityInfo Result;
-   if (ensure (Ability)) {
+   if (ensure (IsValid (Ability))) {
       if (MapAbility.Contains (Ability->GetClass ())) {
          Result = MapAbility[Ability->GetClass ()];
       } else {
@@ -71,19 +71,19 @@ TArray<FRAbilityInfo> URWorldAbilityMgr::GetAllAbilities () const
 
 void URWorldAbilityMgr::ReportAddAbility (URAbility* Ability)
 {
-   if (!ensure (Ability)) return;
+   if (!ensure (IsValid (Ability))) return;
    if (R_IS_VALID_WORLD) OnAddAbility.Broadcast (Ability);
 }
 
 void URWorldAbilityMgr::ReportRmAbility (URAbility* Ability)
 {
-   if (!ensure (Ability)) return;
+   if (!ensure (IsValid (Ability))) return;
    if (R_IS_VALID_WORLD) OnRmAbility.Broadcast (Ability);
 }
 
 void URWorldAbilityMgr::ReportUseAbility (URAbility* Ability)
 {
-   if (!ensure (Ability)) return;
+   if (!ensure (IsValid (Ability))) return;
    if (R_IS_VALID_WORLD) OnUseAbility.Broadcast (Ability);
 }
 
