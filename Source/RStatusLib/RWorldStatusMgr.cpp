@@ -198,25 +198,25 @@ void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor*
    if (!ensure (IsValid (Effect))) return;
    if (!ensure (IsValid (Causer))) return;
    if (!ensure (IsValid (Victim))) return;
-   if (R_IS_VALID_WORLD) OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
+   if (R_IS_VALID_WORLD && OnStatusEffectApplied.IsBound ()) OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
 }
 
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
    if (!ensure (IsValid (Effect))) return;
-   if (R_IS_VALID_WORLD) OnStatusEffectStart.Broadcast (Effect);
+   if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
 {
    if (!ensure (IsValid (Effect))) return;
-   if (R_IS_VALID_WORLD) OnStatusEffectRefresh.Broadcast (Effect);
+   if (R_IS_VALID_WORLD && OnStatusEffectRefresh.IsBound ()) OnStatusEffectRefresh.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 {
    if (!ensure (IsValid (Effect))) return;
-   if (R_IS_VALID_WORLD) OnStatusEffectStart.Broadcast (Effect);
+   if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
 }
 
 //=============================================================================
