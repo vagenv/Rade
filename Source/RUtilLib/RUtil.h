@@ -58,14 +58,7 @@ T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
    if (!ensure (World)) return nullptr;
 
    // All world instances should be kept in game state.
-   const AGameStateBase *GameState = World->GetGameState ();
-   if (!ensure (GameState)) return nullptr;
-
-   T* WorldInstance = GameState->FindComponentByClass<T>();
-
-   // Instance was not added to GameState object
-   ensure (WorldInstance);
-   return WorldInstance;
+   return URUtil::GetComponent<T> (World->GetGameState ());
 }
 
 template<typename T>

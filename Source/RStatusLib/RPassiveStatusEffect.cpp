@@ -6,12 +6,3 @@
 //                 Passive Effect
 //=============================================================================
 
-FRPassiveStatusEffect FRPassiveStatusEffect::operator + (const FRPassiveStatusEffect &obj) const
-{
-   FRPassiveStatusEffect res;
-   res.Scale = Scale;
-   res.Target = Target;
-   res.Value = Value + obj.Value;
-   return res;
-}
-

@@ -94,9 +94,11 @@ URAbility_Aura::URAbility_Aura ()
 void URAbility_Aura::BeginPlay ()
 {
    Super::BeginPlay ();
-   GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
-                                             this, &URAbility_Aura::CheckRange,
-                                             CheckRangeInterval, true);
+   if (ensure (AffectedType)) {
+      GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
+                                                this, &URAbility_Aura::CheckRange,
+                                                CheckRangeInterval, true);
+   }
 }
 
 void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -107,8 +109,6 @@ void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 void URAbility_Aura::CheckRange ()
 {
-   if (!ensure (IsValid (AffectedType))) return;
-
    FVector OwnerLocation = GetOwner ()->GetActorLocation ();
 
    TArray<AActor*> SearchResult;

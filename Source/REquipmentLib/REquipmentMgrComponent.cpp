@@ -293,8 +293,8 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!EquipmentSlot)       return false;
-   if (!EquipmentSlot->Busy) return false;
+   if (!ensure (IsValid (EquipmentSlot))) return false;
+   if (!EquipmentSlot->Busy)              return false;
 
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
@@ -321,10 +321,7 @@ void UREquipmentMgrComponent::EquipItem_Server_Implementation (const FREquipment
 void UREquipmentMgrComponent::Equip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot,
                                                            const FREquipmentData    &EquipmentData)
 {
-   if (!EquipmentSlot) {
-      R_LOG ("Invalid EquipmentSlot");
-      return;
-   }
+   if (!ensure (IsValid (EquipmentSlot))) return;
    Equip (EquipmentSlot, EquipmentData);
 }
 
@@ -346,8 +343,8 @@ void UREquipmentMgrComponent::OnSave (FBufferArchive &SaveData)
    // --- Get equiped items
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
-   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
-      if (ItSlot->Busy) {
+   for (const UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (IsValid (ItSlot) && ItSlot->Busy) {
          FString RawData;
          if (RJSON::ToString (ItSlot->EquipmentData, RawData)) EquipedItemsRaw.Add (RawData);
       }

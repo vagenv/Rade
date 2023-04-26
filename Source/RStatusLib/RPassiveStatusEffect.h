@@ -64,8 +64,6 @@ struct RSTATUSLIB_API FRPassiveStatusEffect
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Value = 0.;
-
-   inline FRPassiveStatusEffect operator + (const FRPassiveStatusEffect &obj) const;
 };
 
 USTRUCT(BlueprintType)

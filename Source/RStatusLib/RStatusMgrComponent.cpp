@@ -92,13 +92,13 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 void URStatusMgrComponent::SetDead (bool Dead)
 {
    R_RETURN_IF_NOT_ADMIN;
-   bool WasDead = bDead;
+   if (Dead == bDead) return;
    bDead = Dead;
 
    URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
 
    // Broadcast only after value has been changed;
-   if (WasDead && !Dead) {
+   if (!Dead) {
       // --- Reset to original values
       Health  = Start_Health;
       Mana    = Start_Mana;
@@ -115,7 +115,7 @@ void URStatusMgrComponent::SetDead (bool Dead)
       if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
    }
 
-   if (!WasDead && Dead) {
+   if (!Dead) {
       Health.Current = 0;
       ReportDeath ();
    }
@@ -209,7 +209,7 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
 
-   if (IsValid (MovementComponent) && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
+   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
 FRStatusValue URStatusMgrComponent::GetHealth () const
