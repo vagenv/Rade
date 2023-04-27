@@ -15,19 +15,19 @@
 		],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "AttackPower",
-				"Value": 40
+				"EffectTarget": "AttackPower",
+				"Flat": 10,
+				"Percent": 5
 			},
 			{
-				"Scale": "None",
-				"Target": "None",
-				"Value": 0
+				"EffectTarget": "STR",
+				"Flat": 5,
+				"Percent": 0
 			},
 			{
-				"Scale": "None",
-				"Target": "None",
-				"Value": 0
+				"EffectTarget": "HealthMax",
+				"Flat": 200,
+				"Percent": 0
 			}
 		],
 		"RequiredStats":
@@ -221,9 +221,9 @@
 		"Resistence": [],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "STR",
-				"Value": 20
+				"EffectTarget": "STR",
+				"Flat": 20,
+				"Percent": 0
 			}
 		],
 		"RequiredStats":
@@ -271,9 +271,9 @@
 		],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "AGI",
-				"Value": 20
+				"EffectTarget": "AGI",
+				"Flat": 20,
+				"Percent": 0
 			}
 		],
 		"RequiredStats":
@@ -315,9 +315,9 @@
 		"Resistence": [],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "INT",
-				"Value": 20
+				"EffectTarget": "INT",
+				"Flat": 20,
+				"Percent": 0
 			}
 		],
 		"RequiredStats":
@@ -370,24 +370,24 @@
 		],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "STR",
-				"Value": -10
+				"EffectTarget": "STR",
+				"Flat": 0,
+				"Percent": -90
 			},
 			{
-				"Scale": "FLAT",
-				"Target": "AGI",
-				"Value": -10
+				"EffectTarget": "AGI",
+				"Flat": 0,
+				"Percent": -90
 			},
 			{
-				"Scale": "FLAT",
-				"Target": "INT",
-				"Value": -10
+				"EffectTarget": "INT",
+				"Flat": 0,
+				"Percent": -90
 			},
 			{
-				"Scale": "PERCENT",
-				"Target": "HealthRegen",
-				"Value": 500
+				"EffectTarget": "HealthRegen",
+				"Flat": 5,
+				"Percent": 500
 			}
 		],
 		"RequiredStats":
@@ -404,10 +404,10 @@
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
+		"Rarity": "B",
 		"Description":
 		{
-			"Label": "Hat of Bad Boi. If you equiped this on your own risk... It has effects...",
+			"Label": "Hat of Bad Boi...  It has effects... good luck...",
 			"Tooltip": "A funny hat that has many questionable effects. Only use this if you really know what you're doing... It's your hat... Do whatever you want man.",
 			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
 		},
@@ -429,9 +429,9 @@
 		"Resistence": [],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "HealthRegen",
-				"Value": 5
+				"EffectTarget": "HealthRegen",
+				"Flat": 5,
+				"Percent": 50
 			}
 		],
 		"RequiredStats":
@@ -473,9 +473,9 @@
 		"Resistence": [],
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "Evasion",
-				"Value": 15
+				"EffectTarget": "Evasion",
+				"Flat": 30,
+				"Percent": 0
 			}
 		],
 		"RequiredStats":

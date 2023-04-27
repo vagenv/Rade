@@ -192,19 +192,17 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 //                Status Effect
 //=============================================================================
 
-void URWorldStatusMgr::ReportStatusEffect (URActiveStatusEffect* Effect, AActor* Causer, AActor* Victim)
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Effect))) return;
-   if (!ensure (IsValid (Causer))) return;
-   if (!ensure (IsValid (Victim))) return;
-   if (R_IS_VALID_WORLD && OnStatusEffectApplied.IsBound ()) OnStatusEffectApplied.Broadcast (Effect, Causer, Victim);
-}
 
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
    if (!ensure (IsValid (Effect))) return;
    if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
+}
+
+void URWorldStatusMgr::ReportStatusEffectStop (URActiveStatusEffect* Effect)
+{
+   if (!ensure (IsValid (Effect))) return;
+   if (R_IS_VALID_WORLD && OnStatusEffectStop.IsBound ()) OnStatusEffectStop.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)

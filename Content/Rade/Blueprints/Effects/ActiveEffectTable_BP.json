@@ -11,9 +11,9 @@
 		"Duration": 5,
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "HealthRegen",
-				"Value": 20
+				"EffectTarget": "HealthRegen",
+				"Flat": 20,
+				"Percent": 0
 			}
 		],
 		"StackScaling": []
@@ -30,9 +30,9 @@
 		"Duration": 5,
 		"PassiveEffects": [
 			{
-				"Scale": "FLAT",
-				"Target": "ManaRegen",
-				"Value": 10
+				"EffectTarget": "ManaRegen",
+				"Flat": 20,
+				"Percent": 0
 			}
 		],
 		"StackScaling": []

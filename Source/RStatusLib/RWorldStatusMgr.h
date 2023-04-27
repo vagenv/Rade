@@ -153,32 +153,30 @@ protected:
    //==========================================================================
 public:
 
-   // --- Server applied
-   UFUNCTION()
-      void ReportStatusEffect (URActiveStatusEffect* Effect,
-                               AActor*               Causer,
-                               AActor*               Victim);
-
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-      FRStatusEffectEvent OnStatusEffectApplied;
-
    // --- Start
    UFUNCTION()
-      void ReportStatusEffectStart (URActiveStatusEffect* Effect);
+      void ReportStatusEffectStart (URActiveStatusEffect* Effect_);
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusEffectStartEvent OnStatusEffectStart;
 
+   // --- Stopped
+   UFUNCTION()
+      void ReportStatusEffectStop (URActiveStatusEffect* Effect_);
+
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRStatusEffectRefreshEvent OnStatusEffectStop;
+
    // --- Refresh
    UFUNCTION()
-      void ReportStatusEffectRefresh (URActiveStatusEffect* Effect);
+      void ReportStatusEffectRefresh (URActiveStatusEffect* Effect_);
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusEffectRefreshEvent OnStatusEffectRefresh;
 
    // --- End
    UFUNCTION()
-      void ReportStatusEffectEnd (URActiveStatusEffect* Effect);
+      void ReportStatusEffectEnd (URActiveStatusEffect* Effect_);
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusEffectEndEvent OnStatusEffectEnd;

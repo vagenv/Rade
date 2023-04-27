@@ -124,14 +124,12 @@ void UREquipmentMgrComponent::CalcWeight ()
 
    float EquipLoad = WeightCurrent * 100. / WeightMax;
    FRPassiveStatusEffect EvasionEffect;
-   EvasionEffect.Scale  = ERStatusEffectScale::PERCENT;
-   EvasionEffect.Target = ERStatusEffectTarget::Evasion;
-   EvasionEffect.Value  = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
+   EvasionEffect.EffectTarget = ERStatusEffectTarget::Evasion;
+   EvasionEffect.Percent      = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
 
    FRPassiveStatusEffect MoveSpeedEffect;
-   MoveSpeedEffect.Scale  = ERStatusEffectScale::PERCENT;
-   MoveSpeedEffect.Target = ERStatusEffectTarget::MoveSpeed;
-   MoveSpeedEffect.Value  = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
+   MoveSpeedEffect.EffectTarget = ERStatusEffectTarget::MoveSpeed;
+   MoveSpeedEffect.Percent      = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
 
    TArray<FRPassiveStatusEffect> Effects;
    Effects.Add (EvasionEffect);

@@ -93,9 +93,6 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRActiveStatusEffectInfo GetEffectInfo () const;
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      FRUIDescription GetDescription () const;
-
    //==========================================================================
    //                 Values
    //==========================================================================
@@ -106,28 +103,28 @@ public:
 
 protected:
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      URStatusMgrComponent* StatusMgr = nullptr;
+   //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
+   //   URStatusMgrComponent* StatusMgr = nullptr;
 
    //==========================================================================
    //                 Events
    //==========================================================================
 public:
-   // Effect started
-   UPROPERTY(BlueprintAssignable)
-      FRActiveStatusEffectEvent OnStart;
+    // Component created
+    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+       FRActiveStatusEffectEvent OnStart;
+
+    // Canceled
+    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+       FRActiveStatusEffectEvent OnStop;
 
    // Effect was re-applied
-   UPROPERTY(BlueprintAssignable)
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRActiveStatusEffectEvent OnRefresh;
 
-   // Effect ended
-   UPROPERTY(BlueprintAssignable)
-      FRActiveStatusEffectEvent OnEnd;
-
-   // Effect canceled
-   UPROPERTY(BlueprintAssignable)
-      FRActiveStatusEffectEvent OnCancel;
+    // Destroying component
+    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+       FRActiveStatusEffectEvent OnEnd;
 
 protected:
 
@@ -160,26 +157,5 @@ protected:
 
    UPROPERTY()
       double StartTime = 0;
-};
-
-
-// ============================================================================
-//                   Status Effect Library
-// ============================================================================
-
-UCLASS(ClassGroup=(_Rade))
-class RSTATUSLIB_API URStatusEffectUtilLibrary : public UBlueprintFunctionLibrary
-{
-   GENERATED_BODY()
-public:
-
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      static bool SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects);
-
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      static bool RmStatusEffect_Passive (AActor *Target, const FString &Tag);
-
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      static bool ApplyStatusEffect_Active (AActor* Causer, AActor *Target, const TSubclassOf<URActiveStatusEffect> Effect);
 };
 

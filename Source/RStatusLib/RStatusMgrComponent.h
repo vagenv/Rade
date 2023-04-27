@@ -171,10 +171,10 @@ protected:
       void OnRep_PassiveEffects ();
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues);
+      bool SetPassiveEffects (const FString& Tag, const TArray<FRPassiveStatusEffect>& AddValues);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool RmPassiveEffects (const FString &Tag);
+      bool RmPassiveEffects (const FString& Tag);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       TArray<FRPassiveStatusEffect> GetPassiveEffects () const;
@@ -187,18 +187,24 @@ public:
    //==========================================================================
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect);
+      bool AddActiveStatusEffect (AActor* Causer_,
+                                  const TSubclassOf<URActiveStatusEffect> Effect_);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      static bool ApplyActiveStatusEffect (AActor* Causer_,
+                                           AActor* Target_,
+                                           const TSubclassOf<URActiveStatusEffect> Effect_);
 
    //==========================================================================
    //                 Resistance
    //==========================================================================
 protected:
    // Should be Map of FRResistanceStat, but for replication -> Array
-   UPROPERTY(ReplicatedUsing = "OnRep_Resistence", Replicated)
-      TArray<FRDamageResistanceWithTag> Resistence;
+   UPROPERTY(ReplicatedUsing = "OnRep_Resistance", Replicated)
+      TArray<FRDamageResistanceWithTag> Resistance;
 
    UFUNCTION()
-      void OnRep_Resistence ();
+      void OnRep_Resistance ();
 
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
