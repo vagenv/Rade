@@ -275,8 +275,8 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->SetPassiveEffects (EquipmentData.Name, EquipmentData.PassiveEffects);
-      StatusMgr->AddResistance     (EquipmentData.Name, EquipmentData.Resistence);
+      StatusMgr->SetPassiveEffects (EquipmentSlot->Description.Label, EquipmentData.PassiveEffects);
+      StatusMgr->AddResistance     (EquipmentSlot->Description.Label, EquipmentData.Resistence);
    }
 
    // --- Update slot data
@@ -296,8 +296,8 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
-      StatusMgr->RmPassiveEffects (EquipmentSlot->EquipmentData.Name);
-      StatusMgr->RmResistance     (EquipmentSlot->EquipmentData.Name);
+      StatusMgr->RmPassiveEffects (EquipmentSlot->Description.Label);
+      StatusMgr->RmResistance     (EquipmentSlot->Description.Label);
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
