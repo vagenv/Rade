@@ -480,22 +480,20 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
 {
    R_RETURN_IF_NOT_ADMIN;
    if (!ensure (IsValid (Target))) return;
-   if (!ensure (Type_))                return;
+   if (!ensure (Type_))            return;
    if (!ensure (IsValid (Causer))) return;
 
    if (!IsDead ()) {
       const URDamageType* Type = Cast<URDamageType>(Type_);
-      // Check evasion
-      if (Type) {
+      // Check if RDamage was applied
+      if (ensure (Type)) {
          // Check if evaded
          if (Type->Evadeable && RollEvasion ()) {
             ReportREvade (Amount, Type, Causer);
             return;
          }
-      } else {
-         R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", Amount);
+         ReportRDamage (Amount, Type, Causer);
       }
-      ReportRDamage (Amount, Type, Causer);
    }
 }
 
