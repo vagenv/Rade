@@ -369,14 +369,16 @@ bool URStatusMgrComponent::AddActiveStatusEffect (
    const TSubclassOf<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (Causer_)))  return false;
+   if (!ensure (IsValid (Causer_))) return false;
    if (!ensure (IsValid (Effect_))) return false;
+   if (IsDead ())                   return false;
 
    TArray<URActiveStatusEffect*> CurrentEffects;
    GetOwner()->GetComponents (CurrentEffects);
    for (URActiveStatusEffect* ItActiveEffect : CurrentEffects) {
       if (!IsValid (ItActiveEffect)) continue;
       if (ItActiveEffect->GetClass () == Effect_) {
+         ItActiveEffect->Causer = Causer_;
          ItActiveEffect->Refresh ();
          return true;
       }
