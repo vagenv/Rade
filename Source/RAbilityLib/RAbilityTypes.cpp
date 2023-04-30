@@ -97,7 +97,7 @@ void URAbility_Aura::BeginPlay ()
    if (ensure (AffectedType)) {
       GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
                                                 this, &URAbility_Aura::CheckRange,
-                                                CheckRangeInterval, true);
+                                                CheckRangeInterval, true, 0);
    }
 }
 
