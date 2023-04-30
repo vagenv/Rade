@@ -12,6 +12,7 @@ public class RAbilityLib : ModuleRules
          "CoreUObject",
          "Engine",
          "RUtilLib",
+         "RUILib",
          "RSaveLib",
          "RDamageLib",
          "RExperienceLib",

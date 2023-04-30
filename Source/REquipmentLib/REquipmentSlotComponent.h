@@ -4,7 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "REquipmentTypes.h"
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "REquipmentSlotComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentSlotEvent);

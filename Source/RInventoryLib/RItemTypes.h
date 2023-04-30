@@ -4,7 +4,7 @@
 
 #include "Engine/DataTable.h"
 #include "RUtilLib/RUtilTypes.h"
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "RItemTypes.generated.h"
 
 //=============================================================================

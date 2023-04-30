@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RPassiveStatusEffect.h"
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "Engine/DataTable.h"
 #include "RActiveStatusEffect.generated.h"
 

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/DamageType.h"
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "RDamageType.generated.h"
 
 struct FDamageEvent;

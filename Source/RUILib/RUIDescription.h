@@ -5,7 +5,7 @@
 #include "RUIDescription.generated.h"
 
 USTRUCT(BlueprintType)
-struct RUTILLIB_API FRUIDescription
+struct RUILIB_API FRUIDescription
 {
    GENERATED_BODY()
 
@@ -26,7 +26,7 @@ struct RUTILLIB_API FRUIDescription
 // ============================================================================
 
 UCLASS()
-class RUTILLIB_API URUIDescriptionUtilLibrary : public UBlueprintFunctionLibrary
+class RUILIB_API URUIDescriptionUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
 public:

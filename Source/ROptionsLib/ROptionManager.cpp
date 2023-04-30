@@ -77,6 +77,8 @@ bool UROptionUtilFunc::FRVideoQualitySetting_EqualEqual (const FRVideoQualitySet
 bool UROptionManager::GetSupportedScreenResolutions (TArray<FRScreenResolution>& Resolutions)
 {
    FScreenResolutionArray ResolutionsArray;
+
+   // NOTE: Vulkan version not implemented
    if (RHIGetAvailableResolutions (ResolutionsArray, true)){
       for (const FScreenResolutionRHI& ItResolution : ResolutionsArray) {
          // Hard limit for 1280 x 720 minimum screen resolution.
