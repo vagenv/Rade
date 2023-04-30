@@ -23,11 +23,10 @@ Pickup
 - Magentic
 - [Open/Close/Take All]
 
-
-
 ==============
 Other
 ==============
+- Deploy to Windows PC in same nework.
 - Look into DDC (Derived Data Cache)
 - FWeakObjectPtr for pointer to object
 - SoftPtr to SubClass (will not create dependency)
@@ -54,47 +53,22 @@ R2 + L2 Mega Action?
 
 
 ==============
-Analyse
-==============
-
-Remove Get All actors of class.
-
-Stutters:
-- Unknown? (Engine::Loop. Conversion of image or load of sames?)
-- Spawn effect
-- Pickup
-
-==============
 UI
 ==============
 
 UI stacks
 
-
-Item list not updated on deck
-
-
-Move screenshot to RUI?
+Move screenshot and RUIDescription to RUI?
 
 ==============
-Resource usage
+Benchmark
 ==============
 
-UI Resource tracking
-- CPU
-- GPU
-- RAM
-- VRAM
+RAM memory leak check
 
-==============
-Laptop
-==============
+Network insight. Benchmark.
 
-Deploy to Laptop
-
-Network trace
-- Connect to laptop
-- start app from steam UI. (Base, RAM trace, time trace)
+Serialization of save file. Version difference / Size check
 
 
 =================================================
