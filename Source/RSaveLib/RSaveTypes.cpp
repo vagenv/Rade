@@ -4,7 +4,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 
-#include "RUtilLib/RViewCapture.h"
+#include "RUILib/RViewCapture.h"
 
 FRSaveGameMeta FRSaveGameMeta::Create (UObject* WorldContextObject)
 {

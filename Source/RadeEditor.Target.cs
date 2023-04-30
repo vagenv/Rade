@@ -14,6 +14,7 @@ public class RadeEditorTarget : TargetRules
       ExtraModuleNames.Add ("RDamageLib");
       ExtraModuleNames.Add ("RExperienceLib");
       ExtraModuleNames.Add ("RTargetableLib");
+      ExtraModuleNames.Add ("RUILib");
       ExtraModuleNames.Add ("RSaveLib");
       ExtraModuleNames.Add ("ROptionsLib");
       ExtraModuleNames.Add ("RInventoryLib");

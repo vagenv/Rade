@@ -35,6 +35,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RUILib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "RSaveLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"

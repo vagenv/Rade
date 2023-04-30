@@ -12,7 +12,7 @@ class UTexture2DDynamic;
 class USceneCaptureComponent2D;
 
 UCLASS()
-class RUTILLIB_API ARViewCapture : public AActor
+class RUILIB_API ARViewCapture : public AActor
 {
    GENERATED_BODY()
 public:
@@ -20,14 +20,14 @@ public:
    ARViewCapture ();
 
    UFUNCTION(BlueprintCallable,
-             Category = "Rade|Util",
+             Category = "Rade|UI",
              meta = (ExpandEnumAsExecs = "Outcome",
                      ToolTip = "Align the camera of this View Capture actor with the player's camera."))
       void SetCameraToPlayerView (ERActionResult &Outcome);
       bool SetCameraToPlayerView ();
 
    UFUNCTION(BlueprintCallable,
-             Category = "Rade|Util",
+             Category = "Rade|UI",
              meta = (ExpandEnumAsExecs = "Outcome",
                      ToolTip = "Capture the player's view.\n\nResolution - a power of 2 resolution for the view capture, like 512"))
       void CapturePlayersView (ERActionResult &Outcome, int32 Resolution, TArray<FColor> &ColorData);
@@ -38,7 +38,7 @@ public:
       USceneCaptureComponent2D* Camera;
 
 	UFUNCTION(BlueprintCallable,
-             Category = "Rade|Util",
+             Category = "Rade|UI",
                meta = (HidePin          = "WorldContextObject",
                        DefaultToSelf    = "WorldContextObject"))
 		static TArray<uint8> GetScreenShot (UObject* WorldContextObject);
@@ -47,13 +47,13 @@ public:
 
 
 UCLASS()
-class RUTILLIB_API URCreateTextureAsync : public UBlueprintAsyncActionBase
+class RUILIB_API URCreateTextureAsync : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable,
-             Category = "Rade|Util",
+	UFUNCTION(BlueprintCallable,
+             Category = "Rade|UI",
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject")
@@ -64,8 +64,7 @@ public:
                                             EPixelFormat InPixelFormat = EPixelFormat::PF_B8G8R8A8);
 
 	UFUNCTION(BlueprintCallable,
-             Category = "Rade|Util",
-            //  meta = (HidePin = "Outer", DefaultToSelf = "Outer")
+             Category = "Rade|UI",
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject")
