@@ -5,7 +5,7 @@
 ==============
 Cleanup
 ==============
-In runtime objects replace Blueprintevent with Dynamic OnEvent
+Performance check of Blueprintevent vs Dynamic OnEvent
 
 ==============
 Camera
@@ -37,6 +37,12 @@ Fixes
 ==============
 Craft/Break item on server
 
+JSON data replication on Item. Very expensive.
+
+TSubclassOf -> TSoftClassPtr
+
+
+
 ==============
 Input
 ==============
@@ -47,28 +53,36 @@ R2 + L2 Mega Action?
 - Double Tap?
 
 
-=================================================
-   Performance
-=================================================
-
-
 ==============
 UI
 ==============
 
-UI stacks
+- Unify Main Menu and StartMenu
 
-Move screenshot and RUIDescription to RUI?
+Unreal Common UI UMG.
+- Unreal Standard.
+- Define Label and Button archetypes.
+- Stacks.
+- Replace RUI
 
-==============
-Benchmark
-==============
+=================================================
+Save File Versioning
+=================================================
 
-RAM memory leak check
+SaveFolder:
+- .data
+- .json
+- .png
 
-Network insight. Benchmark.
-
-Serialization of save file. Version difference / Size check
+.json / .txt [Mapping with optional values]
+- version
+- Name
+- UserIndex
+- MapName
+- Date
+- ScreenshotPath
+- ScreenshotFormat
+- ??? Parsing 
 
 
 =================================================
