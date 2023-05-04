@@ -25,7 +25,7 @@ void URAbility::BeginPlay ()
       GetOwner ()->AddInstanceComponent (this);
 
    if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      if (R_IS_VALID_WORLD) Mgr->OnAbilityListUpdated.Broadcast ();
+      Mgr->ReportAbilityListUpdated ();
 
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportAddAbility (this);
@@ -36,13 +36,14 @@ void URAbility::BeginPlay ()
       R_LOG_PRINTF ("Error. [%s] Ability info is invalid.", *GetPathName ());
    }
 }
+
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    if (GetWorld () && GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->RemoveInstanceComponent (this);
 
-   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      if (R_IS_VALID_WORLD) Mgr->OnAbilityListUpdated.Broadcast ();
+   if (URAbilityMgrComponent* Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
+      Mgr->ReportAbilityListUpdated ();
 
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportRmAbility (this);
@@ -93,14 +94,21 @@ URAbility_Aura::URAbility_Aura ()
 void URAbility_Aura::BeginPlay ()
 {
    Super::BeginPlay ();
-   GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
-                                             this, &URAbility_Aura::CheckRange,
-                                             CheckRangeInterval, true);
+   if (ensure (AffectedType)) {
+      GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
+                                                this, &URAbility_Aura::CheckRange,
+                                                CheckRangeInterval, true, 0);
+   }
 }
+
+void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
+{
+   GetWorld ()->GetTimerManager ().ClearTimer (TimerCheckRange);
+   Super::EndPlay (EndPlayReason);
+}
+
 void URAbility_Aura::CheckRange ()
 {
-   if (!AffectedType) return;
-
    FVector OwnerLocation = GetOwner ()->GetActorLocation ();
 
    TArray<AActor*> SearchResult;
@@ -108,14 +116,14 @@ void URAbility_Aura::CheckRange ()
 
    TArray<AActor*> Result;
    for (AActor* ItActor : SearchResult) {
-      if (!ItActor) continue;
+      if (!IsValid (ItActor)) continue;
       if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
       Result.Add (ItActor);
    }
 
    AffectedActors = Result;
 
-   if (R_IS_VALID_WORLD) OnUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnUpdated.IsBound ()) OnUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -142,7 +150,7 @@ void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType,
       // Can be used
       if (UseCooldownLeft == 0 && GetIsEnabled ()) {
          IsUseable = true;
-         if (R_IS_VALID_WORLD) OnAbilityStatusUpdated.Broadcast ();
+         if (R_IS_VALID_WORLD && OnAbilityStatusUpdated.IsBound ()) OnAbilityStatusUpdated.Broadcast ();
       }
    }
 }
@@ -191,8 +199,8 @@ void URAbility_Active::Use_Global_Implementation ()
 
    // Broadcast event
    if (R_IS_VALID_WORLD) {
-      OnAbilityUsed.Broadcast ();
-      OnAbilityStatusUpdated.Broadcast ();
+      if (OnAbilityUsed.IsBound ())          OnAbilityUsed.Broadcast ();
+      if (OnAbilityStatusUpdated.IsBound ()) OnAbilityStatusUpdated.Broadcast ();
    }
 }
 

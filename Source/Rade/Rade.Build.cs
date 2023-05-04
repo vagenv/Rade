@@ -11,7 +11,6 @@ public class Rade : ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
-         "InputCore",
          "RUtilLib",
       });
    }

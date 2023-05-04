@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "Engine/DataTable.h"
 #include "RAbilityTypes.generated.h"
 
@@ -101,6 +101,7 @@ public:
    URAbility_Aura ();
 
    virtual void BeginPlay () override;
+   virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    // Called in interval to create AffectedActirs list
    virtual void CheckRange ();

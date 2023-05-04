@@ -30,7 +30,12 @@ void URPlayerStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimePro
 }
 void URPlayerStatusMgrComponent::OnRep_Stats ()
 {
-   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
+   ReportStatsUpdated ();
+}
+
+void URPlayerStatusMgrComponent::ReportStatsUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnStatsUpdated.IsBound ()) OnStatsUpdated.Broadcast ();
 }
 
 void URPlayerStatusMgrComponent::BeginPlay ()
@@ -73,8 +78,8 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 void URPlayerStatusMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
-   if (!ensure (ExperienceMgr))  return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
+   if (!ensure (IsValid (ExperienceMgr)))  return;
 
    float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
 
@@ -101,7 +106,7 @@ void URPlayerStatusMgrComponent::RecalcStatus ()
    SetStamina (Stamina);
    SetMana (Mana);
 
-   if (R_IS_VALID_WORLD) OnStatsUpdated.Broadcast ();
+   ReportStatsUpdated ();
 }
 
 void URPlayerStatusMgrComponent::RecalcCoreStats ()
@@ -111,19 +116,15 @@ void URPlayerStatusMgrComponent::RecalcCoreStats ()
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += ItEffect.Value.Value;
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += ItEffect.Value.Flat;
    }
    // Percentage
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + ItEffect.Value.Value) / 100.);
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + ItEffect.Value.Percent) / 100.);
    }
    CoreStats_Added = CoreStats_Total_New - GetCoreStats_Base ();
 }
@@ -131,7 +132,7 @@ void URPlayerStatusMgrComponent::RecalcCoreStats ()
 void URPlayerStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
    float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
@@ -141,21 +142,17 @@ void URPlayerStatusMgrComponent::RecalcSubStats ()
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   += ItEffect.Value.Value;
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   += ItEffect.Value.Flat;
    }
    // Percentage
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   *= ((100. + ItEffect.Value.Value) / 100.);
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   *= ((100. + ItEffect.Value.Percent) / 100.);
    }
 
    FRCoreStats StatsCurrent = GetCoreStats_Base ();
@@ -175,7 +172,7 @@ void URPlayerStatusMgrComponent::RecalcSubStats ()
 void URPlayerStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();
@@ -188,25 +185,21 @@ void URPlayerStatusMgrComponent::RecalcStatusValues ()
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Value;
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Flat;
    }
    // Percentage
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Value) / 100.);
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Flat) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Flat) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Flat) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Flat) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Flat) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Flat) / 100.);
    }
 }
 
@@ -286,6 +279,6 @@ void URPlayerStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
    LoadData << Health << Mana << Stamina;
    LoadData << CoreStats_Base << CoreStats_Extra;
 
-   OnStatsUpdated.Broadcast ();
+   ReportStatsUpdated ();
 }
 

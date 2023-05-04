@@ -19,22 +19,25 @@ struct RSAVELIB_API FRSaveGameMeta
    GENERATED_BODY()
 
    // --- Mandatory info
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString SlotName = "";
 
    // Maybe should be hidden/disabled
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       int32 UserIndex = 0;
 
    // UI info
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Map = "???";
 
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Date = "???";
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<uint8> BinaryTexture;
+      TArray<uint8> SceenshotTextureBinary;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TEnumAsByte<EPixelFormat> SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
 
    // For serialization of data
    friend FArchive& operator << (FArchive& Ar, FRSaveGameMeta &MetaData) {
@@ -42,7 +45,9 @@ struct RSAVELIB_API FRSaveGameMeta
       Ar << MetaData.UserIndex;
       Ar << MetaData.Map;
       Ar << MetaData.Date;
-      Ar << MetaData.BinaryTexture;
+      // Ar << MetaData.SceenshotTextureFormat;
+      Ar << MetaData.SceenshotTextureBinary;
+
       return Ar;
    }
 

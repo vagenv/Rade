@@ -4,18 +4,6 @@
 
 #include "RPassiveStatusEffect.generated.h"
 
-// ============================================================================
-//                   Status Effect Scale (FLAT/PERCENT)
-// ============================================================================
-
-UENUM(Blueprintable, BlueprintType)
-enum class ERStatusEffectScale : uint8
-{
-   None UMETA (DisplayName = "Please select"),
-
-   FLAT    UMETA (DisplayName = "Flat (plus)"),
-   PERCENT UMETA (DisplayName = "Percent (multiply)")
-};
 
 // ============================================================================
 //                   Status Effect Target
@@ -57,15 +45,13 @@ struct RSTATUSLIB_API FRPassiveStatusEffect
    GENERATED_BODY()
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      ERStatusEffectScale Scale = ERStatusEffectScale::None;
+      ERStatusEffectTarget EffectTarget = ERStatusEffectTarget::None;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      ERStatusEffectTarget Target = ERStatusEffectTarget::None;
+      float Flat = 0;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float Value = 0.;
-
-   inline FRPassiveStatusEffect operator + (const FRPassiveStatusEffect &obj) const;
+      float Percent = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -80,5 +66,26 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
    // What value is added
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRPassiveStatusEffect Value;
+};
+
+
+// ============================================================================
+//                   Status Effect Library
+// ============================================================================
+
+UCLASS(ClassGroup=(_Rade))
+class RSTATUSLIB_API URPassiveStatusEffectUtilLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      static TArray<FRPassiveStatusEffect> MergeEffects (const TArray<FRPassiveStatusEffectWithTag>& Effects);
+
+   // UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+   //    static bool SetStatusEffect_Passive (AActor *Target, const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects);
+
+   // UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+   //    static bool RmStatusEffect_Passive (AActor *Target, const FString &Tag);
 };
 

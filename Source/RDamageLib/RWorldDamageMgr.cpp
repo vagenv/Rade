@@ -27,25 +27,25 @@ void URWorldDamageMgr::ReportDamage (AActor*             Victim,
                                      const URDamageType* Type,
                                      AActor*             Causer)
 {
-   if (!ensure (Victim)) return;
-   if (!ensure (Type))   return;
-   if (!ensure (Causer)) return;
-   if (R_IS_VALID_WORLD) OnAnyRDamage.Broadcast (Victim, Amount, Type, Causer);
+   if (!ensure (IsValid (Victim))) return;
+   if (!ensure (Type))             return;
+   if (!ensure (IsValid (Causer))) return;
+   if (R_IS_VALID_WORLD && OnAnyRDamage.IsBound ()) OnAnyRDamage.Broadcast (Victim, Amount, Type, Causer);
 }
 
 void URWorldDamageMgr::ReportDeath (AActor*             Victim,
                                     AActor*             Causer,
                                     const URDamageType* Type)
 {
-   if (!ensure (Victim)) return;
-   if (!ensure (Causer)) return;
-   if (!ensure (Type))   return;
-   if (R_IS_VALID_WORLD) OnDeath.Broadcast (Victim, Causer, Type);
+   if (!ensure (IsValid (Victim))) return;
+   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Type))             return;
+   if (R_IS_VALID_WORLD && OnDeath.IsBound ()) OnDeath.Broadcast (Victim, Causer, Type);
 }
 
 void URWorldDamageMgr::ReportRevive (AActor* Victim)
 {
-   if (!ensure (Victim)) return;
-   if (R_IS_VALID_WORLD) OnRevive.Broadcast (Victim);
+   if (!ensure (IsValid (Victim))) return;
+   if (R_IS_VALID_WORLD && OnRevive.IsBound ()) OnRevive.Broadcast (Victim);
 }
 

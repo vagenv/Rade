@@ -26,3 +26,10 @@ float URUtilLibrary::GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurv
 	return InCurve.GetRichCurveConst ()->Eval (InTime);
 }
 
+float URUtilLibrary::GetAngle (FVector v1, FVector v2)
+{
+   v1.Normalize ();
+   v2.Normalize ();
+   return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
+}
+

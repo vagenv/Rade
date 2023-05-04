@@ -56,8 +56,14 @@ public:
    //          Events
    //==========================================================================
 
+   UFUNCTION()
+      void ReportExperienceChange ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Experience")
       FRExperienceEvent OnExperienceChange;
+
+   UFUNCTION()
+      void ReportLevelUp ();
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Experience")
       FRExperienceEvent OnLevelUp;
@@ -69,6 +75,10 @@ protected:
    UPROPERTY()
       URWorldExperienceMgr* GlobalMgr = nullptr;
 
+
+   //==========================================================================
+   //         Save / Load
+   //==========================================================================
 
    // Status Saved / Loaded between sessions.
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Experience")

@@ -24,25 +24,25 @@ URWorldTargetMgr::URWorldTargetMgr ()
 {
 }
 
-void URWorldTargetMgr::AddTarget (URTargetableComponent * Target)
+void URWorldTargetMgr::AddTarget (URTargetableComponent* Target)
 {
-   if (!ensure (Target)) return;
+   if (!ensure (IsValid (Target))) return;
    TargetableList.Add (Target);
-   if (R_IS_VALID_WORLD) OnListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
-void URWorldTargetMgr::RmTarget  (URTargetableComponent * Target)
+void URWorldTargetMgr::RmTarget  (URTargetableComponent* Target)
 {
-   if (!ensure (Target)) return;
+   if (!ensure (IsValid (Target))) return;
    TargetableList.Remove (Target);
-   if (R_IS_VALID_WORLD) OnListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
 URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,
-                                              TArray<AActor*>                FilterOutActors,
-                                              TArray<URTargetableComponent*> FilterOutTargets)
+                                               TArray<AActor*>                FilterOutActors,
+                                               TArray<URTargetableComponent*> FilterOutTargets)
 {
-   if (!ensure (Targeter)) return nullptr;
+   if (!ensure (IsValid (Targeter))) return nullptr;
    FVector  Origin    = Targeter->GetComponentLocation ();
    FRotator Direction = Targeter->GetComponentRotation ();
 
@@ -53,7 +53,7 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
 
    // --- Iterate over available Targets
    for (URTargetableComponent* ItTarget : TargetableList) {
-      if (!ItTarget) continue;
+      if (!IsValid (ItTarget)) continue;
       if (!ItTarget->GetIsTargetable ()) continue;
 
       // Check blacklist
@@ -68,11 +68,11 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
       // --- Check angle
       FVector ItDir = ItTarget->GetComponentLocation () - Origin;
       ItDir.Normalize ();
-      float ItAngle = URWorldTargetMgr::GetAngle (SearchDir, ItDir);
+      float ItAngle = URUtilLibrary::GetAngle (SearchDir, ItDir);
       if (ItAngle > SearchAngle) continue;
 
       // First target
-      if (!CurrentTarget) {
+      if (!IsValid (CurrentTarget)) {
          CurrentTarget = ItTarget;
          continue;
       }
@@ -80,7 +80,7 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
       // --- Check if smaller angle
       FVector CurrentDir = CurrentTarget->GetComponentLocation () - Origin;
       CurrentDir.Normalize ();
-      float CurrentAngle = URWorldTargetMgr::GetAngle (SearchDir, CurrentDir);
+      float CurrentAngle = URUtilLibrary::GetAngle (SearchDir, CurrentDir);
 
       if (ItAngle < CurrentAngle) CurrentTarget = ItTarget;
    }
@@ -89,14 +89,14 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
 }
 
 URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Targeter,
-                                                  URTargetableComponent*         CurrentTarget,
-                                                  float                          InputOffsetX,
-                                                  float                          InputOffsetY,
-                                                  TArray<AActor*>                FilterOutActors,
-                                                  TArray<URTargetableComponent*> FilterOutTargets)
+                                                   URTargetableComponent*         CurrentTarget,
+                                                   float                          InputOffsetX,
+                                                   float                          InputOffsetY,
+                                                   TArray<AActor*>                FilterOutActors,
+                                                   TArray<URTargetableComponent*> FilterOutTargets)
 {
-   if (!ensure (Targeter))      return nullptr;
-   if (!ensure (CurrentTarget)) return nullptr;
+   if (!ensure (IsValid (Targeter)))      return nullptr;
+   if (!ensure (IsValid (CurrentTarget))) return nullptr;
    FVector Origin     = Targeter->GetComponentLocation ();
    FVector ForwardDir = Targeter->GetForwardVector ();
    FVector RightDir   = Targeter->GetRightVector ();
@@ -121,7 +121,7 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
 
    // --- Iterate over available Targets
    for (URTargetableComponent* ItTarget : TargetableList) {
-      if (!ItTarget) continue;
+      if (!IsValid (ItTarget)) continue;
       if (!ItTarget->GetIsTargetable ()) continue;
 
       // Check blacklist
@@ -136,7 +136,7 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
       // --- Check angle respect to camera
       FVector ItDir = ItTarget->GetComponentLocation () - Origin;
       ItDir.Normalize ();
-      if (URWorldTargetMgr::GetAngle (ForwardDir, ItDir) > SearchAngle) continue;
+      if (URUtilLibrary::GetAngle (ForwardDir, ItDir) > SearchAngle) continue;
 
       // Direction with respect to current target
       ItDir = ItTarget->GetComponentLocation () - TargetLoc;
@@ -168,9 +168,3 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
    return NewTarget;
 }
 
-float URWorldTargetMgr::GetAngle (FVector v1, FVector v2)
-{
-   v1.Normalize ();
-   v2.Normalize ();
-   return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
-}

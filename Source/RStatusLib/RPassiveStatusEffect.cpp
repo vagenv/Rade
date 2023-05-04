@@ -6,12 +6,60 @@
 //                 Passive Effect
 //=============================================================================
 
-FRPassiveStatusEffect FRPassiveStatusEffect::operator + (const FRPassiveStatusEffect &obj) const
+TArray<FRPassiveStatusEffect> URPassiveStatusEffectUtilLibrary::MergeEffects (
+   const TArray<FRPassiveStatusEffectWithTag>& Effects)
 {
-   FRPassiveStatusEffect res;
-   res.Scale = Scale;
-   res.Target = Target;
-   res.Value = Value + obj.Value;
-   return res;
+   TArray<FRPassiveStatusEffect> Result;
+   for (const FRPassiveStatusEffectWithTag& ItEffects : Effects) {
+      bool found = false;
+      // Combine
+      for (FRPassiveStatusEffect& ItRes : Result) {
+         if (ItRes.EffectTarget == ItEffects.Value.EffectTarget) {
+            found = true;
+            ItRes.Flat    += ItEffects.Value.Flat;
+            ItRes.Percent += ItEffects.Value.Percent;
+            break;
+         }
+      }
+      // Add new entry
+      if (!found) Result.Add (ItEffects.Value);
+   }
+
+   return Result;
 }
+
+//=============================================================================
+//                 Status Effect Library
+//=============================================================================
+
+// bool URPassiveStatusEffectUtilLibrary::SetStatusEffect_Passive (
+//    AActor *Target,
+//    const FString &Tag,
+//    const TArray<FRPassiveStatusEffect> &Effects)
+// {
+//    // --- Check Values
+//    if (!ensure (Target))                  return false;
+//    if (!ensure (Target->HasAuthority ())) return false;
+//    if (!ensure (!Tag.IsEmpty ()))         return false;
+//    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target);
+//    if (!ensure (StatusMgr))               return false;
+
+//    // --- Action
+//    return StatusMgr->SetPassiveEffects (Tag, Effects);
+// }
+
+// bool URPassiveStatusEffectUtilLibrary::RmStatusEffect_Passive (
+//    AActor *Target,
+//    const FString &Tag)
+// {
+//    // --- Check Values
+//    if (!ensure (Target))                  return false;
+//    if (!ensure (Target->HasAuthority ())) return false;
+//    if (!ensure (!Tag.IsEmpty ()))         return false;
+//    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target);
+//    if (!ensure (StatusMgr))               return false;
+
+//    // --- Action
+//    return StatusMgr->RmPassiveEffects (Tag);
+// }
 

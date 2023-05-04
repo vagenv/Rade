@@ -12,6 +12,7 @@ public class RStatusLib : ModuleRules
          "CoreUObject",
          "Engine",
          "RUtilLib",
+         "RUILib",
          "RSaveLib",
          "RDamageLib",
          "RExperienceLib",

@@ -71,11 +71,6 @@ public:
                                                TArray<AActor*>                FilterOutActors,
                                                TArray<URTargetableComponent*> FilterOutTargets);
 
-
-   // Gets angle in degrees between two vectors
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
-      static float GetAngle (FVector v1, FVector v2);
-
    //==========================================================================
    //                  Get instance -> GameState component
    //==========================================================================

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/DamageType.h"
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "RDamageType.generated.h"
 
 struct FDamageEvent;
@@ -43,6 +43,7 @@ struct RDAMAGELIB_API FRDamageResistanceWithTag
       FRDamageResistance Value;
 };
 
+
 // ============================================================================
 //                   RDamageType
 // ============================================================================
@@ -69,5 +70,16 @@ public:
                          FRDamageResistance Resistance,
                          float              DamageAmount,
                          AActor*            DamageCauser) const;
+};
+
+UCLASS(ClassGroup=(_Rade))
+class RDAMAGELIB_API URDamageUtilLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      static TArray<FRDamageResistance> MergeResistance (const TArray<FRDamageResistanceWithTag>& Resistance);
+
 };
 

@@ -81,7 +81,7 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
 {
-   if (!ensure (SlotClass)) return nullptr;
+   if (!ensure (IsValid (SlotClass))) return nullptr;
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
 
@@ -89,6 +89,7 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
 
    // --- Find equip slot
    for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (!IsValid (ItSlot)) continue;
       if (ItSlot->GetClass () == SlotClass) {
 
          // First slot available
@@ -103,6 +104,12 @@ UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubc
    }
    return EquipmentSlot;
 }
+
+void UREquipmentMgrComponent::ReportEquipmentUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnEquipmentUpdated.IsBound ()) OnEquipmentUpdated.Broadcast ();
+}
+
 //=============================================================================
 //           Weight penalty using Inventory and StatusMgr
 //=============================================================================
@@ -117,14 +124,12 @@ void UREquipmentMgrComponent::CalcWeight ()
 
    float EquipLoad = WeightCurrent * 100. / WeightMax;
    FRPassiveStatusEffect EvasionEffect;
-   EvasionEffect.Scale  = ERStatusEffectScale::PERCENT;
-   EvasionEffect.Target = ERStatusEffectTarget::Evasion;
-   EvasionEffect.Value  = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
+   EvasionEffect.EffectTarget = ERStatusEffectTarget::Evasion;
+   EvasionEffect.Percent      = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
 
    FRPassiveStatusEffect MoveSpeedEffect;
-   MoveSpeedEffect.Scale  = ERStatusEffectScale::PERCENT;
-   MoveSpeedEffect.Target = ERStatusEffectTarget::MoveSpeed;
-   MoveSpeedEffect.Value  = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
+   MoveSpeedEffect.EffectTarget = ERStatusEffectTarget::MoveSpeed;
+   MoveSpeedEffect.Percent      = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
 
    TArray<FRPassiveStatusEffect> Effects;
    Effects.Add (EvasionEffect);
@@ -235,19 +240,17 @@ bool UREquipmentMgrComponent::EquipItem (const FREquipmentData &EquipmentData)
 bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!EquipmentSlot) {
-      R_LOG ("Invalid Equipment Slot pointer");
-      return false;
-   }
-   if (!EquipmentData.EquipmentSlot.Get ()) {
+   if (!ensure (IsValid (EquipmentSlot)))  return false;
+   if (!ensure (EquipmentData.EquipmentSlot.Get ())) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
       return false;
    }
-   if (EquipmentSlot->GetClass () != EquipmentData.EquipmentSlot) {
+   if (!ensure (EquipmentSlot->GetClass () == EquipmentData.EquipmentSlot)) {
       R_LOG_PRINTF ("Incompatable Equipment Slot and Item Slot Class: Slot [%s] Item [%s]",
          *EquipmentSlot->GetClass ()->GetName (),
          *EquipmentData.EquipmentSlot->GetName ()
          );
+      return false;
    }
 
    URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
@@ -272,43 +275,42 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 
    // --- Add Stats and Effects
    if (StatusMgr) {
-      StatusMgr->SetPassiveEffects (EquipmentData.Name, EquipmentData.PassiveEffects);
-      StatusMgr->AddResistance     (EquipmentData.Name, EquipmentData.Resistence);
+      StatusMgr->SetPassiveEffects (EquipmentSlot->Description.Label, EquipmentData.PassiveEffects);
+      StatusMgr->AddResistance     (EquipmentSlot->Description.Label, EquipmentData.Resistence);
    }
 
    // --- Update slot data
    EquipmentSlot->EquipmentData = EquipmentData;
    EquipmentSlot->Busy = true;
-   if (R_IS_VALID_WORLD) {
-      EquipmentSlot->OnSlotUpdated.Broadcast ();
-      OnEquipmentUpdated.Broadcast ();
-   }
+   EquipmentSlot->ReportOnSlotUpdated ();
+   ReportEquipmentUpdated ();
+
    return true;
 }
 
 bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!EquipmentSlot)       return false;
-   if (!EquipmentSlot->Busy) return false;
+   if (!ensure (IsValid (EquipmentSlot))) return false;
+   if (!EquipmentSlot->Busy)              return false;
 
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
-      StatusMgr->RmPassiveEffects (EquipmentSlot->EquipmentData.Name);
-      StatusMgr->RmResistance     (EquipmentSlot->EquipmentData.Name);
+      StatusMgr->RmPassiveEffects (EquipmentSlot->Description.Label);
+      StatusMgr->RmResistance     (EquipmentSlot->Description.Label);
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();
-   if (R_IS_VALID_WORLD) {
-      EquipmentSlot->OnSlotUpdated.Broadcast ();
-      OnEquipmentUpdated.Broadcast ();
-   }
+   EquipmentSlot->ReportOnSlotUpdated ();
+   ReportEquipmentUpdated ();
+
    return true;
 }
 
 //=============================================================================
 //                 Equip / Unequip server version
 //=============================================================================
+
 void UREquipmentMgrComponent::EquipItem_Server_Implementation (const FREquipmentData &EquipmentData)
 {
    EquipItem (EquipmentData);
@@ -317,10 +319,7 @@ void UREquipmentMgrComponent::EquipItem_Server_Implementation (const FREquipment
 void UREquipmentMgrComponent::Equip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot,
                                                            const FREquipmentData    &EquipmentData)
 {
-   if (!EquipmentSlot) {
-      R_LOG ("Invalid EquipmentSlot");
-      return;
-   }
+   if (!ensure (IsValid (EquipmentSlot))) return;
    Equip (EquipmentSlot, EquipmentData);
 }
 
@@ -342,8 +341,8 @@ void UREquipmentMgrComponent::OnSave (FBufferArchive &SaveData)
    // --- Get equiped items
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
-   for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
-      if (ItSlot->Busy) {
+   for (const UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
+      if (IsValid (ItSlot) && ItSlot->Busy) {
          FString RawData;
          if (RJSON::ToString (ItSlot->EquipmentData, RawData)) EquipedItemsRaw.Add (RawData);
       }

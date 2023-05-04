@@ -5,7 +5,7 @@
 ==============
 Cleanup
 ==============
-In runtime objects replace Blueprintevent with Dynamic OnEvent
+Performance check of Blueprintevent vs Dynamic OnEvent
 
 ==============
 Camera
@@ -24,19 +24,9 @@ Pickup
 - [Open/Close/Take All]
 
 ==============
-Async Task
-==============
-UBlueprintAsyncActionBase
-
-- Thread
-- Read / Write to file
-- Complete Pin
-
-Save / Load Task
-
-==============
 Other
 ==============
+- Deploy to Windows PC in same nework.
 - Look into DDC (Derived Data Cache)
 - FWeakObjectPtr for pointer to object
 - SoftPtr to SubClass (will not create dependency)
@@ -46,6 +36,12 @@ Other
 Fixes
 ==============
 Craft/Break item on server
+
+JSON data replication on Item. Very expensive.
+
+TSubclassOf -> TSoftClassPtr
+
+
 
 ==============
 Input
@@ -57,19 +53,36 @@ R2 + L2 Mega Action?
 - Double Tap?
 
 
-=================================================
-   Performance
-=================================================
-Create backup and initial measurement of basic level system idle:
-- FPS
-- CPU
-- GPU
-- RAM
-- VRAM
+==============
+UI
+==============
 
-PC / Laptop / SteamDeck
+- Unify Main Menu and StartMenu
 
-Determine bottlenecks for 240+ FPS
+Unreal Common UI UMG.
+- Unreal Standard.
+- Define Label and Button archetypes.
+- Stacks.
+- Replace RUI
+
+=================================================
+Save File Versioning
+=================================================
+
+SaveFolder:
+- .data
+- .json
+- .png
+
+.json / .txt [Mapping with optional values]
+- version
+- Name
+- UserIndex
+- MapName
+- Date
+- ScreenshotPath
+- ScreenshotFormat
+- ??? Parsing 
 
 
 =================================================

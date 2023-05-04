@@ -21,7 +21,7 @@ void URExperienceMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimePrope
 
 void URExperienceMgrComponent::OnRep_Exp ()
 {
-   if (R_IS_VALID_WORLD) OnExperienceChange.Broadcast ();
+   ReportExperienceChange ();
    CheckLevel ();
 }
 
@@ -46,6 +46,16 @@ void URExperienceMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason
    Super::EndPlay (EndPlayReason);
 }
 
+void URExperienceMgrComponent::ReportExperienceChange ()
+{
+   if (R_IS_VALID_WORLD && OnExperienceChange.IsBound ()) OnExperienceChange.Broadcast ();
+}
+
+void URExperienceMgrComponent::ReportLevelUp ()
+{
+   if (R_IS_VALID_WORLD && OnLevelUp.IsBound ()) OnLevelUp.Broadcast ();
+}
+
 void URExperienceMgrComponent::AddExperiencePoints (int64 ExpPoint)
 {
    if (ExpPoint <= 0) return;
@@ -55,7 +65,8 @@ void URExperienceMgrComponent::AddExperiencePoints (int64 ExpPoint)
    //       ExperiencePoints + ExpPoint);
 
    ExperiencePoints += ExpPoint;
-   if (R_IS_VALID_WORLD) OnExperienceChange.Broadcast ();
+   ReportExperienceChange ();
+
    CheckLevel ();
 }
 
@@ -66,7 +77,7 @@ int64 URExperienceMgrComponent::GetExperiencePoints () const
 
 void URExperienceMgrComponent::CheckLevel ()
 {
-   if (!GlobalMgr) return;
+   if (!IsValid (GlobalMgr)) return;
 
    int NewLevel = GlobalMgr->ExperienceToLevel (GetExperiencePoints ());
    // R_LOG_PRINTF ("Leveled change [%d => %d]", CurrentLevel, NewLevel);
@@ -95,7 +106,7 @@ void URExperienceMgrComponent::LeveledUp ()
 {
    // R_LOG_PRINTF ("Leveled up!!! [%d => %d]", CurrentLevel, CurrentLevel + 1);
    CurrentLevel++;
-   if (R_IS_VALID_WORLD) OnLevelUp.Broadcast ();
+   ReportLevelUp ();
 }
 
 void URExperienceMgrComponent::OnSave (FBufferArchive &SaveData)
@@ -108,7 +119,7 @@ void URExperienceMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
    LoadData << ExperiencePoints;
    LoadData << CurrentLevel;
-   if (R_IS_VALID_WORLD) {
-      OnExperienceChange.Broadcast ();
-   }
+   ReportExperienceChange ();
+   ReportLevelUp ();
 }
+

@@ -33,6 +33,12 @@ void URTargetingComponent::BeginPlay ()
 	GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle, this, &URTargetingComponent::TargetCheck, 1, true);
 }
 
+void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld ()->GetTimerManager ().ClearTimer (TargetCheckHandle);
+   Super::EndPlay (EndPlayReason);
+}
+
 void URTargetingComponent::TickComponent (float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
@@ -45,7 +51,7 @@ void URTargetingComponent::TickComponent (float DeltaTime, ELevelTick TickType, 
 
 bool URTargetingComponent::IsTargeting () const
 {
-	return (TargetCurrent || !CustomTargetDir.IsNearlyZero ());
+	return (IsValid (TargetCurrent) || !CustomTargetDir.IsNearlyZero ());
 }
 
 FRotator URTargetingComponent::GetTargetRotation () const
@@ -70,7 +76,7 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
    FVector  TargetDir  = FVector::Zero ();
 
    // --- Focus Target
-   if (TargetCurrent) {
+   if (IsValid (TargetCurrent)) {
       FVector TargetLocation = TargetCurrent->GetComponentLocation ();
       TargetDir = TargetLocation - GetComponentLocation ();
       TargetDir.Normalize ();
@@ -90,7 +96,7 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
       // Camera lerp speed
       float LerpPower = 4;
 
-      float Angle = URWorldTargetMgr::GetAngle (CurrentDir, TargetDir);
+      float Angle = URUtilLibrary::GetAngle (CurrentDir, TargetDir);
 
       // Transform Angle to Lerp power
       LerpPower = URUtilLibrary::GetRuntimeFloatCurveValue (TargetAngleToLerpPower, Angle);
@@ -110,7 +116,7 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
    // If there was input stop turning
    if (!CustomTargetDir.IsNearlyZero ()) CustomTargetDir = FVector::Zero ();
 
-   if (   TargetCurrent
+   if (   IsValid (TargetCurrent)
       && (  FMath::Abs (OffsetX) > TargetAdjustMinOffset
          || FMath::Abs (OffsetY) > TargetAdjustMinOffset))
    {
@@ -123,7 +129,7 @@ void URTargetingComponent::TargetToggle ()
 {
    URTargetableComponent *TargetLast = TargetCurrent;
 
-   if (TargetCurrent) {
+   if (IsValid (TargetCurrent)) {
       TargetCurrent->SetIsTargeted (false);
       TargetCurrent = nullptr;
       if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
@@ -132,14 +138,14 @@ void URTargetingComponent::TargetToggle ()
       SearchNewTarget ();
 
       // No Target. Focus forward
-      if (!TargetCurrent) CustomTargetDir = GetOwner ()->GetActorRotation ().Vector ();
+      if (!IsValid (TargetCurrent)) CustomTargetDir = GetOwner ()->GetActorRotation ().Vector ();
    }
 }
 
 // Check if target is valid
 void URTargetingComponent::TargetCheck ()
 {
-   if (TargetCurrent && TargetMgr) {
+   if (IsValid (TargetCurrent) && IsValid (TargetMgr)) {
 
       bool RemoveTarget = false;
 
@@ -155,7 +161,7 @@ void URTargetingComponent::TargetCheck ()
          TargetCurrent->SetIsTargeted (false);
          TargetCurrent = nullptr;
          if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
-         if (R_IS_VALID_WORLD) OnTargetUpdated.Broadcast ();
+         if (R_IS_VALID_WORLD && OnTargetUpdated.IsBound ()) OnTargetUpdated.Broadcast ();
          SearchNewTarget ();
       }
    }
@@ -163,7 +169,7 @@ void URTargetingComponent::TargetCheck ()
 
 void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffsetY)
 {
-   if (!TargetMgr) return;
+   if (!IsValid (TargetMgr)) return;
 
    // --- Limit the amount of camera adjustments
    double CurrentTime = GetWorld ()->GetTimeSeconds ();
@@ -176,7 +182,7 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
 
    URTargetableComponent* TargetNew = nullptr;
 
-   if (TargetCurrent) {
+   if (IsValid (TargetCurrent)) {
       // --- Adjust target
       blacklistTargets.Add (TargetCurrent);
 
@@ -194,15 +200,15 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
                                    blacklistTargets);
    }
 
-   if (TargetNew) {
+   if (IsValid (TargetNew)) {
       // Unset old one
-      if (TargetCurrent) TargetCurrent->SetIsTargeted (false);
+      if (IsValid (TargetCurrent)) TargetCurrent->SetIsTargeted (false);
 
       // Set new one
       TargetCurrent = TargetNew;
       TargetCurrent->SetIsTargeted (true);
       if (!R_IS_NET_ADMIN) SetTarget_Server (TargetCurrent);
-      if (R_IS_VALID_WORLD) OnTargetUpdated.Broadcast ();
+      if (R_IS_VALID_WORLD && OnTargetUpdated.IsBound ()) OnTargetUpdated.Broadcast ();
    }
 }
 

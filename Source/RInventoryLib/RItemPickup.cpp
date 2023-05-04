@@ -1,9 +1,10 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RItemPickup.h"
-#include "RItemAction.h"
 #include "RInventoryComponent.h"
+#include "RItemPickupMgrComponent.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RUtil.h"
 
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -72,7 +73,9 @@ void ARItemPickup::BeginPlay ()
 void ARItemPickup::ActivatePickupOverlap ()
 {
    // Check if Any Player is within the range to pickup this item
-   for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
+   for (TActorIterator<AActor> ActorItr(GetWorld ()); ActorItr; ++ActorItr) {
+
+      if (!IsValid (*ActorItr)) continue;
 
       // Only if actor has Inventory
       if (ActorItr->FindComponentByClass<URInventoryComponent>()) {
@@ -95,18 +98,23 @@ void ARItemPickup::OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
                                    bool bFromSweep,
                                    const FHitResult &SweepResult)
 {
-   // Null or itself
-   if (OtherActor == nullptr || OtherActor == this) return;
+   // Invalid or itself
+   if (!IsValid (OtherActor) || OtherActor == this) return;
 
-   // Only Inventory containing actors
-   URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
-   if (PlayerInventory == nullptr) return;
-
+   // Add to Inventory Directly
    if (bAutoPickup) {
-      if (HasAuthority ())
-         Inventory->TransferAll (PlayerInventory);
+
+      if (HasAuthority ()) {
+         if (URInventoryComponent* ActorInventory = URUtil::GetComponent<URInventoryComponent> (OtherActor))
+            Inventory->TransferAll (ActorInventory);
+      }
+
+   // Add to Tracking
    } else {
-      PlayerInventory->Pickup_Add (this);
+      URItemPickupMgrComponent* PickupTracker = URUtil::GetComponent<URItemPickupMgrComponent> (OtherActor);
+      if (!IsValid (PickupTracker)) return;
+
+      PickupTracker->Pickup_Register (this);
 
       // BP Event that player entered
       BP_PlayerEntered (OtherActor);
@@ -119,14 +127,12 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
                                  UPrimitiveComponent* OtherComp,
                                  int32 OtherBodyIndex)
 {
-   // Null or itself
-   if (OtherActor == nullptr || OtherActor == this) return;
+   // Invalid or itself
+   if (!IsValid (OtherActor) || OtherActor == this) return;
 
-   // Does not have inventory
-   URInventoryComponent *PlayerInventory = OtherActor->FindComponentByClass<URInventoryComponent>();
-   if (PlayerInventory == nullptr) return;
-
-   PlayerInventory->Pickup_Rm (this);
+  URItemPickupMgrComponent* PickupTracker = URUtil::GetComponent<URItemPickupMgrComponent> (OtherActor);
+   if (!IsValid (PickupTracker)) return;
+   PickupTracker->Pickup_Unregister (this);
 
    // BP Event that player Exited
    BP_PlayerLeft (OtherActor);

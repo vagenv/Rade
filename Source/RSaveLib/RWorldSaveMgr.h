@@ -5,14 +5,35 @@
 #include "Components/ActorComponent.h"
 #include "RSaveTypes.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/BlueprintAsyncActionBase.h"
 #include "RWorldSaveMgr.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSaveEvent);
 
 class USaveGame;
 class URSaveGame;
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent) )
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRSaveEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
+
+UCLASS()
+class RSAVELIB_API URGetSaveGameSlotsAsync : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+public:
+
+	UFUNCTION(BlueprintCallable,
+             meta = (BlueprintInternalUseOnly = "true",
+                     WorldContext = "WorldContextObject"))
+	   static URGetSaveGameSlotsAsync* GetAllSaveGameSlotsAsync ();
+
+   // Called when all save game slots have been read
+	UPROPERTY(BlueprintAssignable)
+	   FGetSaveSlotsEvent Loaded;
+
+   // Execution point
+	virtual void Activate () override;
+};
+
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RSAVELIB_API URWorldSaveMgr : public UActorComponent
 {
    GENERATED_BODY()
@@ -26,7 +47,7 @@ public:
              Category = "Rade|Save",
                meta = (HidePin          = "WorldContextObject",
                        DefaultToSelf    = "WorldContextObject"))
-		static TArray<FRSaveGameMeta> GetAllSaveGameSlots (UObject* WorldContextObject);
+		static TArray<FRSaveGameMeta> GetAllSaveGameSlotsSync ();
 
    //==========================================================================
    //                  Save data to disk
@@ -89,13 +110,22 @@ public:
    //                  Events
    //==========================================================================
 
+   UFUNCTION()
+      void ReportSave ();
+
    // Save started. Data must be set at this point
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
       FRSaveEvent OnSave;
 
+   UFUNCTION()
+      void ReportLoad ();
+
    // Load Ended. Data Must be retrieved at this point
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")
       FRSaveEvent OnLoad;
+
+   UFUNCTION()
+      void ReportSaveListUpdated ();
 
    // List of Save Slots has changed. (Save/Delete)
    UPROPERTY(BlueprintAssignable, Category = "Rade|Save")

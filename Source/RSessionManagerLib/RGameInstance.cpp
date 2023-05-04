@@ -85,7 +85,7 @@ void URGameInstance::UpdateSessionList()
       FRAvaiableSessionsData NewData(SessionSearch->SearchResults[i]);
       CurrentSessionSearch.Add(NewData);
    }
-   if (R_IS_VALID_WORLD) OnSessionListUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnSessionListUpdated.IsBound ()) OnSessionListUpdated.Broadcast ();
 }
 
 // Join Any Available Online Game
@@ -252,7 +252,7 @@ void URGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSucce
    if (bWasSuccessful) {
 
       //BattleArena
-      UGameplayStatics::OpenLevel(GetWorld(), *TheMapName, true, "listen");
+      UGameplayStatics::OpenLevel(GetWorld (), *TheMapName, true, "listen");
    }
 }
 

@@ -10,7 +10,8 @@ public class RSaveLib: ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
-         "RUtilLib"
+         "RUtilLib",
+         "RUILib"
       });
    }
 }

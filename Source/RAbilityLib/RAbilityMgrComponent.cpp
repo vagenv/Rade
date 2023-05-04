@@ -45,7 +45,7 @@ void URAbilityMgrComponent::BeginPlay ()
 
    if (R_IS_NET_ADMIN) {
 
-      if (ExperienceMgr) {
+      if (IsValid (ExperienceMgr)) {
          ExperienceMgr->OnLevelUp.AddDynamic (this, &URAbilityMgrComponent::LeveledUp);
       }
 
@@ -63,11 +63,6 @@ void URAbilityMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
-void URAbilityMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
-{
-   Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
-}
-
 //=============================================================================
 //                 Ability Points
 //=============================================================================
@@ -75,16 +70,15 @@ void URAbilityMgrComponent::TickComponent (float DeltaTime, enum ELevelTick Tick
 void URAbilityMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldAbilityMgr)) return;
-   if (!ensure (ExperienceMgr))  return;
+
+   // --- Points per level?
+   // if (!ensure (IsValid (WorldAbilityMgr))) return;
+   // if (!ensure (IsValid (ExperienceMgr)))  return;
 
    AbilityPoints++;
-   OnAbilityPointUpdated.Broadcast ();
+   ReportAbilityPointUpdated ();
 }
 
-//=============================================================================
-//                 Ability Points
-//=============================================================================
 
 int URAbilityMgrComponent::GetAbilityPoint () const
 {
@@ -93,7 +87,12 @@ int URAbilityMgrComponent::GetAbilityPoint () const
 
 void URAbilityMgrComponent::OnRep_Points ()
 {
-   OnAbilityPointUpdated.Broadcast ();
+   ReportAbilityPointUpdated ();
+}
+
+void URAbilityMgrComponent::ReportAbilityPointUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnAbilityPointUpdated.IsBound ()) OnAbilityPointUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -102,18 +101,17 @@ void URAbilityMgrComponent::OnRep_Points ()
 
 URAbility* URAbilityMgrComponent::GetAbility (const TSubclassOf<URAbility> Ability_)
 {
-   if (!ensure (Ability_)) return nullptr;
+   if (!ensure (IsValid (Ability_))) return nullptr;
    URAbility* Result = nullptr;
-   if (Ability_) {
-      TArray<URAbility*> AbilityList;
-      GetOwner ()->GetComponents (AbilityList);
-      for (URAbility* ItAbility : AbilityList) {
-         if (ItAbility->GetClass () == Ability_) {
-            Result = ItAbility;
-            break;
-         }
+   TArray<URAbility*> AbilityList;
+   GetOwner ()->GetComponents (AbilityList);
+   for (URAbility* ItAbility : AbilityList) {
+      if (ItAbility->GetClass () == Ability_) {
+         Result = ItAbility;
+         break;
       }
    }
+
    return Result;
 }
 
@@ -122,14 +120,14 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (AbilityPoints > 0)) return false;
 
-   if (!ensure (Ability_)) return false;
+   if (!ensure (IsValid (Ability_))) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
-   if (!ensure (!Ability)) return false;
+   if (!ensure (!IsValid (Ability))) return false;
 
    Ability = URUtil::AddComponent<URAbility> (GetOwner (), Ability_);
-   if (Ability) {
+   if (IsValid (Ability)) {
       AbilityPoints--;
-      OnAbilityPointUpdated.Broadcast ();
+      ReportAbilityPointUpdated ();
    }
    return Ability != nullptr;
 }
@@ -137,21 +135,26 @@ bool URAbilityMgrComponent::AddAbility (const TSubclassOf<URAbility> Ability_)
 bool URAbilityMgrComponent::RmAbility (const TSubclassOf<URAbility> Ability_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (Ability_)) return false;
+   if (!ensure (IsValid (Ability_))) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
-   if (!ensure (Ability)) return false;
+   if (!ensure (IsValid (Ability))) return false;
 
    AbilityPoints++;
-   OnAbilityPointUpdated.Broadcast ();
+   ReportAbilityPointUpdated ();
 
    Ability->DestroyComponent ();
    return true;
 }
 
+void URAbilityMgrComponent::ReportAbilityListUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnAbilityListUpdated.IsBound ()) OnAbilityListUpdated.Broadcast ();
+}
 
 //=============================================================================
 //                 Server versions of the functions
 //=============================================================================
+
 void URAbilityMgrComponent::AddAbility_Server_Implementation (TSubclassOf<URAbility> Ability)
 {
    AddAbility (Ability);
@@ -190,6 +193,7 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
    for (URAbility* ItAbility : AbilityList) {
       ItAbility->DestroyComponent ();
    }
+   AbilityList.Empty ();
 
    // Serialize Data
    TArray<FString> LoadAbiltities;
@@ -197,7 +201,7 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
    LoadData << AbilityPoints;
 
    // --- Create Abilities of Class.
-   for (FString ItAbility : LoadAbiltities) {
+   for (const FString &ItAbility : LoadAbiltities) {
       // --- Copied from FEditorClassUtils::GetClassFromString
       UClass* Class = FindObject<UClass> (nullptr, *ItAbility);
       if (!Class) {
@@ -208,5 +212,7 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
          AddAbility (Class);
       }
    }
+
+   ReportAbilityPointUpdated ();
 }
 

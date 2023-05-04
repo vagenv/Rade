@@ -22,10 +22,7 @@
 		{
 			"Name": "RTargetableLib",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine"
-			]
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "ROptionsLib",
@@ -34,6 +31,11 @@
 		},
 		{
 			"Name": "RSessionManagerLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RUILib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
@@ -217,6 +219,18 @@
 		{
 			"Name": "EditorTests",
 			"Enabled": true
+		},
+		{
+			"Name": "VisualStudioTools",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/362651520df94e4fa65492dbcba44ae2",
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
 		}
+	],
+	"TargetPlatforms": [
+		"Linux",
+		"Windows"
 	]
 }

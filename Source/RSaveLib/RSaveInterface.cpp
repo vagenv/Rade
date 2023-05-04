@@ -6,8 +6,8 @@
 
 void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId)
 {
-   if (!ensure (WorldContextObject)) return;
-   if (!ensure (!SaveId.IsEmpty ())) return;
+   if (!ensure (IsValid (WorldContextObject))) return;
+   if (!ensure (!SaveId.IsEmpty ()))           return;
 
    const UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (World_)) return;
@@ -24,7 +24,7 @@ void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FStrin
 
 void IRSaveInterface::OnSave_Internal ()
 {
-   if (!SaveMgr) return;
+   if (!IsValid (SaveMgr)) return;
    FBufferArchive ToBinary;
 
    OnSave (ToBinary);
@@ -35,7 +35,7 @@ void IRSaveInterface::OnSave_Internal ()
 
 void IRSaveInterface::OnLoad_Internal ()
 {
-   if (!SaveMgr) return;
+   if (!IsValid (SaveMgr)) return;
    // Get binary data from save file
    TArray<uint8> BinaryArray;
    if (!ensure (SaveMgr->GetBuffer (ObjectSaveId, BinaryArray))) return;

@@ -49,19 +49,6 @@ void URInventoryComponent::BeginPlay()
                *ItItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
       }
    }
-
-   if (bCheckClosestPickup) {
-      world->GetTimerManager ().SetTimer (TimerClosestPickup,
-         this, &URInventoryComponent::CheckClosestPickup, CheckClosestDelay, true);
-   }
-}
-
-void URInventoryComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
-{
-   Super::EndPlay (EndPlayReason);
-
-	// Ensure the fuze timer is cleared by using the timer handle
-	GetWorld ()->GetTimerManager ().ClearTimer (TimerClosestPickup);
 }
 
 //=============================================================================
@@ -75,7 +62,12 @@ TArray<FRItemData> URInventoryComponent::GetItems () const
 
 void URInventoryComponent::OnRep_Items ()
 {
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
+}
+
+void URInventoryComponent::ReportInventoryUpdate () const
+{
+   if (R_IS_VALID_WORLD && OnInventoryUpdated.IsBound ()) OnInventoryUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -163,10 +155,7 @@ bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
 void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                           FRItemData NewItem) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Inventory pointer");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->AddItem (NewItem);
 }
 bool URInventoryComponent::AddItem (FRItemData NewItem)
@@ -195,7 +184,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
          if (NewItem.Count <= ItItemCountLeft) {
             ItItem.Count += NewItem.Count;
             CalcWeight ();
-            if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+            ReportInventoryUpdate ();
             return true;
          }
 
@@ -223,14 +212,13 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
    // Limit number of slots used
    if (Items.Num () >= SlotsMax) {
       CalcWeight ();
-      if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
-      R_LOG ("Maximum number of inventory slots reached");
+      ReportInventoryUpdate ();
       return false;
    }
 
    Items.Add (NewItem);
    CalcWeight ();
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
    return true;
 }
 
@@ -241,10 +229,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryComponent *SrcInventory,
                                                                    int32 ItemIdx, int32 Count) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Inventory pointer");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->RemoveItem_Index (ItemIdx, Count);
 }
 bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
@@ -252,7 +237,8 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
    R_RETURN_IF_NOT_ADMIN_BOOL;
 
    if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG ("Invalid Item index");
+      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
       return false;
    }
 
@@ -263,7 +249,7 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
    }
 
    CalcWeight ();
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
    return true;
 }
 
@@ -274,10 +260,7 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 void URInventoryComponent::RemoveItem_Arch_Server_Implementation (URInventoryComponent *SrcInventory,
                                                                   const FRItemDataHandle &RmItemHandle) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Inventory pointer");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->RemoveItem_Arch (RmItemHandle);
 }
 bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle)
@@ -295,10 +278,7 @@ bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle
 void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryComponent *SrcInventory,
                                                                   FRItemData RmItemData) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Inventory pointer");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->RemoveItem_Data (RmItemData);
 }
 
@@ -330,23 +310,14 @@ bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
 void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *SrcInventory,
                                                               URInventoryComponent *DstInventory) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Source Inventory");
-      return;
-   }
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (IsValid (DstInventory))) return;
    SrcInventory->TransferAll (DstInventory);
 }
 bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
-      return false;
-   }
+   if (!ensure (IsValid (DstInventory))) return false;
    int nItems = Items.Num ();
 
    bool success = true;
@@ -365,14 +336,8 @@ void URInventoryComponent::TransferItem_Server_Implementation (URInventoryCompon
                                                                int32 SrcItemIdx,
                                                                int32 SrcItemCount) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Source Inventory");
-      return;
-   }
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (IsValid (DstInventory))) return;
    SrcInventory->TransferItem (DstInventory, SrcItemIdx, SrcItemCount);
 }
 bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
@@ -380,10 +345,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
                                          int32 SrcItemCount)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
-      return false;
-   }
+   if (!ensure (IsValid (DstInventory))) return false;
 
    if (!Items.IsValidIndex (SrcItemIdx)) {
       R_LOG_PRINTF ("Invalid Source Inventory Item Index [%d]. Must be [0-%d]",
@@ -436,10 +398,7 @@ void URInventoryComponent::CalcWeight ()
 void URInventoryComponent::UseItem_Server_Implementation (URInventoryComponent *DstInventory,
                                                           int32 ItemIdx) const
 {
-   if (!DstInventory) {
-      R_LOG ("Invalid Destination Inventory");
-      return;
-   }
+   if (!ensure (IsValid (DstInventory))) return;
    DstInventory->UseItem (ItemIdx);
 }
 bool URInventoryComponent::UseItem (int32 ItemIdx)
@@ -469,10 +428,7 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                            int32 ItemIdx, int32 Count) const
 {
-   if (!SrcInventory) {
-      R_LOG ("Invalid Source Inventory");
-      return;
-   }
+   if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->DropItem (ItemIdx, Count);
 }
 ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
@@ -536,61 +492,6 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 }
 
 //=============================================================================
-//                 Pickup
-//=============================================================================
-
-bool URInventoryComponent::Pickup_Add (const ARItemPickup* Pickup)
-{
-   if (Pickup == nullptr) return false;
-   CurrentPickups.Add (Pickup);
-   if (R_IS_VALID_WORLD) OnPickupListUpdated.Broadcast ();
-   return true;
-}
-
-bool URInventoryComponent::Pickup_Rm (const ARItemPickup* Pickup)
-{
-   if (Pickup == nullptr) return false;
-   CurrentPickups.RemoveSingle (Pickup);
-   if (R_IS_VALID_WORLD) OnPickupListUpdated.Broadcast ();
-   return true;
-}
-
-const ARItemPickup* URInventoryComponent::GetClosestPickup () const
-{
-   return ClosestPickup;
-}
-
-void URInventoryComponent::CheckClosestPickup ()
-{
-   FVector PlayerLoc = GetOwner ()->GetActorLocation ();
-
-   FVector              newClosestPickupLoc;
-   const ARItemPickup * newClosestPickup = nullptr;
-
-   for (const ARItemPickup *ItPickup : CurrentPickups) {
-      if (!ensure (ItPickup)) continue;
-
-      FVector ItLoc = ItPickup->GetActorLocation ();
-
-      if (!newClosestPickup) {
-         newClosestPickup    = ItPickup;
-         newClosestPickupLoc = ItLoc;
-      }
-
-      if (FVector::Distance (PlayerLoc, ItLoc) < FVector::Distance (PlayerLoc, newClosestPickupLoc)) {
-         newClosestPickup    = ItPickup;
-         newClosestPickupLoc = ItLoc;
-      }
-   }
-
-   if (newClosestPickup != ClosestPickup) {
-      ClosestPickup = newClosestPickup;
-      if (R_IS_VALID_WORLD) OnClosestPickupUpdated.Broadcast ();
-   }
-}
-
-
-//=============================================================================
 //                 Save / Load
 //=============================================================================
 
@@ -624,6 +525,6 @@ void URInventoryComponent::OnLoad (FMemoryReader &LoadData)
 
    // Update inventory
    Items = LoadedItems;
-   if (R_IS_VALID_WORLD) OnInventoryUpdated.Broadcast ();
+   ReportInventoryUpdate ();
 }
 

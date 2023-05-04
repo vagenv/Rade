@@ -12,6 +12,7 @@ public class RDamageLib : ModuleRules
          "CoreUObject",
          "Engine",
          "RUtilLib",
+         "RUILib",
       });
    }
 }

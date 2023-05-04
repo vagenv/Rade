@@ -42,7 +42,7 @@ void URStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 
    DOREPLIFETIME (URStatusMgrComponent, bDead);
    DOREPLIFETIME (URStatusMgrComponent, PassiveEffects);
-   DOREPLIFETIME (URStatusMgrComponent, Resistence);
+   DOREPLIFETIME (URStatusMgrComponent, Resistance);
 }
 
 //=============================================================================
@@ -92,17 +92,23 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 void URStatusMgrComponent::SetDead (bool Dead)
 {
    R_RETURN_IF_NOT_ADMIN;
-   bool WasDead = bDead;
+   if (Dead == bDead) return;
    bDead = Dead;
 
    URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
 
    // Broadcast only after value has been changed;
-   if (WasDead && !Dead) {
+   if (!Dead) {
       // --- Reset to original values
       Health  = Start_Health;
       Mana    = Start_Mana;
       Stamina = Start_Stamina;
+
+      ReportRevive ();
+      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+   }
+
+   if (Dead) {
 
       // Stop active effects
       TArray<URActiveStatusEffect*> StillActiveEffects;
@@ -111,12 +117,8 @@ void URStatusMgrComponent::SetDead (bool Dead)
          ItEffect->Stop ();
       }
 
-      if (R_IS_VALID_WORLD) OnRevive.Broadcast ();
-      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
-   }
-   if (!WasDead && Dead) {
       Health.Current = 0;
-      if (R_IS_VALID_WORLD) OnDeath.Broadcast ();
+      ReportDeath ();
    }
 }
 
@@ -130,14 +132,24 @@ void URStatusMgrComponent::OnRep_Dead ()
    if (!R_IS_VALID_WORLD) return;
    if (bDead) {
       Health.Current = 0;
-      OnDeath.Broadcast ();
+      ReportDeath ();
    } else {
       // --- Reset to original values
       Health  = Start_Health;
       Mana    = Start_Mana;
       Stamina = Start_Stamina;
-      OnRevive.Broadcast ();
+      ReportRevive ();
    }
+}
+
+void URStatusMgrComponent::ReportDeath ()
+{
+   if (R_IS_VALID_WORLD && OnDeath.IsBound ()) OnDeath.Broadcast ();
+}
+
+void URStatusMgrComponent::ReportRevive ()
+{
+   if (R_IS_VALID_WORLD && OnRevive.IsBound ()) OnRevive.Broadcast ();
 }
 
 //=============================================================================
@@ -149,15 +161,15 @@ void URStatusMgrComponent::RecalcStatus ()
    R_RETURN_IF_NOT_ADMIN;
    RecalcStatusValues ();
 
-   SetHealth (Health);
+   SetHealth  (Health);
    SetStamina (Stamina);
-   SetMana (Mana);
+   SetMana    (Mana);
 }
 
 void URStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (WorldStatusMgr)) return;
+   if (!ensure (IsValid (WorldStatusMgr))) return;
 
    // --- Status
    Health  = Start_Health;
@@ -166,25 +178,21 @@ void URStatusMgrComponent::RecalcStatusValues ()
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::FLAT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Value;
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Value;
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Flat;
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Flat;
    }
    // Percentage
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.Scale == ERStatusEffectScale::PERCENT) {
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Value) / 100.);
-         if (ItEffect.Value.Target == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Value) / 100.);
-      }
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Percent) / 100.);
+      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Percent) / 100.);
    }
 }
 
@@ -272,23 +280,7 @@ bool URStatusMgrComponent::RollEvasion () const
 
 TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects () const
 {
-   TArray<FRPassiveStatusEffect> Result;
-   for (const FRPassiveStatusEffectWithTag& ItEffects : PassiveEffects) {
-      bool found = false;
-      // Combine
-      for (FRPassiveStatusEffect& ItRes : Result) {
-         if (  ItRes.Target == ItEffects.Value.Target
-            && ItRes.Scale  == ItEffects.Value.Scale)
-         {
-            found = true;
-            ItRes.Value += ItEffects.Value.Value;
-            break;
-         }
-      }
-      // Add new entry
-      if (!found) Result.Add (ItEffects.Value);
-   }
-   return Result;
+   return URPassiveStatusEffectUtilLibrary::MergeEffects (PassiveEffects);
 }
 
 TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffectsWithTag () const
@@ -312,7 +304,7 @@ bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<F
    }
 
    RecalcStatus ();
-   OnPassiveEffectsUpdated.Broadcast ();
+   ReporPassiveEffectsUpdated ();
    return true;
 }
 
@@ -334,43 +326,73 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
    }
 
    RecalcStatus ();
-   OnPassiveEffectsUpdated.Broadcast ();
+   ReporPassiveEffectsUpdated ();
    return true;
 }
 
 void URStatusMgrComponent::OnRep_PassiveEffects ()
 {
-   OnPassiveEffectsUpdated.Broadcast ();
+   ReporPassiveEffectsUpdated ();
+}
+
+void URStatusMgrComponent::ReporPassiveEffectsUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnPassiveEffectsUpdated.IsBound ()) OnPassiveEffectsUpdated.Broadcast ();
 }
 
 //==========================================================================
 //                 Active Effect
 //==========================================================================
 
-bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclassOf<URActiveStatusEffect> Effect_)
+
+bool URStatusMgrComponent::ApplyActiveStatusEffect (
+   AActor* Causer_,
+   AActor* Target_,
+   const TSubclassOf<URActiveStatusEffect> Effect_)
+{
+   // --- Check Values
+   if (!ensure (IsValid (Causer_))) return false;
+   if (!ensure (IsValid (Target_))) return false;
+   if (!ensure (IsValid (Effect_))) return false;
+
+   UWorld* World = Target_->GetWorld ();
+   if (!World)                            return false;
+   URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target_);
+   if (!ensure (StatusMgr))               return false;
+
+   return StatusMgr->AddActiveStatusEffect (Causer_, Effect_);
+}
+
+
+bool URStatusMgrComponent::AddActiveStatusEffect (
+   AActor* Causer_,
+   const TSubclassOf<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (Causer))  return false;
-   if (!ensure (Effect_)) return false;
+   if (!ensure (IsValid (Causer_))) return false;
+   if (!ensure (IsValid (Effect_))) return false;
+   if (IsDead ())                   return false;
 
    TArray<URActiveStatusEffect*> CurrentEffects;
    GetOwner()->GetComponents (CurrentEffects);
    for (URActiveStatusEffect* ItActiveEffect : CurrentEffects) {
-      if (!ItActiveEffect) continue;
+      if (!IsValid (ItActiveEffect)) continue;
       if (ItActiveEffect->GetClass () == Effect_) {
+         ItActiveEffect->Causer = Causer_;
          ItActiveEffect->Refresh ();
          return true;
       }
    }
 
    URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), Effect_);
-   if (Effect) {
-      Effect->Causer = Causer;
-      if (WorldStatusMgr)
-         WorldStatusMgr->ReportStatusEffect (Effect, Causer, GetOwner ());
-   }
+   if (Effect) Effect->Causer = Causer_;
 
    return Effect != nullptr;
+}
+
+void URStatusMgrComponent::ReportActiveEffectsUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnActiveEffectsUpdated.IsBound ()) OnActiveEffectsUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -379,34 +401,19 @@ bool URStatusMgrComponent::AddActiveStatusEffect (AActor* Causer, const TSubclas
 
 TArray<FRDamageResistance> URStatusMgrComponent::GetResistance () const
 {
-   TArray<FRDamageResistance> Result;
-   for (const FRDamageResistanceWithTag& ItResistance : Resistence) {
-      bool found = false;
-      // Combine
-      for (FRDamageResistance& ItRes : Result) {
-         if (ItRes.DamageType == ItResistance.Value.DamageType) {
-            found = true;
-            ItRes.Flat    += ItResistance.Value.Flat;
-            ItRes.Percent += ItResistance.Value.Percent;
-            break;
-         }
-      }
-      // Add new entry
-      if (!found) Result.Add (ItResistance.Value);
-   }
-   return Result;
+   return URDamageUtilLibrary::MergeResistance (Resistance);
 }
 
 TArray<FRDamageResistanceWithTag> URStatusMgrComponent::GetResistanceWithTag () const
 {
-   return Resistence;
+   return Resistance;
 }
 
 FRDamageResistance URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageType> const DamageType) const
 {
    FRDamageResistance Result;
    if (!ensure (DamageType)) return Result;
-   for (const FRDamageResistanceWithTag& ItResistance : Resistence) {
+   for (const FRDamageResistanceWithTag& ItResistance : Resistance) {
       if (DamageType == ItResistance.Value.DamageType) {
          Result.Flat    += ItResistance.Value.Flat;
          Result.Percent += ItResistance.Value.Percent;
@@ -428,9 +435,9 @@ void URStatusMgrComponent::AddResistance (const FString &Tag, const TArray<FRDam
       FRDamageResistanceWithTag newRes;
       newRes.Tag   = Tag;
       newRes.Value = ItAddValue;
-      Resistence.Add (newRes);
+      Resistance.Add (newRes);
    }
-   OnResistanceUpdated.Broadcast ();
+   ReportResistanceUpdated ();
 }
 
 void URStatusMgrComponent::RmResistance (const FString &Tag)
@@ -439,8 +446,8 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
    if (!ensure (!Tag.IsEmpty ())) return;
 
    TArray<int32> ToRemove;
-   for (int32 iResistance = 0; iResistance < Resistence.Num (); iResistance++) {
-      const FRDamageResistanceWithTag& ItResistance = Resistence[iResistance];
+   for (int32 iResistance = 0; iResistance < Resistance.Num (); iResistance++) {
+      const FRDamageResistanceWithTag& ItResistance = Resistance[iResistance];
       if (ItResistance.Tag == Tag) ToRemove.Add (iResistance);
    }
    // Nothing to remove
@@ -448,14 +455,19 @@ void URStatusMgrComponent::RmResistance (const FString &Tag)
 
    // Remove in reverse order;
    for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
-      Resistence.RemoveAt (ToRemove[iToRemove]);
+      Resistance.RemoveAt (ToRemove[iToRemove]);
    }
-   OnResistanceUpdated.Broadcast ();
+   ReportResistanceUpdated ();
 }
 
-void URStatusMgrComponent::OnRep_Resistence ()
+void URStatusMgrComponent::OnRep_Resistance ()
 {
-   OnResistanceUpdated.Broadcast ();
+   ReportResistanceUpdated ();
+}
+
+void URStatusMgrComponent::ReportResistanceUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnResistanceUpdated.IsBound ()) OnResistanceUpdated.Broadcast ();
 }
 
 //=============================================================================
@@ -469,23 +481,21 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
                                       AActor*            Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (Target)) return;
-   if (!ensure (Type_))  return;
-   if (!ensure (Causer)) return;
+   if (!ensure (IsValid (Target))) return;
+   if (!ensure (Type_))            return;
+   if (!ensure (IsValid (Causer))) return;
 
    if (!IsDead ()) {
       const URDamageType* Type = Cast<URDamageType>(Type_);
-      // Check evasion
-      if (Type) {
+      // Check if RDamage was applied
+      if (ensure (Type)) {
          // Check if evaded
          if (Type->Evadeable && RollEvasion ()) {
             ReportREvade (Amount, Type, Causer);
             return;
          }
-      } else {
-         R_LOG_PRINTF ("Non-URDamageType class of Damage applied. [%.1f] Damage applied directly.", Amount);
+         ReportRDamage (Amount, Type, Causer);
       }
-      ReportRDamage (Amount, Type, Causer);
    }
 }
 
@@ -493,19 +503,19 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
                                                          const URDamageType* Type,
                                                          AActor*             Causer)
 {
-   if (!ensure (Causer)) return;
+   if (!ensure (IsValid (Causer))) return;
 
    if (Type) {
-      FRDamageResistance Resistance = GetResistanceFor (Type->GetClass ());
+      FRDamageResistance DamageResistance = GetResistanceFor (Type->GetClass ());
 
-      Amount = Type->CalcDamage (Amount, Resistance);
-      Type->BP_AnyDamage (GetOwner (), Resistance, Amount, Causer);
+      Amount = Type->CalcDamage (Amount, DamageResistance);
+      Type->BP_AnyDamage (GetOwner (), DamageResistance, Amount, Causer);
       //R_LOG_PRINTF ("Final Damage [%.1f] Resistance:[%1.f]", Amount, Resistance);
    }
 
    UseHealth (Amount);
 
-   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
+   URWorldDamageMgr* DamageMgr = URWorldDamageMgr::GetInstance (this);
    if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
 
    if (!Health.Current) {
@@ -513,7 +523,7 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
       if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
    }
 
-   if (R_IS_VALID_WORLD) OnAnyRDamage.Broadcast (Amount, Type, Causer);
+   if (R_IS_VALID_WORLD && OnAnyRDamage.IsBound ()) OnAnyRDamage.Broadcast (Amount, Type, Causer);
 }
 
 void URStatusMgrComponent::ReportREvade_Implementation (float               Amount,
@@ -521,6 +531,6 @@ void URStatusMgrComponent::ReportREvade_Implementation (float               Amou
                                                         AActor*             Causer)
 {
    if (!ensure (Causer)) return;
-   if (R_IS_VALID_WORLD) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
+   if (R_IS_VALID_WORLD && OnEvadeRDamage.IsBound ()) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
 }
 

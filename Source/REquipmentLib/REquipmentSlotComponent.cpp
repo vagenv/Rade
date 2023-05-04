@@ -23,7 +23,7 @@ void UREquipmentSlotComponent::GetLifetimeReplicatedProps (TArray<FLifetimePrope
 
 void UREquipmentSlotComponent::OnRep_Slot ()
 {
-   if (R_IS_VALID_WORLD) OnSlotUpdated.Broadcast ();
+   ReportOnSlotUpdated ();
 }
 
 void UREquipmentSlotComponent::BeginPlay()
@@ -34,5 +34,10 @@ void UREquipmentSlotComponent::BeginPlay()
 void UREquipmentSlotComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    Super::EndPlay (EndPlayReason);
+}
+
+void UREquipmentSlotComponent::ReportOnSlotUpdated ()
+{
+   if (R_IS_VALID_WORLD && OnSlotUpdated.IsBound ()) OnSlotUpdated.Broadcast ();
 }
 

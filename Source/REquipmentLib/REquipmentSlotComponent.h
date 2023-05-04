@@ -4,7 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "REquipmentTypes.h"
-#include "RUtilLib/RUIDescription.h"
+#include "RUILib/RUIDescription.h"
 #include "REquipmentSlotComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentSlotEvent);
@@ -35,7 +35,13 @@ public:
    UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       FREquipmentData EquipmentData;
 
-   // Delegate when slot updated
+   //==========================================================================
+   //                 Events
+   //==========================================================================
+
+   UFUNCTION()
+      void ReportOnSlotUpdated ();
+
    UPROPERTY(BlueprintAssignable, Category = "Rade|Equipment")
       FREquipmentSlotEvent OnSlotUpdated;
 };
