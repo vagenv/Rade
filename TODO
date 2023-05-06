@@ -69,10 +69,17 @@ Unreal Common UI UMG.
 Save File Versioning
 =================================================
 
-SaveFolder:
+SaveSystem (Sync + Async)
+- Save
+- Load
+- Delete
+- List
+
+
+SaveSlot:
 - .data
 - .json
-- .png
+- .png / .bmp / .jpg
 
 .json / .txt [Mapping with optional values]
 - version
