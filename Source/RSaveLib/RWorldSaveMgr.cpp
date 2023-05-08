@@ -22,10 +22,7 @@ URWorldSaveMgr* URWorldSaveMgr::GetInstance (const UObject* WorldContextObject)
 
 URWorldSaveMgr::URWorldSaveMgr ()
 {
-   //OnAsyncSaveDelegate.BindUObject (this, &URWorldSaveMgr::AsyncSaveComplete);
-   //OnAsyncLoadDelegate.BindUObject (this, &URWorldSaveMgr::AsyncLoadComplete);
 }
-
 
 void URWorldSaveMgr::ReportSave (URSaveGame* SaveGame)
 {
@@ -43,7 +40,6 @@ void URWorldSaveMgr::ReportSaveListUpdated ()
 {
    if (R_IS_VALID_WORLD && OnSaveListUpdated.IsBound ()) OnSaveListUpdated.Broadcast ();
 }
-
 
 //=============================================================================
 //                   Save
@@ -104,17 +100,45 @@ bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SaveMeta)
    return true;
 }
 
-bool URWorldSaveMgr::RemoveSync (const FRSaveGameMeta &SaveMeta)
+URemoveSaveGameSlotAsync* URemoveSaveGameSlotAsync::RemoveSaveGameSlotAsync (
+   UObject* WorldContextObject,
+   const FRSaveGameMeta &SaveMeta)
 {
-   IFileManager& FileMgr = IFileManager::Get ();
-   const FString SaveDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
+	URemoveSaveGameSlotAsync* BlueprintNode = NewObject<URemoveSaveGameSlotAsync>();
+   BlueprintNode->WorldContextObject = WorldContextObject;
+   BlueprintNode->SaveMeta           = SaveMeta;
+	return BlueprintNode;
+}
 
-   if (!FileMgr.DirectoryExists (*SaveDir)) return false;
-  
-   if (!FileMgr.DeleteDirectory (*SaveDir, true, true)) return false;
+void URemoveSaveGameSlotAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
-   ReportSaveListUpdated ();
+      // Perform long sync operation
+      IFileManager& FileMgr = IFileManager::Get ();
+      const FString SaveDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
 
-   return true;
+      bool success = false;
+      if (FileMgr.DirectoryExists (*SaveDir)) {
+         if (FileMgr.DeleteDirectory (*SaveDir, true, true))  {
+            success = true;
+         }
+      }
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this, success] () {
+
+         if (success) {
+            if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
+               Mgr->ReportSaveListUpdated ();
+            }
+         }
+
+         // Report operation end
+         Loaded.Broadcast (success);
+         WorldContextObject = nullptr;
+      });
+   });
 }
 
