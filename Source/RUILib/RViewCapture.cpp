@@ -76,13 +76,12 @@ void ARViewCapture::CapturePlayersView (ERActionResult &Outcome, const int32 Res
    Outcome = CapturePlayersView (Resolution, ColorData) ? ERActionResult::Success : ERActionResult::Failure;
 }
 
-TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
+bool ARViewCapture::GetScreenShot (UObject* WorldContextObject, TArray<uint8> &TextureData)
 {
-   TArray<uint8> Result;
-   if (!ensure (IsValid (WorldContextObject))) return Result;
+   if (!ensure (IsValid (WorldContextObject))) return false;
 
    UWorld* World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return Result;
+   if (!ensure (World)) return false;
 
    // 1. Create a temporary actor to capture the player's view.
    ARViewCapture* ViewCaptureActor = World->SpawnActor<ARViewCapture>();
@@ -101,13 +100,13 @@ TArray<uint8> ARViewCapture::GetScreenShot (UObject* WorldContextObject)
 
    // Pre-allocate enough memory to fit our data. We reserve space before adding uninitialized elements to avoid array
    // growth operations and we add uninitialized elements to increase array element count properly.
-   Result.Reserve (BufferSize);
-   Result.AddUninitialized (BufferSize);
+   TextureData.Reserve (BufferSize);
+   TextureData.AddUninitialized (BufferSize);
 
    // Copy BufferSize number of bytes starting from the memory address where ColorArray's bulk data starts,
    // to a space in memory starting from the memory address where BinaryTexture's bulk data starts.
-   FMemory::Memcpy (Result.GetData (), ColorArray.GetData (), BufferSize);
+   FMemory::Memcpy (TextureData.GetData (), ColorArray.GetData (), BufferSize);
 
-   return Result;
+   return true;
 }
 

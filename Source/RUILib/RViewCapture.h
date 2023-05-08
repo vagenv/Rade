@@ -41,6 +41,6 @@ public:
              Category = "Rade|UI",
                meta = (HidePin          = "WorldContextObject",
                        DefaultToSelf    = "WorldContextObject"))
-		static TArray<uint8> GetScreenShot (UObject* WorldContextObject);
+		static bool GetScreenShot (UObject* WorldContextObject, TArray<uint8> &TextureData);
 };
 
