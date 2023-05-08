@@ -57,16 +57,16 @@ public:
    
    // Get Save slots list
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-		static void GetAllSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result);
+		static void ListSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result);
 
 
-   // Get Save slots list
+   // Read save slot image
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-		static bool ReadSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary);
+		static bool GetSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary);
 };
 
 UCLASS()
-class RSAVELIB_API UReadSaveGameSlotImageAsync : public UBlueprintAsyncActionBase
+class RSAVELIB_API UGetSaveGameSlotImageAsync : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 public:
@@ -74,7 +74,7 @@ public:
 	UFUNCTION(BlueprintCallable,
              meta = (BlueprintInternalUseOnly = "true",
                      WorldContext = "WorldContextObject"))
-	   static UReadSaveGameSlotImageAsync* ReadSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
+	   static UGetSaveGameSlotImageAsync* GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
@@ -94,7 +94,7 @@ protected:
 
 
 UCLASS()
-class RSAVELIB_API URGetSaveGameSlotsAsync : public UBlueprintAsyncActionBase
+class RSAVELIB_API URListSaveGameSlotsAsync : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 public:
@@ -102,7 +102,7 @@ public:
 	UFUNCTION(BlueprintCallable,
              meta = (BlueprintInternalUseOnly = "true",
                      WorldContext = "WorldContextObject"))
-	   static URGetSaveGameSlotsAsync* GetAllSaveGameSlotsAsync ();
+	   static URListSaveGameSlotsAsync* ListSaveGameSlotsAsync ();
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);

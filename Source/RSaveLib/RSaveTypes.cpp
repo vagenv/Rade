@@ -25,7 +25,6 @@ FString FRSaveGameMeta::GetSaveDir ()
    return AbsPath;
 }
 
-
 bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObject)
 {
    if (!IsValid (WorldContextObject)) return false;
@@ -88,7 +87,7 @@ void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
 
    DirList.Sort ();
 
-   //for (const FString &It : DirList) {
+   // Iterate in reverse order
    for (int i = DirList.Num () - 1; i >= 0; i--) {
       const FString &It = DirList[i];
 
@@ -124,12 +123,12 @@ void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
 //                   Function Library task
 //=============================================================================
 
-void URSaveGameMetaLibrary::GetAllSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result)
+void URSaveGameMetaLibrary::ListSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result)
 {
    FRSaveGameMeta::List (Result);
 }
 
-bool URSaveGameMetaLibrary::ReadSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary)
+bool URSaveGameMetaLibrary::GetSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary)
 {
    IFileManager& FileMgr = IFileManager::Get ();
    FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotMeta.SlotName + "/";
@@ -148,27 +147,27 @@ bool URSaveGameMetaLibrary::ReadSaveGameSlotImageSync (const FRSaveGameMeta &Slo
 //                   Read image data
 //=============================================================================
 
-UReadSaveGameSlotImageAsync* UReadSaveGameSlotImageAsync::ReadSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta)
+UGetSaveGameSlotImageAsync* UGetSaveGameSlotImageAsync::GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta)
 {
-	UReadSaveGameSlotImageAsync* BlueprintNode = NewObject<UReadSaveGameSlotImageAsync>();
+	UGetSaveGameSlotImageAsync* BlueprintNode = NewObject<UGetSaveGameSlotImageAsync>();
    BlueprintNode->SlotMeta = SlotMeta;
 	return BlueprintNode;
 }
 
-void UReadSaveGameSlotImageAsync::Activate ()
+void UGetSaveGameSlotImageAsync::Activate ()
 {
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
       // Perform long sync operation
-      this->success = URSaveGameMetaLibrary::ReadSaveGameSlotImageSync (this->SlotMeta, this->Result);
+      success = URSaveGameMetaLibrary::GetSaveGameSlotImageSync (SlotMeta, Result);
 
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this] () {
 
          // Report operation end
-         this->Loaded.Broadcast (this->Result, this->success);
-         this->Result.Empty ();
+         Loaded.Broadcast (Result, success);
+         Result.Empty ();
       });
    });
 }
@@ -178,20 +177,20 @@ void UReadSaveGameSlotImageAsync::Activate ()
 //=============================================================================
 
 
-URGetSaveGameSlotsAsync* URGetSaveGameSlotsAsync::GetAllSaveGameSlotsAsync ()
+URListSaveGameSlotsAsync* URListSaveGameSlotsAsync::ListSaveGameSlotsAsync ()
 {
-	URGetSaveGameSlotsAsync* BlueprintNode = NewObject<URGetSaveGameSlotsAsync>();
+	URListSaveGameSlotsAsync* BlueprintNode = NewObject<URListSaveGameSlotsAsync>();
 	return BlueprintNode;
 }
 
-void URGetSaveGameSlotsAsync::Activate ()
+void URListSaveGameSlotsAsync::Activate ()
 {
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
       // Perform long sync operation
       TArray<FRSaveGameMeta> Result;
-      URSaveGameMetaLibrary::GetAllSaveGameSlotsSync (Result);
+      URSaveGameMetaLibrary::ListSaveGameSlotsSync (Result);
 
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, Result] () {
