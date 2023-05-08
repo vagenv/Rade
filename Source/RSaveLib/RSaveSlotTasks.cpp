@@ -138,40 +138,6 @@ UCreateSaveGameSlotAsync* UCreateSaveGameSlotAsync::CreateSaveGameSlotAsync (
 
 void UCreateSaveGameSlotAsync::Activate ()
 {
-   /*
-   FRSaveGameMeta SaveMeta;
-   if (!FRSaveGameMeta::Create (SaveMeta, WorldContextObject)) {
-      return false;
-   }
-
-   // --- Create save object
-   UClass* SaveSlotClass = SaveClass ? SaveClass : URSaveGame::StaticClass ();
-   SaveGameObject = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (SaveSlotClass));
-
-
-   ReportSave (SaveGameObject);
-
-   TArray<uint8> ObjectBytes;
-   if (!UGameplayStatics::SaveGameToMemory (SaveGameObject, ObjectBytes)) {
-      SaveGameObject = nullptr;
-      return false;
-   }
-
-   FString SaveFilePath = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/save.data";
-
-   if (!FFileHelper::SaveArrayToFile (ObjectBytes, *SaveFilePath)) {
-      SaveGameObject = nullptr;
-      return false;
-   }
-
-   ReportSaveListUpdated ();
-
-   SaveGameObject = nullptr;
-   return true;
-
-   */
-
-   
    URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject);
    if (!Mgr) {
       return ReportEnd (false);
