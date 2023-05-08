@@ -104,18 +104,21 @@ public:
 	   static UGetSaveGameSlotImageAsync* GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
 
 
-   DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
 
    // Called when all save game slots image has been read
 	UPROPERTY(BlueprintAssignable)
-	   FReadSaveSlotImageEvent Loaded;
+	   FRReadSaveSlotImageEvent Loaded;
 
    // Execution point
 	virtual void Activate () override;
 
 protected:
-   FRSaveGameMeta SlotMeta;
-   TArray<uint8>  Result;
+   UPROPERTY()
+      FRSaveGameMeta SlotMeta;
+
+   UPROPERTY()
+      TArray<uint8>  ImageBinary;
 };
 
 // ============================================================================
@@ -134,11 +137,11 @@ public:
 	   static URListSaveGameSlotsAsync* ListSaveGameSlotsAsync ();
 
 
-   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
 
    // Called when all save game slots have been read
 	UPROPERTY(BlueprintAssignable)
-	   FGetSaveSlotsEvent Loaded;
+	   FRGetSaveSlotsEvent Loaded;
 
    // Execution point
 	virtual void Activate () override;
@@ -164,11 +167,11 @@ public:
                                                                 const FRSaveGameMeta &SaveMeta);
 
 
-   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveSaveSlotsEvent, bool, Success);
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRRemoveSaveSlotsEvent, bool, Success);
 
    // Called when all save game slots have been read
 	UPROPERTY(BlueprintAssignable)
-	   FRemoveSaveSlotsEvent Loaded;
+	   FRRemoveSaveSlotsEvent Loaded;
 
    // Execution point
 	virtual void Activate () override;

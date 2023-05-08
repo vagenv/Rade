@@ -124,16 +124,18 @@ void UGetSaveGameSlotImageAsync::Activate ()
 
       bool success = false;
       if (FileMgr.FileExists (*ImgFilePath)) {
-         if (FFileHelper::LoadFileToArray (Result, *ImgFilePath)){
+         if (FFileHelper::LoadFileToArray (ImageBinary, *ImgFilePath)){
             success = true;
          }
       }
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, success] () {
 
-         // Report operation end
-         Loaded.Broadcast (Result, success);
-         Result.Empty ();
+         // Report task end
+         Loaded.Broadcast (ImageBinary, success);
+
+         // --- Cleanup
+         ImageBinary.Empty ();
       });
    });
 }
@@ -160,7 +162,7 @@ void URListSaveGameSlotsAsync::Activate ()
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, Result] () {
 
-         // Report operation end
+         // Report task end
          this->Loaded.Broadcast (Result);
       });
    });
@@ -205,8 +207,10 @@ void URemoveSaveGameSlotAsync::Activate ()
             }
          }
 
-         // Report operation end
+         // Report task end
          Loaded.Broadcast (success);
+
+         // --- Cleanup
          WorldContextObject = nullptr;
       });
    });
