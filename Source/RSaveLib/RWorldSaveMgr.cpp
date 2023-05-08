@@ -102,7 +102,6 @@ bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SaveMeta)
    return true;
 }
 
-
 // ============================================================================
 //                   Get Save Slot Image binary data Async Task
 // ============================================================================
@@ -119,11 +118,18 @@ void UGetSaveGameSlotImageAsync::Activate ()
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
-      // Perform long sync operation
-      success = URSaveGameMetaLibrary::GetSaveGameSlotImageSync (SlotMeta, Result);
+      IFileManager& FileMgr = IFileManager::Get ();
+      FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotMeta.SlotName + "/";
+      FString ImgFilePath = SaveFileDir + "save.img";
 
+      bool success = false;
+      if (FileMgr.FileExists (*ImgFilePath)) {
+         if (FFileHelper::LoadFileToArray (Result, *ImgFilePath)){
+            success = true;
+         }
+      }
       // Schedule game thread and pass in result
-      AsyncTask (ENamedThreads::GameThread, [this] () {
+      AsyncTask (ENamedThreads::GameThread, [this, success] () {
 
          // Report operation end
          Loaded.Broadcast (Result, success);
@@ -149,7 +155,7 @@ void URListSaveGameSlotsAsync::Activate ()
 
       // Perform long sync operation
       TArray<FRSaveGameMeta> Result;
-      URSaveGameMetaLibrary::ListSaveGameSlotsSync (Result);
+      FRSaveGameMeta::List (Result);
 
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, Result] () {

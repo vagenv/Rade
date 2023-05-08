@@ -51,23 +51,3 @@ struct RSAVELIB_API FRSaveGameMeta
    static void List (TArray<FRSaveGameMeta> &SaveSlots);
 };
 
-// ============================================================================
-//                   Save Game Function Library
-// ============================================================================
-
-UCLASS()
-class RSAVELIB_API URSaveGameMetaLibrary : public UBlueprintFunctionLibrary
-{
-   GENERATED_BODY()
-public:
-   
-   // Get Save slots list
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-		static void ListSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result);
-
-
-   // Read save slot image
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-		static bool GetSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary);
-};
-

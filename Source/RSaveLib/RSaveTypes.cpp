@@ -118,27 +118,3 @@ void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
       Result.Add (MetaData);
    }
 }
-
-//=============================================================================
-//                   Function Library task
-//=============================================================================
-
-void URSaveGameMetaLibrary::ListSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result)
-{
-   FRSaveGameMeta::List (Result);
-}
-
-bool URSaveGameMetaLibrary::GetSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary)
-{
-   IFileManager& FileMgr = IFileManager::Get ();
-   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotMeta.SlotName + "/";
-   FString ImgFilePath = SaveFileDir + "save.img";
-   if (!FileMgr.FileExists (*ImgFilePath)) {
-      return false;
-   }
-
-   if (!FFileHelper::LoadFileToArray (ImageBinary, *ImgFilePath)){
-      return false;
-   }
-   return true;
-}

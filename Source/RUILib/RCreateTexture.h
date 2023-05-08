@@ -34,7 +34,6 @@ public:
 //                   Async Task
 // ============================================================================
 
-
 UCLASS()
 class RUILIB_API URCreateTextureAsync : public UBlueprintAsyncActionBase
 {

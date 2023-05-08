@@ -115,7 +115,6 @@ public:
 
 protected:
    FRSaveGameMeta SlotMeta;
-   bool           success = false;
    TArray<uint8>  Result;
 };
 
