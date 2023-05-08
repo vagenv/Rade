@@ -17,10 +17,6 @@ struct RSAVELIB_API FRSaveGameMeta
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString SlotName;
 
-   // Maybe should be hidden/disabled
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      int32 UserIndex = 0;
-
    // UI info
   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Map;
@@ -44,7 +40,10 @@ struct RSAVELIB_API FRSaveGameMeta
    // Creates a New instance with current date as name.
    static bool Create (FRSaveGameMeta &SaveMeta, UObject* WorldContextObject);
 
-   // Loads data from disk,.
+   // Write data to disk
+   static bool Write (FRSaveGameMeta &SaveMeta);
+
+   // Loads data from disk
    static bool Read (FRSaveGameMeta &SaveMeta, const FString &SlotName);
 
    // Get list of all available slots

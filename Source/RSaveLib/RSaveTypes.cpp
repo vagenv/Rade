@@ -33,14 +33,12 @@ bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObje
    SaveMeta.Date     = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
    SaveMeta.Map      = WorldContextObject->GetWorld ()->GetMapName ();
 
-   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
+   return true;
+}
 
-   TArray<uint8>ScreenShotData = ARViewCapture::GetScreenShot (WorldContextObject);
-   if (!ScreenShotData.IsEmpty ()) {
-      if (FFileHelper::SaveArrayToFile (ScreenShotData, *(SaveFileDir + "save.img"))) {
-         SaveMeta.ImageFormat = EPixelFormat::PF_B8G8R8A8;
-      }
-   }
+bool FRSaveGameMeta::Write (FRSaveGameMeta& SaveMeta)
+{
+   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
 
    FString JsonData;
    if (!RJSON::ToString (SaveMeta, JsonData)) return false;
@@ -118,3 +116,4 @@ void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
       Result.Add (MetaData);
    }
 }
+
