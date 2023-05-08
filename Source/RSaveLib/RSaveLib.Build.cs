@@ -10,6 +10,8 @@ public class RSaveLib: ModuleRules
          "Core",
          "CoreUObject",
          "Engine",
+         "Json",
+         "JsonUtilities",
          "RUtilLib",
          "RUILib"
       });

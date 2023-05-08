@@ -1,6 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RSaveInterface.h"
+#include "RSaveGame.h"
 #include "RWorldSaveMgr.h"
 #include "RUtilLib/RLog.h"
 
@@ -22,26 +23,31 @@ void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FStrin
    SaveMgr->OnLoad.AddDynamic (this, &IRSaveInterface::OnLoad_Internal);
 }
 
-void IRSaveInterface::OnSave_Internal ()
+void IRSaveInterface::OnSave_Internal (URSaveGame* SaveGame)
 {
-   if (!IsValid (SaveMgr)) return;
+   if (!IsValid (SaveMgr))  return;
+   if (!IsValid (SaveGame)) return;
+
    FBufferArchive ToBinary;
 
    OnSave (ToBinary);
 
-   // Set binary data to save file
-   if (!ensure (SaveMgr->SetBuffer (ObjectSaveId, ToBinary))) return;
+   FRSaveData SaveData;
+
+   SaveData.Data = ToBinary;
+   SaveGame->RawData.Add (ObjectSaveId, SaveData);
 }
 
-void IRSaveInterface::OnLoad_Internal ()
+void IRSaveInterface::OnLoad_Internal (URSaveGame* SaveGame)
 {
-   if (!IsValid (SaveMgr)) return;
-   // Get binary data from save file
-   TArray<uint8> BinaryArray;
-   if (!ensure (SaveMgr->GetBuffer (ObjectSaveId, BinaryArray))) return;
+   if (!IsValid (SaveMgr))  return;
+   if (!IsValid (SaveGame)) return;
 
-   FMemoryReader FromBinary = FMemoryReader (BinaryArray, true);
+   if (!SaveGame->RawData.Contains (ObjectSaveId)) return;
+
+   FMemoryReader FromBinary = FMemoryReader (SaveGame->RawData[ObjectSaveId].Data, true);
    FromBinary.Seek(0);
 
    OnLoad (FromBinary);
 }
+

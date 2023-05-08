@@ -2,16 +2,9 @@
 
 #pragma once
 
+#include "Kismet/BlueprintAsyncActionBase.h"
 #include "RSaveTypes.generated.h"
 
-USTRUCT(BlueprintType)
-struct RSAVELIB_API FRSaveData
-{
-   GENERATED_BODY()
-
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-      TArray<uint8> Data;
-};
 
 USTRUCT(BlueprintType)
 struct RSAVELIB_API FRSaveGameMeta
@@ -20,7 +13,7 @@ struct RSAVELIB_API FRSaveGameMeta
 
    // --- Mandatory info
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString SlotName = "";
+      FString SlotName;
 
    // Maybe should be hidden/disabled
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -28,36 +21,66 @@ struct RSAVELIB_API FRSaveGameMeta
 
    // UI info
   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString Map = "???";
+      FString Map;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString Date = "???";
+      FString Date;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<uint8> SceenshotTextureBinary;
+   
+   //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      //TEnumAsByte<EPixelFormat> SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TEnumAsByte<EPixelFormat> SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
 
-   // For serialization of data
-   friend FArchive& operator << (FArchive& Ar, FRSaveGameMeta &MetaData) {
-      Ar << MetaData.SlotName;
-      Ar << MetaData.UserIndex;
-      Ar << MetaData.Map;
-      Ar << MetaData.Date;
-      // Ar << MetaData.SceenshotTextureFormat;
-      Ar << MetaData.SceenshotTextureBinary;
+   // Check Values
+   bool IsValidSave () const;
+   
+   // Get absolute path to save folder
+   static FString GetSaveDir ();
 
-      return Ar;
-   }
+
+   // --- Long Sync functions
 
    // Creates a New instance with current date as name.
-   static FRSaveGameMeta Create (UObject* WorldContextObject);
+   static bool Create  (FRSaveGameMeta &SaveMeta, UObject* WorldContextObject);
 
-   // Loads data from disk if available.
-   static FRSaveGameMeta Read   (const FString &SaveDirPath,  const FString &SlotName);
+   // Loads data from disk,.
+   static bool Read   (FRSaveGameMeta& SaveMeta, const FString &SlotName);
 
-   // Remove save from disk if available.
-   static void           Remove (const FRSaveGameMeta &SaveMeta);
+   // Get list of all available slots
+   static void List (TArray<FRSaveGameMeta> &SaveSlots);
+};
+
+UCLASS()
+class RSAVELIB_API URSaveGameMetaLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+   
+   // Get Save slots list
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
+		static void GetAllSaveGameSlotsSync (TArray<FRSaveGameMeta> &Result);
+};
+
+
+UCLASS()
+class RSAVELIB_API URGetSaveGameSlotsAsync : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+public:
+
+	UFUNCTION(BlueprintCallable,
+             meta = (BlueprintInternalUseOnly = "true",
+                     WorldContext = "WorldContextObject"))
+	   static URGetSaveGameSlotsAsync* GetAllSaveGameSlotsAsync ();
+
+
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
+
+   // Called when all save game slots have been read
+	UPROPERTY(BlueprintAssignable)
+	   FGetSaveSlotsEvent Loaded;
+
+   // Execution point
+	virtual void Activate () override;
 };
 

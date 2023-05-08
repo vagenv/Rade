@@ -11,7 +11,9 @@
 #include "RSaveInterface.generated.h"
 
 class UWorld;
+class URSaveGame;
 class URWorldSaveMgr;
+
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, NotBlueprintable)
@@ -36,10 +38,10 @@ protected:
 
 	// Internal events
    UFUNCTION()
-      virtual void OnSave_Internal ();
+      virtual void OnSave_Internal (URSaveGame* SaveGame);
 
    UFUNCTION()
-      virtual void OnLoad_Internal ();
+      virtual void OnLoad_Internal (URSaveGame* SaveGame);
 
 private:
 
