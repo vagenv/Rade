@@ -34,16 +34,19 @@ bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObje
    SaveMeta.Date     = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
    SaveMeta.Map      = WorldContextObject->GetWorld ()->GetMapName ();
 
-   //SaveMeta.SceenshotTextureBinary = ARViewCapture::GetScreenShot (WorldContextObject);
-   //SaveMeta.SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
+   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
+
+   TArray<uint8>ScreenShotData = ARViewCapture::GetScreenShot (WorldContextObject);
+   if (!ScreenShotData.IsEmpty ()) {
+      if (FFileHelper::SaveArrayToFile (ScreenShotData, *(SaveFileDir + "save.img"))) {
+         SaveMeta.ImageFormat = EPixelFormat::PF_B8G8R8A8;
+      }
+   }
 
    FString JsonData;
    if (!RJSON::ToString (SaveMeta, JsonData)) return false;
 
-   // File Mgr
-   IFileManager& FileMgr = IFileManager::Get ();
-   FString MetaPath = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/save.json";
-
+   FString MetaPath = SaveFileDir + "save.json";
    if (!FFileHelper::SaveStringToFile (JsonData, *MetaPath)) {
       return false;
    }
@@ -54,7 +57,8 @@ bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObje
 bool FRSaveGameMeta::Read (FRSaveGameMeta& SaveMeta, const FString &SlotName)
 {
    IFileManager& FileMgr = IFileManager::Get ();
-   FString MetaFilePath = FRSaveGameMeta::GetSaveDir () + SlotName + "/save.json";
+   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotName + "/";
+   FString MetaFilePath = SaveFileDir + "save.json";
 
    if (!FileMgr.FileExists (*MetaFilePath)) return false;
 
@@ -91,8 +95,6 @@ void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
       FFileStatData DataFile = FileMgr.GetStatData (*(SaveDir + It + "/save.data"));
       FFileStatData MetaFile = FileMgr.GetStatData (*(SaveDir + It + "/save.json"));
 
-
-
       if (!DataFile.bIsValid || !DataFile.FileSize) {
          //R_LOG_STATIC_PRINTF ("[%s] Invalid: data file", *It);
          continue;
@@ -127,9 +129,54 @@ void URSaveGameMetaLibrary::GetAllSaveGameSlotsSync (TArray<FRSaveGameMeta> &Res
    FRSaveGameMeta::List (Result);
 }
 
+bool URSaveGameMetaLibrary::ReadSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary)
+{
+   IFileManager& FileMgr = IFileManager::Get ();
+   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotMeta.SlotName + "/";
+   FString ImgFilePath = SaveFileDir + "save.img";
+   if (!FileMgr.FileExists (*ImgFilePath)) {
+      return false;
+   }
+
+   if (!FFileHelper::LoadFileToArray (ImageBinary, *ImgFilePath)){
+      return false;
+   }
+   return true;
+}
+
 //=============================================================================
-//                   Async task
+//                   Read image data
 //=============================================================================
+
+UReadSaveGameSlotImageAsync* UReadSaveGameSlotImageAsync::ReadSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta)
+{
+	UReadSaveGameSlotImageAsync* BlueprintNode = NewObject<UReadSaveGameSlotImageAsync>();
+   BlueprintNode->SlotMeta = SlotMeta;
+	return BlueprintNode;
+}
+
+void UReadSaveGameSlotImageAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+
+      // Perform long sync operation
+      this->success = URSaveGameMetaLibrary::ReadSaveGameSlotImageSync (this->SlotMeta, this->Result);
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this] () {
+
+         // Report operation end
+         this->Loaded.Broadcast (this->Result, this->success);
+         this->Result.Empty ();
+      });
+   });
+}
+
+//=============================================================================
+//                   Async get save slots
+//=============================================================================
+
 
 URGetSaveGameSlotsAsync* URGetSaveGameSlotsAsync::GetAllSaveGameSlotsAsync ()
 {
