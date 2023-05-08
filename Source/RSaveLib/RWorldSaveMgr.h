@@ -52,9 +52,6 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
       bool SaveSync ();
 
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
-      bool LoadSync (const FRSaveGameMeta &SlotMeta);
-
    //==========================================================================
    //                  Events
    //==========================================================================
@@ -184,3 +181,46 @@ protected:
       UObject* WorldContextObject = nullptr;
 };
 
+
+
+// ============================================================================
+//                   Load Save Game Slot Async Task
+// ============================================================================
+
+UCLASS()
+class RSAVELIB_API ULoadSaveGameSlotAsync : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+public:
+
+	UFUNCTION(BlueprintCallable,
+             Category = "Rade|UI",
+             meta = (BlueprintInternalUseOnly = "true",
+                     HidePin      = "WorldContextObject",
+                     WorldContext = "WorldContextObject"))
+	   static ULoadSaveGameSlotAsync* LoadSaveGameSlotAsync (UObject* WorldContextObject,
+                                                            const FRSaveGameMeta &SaveMeta);
+
+
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRLoadSaveSlotsEvent, bool, Success);
+
+   // Called when all save game slots have been read
+	UPROPERTY(BlueprintAssignable)
+	   FRLoadSaveSlotsEvent Loaded;
+
+   // Execution point
+	virtual void Activate () override;
+
+protected:
+   UPROPERTY()
+      FRSaveGameMeta SaveMeta;
+
+   UPROPERTY()
+      UObject* WorldContextObject = nullptr;
+
+   UPROPERTY()
+      TArray<uint8> SaveBinary;
+   
+   UPROPERTY()
+      URSaveGame* SaveGameObject = nullptr;
+};

@@ -79,29 +79,6 @@ bool URWorldSaveMgr::SaveSync ()
    return true;
 }
 
-bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SaveMeta)
-{
-   FString SaveFilePath = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/save.data";
-
-   // TODO: Add save file header checking.
-
-   TArray<uint8> ObjectBytes;
-	if (!FFileHelper::LoadFileToArray (ObjectBytes, *SaveFilePath)) {
-		return false;
-	}
-
-   SaveGameObject = Cast<URSaveGame> (UGameplayStatics::LoadGameFromMemory (ObjectBytes));
-   if (!SaveGameObject) {
-      return false;
-   }
-
-   ReportLoad (SaveGameObject);
-
-   SaveGameObject = nullptr;
-   
-   return true;
-}
-
 // ============================================================================
 //                   Get Save Slot Image binary data Async Task
 // ============================================================================
@@ -216,3 +193,58 @@ void URemoveSaveGameSlotAsync::Activate ()
    });
 }
 
+// ============================================================================
+//                   Load Save Game Slot Async Task
+// ============================================================================
+
+ULoadSaveGameSlotAsync* ULoadSaveGameSlotAsync::LoadSaveGameSlotAsync (
+   UObject* WorldContextObject,
+   const FRSaveGameMeta &SaveMeta)
+{
+	ULoadSaveGameSlotAsync* BlueprintNode = NewObject<ULoadSaveGameSlotAsync>();
+   BlueprintNode->WorldContextObject = WorldContextObject;
+   BlueprintNode->SaveMeta           = SaveMeta;
+	return BlueprintNode;
+}
+
+void ULoadSaveGameSlotAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+
+      bool ReadSuccess = false;
+
+      FString SaveFilePath = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/save.data";
+
+      // TODO: Add save file header checking.
+
+	   if (FFileHelper::LoadFileToArray (SaveBinary, *SaveFilePath)) {
+		   ReadSuccess = true;
+	   }
+
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this, ReadSuccess] () {
+         bool CreateSuccess = false;
+
+         if (ReadSuccess) {
+            SaveGameObject = Cast<URSaveGame> (UGameplayStatics::LoadGameFromMemory (SaveBinary));
+            if (SaveGameObject) {
+               CreateSuccess = true;
+
+            if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
+                  Mgr->ReportLoad (SaveGameObject);
+               }
+            }
+         }
+
+         // Report task end
+         Loaded.Broadcast (CreateSuccess);
+
+         // --- Cleanup
+         WorldContextObject = nullptr;
+         SaveBinary.Empty ();
+         SaveGameObject = nullptr;
+      });
+   });
+}
