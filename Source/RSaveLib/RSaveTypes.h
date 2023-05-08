@@ -2,9 +2,11 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
 #include "RSaveTypes.generated.h"
 
+// ============================================================================
+//                   Save Slot Meta information
+// ============================================================================
 
 USTRUCT(BlueprintType)
 struct RSAVELIB_API FRSaveGameMeta
@@ -49,6 +51,10 @@ struct RSAVELIB_API FRSaveGameMeta
    static void List (TArray<FRSaveGameMeta> &SaveSlots);
 };
 
+// ============================================================================
+//                   Save Game Function Library
+// ============================================================================
+
 UCLASS()
 class RSAVELIB_API URSaveGameMetaLibrary : public UBlueprintFunctionLibrary
 {
@@ -63,55 +69,5 @@ public:
    // Read save slot image
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Save")
 		static bool GetSaveGameSlotImageSync (const FRSaveGameMeta &SlotMeta, TArray<uint8> &ImageBinary);
-};
-
-UCLASS()
-class RSAVELIB_API UGetSaveGameSlotImageAsync : public UBlueprintAsyncActionBase
-{
-	GENERATED_BODY()
-public:
-
-	UFUNCTION(BlueprintCallable,
-             meta = (BlueprintInternalUseOnly = "true",
-                     WorldContext = "WorldContextObject"))
-	   static UGetSaveGameSlotImageAsync* GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
-
-
-   DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
-
-   // Called when all save game slots image has been read
-	UPROPERTY(BlueprintAssignable)
-	   FReadSaveSlotImageEvent Loaded;
-
-   // Execution point
-	virtual void Activate () override;
-
-protected:
-   FRSaveGameMeta SlotMeta;
-   bool           success = false;
-   TArray<uint8>  Result;
-};
-
-
-UCLASS()
-class RSAVELIB_API URListSaveGameSlotsAsync : public UBlueprintAsyncActionBase
-{
-	GENERATED_BODY()
-public:
-
-	UFUNCTION(BlueprintCallable,
-             meta = (BlueprintInternalUseOnly = "true",
-                     WorldContext = "WorldContextObject"))
-	   static URListSaveGameSlotsAsync* ListSaveGameSlotsAsync ();
-
-
-   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
-
-   // Called when all save game slots have been read
-	UPROPERTY(BlueprintAssignable)
-	   FGetSaveSlotsEvent Loaded;
-
-   // Execution point
-	virtual void Activate () override;
 };
 

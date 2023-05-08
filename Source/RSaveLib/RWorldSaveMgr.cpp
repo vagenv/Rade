@@ -44,6 +44,8 @@ void URWorldSaveMgr::ReportSaveListUpdated ()
 //=============================================================================
 //                   Save
 //=============================================================================
+
+
 bool URWorldSaveMgr::SaveSync ()
 {
    FRSaveGameMeta SaveMeta;
@@ -99,6 +101,68 @@ bool URWorldSaveMgr::LoadSync (const FRSaveGameMeta &SaveMeta)
    
    return true;
 }
+
+
+// ============================================================================
+//                   Get Save Slot Image binary data Async Task
+// ============================================================================
+
+UGetSaveGameSlotImageAsync* UGetSaveGameSlotImageAsync::GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta)
+{
+	UGetSaveGameSlotImageAsync* BlueprintNode = NewObject<UGetSaveGameSlotImageAsync>();
+   BlueprintNode->SlotMeta = SlotMeta;
+	return BlueprintNode;
+}
+
+void UGetSaveGameSlotImageAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+
+      // Perform long sync operation
+      success = URSaveGameMetaLibrary::GetSaveGameSlotImageSync (SlotMeta, Result);
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this] () {
+
+         // Report operation end
+         Loaded.Broadcast (Result, success);
+         Result.Empty ();
+      });
+   });
+}
+
+// ============================================================================
+//                   List Save Game Slots Async Task
+// ============================================================================
+
+URListSaveGameSlotsAsync* URListSaveGameSlotsAsync::ListSaveGameSlotsAsync ()
+{
+	URListSaveGameSlotsAsync* BlueprintNode = NewObject<URListSaveGameSlotsAsync>();
+	return BlueprintNode;
+}
+
+void URListSaveGameSlotsAsync::Activate ()
+{
+   // Schedule a background lambda thread
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+
+      // Perform long sync operation
+      TArray<FRSaveGameMeta> Result;
+      URSaveGameMetaLibrary::ListSaveGameSlotsSync (Result);
+
+      // Schedule game thread and pass in result
+      AsyncTask (ENamedThreads::GameThread, [this, Result] () {
+
+         // Report operation end
+         this->Loaded.Broadcast (Result);
+      });
+   });
+}
+
+// ============================================================================
+//                   Remove Save Game Slot Async Task
+// ============================================================================
 
 URemoveSaveGameSlotAsync* URemoveSaveGameSlotAsync::RemoveSaveGameSlotAsync (
    UObject* WorldContextObject,

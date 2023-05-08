@@ -7,9 +7,7 @@
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "RWorldSaveMgr.generated.h"
 
-//class USaveGame;
 class URSaveGame;
-
 
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -89,6 +87,68 @@ public:
       FRSaveListEvent OnSaveListUpdated;
 };
 
+
+// ============================================================================
+//                   Get Save Slot Image binary data Async Task
+// ============================================================================
+
+UCLASS()
+class RSAVELIB_API UGetSaveGameSlotImageAsync : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+public:
+
+	UFUNCTION(BlueprintCallable,
+             meta = (BlueprintInternalUseOnly = "true",
+                     WorldContext = "WorldContextObject"))
+	   static UGetSaveGameSlotImageAsync* GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
+
+
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
+
+   // Called when all save game slots image has been read
+	UPROPERTY(BlueprintAssignable)
+	   FReadSaveSlotImageEvent Loaded;
+
+   // Execution point
+	virtual void Activate () override;
+
+protected:
+   FRSaveGameMeta SlotMeta;
+   bool           success = false;
+   TArray<uint8>  Result;
+};
+
+// ============================================================================
+//                   List Save Game Slots Async Task
+// ============================================================================
+
+UCLASS()
+class RSAVELIB_API URListSaveGameSlotsAsync : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+public:
+
+	UFUNCTION(BlueprintCallable,
+             meta = (BlueprintInternalUseOnly = "true",
+                     WorldContext = "WorldContextObject"))
+	   static URListSaveGameSlotsAsync* ListSaveGameSlotsAsync ();
+
+
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
+
+   // Called when all save game slots have been read
+	UPROPERTY(BlueprintAssignable)
+	   FGetSaveSlotsEvent Loaded;
+
+   // Execution point
+	virtual void Activate () override;
+};
+
+
+// ============================================================================
+//                   Remove Save Game Slot Async Task
+// ============================================================================
 
 UCLASS()
 class RSAVELIB_API URemoveSaveGameSlotAsync : public UBlueprintAsyncActionBase
