@@ -149,7 +149,8 @@ void UCreateSaveGameSlotAsync::Activate ()
    }
 
    // --- Create save object
-   UClass* SaveSlotClass = Mgr->SaveClass ? Mgr->SaveClass : URSaveGame::StaticClass ();
+   TSubclassOf<URSaveGame> const SaveSlotClass = Mgr->SaveClass ? Mgr->SaveClass : TSubclassOf<URSaveGame>(URSaveGame::StaticClass ());
+
    SaveGameObject = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (SaveSlotClass));
    if (!SaveGameObject) {
       return ReportEnd (false);
