@@ -27,7 +27,6 @@ struct RSAVELIB_API FRSaveGameMeta
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TEnumAsByte<EPixelFormat> ImageFormat = EPixelFormat::PF_B8G8R8A8;
 
-
    // Check Values
    bool IsValidSave () const;
    

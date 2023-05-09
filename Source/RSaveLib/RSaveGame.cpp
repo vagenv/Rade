@@ -49,3 +49,4 @@ bool URSaveGame::SetBuffer (const FString &Key, const TArray<uint8> &Value)
 
    return true;
 }
+

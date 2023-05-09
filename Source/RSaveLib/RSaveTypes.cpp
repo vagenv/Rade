@@ -7,7 +7,6 @@
 
 #include "RUILib/RViewCapture.h"
 
-
 bool FRSaveGameMeta::IsValidSave () const
 {
    return (

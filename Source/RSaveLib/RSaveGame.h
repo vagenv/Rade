@@ -5,7 +5,7 @@
 #include "GameFramework/SaveGame.h"
 #include "RSaveGame.generated.h"
 
-
+// Wrapper for Data.
 USTRUCT(BlueprintType)
 struct RSAVELIB_API FRSaveData
 {
@@ -22,7 +22,6 @@ class RSAVELIB_API URSaveGame : public USaveGame
    GENERATED_BODY()
 public:
 
-
    // --- String Get/Set
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
@@ -38,7 +37,6 @@ public:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Save")
       bool SetBuffer (const FString &Key, const TArray<uint8> &Value);
-
 
 protected:
    // Serialized content

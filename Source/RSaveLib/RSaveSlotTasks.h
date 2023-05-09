@@ -9,7 +9,6 @@
 
 class URSaveGame;
 
-
 // ============================================================================
 //                   Get Save Slot Image binary data Async Task
 // ============================================================================
@@ -29,7 +28,7 @@ public:
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
 
-   // Called when all save game slots image has been read
+   // Called when save game screenshot has been read
 	UPROPERTY(BlueprintAssignable)
 	   FRReadSaveSlotImageEvent Finished;
 
@@ -63,14 +62,13 @@ public:
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
 
-   // Called when all save game slots have been read
+   // Called when all save game slots meta information has been read
 	UPROPERTY(BlueprintAssignable)
 	   FRGetSaveSlotsEvent Finished;
 
    // Execution point
 	virtual void Activate () override;
 };
-
 
 // ============================================================================
 //                   Remove Save Game Slot Async Task
@@ -93,7 +91,7 @@ public:
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRRemoveSaveSlotsEvent, bool, Success);
 
-   // Called when all save game slots have been read
+   // Called when all content associated with save slot has been removed
 	UPROPERTY(BlueprintAssignable)
 	   FRRemoveSaveSlotsEvent Finished;
 
@@ -129,7 +127,7 @@ public:
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRCreateSaveSlotsEvent, bool, Success);
 
-   // Called when all save game slots have been read
+   // Called when save game slots have been created
 	UPROPERTY(BlueprintAssignable)
 	   FRCreateSaveSlotsEvent Finished;
 
@@ -172,7 +170,7 @@ public:
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRLoadSaveSlotsEvent, bool, Success);
 
-   // Called when all save game slots have been read
+   // Called when save game slot content has been read
 	UPROPERTY(BlueprintAssignable)
 	   FRLoadSaveSlotsEvent Finished;
 
@@ -191,5 +189,8 @@ protected:
    
    UPROPERTY()
       TObjectPtr<URSaveGame> SaveGameObject;
+
+   UFUNCTION()
+      void ReportEnd (bool succes);
 };
 

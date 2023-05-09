@@ -9,7 +9,6 @@
 
 #include "RUILib/RViewCapture.h"
 
-
 // ============================================================================
 //                   Get Save Slot Image binary data Async Task
 // ============================================================================
@@ -31,11 +30,14 @@ void UGetSaveGameSlotImageAsync::Activate ()
       FString ImgFilePath = SaveFileDir + "save.img";
 
       bool success = false;
+
+      // Read save slot screenshot
       if (FileMgr.FileExists (*ImgFilePath)) {
          if (FFileHelper::LoadFileToArray (ImageBinary, *ImgFilePath)){
             success = true;
          }
       }
+
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, success] () {
 
@@ -63,8 +65,9 @@ void URListSaveGameSlotsAsync::Activate ()
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
-      // Perform long sync operation
       TArray<FRSaveGameMeta> Result;
+
+      // Get all save slots
       FRSaveGameMeta::List (Result);
 
       // Schedule game thread and pass in result
@@ -95,11 +98,12 @@ void URemoveSaveGameSlotAsync::Activate ()
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
-      // Perform long sync operation
       IFileManager& FileMgr = IFileManager::Get ();
       const FString SaveDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
 
       bool success = false;
+
+      // Delete save slot folder.
       if (FileMgr.DirectoryExists (*SaveDir)) {
          if (FileMgr.DeleteDirectory (*SaveDir, true, true))  {
             success = true;
@@ -109,6 +113,7 @@ void URemoveSaveGameSlotAsync::Activate ()
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this, success] () {
 
+         // Report save game list update
          if (success) {
             if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
                Mgr->ReportSaveListUpdated ();
@@ -150,13 +155,11 @@ void UCreateSaveGameSlotAsync::Activate ()
       return ReportEnd (false);
    }
 
-   // --- Gather save information
+   // Gather save information
    Mgr->ReportSave (SaveGameObject);
-
 
    // Create screenshot
    ARViewCapture::GetScreenShot (WorldContextObject, ScreenShotData);
-
 
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
@@ -184,6 +187,7 @@ void UCreateSaveGameSlotAsync::Activate ()
          return ReportEnd (false);
       }
 
+      // Write Save Game Data to disk
       if (!FFileHelper::SaveArrayToFile (SaveFileData, *(SaveFileDir + "save.data"))) {
          return ReportEnd (false);
       }
@@ -192,19 +196,20 @@ void UCreateSaveGameSlotAsync::Activate ()
    });
 }
 
-void UCreateSaveGameSlotAsync::ReportEnd (bool succes)
+void UCreateSaveGameSlotAsync::ReportEnd (bool success)
 {
    // Schedule game thread and pass in result
-   AsyncTask (ENamedThreads::GameThread, [this, succes] () {
+   AsyncTask (ENamedThreads::GameThread, [this, success] () {
 
-      if (succes && IsValid (WorldContextObject)) {
+      // Report save game list update
+      if (success && IsValid (WorldContextObject)) {
          if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
             Mgr->ReportSaveListUpdated ();
          }
       }
 
       // Report task end
-      Finished.Broadcast (succes);
+      Finished.Broadcast (success);
 
       // --- Cleanup
       WorldContextObject = nullptr;
@@ -232,41 +237,44 @@ void ULoadSaveGameSlotAsync::Activate ()
    // Schedule a background lambda thread
    AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
 
-      bool ReadSuccess = false;
-
+      // Read Save Slot Data to buffer
       FString SaveFilePath = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/save.data";
-
-      // TODO: Add save file header checking.
-
-	   if (FFileHelper::LoadFileToArray (SaveBinary, *SaveFilePath)) {
-		   ReadSuccess = true;
+	   if (!FFileHelper::LoadFileToArray (SaveBinary, *SaveFilePath)) {
+		   return ReportEnd (false);
 	   }
 
-
       // Schedule game thread and pass in result
-      AsyncTask (ENamedThreads::GameThread, [this, ReadSuccess] () {
-         bool CreateSuccess = false;
+      AsyncTask (ENamedThreads::GameThread, [this] () {
 
-         if (ReadSuccess) {
+         // Create Save Game Object
+         SaveGameObject = Cast<URSaveGame> (UGameplayStatics::LoadGameFromMemory (SaveBinary));
 
-            SaveGameObject = Cast<URSaveGame> (UGameplayStatics::LoadGameFromMemory (SaveBinary));
-            if (SaveGameObject) {
-               CreateSuccess = true;
-
-            if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
-                  Mgr->ReportLoad (SaveGameObject);
-               }
-            }
-         }
-
-         // Report task end
-         Finished.Broadcast (CreateSuccess);
-
-         // --- Cleanup
-         WorldContextObject = nullptr;
-         SaveBinary.Empty ();
-         SaveGameObject = nullptr;
+         // Report
+         if (SaveGameObject) ReportEnd (true);
+         else                ReportEnd (false);
       });
+   });
+}
+
+void ULoadSaveGameSlotAsync::ReportEnd (bool success)
+{
+   // Schedule game thread and pass in result
+   AsyncTask (ENamedThreads::GameThread, [this, success] () {
+
+      if (success && IsValid (WorldContextObject)) {
+         // Provide save data to all registered objects
+         if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
+            Mgr->ReportLoad (SaveGameObject);
+         }
+      }
+
+      // Report task end
+      Finished.Broadcast (success);
+
+      // --- Cleanup
+      WorldContextObject = nullptr;
+      SaveBinary.Empty ();
+      SaveGameObject = nullptr;
    });
 }
 
