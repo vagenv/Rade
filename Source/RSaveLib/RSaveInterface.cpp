@@ -29,13 +29,9 @@ void IRSaveInterface::OnSave_Internal (URSaveGame* SaveGame)
    if (!IsValid (SaveGame)) return;
 
    FBufferArchive ToBinary;
-
    OnSave (ToBinary);
 
-   FRSaveData SaveData;
-
-   SaveData.Data = ToBinary;
-   SaveGame->RawData.Add (ObjectSaveId, SaveData);
+   SaveGame->SetBuffer (ObjectSaveId, ToBinary);
 }
 
 void IRSaveInterface::OnLoad_Internal (URSaveGame* SaveGame)
@@ -43,9 +39,11 @@ void IRSaveInterface::OnLoad_Internal (URSaveGame* SaveGame)
    if (!IsValid (SaveMgr))  return;
    if (!IsValid (SaveGame)) return;
 
-   if (!SaveGame->RawData.Contains (ObjectSaveId)) return;
 
-   FMemoryReader FromBinary = FMemoryReader (SaveGame->RawData[ObjectSaveId].Data, true);
+   TArray<uint8> Data;
+   if (!SaveGame->GetBuffer (ObjectSaveId, Data)) return;
+
+   FMemoryReader FromBinary = FMemoryReader (Data, true);
    FromBinary.Seek(0);
 
    OnLoad (FromBinary);

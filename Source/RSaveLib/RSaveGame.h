@@ -15,16 +15,33 @@ public:
       TArray<uint8> Data;
 };
 
+// Blueprint subclass can add it's on data types.
 UCLASS(BlueprintType, ClassGroup=(_Rade))
 class RSAVELIB_API URSaveGame : public USaveGame
 {
    GENERATED_BODY()
 public:
 
-   // Blueprint subclass can add it's on data.
 
-   // --- Only for CPP content
-   //UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Rade|Save")
+   // --- String Get/Set
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool GetString (const FString &Key, FString &Value) const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool SetString (const FString &Key, const FString &Value);
+
+   // --- Buffer Get/Set
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool GetBuffer (const FString &Key, TArray<uint8> &Value) const;
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Save")
+      bool SetBuffer (const FString &Key, const TArray<uint8> &Value);
+
+
+protected:
+   // Serialized content
    UPROPERTY()
       TMap<FString, FRSaveData> RawData;
 };
