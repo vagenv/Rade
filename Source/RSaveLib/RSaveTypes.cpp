@@ -3,82 +3,116 @@
 #include "RSaveTypes.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RJson.h"
 
 #include "RUILib/RViewCapture.h"
 
-FRSaveGameMeta FRSaveGameMeta::Create (UObject* WorldContextObject)
+bool FRSaveGameMeta::IsValidSave () const
 {
-   FRSaveGameMeta Result;
-   Result.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));
-   Result.Date     = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
-
-   if (IsValid (WorldContextObject)) {
-      Result.SceenshotTextureBinary = ARViewCapture::GetScreenShot (WorldContextObject);
-      Result.SceenshotTextureFormat = EPixelFormat::PF_B8G8R8A8;
-      Result.Map = WorldContextObject->GetWorld ()->GetMapName ();
-   }
-
-   // File Mgr
-   IFileManager& FileMgr = IFileManager::Get ();
-   const FString DirName = "SaveGames";
-   const FString RelPath = FPaths::ProjectSavedDir () + DirName;
-   const FString AbsPath = FileMgr.ConvertToAbsolutePathForExternalAppForRead (*(RelPath));
-
-   FString MetaPath = AbsPath + "/" + Result.SlotName + ".savmeta";
-
-   FArchive* Writer = FileMgr.CreateFileWriter (*MetaPath);
-   if (Writer) {
-      (*Writer) << Result;
-      Writer->Close ();
-   } else {
-      R_LOG_STATIC_PRINTF ("Failed to create meta file: %s", *MetaPath);
-   }
-
-   return Result;
+   return (
+         !SlotName.IsEmpty ()
+      && !Map.IsEmpty ()
+      && !Date.IsEmpty ()
+      );
 }
 
-FRSaveGameMeta FRSaveGameMeta::Read (const FString &SaveDirPath, const FString &SlotName)
+FString FRSaveGameMeta::GetSaveDir ()
 {
-   // File Mgr
    IFileManager& FileMgr = IFileManager::Get ();
+   const FString RelPath = FPaths::ProjectSavedDir () + "SaveGames/";
+   const FString AbsPath = FileMgr.ConvertToAbsolutePathForExternalAppForRead (*(RelPath));
+   return AbsPath;
+}
 
-   FString MetaPath = SaveDirPath + "/" + SlotName + ".savmeta";
+bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObject)
+{
+   if (!IsValid (WorldContextObject)) return false;
 
-   FRSaveGameMeta Result;
-   Result.SlotName = SlotName;
+   SaveMeta.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));
+   SaveMeta.Date     = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
+   SaveMeta.Map      = WorldContextObject->GetWorld ()->GetMapName ();
 
-   if (FileMgr.FileExists (*MetaPath)) {
+   return true;
+}
 
-      TArray<uint8> BinaryArray;
+bool FRSaveGameMeta::Write (FRSaveGameMeta& SaveMeta)
+{
+   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/";
 
-      if (!FFileHelper::LoadFileToArray (BinaryArray, *MetaPath)){
-         R_LOG_STATIC_PRINTF ("Corrupted File: ", *MetaPath);
-         return Result;
+   FString JsonData;
+   if (!RJSON::ToString (SaveMeta, JsonData)) return false;
+
+   FString MetaPath = SaveFileDir + "save.json";
+   if (!FFileHelper::SaveStringToFile (JsonData, *MetaPath)) {
+      return false;
+   }
+
+   return true;
+}
+
+bool FRSaveGameMeta::Read (FRSaveGameMeta& SaveMeta, const FString &SlotName)
+{
+   IFileManager& FileMgr = IFileManager::Get ();
+   FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotName + "/";
+   FString MetaFilePath = SaveFileDir + "save.json";
+
+   if (!FileMgr.FileExists (*MetaFilePath)) return false;
+
+   TArray<uint8> BinaryArray;
+   if (!FFileHelper::LoadFileToArray (BinaryArray, *MetaFilePath)){
+      return false;
+   }
+
+   FString JsonData;
+   FFileHelper::BufferToString (JsonData, BinaryArray.GetData (), BinaryArray.Num ());
+   if (!RJSON::ToStruct (JsonData, SaveMeta)) {
+      return false;
+   }
+
+   SaveMeta.SlotName = SlotName;
+   return true;
+}
+
+void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
+{
+   IFileManager& FileMgr = IFileManager::Get ();
+   const FString SaveDir = FRSaveGameMeta::GetSaveDir ();
+
+   // Get save slots
+   TArray<FString> DirList;
+   FileMgr.FindFiles (DirList, *(SaveDir + TEXT ("*")), false, true);
+
+   DirList.Sort ();
+
+   // Iterate in reverse order
+   for (int i = DirList.Num () - 1; i >= 0; i--) {
+      const FString &It = DirList[i];
+
+      FFileStatData DataFile = FileMgr.GetStatData (*(SaveDir + It + "/save.data"));
+      FFileStatData MetaFile = FileMgr.GetStatData (*(SaveDir + It + "/save.json"));
+
+      if (!DataFile.bIsValid || !DataFile.FileSize) {
+         //R_LOG_STATIC_PRINTF ("[%s] Invalid: data file", *It);
+         continue;
       }
 
-      FMemoryReader FromBinary = FMemoryReader (BinaryArray, true); //true, free data after done
-      FromBinary.Seek(0);
-      FromBinary << Result;
-      FromBinary.FlushCache ();
-      BinaryArray.Empty ();
+      if (!MetaFile.bIsValid || !MetaFile.FileSize) {
+         //R_LOG_STATIC_PRINTF ("[%s] Invalid: meta file", *It);
+         continue;
+      }
 
-   } else {
-      R_LOG_STATIC_PRINTF ("Save Meta file not found: %s", *MetaPath);
+      FRSaveGameMeta MetaData;
+      if (!FRSaveGameMeta::Read (MetaData, It)) {
+         //R_LOG_STATIC_PRINTF ("[%s] Corrupt: meta file", *It);
+         continue;
+      }
+
+      if (!MetaData.IsValidSave ()) {
+         //R_LOG_STATIC_PRINTF ("[%s] Invalid save meta data", *It);
+         continue;
+      }
+
+      Result.Add (MetaData);
    }
-   return Result;
-}
-
-void FRSaveGameMeta::Remove (const FRSaveGameMeta &SaveMeta)
-{
-   // File Mgr
-   IFileManager& FileMgr = IFileManager::Get ();
-   const FString DirName = "SaveGames";
-   const FString RelPath = FPaths::ProjectSavedDir () + DirName;
-   const FString AbsPath = FileMgr.ConvertToAbsolutePathForExternalAppForRead (*(RelPath));
-
-   const FString SavePath = AbsPath + "/" + SaveMeta.SlotName + ".sav";
-   const FString MetaPath = SavePath + "meta";
-   if (FileMgr.FileExists (*SavePath)) FileMgr.Delete (*SavePath);
-   if (FileMgr.FileExists (*MetaPath)) FileMgr.Delete (*MetaPath);
 }
 
