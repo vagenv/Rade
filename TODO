@@ -58,38 +58,13 @@ UI
 ==============
 
 - Unify Main Menu and StartMenu
+- Endless scroll with mouse -> disable?
 
 Unreal Common UI UMG.
 - Unreal Standard.
 - Define Label and Button archetypes.
 - Stacks.
 - Replace RUI
-
-=================================================
-Save File Versioning
-=================================================
-
-SaveSystem (Sync + Async)
-- Save
-- Load
-- Delete
-- List
-
-
-SaveSlot:
-- .data
-- .json
-- .png / .bmp / .jpg
-
-.json / .txt [Mapping with optional values]
-- version
-- Name
-- UserIndex
-- MapName
-- Date
-- ScreenshotPath
-- ScreenshotFormat
-- ??? Parsing 
 
 
 =================================================
@@ -566,6 +541,9 @@ Reset if recieved damage
 =================================================
    Save / Load Advanced
 =================================================
+
+
+SaveOrder Index
 
 Async Save/Load
 - SetPending (FString ObjectId)
