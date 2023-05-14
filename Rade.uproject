@@ -65,6 +65,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RLoadingScreenLib",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
 			"Name": "Rade",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"

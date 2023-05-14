@@ -22,6 +22,7 @@ public class RadeTarget : TargetRules
       ExtraModuleNames.Add ("RStatusLib");
       ExtraModuleNames.Add ("RAbilityLib");
       ExtraModuleNames.Add ("REquipmentLib");
+      ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("Rade");
    }
 }
