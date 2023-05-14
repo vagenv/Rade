@@ -1,15 +1,18 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2015-2023 Vagen Ayrapetyan
 
 using UnrealBuildTool;
 using System.Collections.Generic;
+
 
 public class RadeEditorTarget : TargetRules
 {
    public RadeEditorTarget (TargetInfo Target) : base(Target)
    {
       Type = TargetType.Editor;
+      bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V2;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+	  
       ExtraModuleNames.Add ("RUtilLib");
       ExtraModuleNames.Add ("RDamageLib");
       ExtraModuleNames.Add ("RExperienceLib");
@@ -22,6 +25,7 @@ public class RadeEditorTarget : TargetRules
       ExtraModuleNames.Add ("RStatusLib");
       ExtraModuleNames.Add ("RAbilityLib");
       ExtraModuleNames.Add ("REquipmentLib");
+      ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("Rade");
    }
 }
