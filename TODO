@@ -71,6 +71,20 @@ Unreal Common UI UMG.
    Level Transition
 =================================================
 
+
+Level streaming vs OpenLevel
+
+
+Progress String
+
+Disconnect -> Fade Out first
+
+Join Session Black Screen flickers
+
+
+
+
+
 ==============
 User Journey
 ==============
@@ -105,6 +119,84 @@ World change
 - Travel to the Transition Level
 - Mark Actors that will persist to the Final Level
 - Travel to the Final Level
+
+
+
+=================================================
+   Online Subsystem
+=================================================
+
+Cleanup RSessionManager
+- Add components to GameInstance, GameState and PlayerState
+
+==============
+Session
+==============
+Network Session
+- Deep dive / Analysis / Simplification of core functionality
+- Persistent data between sessions with PlayerId storing data
+- Real time data. (Latency, Player count)
+- Disconnect and return to main screen
+- Kick Player
+
+
+=================================================
+   Game Session
+=================================================
+
+==============
+GameMode
+==============
+- OnPostLogin. Add list of players
+- Pauseable
+- ChangeName?
+
+==============
+GameState
+==============
+- Score
+- Chat
+
+==============
+PlayerState
+==============
+- Recconect -> Get values from old data
+- Description (player name, UUID, icon)
+Additional Character info
+- ping
+- color
+- icon
+
+==============
+UI
+==============
+Connected Players:
+- Name
+- Ping
+- Level
+- HP
+- Distance
+
+
+=================================================
+   Network
+=================================================
+
+==============
+Spawn Menu
+==============
+Select spawn point
+
+
+
+
+
+
+
+
+
+
+
 
 
 =================================================
@@ -172,71 +264,6 @@ Melee
 - Attack
 - Basic AI
 
-
-=================================================
-   Online Subsystem
-=================================================
-
-Cleanup RSessionManager
-- Add components to GameInstance, GameState and PlayerState
-
-==============
-Session
-==============
-Network Session
-- Deep dive / Analysis / Simplification of core functionality
-- Persistent data between sessions with PlayerId storing data
-- Real time data. (Latency, Player count)
-- Disconnect and return to main screen
-- Kick Player
-
-
-=================================================
-   Game Session
-=================================================
-
-==============
-GameMode
-==============
-- OnPostLogin. Add list of players
-- Pauseable
-- ChangeName?
-
-==============
-GameState
-==============
-- Score
-- Chat
-
-==============
-PlayerState
-==============
-- Recconect -> Get values from old data
-- Description (player name, UUID, icon)
-Additional Character info
-- ping
-- color
-- icon
-
-==============
-UI
-==============
-Connected Players:
-- Name
-- Ping
-- Level
-- HP
-- Distance
-
-
-=================================================
-   Network
-=================================================
-
-==============
-Spawn Menu
-==============
-Select spawn point
 
 
 =================================================
@@ -671,28 +698,42 @@ VCPP
 Custom plugin
 - Block constructor or something new
 
+=================================================
+   UI
+=================================================
+
+- Less is more
+- Transparent
+- Thin border around window only.
 
 =================================================
    Game Design
 =================================================
 
 ==============
-Style
-==============
-- 3rd/1st Person Shooter/Slasher
-
-==============
 Movement
 ==============
 - Jump
-- Roll + Sprint
-DarkSouls vs Sekiro vs DMC
+- Wall jump
+- Double jump
+- Phase forward
+- Roll
+- Sprint
+
+
+==============
+Character status
+==============
+- Stun
+- On ground
+- Slow/Fast status effect
 
 ==============
 Attack types
 ==============
 - Melee / Ranged
 - Guns
+- Attack combo
 - Spells. Instant + Casting
 - Environment
 - Turrents / Towers
