@@ -1,14 +1,9 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-
 #include "RLoadingScreenLib.h"
 #include "MoviePlayer.h"
 #include "RLoadingScreenSettings.h"
-#include "RWidgets/SCenterLayout.h"
 #include "RWidgets/SClassicLayout.h"
-#include "RWidgets/SLetterboxLayout.h"
-#include "RWidgets/SSidebarLayout.h"
-#include "RWidgets/SDualSidebarLayout.h"
 #include "Framework/Application/SlateApplication.h"
 #include "RLoadingScreenLibrary.h"
 #include "Engine/Texture2D.h"
@@ -108,29 +103,9 @@ void FRLoadingScreenModule::SetupLoadingScreen(const FALoadingScreenSettings& Lo
 	LoadingScreen.MoviePaths = MoviesList;
 	LoadingScreen.PlaybackType = LoadingScreenSettings.PlaybackType;
 
-	if (LoadingScreenSettings.bShowWidgetOverlay)
-	{
+	if (LoadingScreenSettings.bShowWidgetOverlay) {
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings>();
-
-		switch (LoadingScreenSettings.Layout)
-		{
-		case ERLoadingScreenLayout::ALSL_Classic:
-			LoadingScreen.WidgetLoadingScreen = SNew(SClassicLayout, LoadingScreenSettings, Settings->Classic);
-			break;
-		case ERLoadingScreenLayout::ALSL_Center:
-			LoadingScreen.WidgetLoadingScreen = SNew(SCenterLayout, LoadingScreenSettings, Settings->Center);
-			break;
-		case ERLoadingScreenLayout::ALSL_Letterbox:
-			LoadingScreen.WidgetLoadingScreen = SNew(SLetterboxLayout, LoadingScreenSettings, Settings->Letterbox);
-			break;
-		case ERLoadingScreenLayout::ALSL_Sidebar:
-			LoadingScreen.WidgetLoadingScreen = SNew(SSidebarLayout, LoadingScreenSettings, Settings->Sidebar);
-			break;
-		case ERLoadingScreenLayout::ALSL_DualSidebar:
-			LoadingScreen.WidgetLoadingScreen = SNew(SDualSidebarLayout, LoadingScreenSettings, Settings->DualSidebar);
-			break;
-		}
-
+		LoadingScreen.WidgetLoadingScreen = SNew (SClassicLayout, LoadingScreenSettings, Settings->Classic);
 	}
 
 	GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);

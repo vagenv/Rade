@@ -1,7 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-
-
 #include "RLoadingScreenLibrary.h"
 #include "MoviePlayer.h"
 #include "RLoadingScreenLib.h"
