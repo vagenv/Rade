@@ -14,7 +14,8 @@ FLoadingWidgetSettings::FLoadingWidgetSettings ()
 //FLoadingCompleteTextSettings::FLoadingCompleteTextSettings() : LoadingCompleteText(LOCTEXT("Loading Complete", "Loading is complete! Press any key to continue...")) {}
 
 
-ULoadingScreenSettings::ULoadingScreenSettings(const FObjectInitializer& Initializer) : Super(Initializer)
+ULoadingScreenSettings::ULoadingScreenSettings (const FObjectInitializer& Initializer)
+	: Super(Initializer)
 {
 	StartScreen.TipWidget.TipWrapAt   = 1000.0f;
 	StartScreen.bShowWidgetOverlay    = false;

@@ -8,7 +8,9 @@
 
 #include "RLoadingScreenSettings.h"
 #include "RLoadingScreenLibrary.h"
+
 #include "RLayouts/SRLoadingLayout.h"
+#include "RLayouts/SRStartLayout.h"
 
 #include "RUtilLib/RLog.h"
 
@@ -60,7 +62,8 @@ TArray<UTexture2D*> FRLoadingScreenModule::GetBackgroundImages ()
 
 void FRLoadingScreenModule::PreSetupLoadingScreen ()
 {
-	R_LOG_STATIC ("Setting up Loading Screen");
+	//R_LOG_STATIC ("Loading screen completed");
+
 	const bool bIsEnableLoadingScreen = URLoadingScreenLibrary::GetIsEnableLoadingScreen ();
 	if (bIsEnableLoadingScreen) {
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings> ();
@@ -101,10 +104,15 @@ void FRLoadingScreenModule::SetupLoadingScreen (const FALoadingScreenSettings& L
 
 	if (LoadingScreenSettings.bShowWidgetOverlay) {
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings> ();
-		LoadingScreen.WidgetLoadingScreen = SNew (SRLoadingLayout, LoadingScreenSettings, Settings->LoadingSettings);
+
+		if (bIsStartupLoadingScreen) {
+			LoadingScreen.WidgetLoadingScreen = SNew (SRStartLayout, LoadingScreenSettings, Settings->StartSettings);
+		} else {
+			LoadingScreen.WidgetLoadingScreen = SNew (SRLoadingLayout, LoadingScreenSettings, Settings->LoadingSettings);
+		}
 	}
 
-	GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
+	GetMoviePlayer()->SetupLoadingScreen (LoadingScreen);
 }
 
 void FRLoadingScreenModule::ShuffleMovies(TArray<FString>& MoviesList)
