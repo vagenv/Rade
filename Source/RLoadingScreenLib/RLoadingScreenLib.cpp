@@ -72,47 +72,47 @@ void FRLoadingScreenModule::PreSetupLoadingScreen ()
 	}
 }
 
-void FRLoadingScreenModule::SetupLoadingScreen (const FALoadingScreenSettings& LoadingScreenSettings)
+void FRLoadingScreenModule::SetupLoadingScreen (const FALoadingScreenSettings& ScreenSettings)
 {
-	TArray<FString> MoviesList = LoadingScreenSettings.MoviePaths;
+	TArray<FString> MoviesList = ScreenSettings.MoviePaths;
 
 	// Shuffle the movies list
-	if (LoadingScreenSettings.bShuffle == true) {
+	if (ScreenSettings.bShuffle == true) {
 		ShuffleMovies (MoviesList);
 	}
 
-	if (LoadingScreenSettings.bSetDisplayMovieIndexManually == true) {
+	if (ScreenSettings.bSetDisplayMovieIndexManually == true) {
 		MoviesList.Empty ();
 
 		// Show specific movie if valid otherwise show original movies list
-		if (LoadingScreenSettings.MoviePaths.IsValidIndex (URLoadingScreenLibrary::GetDisplayMovieIndex())) {
-			MoviesList.Add (LoadingScreenSettings.MoviePaths[URLoadingScreenLibrary::GetDisplayMovieIndex()]);
+		if (ScreenSettings.MoviePaths.IsValidIndex (URLoadingScreenLibrary::GetDisplayMovieIndex())) {
+			MoviesList.Add (ScreenSettings.MoviePaths[URLoadingScreenLibrary::GetDisplayMovieIndex()]);
 		} else {
-			MoviesList = LoadingScreenSettings.MoviePaths;
+			MoviesList = ScreenSettings.MoviePaths;
 		}
 	}
 
-	FLoadingScreenAttributes LoadingScreen;
-	LoadingScreen.MinimumLoadingScreenDisplayTime = LoadingScreenSettings.MinimumLoadingScreenDisplayTime;
-	LoadingScreen.bAutoCompleteWhenLoadingCompletes = LoadingScreenSettings.bAutoCompleteWhenLoadingCompletes;
-	LoadingScreen.bMoviesAreSkippable = LoadingScreenSettings.bMoviesAreSkippable;
-	LoadingScreen.bWaitForManualStop = LoadingScreenSettings.bWaitForManualStop;
-	LoadingScreen.bAllowInEarlyStartup = LoadingScreenSettings.bAllowInEarlyStartup;
-	LoadingScreen.bAllowEngineTick = LoadingScreenSettings.bAllowEngineTick;
-	LoadingScreen.MoviePaths = MoviesList;
-	LoadingScreen.PlaybackType = LoadingScreenSettings.PlaybackType;
+	FLoadingScreenAttributes ScreenAttributes;
+	ScreenAttributes.MinimumLoadingScreenDisplayTime	= ScreenSettings.MinimumLoadingScreenDisplayTime;
+	ScreenAttributes.bAutoCompleteWhenLoadingCompletes = ScreenSettings.bAutoCompleteWhenLoadingCompletes;
+	ScreenAttributes.bMoviesAreSkippable					= ScreenSettings.bMoviesAreSkippable;
+	ScreenAttributes.bWaitForManualStop						= ScreenSettings.bWaitForManualStop;
+	ScreenAttributes.bAllowInEarlyStartup					= ScreenSettings.bAllowInEarlyStartup;
+	ScreenAttributes.bAllowEngineTick						= ScreenSettings.bAllowEngineTick;
+	ScreenAttributes.MoviePaths								= MoviesList;
+	ScreenAttributes.PlaybackType							   = ScreenSettings.PlaybackType;
 
-	if (LoadingScreenSettings.bShowWidgetOverlay) {
+	if (ScreenSettings.bShowWidgetOverlay) {
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings> ();
 
 		if (bIsStartupLoadingScreen) {
-			LoadingScreen.WidgetLoadingScreen = SNew (SRStartLayout, LoadingScreenSettings, Settings->StartSettings);
+			ScreenAttributes.WidgetLoadingScreen = SNew (SRStartLayout, ScreenSettings, Settings->StartSettings);
 		} else {
-			LoadingScreen.WidgetLoadingScreen = SNew (SRLoadingLayout, LoadingScreenSettings, Settings->LoadingSettings);
+			ScreenAttributes.WidgetLoadingScreen = SNew (SRLoadingLayout, ScreenSettings, Settings->LoadingSettings);
 		}
 	}
 
-	GetMoviePlayer()->SetupLoadingScreen (LoadingScreen);
+	GetMoviePlayer()->SetupLoadingScreen (ScreenAttributes);
 }
 
 void FRLoadingScreenModule::ShuffleMovies(TArray<FString>& MoviesList)
