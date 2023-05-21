@@ -3,7 +3,7 @@
 #include "RLoadingScreenLib.h"
 #include "MoviePlayer.h"
 #include "RLoadingScreenSettings.h"
-#include "RWidgets/SRLoadingLayout.h"
+#include "RLayouts/SRLoadingLayout.h"
 #include "Framework/Application/SlateApplication.h"
 #include "RLoadingScreenLibrary.h"
 #include "Engine/Texture2D.h"

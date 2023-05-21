@@ -6,11 +6,12 @@
 #include "Widgets/Layout/SDPIScaler.h"
 #include "Widgets/Layout/SSpacer.h"
 #include "Widgets/SBoxPanel.h"
-#include "SHorizontalLoadingWidget.h"
-#include "SVerticalLoadingWidget.h"
-#include "SBackgroundWidget.h"
-#include "STipWidget.h"
-#include "SLoadingCompleteText.h"
+
+#include "../RWidgets/SHorizontalLoadingWidget.h"
+#include "../RWidgets/SVerticalLoadingWidget.h"
+#include "../RWidgets/SBackgroundWidget.h"
+#include "../RWidgets/STipWidget.h"
+#include "../RWidgets/SLoadingCompleteText.h"
 
 void SRStartLayout::Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FStartLayoutSettings& LayoutSettings)
 {
