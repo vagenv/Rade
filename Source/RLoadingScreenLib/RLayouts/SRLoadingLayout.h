@@ -7,9 +7,7 @@
 struct FALoadingScreenSettings;
 struct FLoadingLayoutSettings;
 
-/**
- * Classic layout loading screen
- */
+// Layout between level transition
 class SRLoadingLayout : public SRLayout
 {
 public:
@@ -17,8 +15,8 @@ public:
 
 	SLATE_END_ARGS()
 
-	/**
-	 * Construct this widget
-	 */
-	void Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FLoadingLayoutSettings& LayoutSettings);
+	void Construct (const FArguments &InArgs,
+						 const FALoadingScreenSettings &ScreenSettings,
+						 const FLoadingLayoutSettings  &LayoutSettings);
 };
+

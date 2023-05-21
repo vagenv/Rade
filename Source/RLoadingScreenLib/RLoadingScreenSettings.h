@@ -546,3 +546,4 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Layout")
 		FLoadingLayoutSettings LoadingSettings;
 };
+

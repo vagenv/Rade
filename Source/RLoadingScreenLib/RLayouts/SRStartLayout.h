@@ -16,5 +16,7 @@ public:
 	SLATE_END_ARGS()
 
 
-	void Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FStartLayoutSettings& LayoutSettings);
+	void Construct (const FArguments					 &InArgs,
+						 const FALoadingScreenSettings &ScreenSettings,
+						 const FStartLayoutSettings    &LayoutSettings);
 };

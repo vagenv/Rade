@@ -1,6 +1,5 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-
 #include "SRLayout.h"
 #include "Engine/UserInterfaceSettings.h"
 

@@ -14,7 +14,10 @@
 #include "../RWidgets/STipWidget.h"
 #include "../RWidgets/SLoadingCompleteText.h"
 
-void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FLoadingLayoutSettings& LayoutSettings)
+void SRLoadingLayout::Construct (
+	const FArguments					&InArgs,
+	const FALoadingScreenSettings &ScreenSettings,
+	const FLoadingLayoutSettings  &LayoutSettings)
 {
 	// Root widget and background
 	TSharedRef<SOverlay> Root = SNew(SOverlay)
@@ -22,24 +25,20 @@ void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenS
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
 		[
-			SNew(SBackgroundWidget, Settings.Background)
+			SNew(SBackgroundWidget, ScreenSettings.Background)
 		];
 
 	// Placeholder for loading widget
 	TSharedRef<SWidget> LoadingWidget = SNullWidget::NullWidget;
-	if (Settings.LoadingWidget.LoadingWidgetType == ELoadingWidgetType::LWT_Horizontal)
-	{
-		LoadingWidget = SNew(SHorizontalLoadingWidget, Settings.LoadingWidget);
-	}
-	else
-	{
-		LoadingWidget = SNew(SVerticalLoadingWidget, Settings.LoadingWidget);
+	if (ScreenSettings.LoadingWidget.LoadingWidgetType == ELoadingWidgetType::LWT_Horizontal) {
+		LoadingWidget = SNew(SHorizontalLoadingWidget, ScreenSettings.LoadingWidget);
+	} else {
+		LoadingWidget = SNew(SVerticalLoadingWidget, ScreenSettings.LoadingWidget);
 	}
 
 	TSharedRef<SHorizontalBox> HorizontalBox = SNew(SHorizontalBox);
 
-	if (LayoutSettings.bIsLoadingWidgetAtLeft)
-	{
+	if (LayoutSettings.bIsLoadingWidgetAtLeft) {
 		// Add Loading widget on left first
 		HorizontalBox.Get().AddSlot()
 			.VAlign(VAlign_Center)
@@ -65,11 +64,11 @@ void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenS
 			.HAlign(LayoutSettings.TipAlignment.HorizontalAlignment)
 			.VAlign(LayoutSettings.TipAlignment.VerticalAlignment)
 			[
-				SNew(STipWidget, Settings.TipWidget)
+				SNew(STipWidget, ScreenSettings.TipWidget)
 			];
-	}
-	else
-	{
+
+	} else {
+
 		// Tip Text on the left
 		HorizontalBox.Get().AddSlot()
 			.FillWidth(1.0f)
@@ -77,7 +76,7 @@ void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenS
 			.VAlign(LayoutSettings.TipAlignment.VerticalAlignment)
 			[
 				// Add tip text
-				SNew(STipWidget, Settings.TipWidget)
+				SNew(STipWidget, ScreenSettings.TipWidget)
 			];
 
 		// Add spacer at midder
@@ -100,15 +99,11 @@ void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenS
 			];
 	}
 
-
 	EVerticalAlignment VerticalAlignment;
 	// Set vertical alignment for widget
-	if (LayoutSettings.bIsWidgetAtBottom)
-	{
+	if (LayoutSettings.bIsWidgetAtBottom) {
 		VerticalAlignment = EVerticalAlignment::VAlign_Bottom;
-	}
-	else
-	{
+	} else {
 		VerticalAlignment = EVerticalAlignment::VAlign_Top;
 	}
 
@@ -139,14 +134,13 @@ void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenS
 	];
 
 	// Construct loading complete text if enable
-	if (Settings.bShowLoadingCompleteText)
-	{
+	if (ScreenSettings.bShowLoadingCompleteText) {
 		Root->AddSlot()
-			.VAlign(Settings.LoadingCompleteTextSettings.Alignment.VerticalAlignment)
-			.HAlign(Settings.LoadingCompleteTextSettings.Alignment.HorizontalAlignment)
-			.Padding(Settings.LoadingCompleteTextSettings.Padding)
+			.VAlign(ScreenSettings.LoadingCompleteTextSettings.Alignment.VerticalAlignment)
+			.HAlign(ScreenSettings.LoadingCompleteTextSettings.Alignment.HorizontalAlignment)
+			.Padding(ScreenSettings.LoadingCompleteTextSettings.Padding)
 			[
-				SNew(SLoadingCompleteText, Settings.LoadingCompleteTextSettings)
+				SNew(SLoadingCompleteText, ScreenSettings.LoadingCompleteTextSettings)
 			];
 	}
 
@@ -156,3 +150,4 @@ void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenS
 		Root
 	];
 }
+
