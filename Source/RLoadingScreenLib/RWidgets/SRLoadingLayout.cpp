@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 
-#include "SClassicLayout.h"
+#include "SRLoadingLayout.h"
 #include "../RLoadingScreenSettings.h"
 #include "Widgets/Layout/SSafeZone.h"
 #include "Widgets/Layout/SDPIScaler.h"
@@ -13,7 +13,7 @@
 #include "STipWidget.h"
 #include "SLoadingCompleteText.h"
 
-void SClassicLayout::Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FClassicLayoutSettings& LayoutSettings)
+void SRLoadingLayout::Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FClassicLayoutSettings& LayoutSettings)
 {
 	// Root widget and background
 	TSharedRef<SOverlay> Root = SNew(SOverlay)
@@ -129,7 +129,7 @@ void SClassicLayout::Construct(const FArguments& InArgs, const FALoadingScreenSe
 			.Padding(LayoutSettings.BorderPadding)
 			[
 				SNew(SDPIScaler)
-				.DPIScale(this, &SClassicLayout::GetDPIScale)
+				.DPIScale(this, &SRLoadingLayout::GetDPIScale)
 				[
 					HorizontalBox
 				]

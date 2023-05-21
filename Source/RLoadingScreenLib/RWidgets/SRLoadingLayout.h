@@ -10,10 +10,10 @@ struct FClassicLayoutSettings;
 /**
  * Classic layout loading screen
  */
-class SClassicLayout : public SLoadingScreenLayout
+class SRLoadingLayout : public SLoadingScreenLayout
 {
 public:
-	SLATE_BEGIN_ARGS(SClassicLayout) {}
+	SLATE_BEGIN_ARGS(SRLoadingLayout) {}
 
 	SLATE_END_ARGS()
 

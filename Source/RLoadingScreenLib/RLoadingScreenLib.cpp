@@ -3,7 +3,7 @@
 #include "RLoadingScreenLib.h"
 #include "MoviePlayer.h"
 #include "RLoadingScreenSettings.h"
-#include "RWidgets/SClassicLayout.h"
+#include "RWidgets/SRLoadingLayout.h"
 #include "Framework/Application/SlateApplication.h"
 #include "RLoadingScreenLibrary.h"
 #include "Engine/Texture2D.h"
@@ -105,7 +105,7 @@ void FRLoadingScreenModule::SetupLoadingScreen(const FALoadingScreenSettings& Lo
 
 	if (LoadingScreenSettings.bShowWidgetOverlay) {
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings>();
-		LoadingScreen.WidgetLoadingScreen = SNew (SClassicLayout, LoadingScreenSettings, Settings->Classic);
+		LoadingScreen.WidgetLoadingScreen = SNew (SRLoadingLayout, LoadingScreenSettings, Settings->Classic);
 	}
 
 	GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
