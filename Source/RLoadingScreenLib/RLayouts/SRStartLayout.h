@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "SLoadingScreenLayout.h"
+#include "SRLayout.h"
 
 struct FALoadingScreenSettings;
 struct FStartLayoutSettings;
 
 // Start loading screen
-class SRStartLayout : public SLoadingScreenLayout
+class SRStartLayout : public SRLayout
 {
 public:
 	SLATE_BEGIN_ARGS(SRStartLayout) {}

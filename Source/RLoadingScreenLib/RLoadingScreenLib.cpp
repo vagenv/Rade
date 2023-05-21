@@ -1,12 +1,15 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RLoadingScreenLib.h"
+
 #include "MoviePlayer.h"
-#include "RLoadingScreenSettings.h"
-#include "RLayouts/SRLoadingLayout.h"
 #include "Framework/Application/SlateApplication.h"
-#include "RLoadingScreenLibrary.h"
 #include "Engine/Texture2D.h"
+
+#include "RLoadingScreenSettings.h"
+#include "RLoadingScreenLibrary.h"
+#include "RLayouts/SRLoadingLayout.h"
+
 
 #define LOCTEXT_NAMESPACE "FRLoadingScreenModule"
 

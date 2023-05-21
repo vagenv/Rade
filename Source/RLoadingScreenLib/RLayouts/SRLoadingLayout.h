@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "SLoadingScreenLayout.h"
+#include "SRLayout.h"
 
 struct FALoadingScreenSettings;
 struct FLoadingLayoutSettings;
@@ -10,7 +10,7 @@ struct FLoadingLayoutSettings;
 /**
  * Classic layout loading screen
  */
-class SRLoadingLayout : public SLoadingScreenLayout
+class SRLoadingLayout : public SRLayout
 {
 public:
 	SLATE_BEGIN_ARGS(SRLoadingLayout) {}
