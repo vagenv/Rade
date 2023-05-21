@@ -31,7 +31,7 @@ void FRLoadingScreenModule::StartupModule()
 		// Prepare the startup screen, the PreSetupLoadingScreen callback won't be called
 		// if we've already explicitly setup the loading screen
 		bIsStartupLoadingScreen = true;
-		SetupLoadingScreen(Settings->StartupLoadingScreen);
+		SetupLoadingScreen(Settings->StartScreen);
 	}
 }
 
@@ -64,7 +64,7 @@ void FRLoadingScreenModule::PreSetupLoadingScreen()
 	{
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings>();
 		bIsStartupLoadingScreen = false;
-		SetupLoadingScreen(Settings->DefaultLoadingScreen);
+		SetupLoadingScreen(Settings->LoadingScreen);
 	}
 }
 
@@ -105,7 +105,7 @@ void FRLoadingScreenModule::SetupLoadingScreen(const FALoadingScreenSettings& Lo
 
 	if (LoadingScreenSettings.bShowWidgetOverlay) {
 		const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings>();
-		LoadingScreen.WidgetLoadingScreen = SNew (SRLoadingLayout, LoadingScreenSettings, Settings->Classic);
+		LoadingScreen.WidgetLoadingScreen = SNew (SRLoadingLayout, LoadingScreenSettings, Settings->LoadingSettings);
 	}
 
 	GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
@@ -135,7 +135,7 @@ void FRLoadingScreenModule::LoadBackgroundImages()
 	const ULoadingScreenSettings* Settings = GetDefault<ULoadingScreenSettings>();
 
 	// Preload startup background images
-	for (auto& Image : Settings->StartupLoadingScreen.Background.Images)
+	for (auto& Image : Settings->StartScreen.Background.Images)
 	{
 		UTexture2D* LoadedImage = Cast<UTexture2D>(Image.TryLoad());
 		if (LoadedImage)
@@ -145,7 +145,7 @@ void FRLoadingScreenModule::LoadBackgroundImages()
 	}
 
 	// Preload default background images
-	for (auto& Image : Settings->DefaultLoadingScreen.Background.Images)
+	for (auto& Image : Settings->LoadingScreen.Background.Images)
 	{
 		UTexture2D* LoadedImage = Cast<UTexture2D> (Image.TryLoad());
 		if (LoadedImage)

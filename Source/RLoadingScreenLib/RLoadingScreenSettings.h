@@ -414,40 +414,81 @@ struct RLOADINGSCREENLIB_API FALoadingScreenSettings
 	FLoadingWidgetSettings LoadingWidget;
 };
 
-/** Classic Layout settings*/
+
+
+// Classic Layout settings
 USTRUCT(BlueprintType)
-struct FClassicLayoutSettings
+struct FStartLayoutSettings
 {
 	GENERATED_BODY()
 
 	/** Is the border that contains loading and tip widget located at the bottom or top? */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classic Layout")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Start Layout")
 	bool bIsWidgetAtBottom = true;
 
 	/** Is loading widget on the left of the tip? */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classic Layout")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Start Layout")
 	bool bIsLoadingWidgetAtLeft = true;
 
 	/** The empty space between loading widget and the tip.*/
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classic Layout")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Start Layout")
 	float Space = 1.0f;
 
 	/** The alignment of the tips. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Classic Layout")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Start Layout")
 	FWidgetAlignment TipAlignment;
 
 	/** The horizontal alignment of the border background.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Center Layout")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Start Layout")
 	TEnumAsByte<EHorizontalAlignment> BorderHorizontalAlignment = EHorizontalAlignment::HAlign_Fill;
 
 	/** The padding area between the border and the widget it contains.*/
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classic Layout")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Start Layout")
 	FMargin BorderPadding;
 
 	/** Background appearance settings for the border widget */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classic Layout")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Start Layout")
 	FSlateBrush BorderBackground;
 };
+
+
+// Classic Layout settings
+USTRUCT(BlueprintType)
+struct FLoadingLayoutSettings
+{
+	GENERATED_BODY()
+
+	/** Is the border that contains loading and tip widget located at the bottom or top? */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Loading Layout")
+	bool bIsWidgetAtBottom = true;
+
+	/** Is loading widget on the left of the tip? */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Loading Layout")
+	bool bIsLoadingWidgetAtLeft = true;
+
+	/** The empty space between loading widget and the tip.*/
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Loading Layout")
+	float Space = 1.0f;
+
+	/** The alignment of the tips. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loading Layout")
+	FWidgetAlignment TipAlignment;
+
+	/** The horizontal alignment of the border background.*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loading Layout")
+	TEnumAsByte<EHorizontalAlignment> BorderHorizontalAlignment = EHorizontalAlignment::HAlign_Fill;
+
+	/** The padding area between the border and the widget it contains.*/
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Loading Layout")
+	FMargin BorderPadding;
+
+	/** Background appearance settings for the border widget */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Loading Layout")
+	FSlateBrush BorderBackground;
+};
+
+
+
 
 /**
  * Loading Screen Settings
@@ -484,23 +525,24 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "General")
 	bool bPreloadBackgroundImages = false;
 
-	/**
-	 * The startup loading screen when you first open the game. Setup any studio logo movies here.
-	 */
-	UPROPERTY(Config, EditAnywhere, Category = "General")
-	FALoadingScreenSettings StartupLoadingScreen;
+	// --- Start Screen
 
-	/**
-	 * The default loading screen that shows up whenever you open a new level.
-	 */
+	// The startup loading screen when you first open the game. Setup any studio logo movies here.
 	UPROPERTY(Config, EditAnywhere, Category = "General")
-	FALoadingScreenSettings DefaultLoadingScreen;
+		FALoadingScreenSettings StartScreen;
 
-	/**
-	 * Classic Layout settings.
-	 * The Classic is a simple, generic layout and fits well with many designs.
-	 * A border that contains loading and tip widgets can be at the bottom or top.
-	 */
+	// Game first start
 	UPROPERTY(Config, EditAnywhere, Category = "Layout")
-	FClassicLayoutSettings Classic;
+		FStartLayoutSettings StartSettings;
+
+
+	// --- Loading screen
+
+	// The default loading screen that shows up whenever you open a new level.
+	UPROPERTY(Config, EditAnywhere, Category = "General")
+		FALoadingScreenSettings LoadingScreen;
+
+	// Level transition
+	UPROPERTY(Config, EditAnywhere, Category = "Layout")
+		FLoadingLayoutSettings LoadingSettings;
 };

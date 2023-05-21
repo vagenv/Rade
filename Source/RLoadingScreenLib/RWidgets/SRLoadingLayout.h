@@ -5,7 +5,7 @@
 #include "SLoadingScreenLayout.h"
 
 struct FALoadingScreenSettings;
-struct FClassicLayoutSettings;
+struct FLoadingLayoutSettings;
 
 /**
  * Classic layout loading screen
@@ -20,5 +20,5 @@ public:
 	/**
 	 * Construct this widget
 	 */
-	void Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FClassicLayoutSettings& LayoutSettings);
+	void Construct(const FArguments& InArgs, const FALoadingScreenSettings& Settings, const FLoadingLayoutSettings& LayoutSettings);
 };
