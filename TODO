@@ -42,7 +42,6 @@ JSON data replication on Item. Very expensive.
 TSubclassOf -> TSoftClassPtr
 
 
-
 ==============
 Input
 ==============
@@ -67,44 +66,95 @@ Unreal Common UI UMG.
 - Replace RUI
 
 
+==============
+Session
+==============
+
+Network Disconnect -> Fade Out first
+Join Session Black Screen flickers
+
+
 =================================================
-   Level Transition
+   Online Subsystem
+=================================================
+
+Cleanup RSessionManager
+- Add components to GameInstance, GameState and PlayerState
+
+==============
+Session
+==============
+Network Session
+- Deep dive / Analysis / Simplification of core functionality
+- Persistent data between sessions with PlayerId storing data
+- Real time data. (Latency, Player count)
+- Disconnect and return to main screen
+- Kick Player
+
+
+=================================================
+   Game Session
 =================================================
 
 ==============
-User Journey
+GameMode
 ==============
-- App Start
-- Small Splash screen
-- Black screen
-- Fade Out
-- Main Menu
-- Start New game / Load Save File / Join Session
-- Fade In
-- Fade Out
-- Loading Screen with progress
-- Fade Out
+- OnPostLogin. Add list of players
+- Pauseable
+- ChangeName?
 
 ==============
-Loading screen / Level Change
+GameState
 ==============
-- Transition level.
-- Transitioning?
-- Load progress.
+- Score
+- Chat
 
 ==============
-World change
+PlayerState
 ==============
-- Players still connected.
-- UI class stable and valid
+- Recconect -> Get values from old data
+- Description (player name, UUID, icon)
+Additional Character info
+- ping
+- color
+- icon
 
 ==============
-'Seamless' travel:
+UI
 ==============
+Connected Players:
+- Name
+- Ping
+- Level
+- HP
+- Distance
+
+
+=================================================
+   Network
+=================================================
+
+==============
+Spawn Menu
+==============
+Select spawn point
+
+
+
+
+
+=================================================
+   'Seamless' travel in party
+=================================================
 - Mark Actors that will persist to the Transition Level
 - Travel to the Transition Level
 - Mark Actors that will persist to the Final Level
 - Travel to the Final Level
+
+
+
+
+
 
 
 =================================================
@@ -172,71 +222,6 @@ Melee
 - Attack
 - Basic AI
 
-
-=================================================
-   Online Subsystem
-=================================================
-
-Cleanup RSessionManager
-- Add components to GameInstance, GameState and PlayerState
-
-==============
-Session
-==============
-Network Session
-- Deep dive / Analysis / Simplification of core functionality
-- Persistent data between sessions with PlayerId storing data
-- Real time data. (Latency, Player count)
-- Disconnect and return to main screen
-- Kick Player
-
-
-=================================================
-   Game Session
-=================================================
-
-==============
-GameMode
-==============
-- OnPostLogin. Add list of players
-- Pauseable
-- ChangeName?
-
-==============
-GameState
-==============
-- Score
-- Chat
-
-==============
-PlayerState
-==============
-- Recconect -> Get values from old data
-- Description (player name, UUID, icon)
-Additional Character info
-- ping
-- color
-- icon
-
-==============
-UI
-==============
-Connected Players:
-- Name
-- Ping
-- Level
-- HP
-- Distance
-
-
-=================================================
-   Network
-=================================================
-
-==============
-Spawn Menu
-==============
-Select spawn point
 
 
 =================================================
@@ -671,28 +656,43 @@ VCPP
 Custom plugin
 - Block constructor or something new
 
+=================================================
+   UI
+=================================================
+
+- Less is more
+- Transparent
+- Thin border around window only.
+
 
 =================================================
    Game Design
 =================================================
 
 ==============
-Style
-==============
-- 3rd/1st Person Shooter/Slasher
-
-==============
 Movement
 ==============
 - Jump
-- Roll + Sprint
-DarkSouls vs Sekiro vs DMC
+- Wall jump
+- Double jump
+- Phase forward
+- Roll
+- Sprint
+
+
+==============
+Character status
+==============
+- Stun
+- On ground
+- Slow/Fast status effect
 
 ==============
 Attack types
 ==============
 - Melee / Ranged
 - Guns
+- Attack combo
 - Spells. Instant + Casting
 - Environment
 - Turrents / Towers

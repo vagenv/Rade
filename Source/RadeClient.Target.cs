@@ -4,12 +4,12 @@ using UnrealBuildTool;
 using System.Collections.Generic;
 
 
-public class RadeTarget : TargetRules
+public class RadeClientTarget : TargetRules
 {
-   public RadeTarget (TargetInfo Target) : base(Target)
-   {
-      Type = TargetType.Game;
-	   bUsesSteam = true;
+	public RadeClientTarget (TargetInfo Target) : base(Target)
+	{	
+		Type = TargetType.Client;
+      bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V2;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 	  

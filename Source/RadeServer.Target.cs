@@ -3,13 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-
-public class RadeTarget : TargetRules
+[SupportedPlatforms(UnrealPlatformClass.Server)]
+public class RadeServerTarget : TargetRules
 {
-   public RadeTarget (TargetInfo Target) : base(Target)
-   {
-      Type = TargetType.Game;
-	   bUsesSteam = true;
+	public RadeServerTarget (TargetInfo Target) : base(Target)
+	{
+      Type = TargetType.Server;
+      bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V2;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 	  
@@ -27,5 +27,5 @@ public class RadeTarget : TargetRules
       ExtraModuleNames.Add ("REquipmentLib");
       ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("Rade");
-   }
+	}
 }
