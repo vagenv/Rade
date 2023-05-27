@@ -42,7 +42,6 @@ JSON data replication on Item. Very expensive.
 TSubclassOf -> TSoftClassPtr
 
 
-
 ==============
 Input
 ==============
@@ -67,59 +66,12 @@ Unreal Common UI UMG.
 - Replace RUI
 
 
-=================================================
-   Level Transition
-=================================================
+==============
+Session
+==============
 
-
-Level streaming vs OpenLevel
-
-
-Progress String
-
-Disconnect -> Fade Out first
-
+Network Disconnect -> Fade Out first
 Join Session Black Screen flickers
-
-
-
-
-
-==============
-User Journey
-==============
-- App Start
-- Small Splash screen
-- Black screen
-- Fade Out
-- Main Menu
-- Start New game / Load Save File / Join Session
-- Fade In
-- Fade Out
-- Loading Screen with progress
-- Fade Out
-
-==============
-Loading screen / Level Change
-==============
-- Transition level.
-- Transitioning?
-- Load progress.
-
-==============
-World change
-==============
-- Players still connected.
-- UI class stable and valid
-
-==============
-'Seamless' travel:
-==============
-- Mark Actors that will persist to the Transition Level
-- Travel to the Transition Level
-- Mark Actors that will persist to the Final Level
-- Travel to the Final Level
-
 
 
 =================================================
@@ -191,7 +143,13 @@ Select spawn point
 
 
 
-
+=================================================
+   'Seamless' travel in party
+=================================================
+- Mark Actors that will persist to the Transition Level
+- Travel to the Transition Level
+- Mark Actors that will persist to the Final Level
+- Travel to the Final Level
 
 
 
@@ -705,6 +663,7 @@ Custom plugin
 - Less is more
 - Transparent
 - Thin border around window only.
+
 
 =================================================
    Game Design
