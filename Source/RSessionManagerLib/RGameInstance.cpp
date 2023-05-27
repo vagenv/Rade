@@ -5,7 +5,7 @@
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
-const FName theSessionName ("RadeSessionName");
+const FName RSessionName ("RadeSessionName");
 
 FRAvaiableSessionsData::FRAvaiableSessionsData ()
 {
@@ -20,389 +20,349 @@ FRAvaiableSessionsData::FRAvaiableSessionsData (const FOnlineSessionSearchResult
    NumberOfAvaiableConnections = NumberOfConnections - newSessionData.Session.NumOpenPublicConnections;
 }
 
-URGameInstance::URGameInstance()
+URGameInstance::URGameInstance ()
 {
-   /** Bind function for CREATING a Session */
+   // Bind function for CREATING a Session
    OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnCreateSessionComplete);
-   OnStartSessionCompleteDelegate  = FOnStartSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnStartOnlineGameComplete);
+   OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnStartOnlineGameComplete);
 
-   /** Bind function for FINDING a Session */
+   // Bind function for FINDING a Session
    OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &URGameInstance::OnFindSessionsComplete);
 
-   /** Bind function for JOINING a Session */
+   // Bind function for JOINING a Session
    OnJoinSessionCompleteDelegate = FOnJoinSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnJoinSessionComplete);
 
-   /** Bind function for DESTROYING a Session */
+   // Bind function for DESTROYING a Session
    OnDestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnDestroySessionComplete);
 }
 
-
-// Set Local Player Stats
-void URGameInstance::SetPlayerStats(FString newPlayerName, FLinearColor newPlayerColor, FVector newMaterialSettings)
+void URGameInstance::StartOnlineGameMap (FString MapName, int32 MaxPlayerNumber)
 {
-   PlayerName             = newPlayerName;
-   PlayerColor            = newPlayerColor;
-   PlayerMaterialSettings = newMaterialSettings;
-}
-
-// Host Default Map
-void URGameInstance::StartOnlineGame()
-{
-   // Creating a local player where we can get the UserID from
-   ULocalPlayer* const Player = GetFirstGamePlayer();
+   ULocalPlayer* const Player = GetFirstGamePlayer ();
+   if (!ensure (Player)) return;
 
    // Call our custom HostSession function. GameSessionName is a GameInstance variable
-   HostSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId(), *PlayerName, TheMapName, true, true, 16);
+   HostSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
+                RSessionName,
+                MapName,
+                true,
+                true,
+                MaxPlayerNumber);
 }
 
-// Host Specific Map
-void URGameInstance::StartOnlineGameMap(FString MapName, int32 MaxPlayerNumber)
+void URGameInstance::FindOnlineGames ()
 {
-   // Creating a local player where we can get the UserID from
-   ULocalPlayer* const Player = GetFirstGamePlayer();
+   ULocalPlayer* const Player = GetFirstGamePlayer ();
+   if (!ensure (Player)) return;
 
-   //Player->GetPreferredUniqueNetId()
-   TheMapName = MapName;
-
-   // Call our custom HostSession function. GameSessionName is a GameInstance variable
-   HostSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, TheMapName, true, true, MaxPlayerNumber);
+   FindSessions (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
+                 RSessionName,
+                 true,
+                 true);
 }
 
-// Find All Online Sessions
-void URGameInstance::FindOnlineGames()
-{
-   ULocalPlayer* const Player = GetFirstGamePlayer();
-   FindSessions (Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, true, true);
-}
-
-// Update Available Sessions List
-void URGameInstance::UpdateSessionList()
+void URGameInstance::UpdateSessionList ()
 {
    if (!SessionSearch.IsValid ()) return;
 
-   CurrentSessionSearch.Empty();
-   for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++) {
-      FRAvaiableSessionsData NewData(SessionSearch->SearchResults[i]);
-      CurrentSessionSearch.Add(NewData);
+   CurrentSessionSearch.Empty ();
+   for (const FOnlineSessionSearchResult &ItResult : SessionSearch->SearchResults) {
+      CurrentSessionSearch.Add (FRAvaiableSessionsData (ItResult));
    }
    if (R_IS_VALID_WORLD && OnSessionListUpdated.IsBound ()) OnSessionListUpdated.Broadcast ();
 }
 
-// Join Any Available Online Game
-void URGameInstance::JoinOnlineGame()
+void URGameInstance::JoinOnlineGame ()
 {
+   if (!SessionSearch.IsValid ())            return;
+   if (!SessionSearch->SearchResults.Num ()) return;
+
    ULocalPlayer* const Player = GetFirstGamePlayer();
 
-   // Just a SearchResult where we can save the one we want to use, for the case we find more than one!
-   FOnlineSessionSearchResult SearchResult;
-
-   // If the Array is not empty, we can go through it
-   if (SessionSearch->SearchResults.Num() > 0) {
-      for (int32 i = 0; i < SessionSearch->SearchResults.Num(); i++) {
-         // To avoid something crazy, we filter sessions from ourself
-         if (SessionSearch->SearchResults[i].Session.OwningUserId != Player->GetPreferredUniqueNetId()) {
-            SearchResult = SessionSearch->SearchResults[i];
-            JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, SearchResult);
-            break;
-         }
+   for (const FOnlineSessionSearchResult &ItResult : SessionSearch->SearchResults) {
+      if (ItResult.Session.OwningUserId != Player->GetPreferredUniqueNetId ()) {
+         JoinSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
+                      RSessionName,
+                      ItResult);
+         break;
       }
    }
 }
 
 // Join Selected Online Session
-void URGameInstance::JoinSelectedOnlineGame(FRAvaiableSessionsData SessionData)
+void URGameInstance::JoinSelectedOnlineGame (FRAvaiableSessionsData SessionData)
 {
-   ULocalPlayer* const Player = GetFirstGamePlayer();
-   JoinSession(Player->GetPreferredUniqueNetId().GetUniqueNetId(), theSessionName, SessionData.SessionData);
+   ULocalPlayer* const Player = GetFirstGamePlayer ();
+   if (!ensure (Player)) return;
+
+   JoinSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
+                RSessionName,
+                SessionData.SessionData);
 }
 
 // Destroy Session
-void URGameInstance::DestroySessionAndLeaveGame()
+void URGameInstance::DestroySessionAndLeaveGame ()
 {
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-   if (OnlineSub) {
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return;
 
-      if (Sessions.IsValid()) {
-         Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
-         Sessions->DestroySession(theSessionName);
-      }
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
    }
+
+   Sessions->AddOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegate);
+   Sessions->DestroySession (RSessionName);
 }
 
 //=============================================================================
 //                      Internal Code
 //=============================================================================
 
-/*
-Code Part for CREATING a Session and starting it, as well as handling
-the delegates that get called when the creation or start request is done.
-*/
-
-
-/**
-*   Function to host a game!
-*
-*   @Param      UserID         User that started the request
-*   @Param      SessionName      Name of the Session
-*   @Param      bIsLAN         Is this is LAN Game?
-*   @Param      bIsPresence      "Is the Session to create a presence Session"
-*   @Param      MaxNumPlayers   Number of Maximum allowed players on this "Session" (Server)
-*/
-bool URGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers)
+bool URGameInstance::HostSession (
+   TSharedPtr<const FUniqueNetId> UserId,
+   FName                          SessionName,
+   FString                        MapName,
+   bool                           bIsLAN,
+   bool                           bIsPresence,
+   int32                          MaxNumPlayers)
 {
-   // Get the Online Subsystem to work with
-   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get();
-
-   if (OnlineSub) {
-      // Get the Session Interface, so we can call the "CreateSession" function on it
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-
-      if (Sessions.IsValid() && UserId.IsValid()) {
-         /*
-         Fill in all the Session Settings that we want to use.
-
-         There are more with SessionSettings.Set(...);
-         For example the Map or the GameMode/Type.
-         */
-
-         SessionSettings = MakeShareable(new FOnlineSessionSettings());
-
-         SessionSettings->bIsLANMatch = bIsLAN;
-         SessionSettings->bUsesPresence = bIsPresence;
-         SessionSettings->NumPublicConnections = MaxNumPlayers;
-         SessionSettings->NumPrivateConnections = 0;
-         SessionSettings->bAllowInvites = true;
-         SessionSettings->bAllowJoinInProgress = true;
-         SessionSettings->bShouldAdvertise = true;
-         SessionSettings->bAllowJoinViaPresence = true;
-         SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
-
-         SessionSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
-
-         // Set the delegate to the Handle of the SessionInterface
-         OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
-
-         //printr(SessionName.ToString());
-
-         // Our delegate should get called when this is complete (doesn't need to be successful!)
-         return Sessions->CreateSession(*UserId, SessionName, *SessionSettings);
-
-      }
-   } else {
-      //GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("No OnlineSubsytem found!"));
+   if (!UserId.IsValid()) {
+      R_LOG ("Invalid UserId");
+      return false;
    }
 
-   return false;
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return false;
+
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return false;
+   }
+
+   SessionSettings = MakeShareable(new FOnlineSessionSettings());
+
+   SessionSettings->bIsLANMatch = bIsLAN;
+   SessionSettings->bUsesPresence = bIsPresence;
+   SessionSettings->NumPublicConnections = MaxNumPlayers;
+   SessionSettings->NumPrivateConnections = 0;
+   SessionSettings->bAllowInvites = true;
+   SessionSettings->bAllowJoinInProgress = true;
+   SessionSettings->bShouldAdvertise = true;
+   SessionSettings->bAllowJoinViaPresence = true;
+   SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
+
+   SessionSettings->Set (SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
+
+   // Set the delegate to the Handle of the SessionInterface
+   OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle (OnCreateSessionCompleteDelegate);
+
+   // Our delegate should get called when this is complete (doesn't need to be successful!)
+   return Sessions->CreateSession (*UserId,
+                                   SessionName,
+                                   *SessionSettings);
 }
 
-/**
-*   Delegate fired when a session create request has completed
-*
-*   @param SessionName the name of the session this callback is for
-*   @param bWasSuccessful true if the async action completed without error, false if there was an error
-*/
-void URGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
+void URGameInstance::OnCreateSessionComplete (FName SessionName, bool bWasSuccessful)
 {
-   //GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("OnCreateSessionComplete %s, %d"), *SessionName.ToString(), bWasSuccessful));
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return;
 
-   // Get the OnlineSubsystem so we can get the Session Interface
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-   if (OnlineSub) {
-      // Get the Session Interface to call the StartSession function
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-
-      if (Sessions.IsValid()) {
-         // Clear the SessionComplete delegate handle, since we finished this call
-         Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
-         if (bWasSuccessful) {
-            // Set the StartSession delegate handle
-            OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
-
-            //printr(SessionName.ToString());
-            // Our StartSessionComplete delegate should get called after this
-            Sessions->StartSession(SessionName);
-         }
-      }
-   }
-}
-
-/**
-*   Delegate fired when a session start request has completed
-*
-*   @param SessionName the name of the session this callback is for
-*   @param bWasSuccessful true if the async action completed without error, false if there was an error
-*/
-void URGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful)
-{
-   //GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("OnStartSessionComplete %s, %d"), *SessionName.ToString(), bWasSuccessful));
-
-   // Get the Online Subsystem so we can get the Session Interface
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-   if (OnlineSub) {
-      // Get the Session Interface to clear the Delegate
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-      if (Sessions.IsValid()) {
-         // Clear the delegate, since we are done with this call
-         Sessions->ClearOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegateHandle);
-      }
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
    }
 
-   // If the start was successful, we can open a NewMap if we want. Make sure to use "listen" as a parameter!
-   if (bWasSuccessful) {
+   // Clear the SessionComplete delegate handle, since we finished this call
+   Sessions->ClearOnCreateSessionCompleteDelegate_Handle (OnCreateSessionCompleteDelegateHandle);
+   if (!bWasSuccessful) return;
 
-      //BattleArena
-      UGameplayStatics::OpenLevel(GetWorld (), *TheMapName, true, "listen");
-   }
+
+   // Set the StartSession delegate handle
+   OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
+
+   // Our StartSessionComplete delegate should get called after this
+   Sessions->StartSession (SessionName);
 }
 
 
-/**
-*   Find an online session
-*
-*   @param UserId user that initiated the request
-*   @param SessionName name of session this search will generate
-*   @param bIsLAN are we searching LAN matches
-*   @param bIsPresence are we searching presence sessions
-*/
-void URGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, bool bIsLAN, bool bIsPresence)
+void URGameInstance::OnStartOnlineGameComplete (FName SessionName, bool bWasSuccessful)
 {
-   // Get the OnlineSubsystem we want to work with
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return;
 
-   if (OnlineSub) {
-      bIsSearchingSession = true;
-      // Get the SessionInterface from our OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
+   }
 
-      if (Sessions.IsValid() && UserId.IsValid()) {
-         /*
-         Fill in all the SearchSettings, like if we are searching for a LAN game and how many results we want to have!
-         */
-         SessionSearch = MakeShareable(new FOnlineSessionSearch());
+   // Clear the delegate, since we are done with this call
+   Sessions->ClearOnStartSessionCompleteDelegate_Handle (OnStartSessionCompleteDelegateHandle);
 
-         SessionSearch->bIsLanQuery = bIsLAN;
-         SessionSearch->MaxSearchResults = 20;
-         SessionSearch->PingBucketSize = 50;
+   if (!bWasSuccessful) return;
 
-         // We only want to set this Query Setting if "bIsPresence" is true
-         if (bIsPresence) {
-            SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
-         }
+   if (!SessionSettings.IsValid ()) return;
 
-         TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
+   FString MapName;  
+   if (!SessionSettings->Get (SETTING_MAPNAME, MapName)) return;
 
-         // Set the Delegate to the Delegate Handle of the FindSession function
-         OnFindSessionsCompleteDelegateHandle = Sessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
+   // TODO : Notify that Session has been started and load level
+   UGameplayStatics::OpenLevel (GetWorld (),
+                                *MapName,
+                                true,
+                                "listen");
+}
 
-         // Finally call the SessionInterface function. The Delegate gets called once this is finished
-         Sessions->FindSessions(*UserId, SearchSettingsRef);
-      }
-   } else {
+
+void URGameInstance::FindSessions (
+   TSharedPtr<const FUniqueNetId> UserId,
+   FName                          SessionName,
+   bool                           bIsLAN,
+   bool                           bIsPresence)
+{
+
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) {
+
       // If something goes wrong, just call the Delegate Function directly with "false".
-      OnFindSessionsComplete(false);
+      OnFindSessionsComplete (false);
+      return;
    }
+
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
+   }
+
+   if (!UserId.IsValid()) {
+      R_LOG ("Invalid UserId");
+      return;
+   }
+
+   bIsSearchingSession = true;
+      
+   // Fill in all the SearchSettings, like if we are searching for a LAN game and how many results we want to have!
+   SessionSearch = MakeShareable(new FOnlineSessionSearch());
+
+   SessionSearch->bIsLanQuery = bIsLAN;
+   SessionSearch->MaxSearchResults = 20;
+   SessionSearch->PingBucketSize = 50;
+
+   // We only want to set this Query Setting if "bIsPresence" is true
+   if (bIsPresence) {
+      SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
+   }
+
+   TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef ();
+
+   // Set the Delegate to the Delegate Handle of the FindSession function
+   OnFindSessionsCompleteDelegateHandle = Sessions->AddOnFindSessionsCompleteDelegate_Handle (OnFindSessionsCompleteDelegate);
+
+   // Finally call the SessionInterface function. The Delegate gets called once this is finished
+   Sessions->FindSessions (*UserId, SearchSettingsRef);
 }
 
-/**
-*   Delegate fired when a session search query has completed
-*
-*   @param bWasSuccessful true if the async action completed without error, false if there was an error
-*/
-void URGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
+void URGameInstance::OnFindSessionsComplete (bool bWasSuccessful)
 {
-   // Start Session Search
    bIsSearchingSession = false;
 
-   // Get OnlineSubsystem we want to work with
-   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get();
-   if (OnlineSub) {
-      // Get SessionInterface of the OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-      if (Sessions.IsValid()) {
-         // Clear the Delegate handle, since we finished this call
-         Sessions->ClearOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegateHandle);
-      }
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return;
+
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
    }
 
-   UpdateSessionList();
+   // Clear the Delegate handle, since we finished this call
+   Sessions->ClearOnFindSessionsCompleteDelegate_Handle (OnFindSessionsCompleteDelegateHandle);
+
+   UpdateSessionList ();
 }
 
-
-//      Join Session
-bool URGameInstance::JoinSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult)
+bool URGameInstance::JoinSession (
+   TSharedPtr<const FUniqueNetId>    UserId,
+   FName                             SessionName,
+   const FOnlineSessionSearchResult& SearchResult)
 {
-   // Return bool
-   bool bSuccessful = false;
-
-   // Get OnlineSubsystem we want to work with
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
-
-   if (OnlineSub) {
-      // Get SessionInterface from the OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
-
-      if (Sessions.IsValid () && UserId.IsValid ()) {
-         // Set the Handle again
-         OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegate);
-
-         // Call the "JoinSession" Function with the passed "SearchResult". The "SessionSearch->SearchResults" can be used to get such a
-         // "FOnlineSessionSearchResult" and pass it. Pretty straight forward!
-         bSuccessful = Sessions->JoinSession (*UserId, SessionName, SearchResult);
-      }
+   if (!UserId.IsValid ()) {
+      R_LOG ("Invalid UserId");
+      return false;
    }
 
-   return bSuccessful;
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return false;
+
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return false;
+   }
+
+   // Set the Handle again
+   OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegate);
+
+   // Call the "JoinSession" Function with the passed "SearchResult". The "SessionSearch->SearchResults" can be used to get such a
+   // "FOnlineSessionSearchResult" and pass it. Pretty straight forward!
+   return Sessions->JoinSession (*UserId,
+                                 SessionName,
+                                 SearchResult);
 }
 
 void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-   // Get the OnlineSubsystem we want to work with
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get ();
-   if (OnlineSub) {
-      // Get SessionInterface from the OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return;
 
-      if (Sessions.IsValid()) {
-         // Clear the Delegate again
-         Sessions->ClearOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegateHandle);
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
+   }
 
-         // Get the first local PlayerController, so we can call "ClientTravel" to get to the Server Map
-         // This is something the Blueprint Node "Join Session" does automatically!
-         APlayerController * const PlayerController = GetFirstLocalPlayerController ();
+   // Clear the Delegate again
+   Sessions->ClearOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegateHandle);
 
-         // We need a FString to use ClientTravel and we can let the SessionInterface construct such a
-         // String for us by giving him the SessionName and an empty String. We want to do this, because
-         // Every OnlineSubsystem uses different TravelURLs
-         FString TravelURL;
+   // Get the first local PlayerController, so we can call "ClientTravel" to get to the Server Map
+   // This is something the Blueprint Node "Join Session" does automatically!
+   APlayerController * const PlayerController = GetFirstLocalPlayerController ();
 
-         if (PlayerController && Sessions->GetResolvedConnectString (SessionName, TravelURL)) {
-            // Finally call the ClienTravel. If you want, you could print the TravelURL to see
-            // how it really looks like
-            PlayerController->ClientTravel (TravelURL, ETravelType::TRAVEL_Absolute);
-         }
-      }
+   // We need a FString to use ClientTravel and we can let the SessionInterface construct such a
+   // String for us by giving him the SessionName and an empty String. We want to do this, because
+   // Every OnlineSubsystem uses different TravelURLs
+   FString TravelURL;
+
+   if (PlayerController && Sessions->GetResolvedConnectString (SessionName, TravelURL)) {
+      // Finally call the ClienTravel. If you want, you could print the TravelURL to see
+      // how it really looks like
+      PlayerController->ClientTravel (TravelURL, ETravelType::TRAVEL_Absolute);
    }
 }
 
 // Destroy Session And return to Start Map
 void URGameInstance::OnDestroySessionComplete (FName SessionName, bool bWasSuccessful)
 {
-   // Get the OnlineSubsystem we want to work with
-   IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get ();
-   if (OnlineSub) {
-      // Get the SessionInterface from the OnlineSubsystem
-      IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
+   if (!ensure (OnlineSub)) return;
 
-      if (Sessions.IsValid ()) {
-         // Clear the Delegate
-         Sessions->ClearOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegateHandle);
-
-         // If it was successful, we just load another level (could be a MainMenu!)
-         if (bWasSuccessful) {
-            UGameplayStatics::OpenLevel (GetWorld (), "SelectMap", true);
-         }
-      }
+   IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
+   if (!Sessions.IsValid ()) {
+      R_LOG ("Invalid session interface.");
+      return;
    }
+
+   // Clear the Delegate
+   Sessions->ClearOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegateHandle);
+
+   if (!bWasSuccessful) return;
+
+   // TODO : Notify that Session ended and return to main screen.
+   //UGameplayStatics::OpenLevel (GetWorld (), "SelectMap", true);
 }
 
