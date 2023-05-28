@@ -10,7 +10,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSessionEvent);
 
 class FOnlineSessionSearch;
 
-// Online Session Data Struct
+// ============================================================================
+//          Available session information
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct FRAvaiableSessionsData
 {
@@ -35,7 +38,10 @@ struct FRAvaiableSessionsData
    FRAvaiableSessionsData (const FOnlineSessionSearchResult &newSessionData);
 };
 
-// Custom Game Instance
+// ============================================================================
+//          R Game Instance
+// ============================================================================
+
 UCLASS(Blueprintable, ClassGroup=(_Rade))
 class RSESSIONMANAGERLIB_API URGameInstance : public UGameInstance
 {
@@ -45,111 +51,32 @@ public:
    URGameInstance ();
 
    //==========================================================================
-   //               Callable Events and Functions
+   //               Params
    //==========================================================================
-
-   // Host Specific Online Map Session
-   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void StartOnlineGameMap (FString MapName = TEXT ("NewMap"), int32 MaxPlayerNumber = 16);
-
-   // Find all available Online Sessions
-   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void FindOnlineGames ();
-
-   // Update available Online Sessions
-   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void UpdateSessionList ();
-
-   // Join Any Online Session
-   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void JoinOnlineGame ();
-
-   // Join Specific Online Session
-   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void JoinSelectedOnlineGame (FRAvaiableSessionsData SessionData);
-
-   // Stop Session and Quit Game
-   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void DestroySessionAndLeaveGame ();
-
-   //==========================================================================
-   //               Data about the Sessions and Game Instance
-   //==========================================================================
-
-   // Current Online Sessions Search Result
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Network")
-      TArray<FRAvaiableSessionsData> CurrentSessionSearch;
-
-   // Delegate when Item list updated
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
-      FRSessionEvent OnSessionListUpdated;
-
-   // Is Currently Searching Sessions?
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Network")
-      bool bIsSearchingSession = false;
-
-   //==========================================================================
-   //               Settings
-   //==========================================================================
-
-   // --- Variable Part for FINDING a Session
+protected:
+   // Session search manager
    TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
    // Session Setting
    TSharedPtr<FOnlineSessionSettings> SessionSettings;
 
    //==========================================================================
-   //               Delegate
+   //               Search Session
    //==========================================================================
+public:
 
-   // Delegate called when session created
-   FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
-   // Delegate called when session started
-   FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      bool GetSessionList (TArray<FRAvaiableSessionsData> &Result) const;
 
-   // Handles to registered delegates for creating a session
-   FDelegateHandle OnCreateSessionCompleteDelegateHandle;
-   FDelegateHandle OnStartSessionCompleteDelegateHandle;
+   // Delegate when Item list updated
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
+      FRSessionEvent OnSessionListUpdated;
 
-   // Delegate for searching for sessions
-   FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 
-   // Handle to registered delegate for searching a session
-   FDelegateHandle OnFindSessionsCompleteDelegateHandle;
+   // Find all available Online Sessions
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      void FindOnlineGames ();
 
-   // ---  Variable Part for JOINING a Session
-
-   // Delegate after joining a session
-   FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
-
-   // Handle to registered delegate for joining a session
-   FDelegateHandle OnJoinSessionCompleteDelegateHandle;
-
-   // --- Variable Part for DESTROYING a Session
-
-   // Delegate for destroying a session
-   FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
-
-   // Handle to registered delegate for destroying a session
-   FDelegateHandle OnDestroySessionCompleteDelegateHandle;
-
-   //==========================================================================
-   //                        Internal Events
-   //==========================================================================
-
-   // --- Host A Game
-   // @Param      UserID         User that started the request
-   // @Param      SessionName    Name of the Session
-   // @Param      bIsLAN         Is this is LAN Game?
-   // @Param      bIsPresence    "Is the Session to create a presence Session"
-   // @Param      MaxNumPlayers
-   bool HostSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
-
-   // --- Create Session Complete
-   virtual void OnCreateSessionComplete (FName SessionName, bool bWasSuccessful);
-
-   // --- Start Online Game Complete
-   void OnStartOnlineGameComplete (FName SessionName, bool bWasSuccessful);
 
    // --- Find Sessions
    // @param UserId user that initiated the request
@@ -162,17 +89,81 @@ public:
    // --- Find Session Complete
    void OnFindSessionsComplete (bool bWasSuccessful);
 
+protected:
+   // Found
+   FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
+   FDelegateHandle                 OnFindSessionsCompleteDelegateHandle;
+
+   //==========================================================================
+   //                   Start Session
+   //==========================================================================
+public:
+   // Host Specific Online Map Session
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      void StartOnlineGameMap (FString MapName, int32 MaxPlayerNumber = 16);
+
+
+   // --- Host A Game
+   // @Param      UserID         User that started the request
+   // @Param      SessionName    Name of the Session
+   // @Param      bIsLAN         Is this is LAN Game?
+   // @Param      bIsPresence    "Is the Session to create a presence Session"
+   // @Param      MaxNumPlayers
+   bool HostSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
+
+   // --- Create Session Complete
+   void OnCreateSessionComplete (FName SessionName, bool bWasSuccessful);
+
+   // --- Start Online Game Complete
+   void OnStartOnlineGameComplete (FName SessionName, bool bWasSuccessful);
+   
+protected:
+   // Created
+   FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
+   FDelegateHandle                  OnCreateSessionCompleteDelegateHandle;
+
+   // Started
+   FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
+   FDelegateHandle                 OnStartSessionCompleteDelegateHandle;
+
+   //==========================================================================
+   //                   Join Session
+   //==========================================================================
+public:
+
+   
+   // Disable join methods
+   virtual bool JoinSession (ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult) override{ return false; }
+   virtual bool JoinSession (ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) override { return false; } 
+
+   // Join Specific Online Session
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      void JoinSession (FRAvaiableSessionsData SessionData);
+   
    // --- Join Session
    bool JoinSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
-
-   // Disable default join methods
-   virtual bool JoinSession (ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult) { return false; }
-   virtual bool JoinSession (ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) { return false; }
 
    // --- Join Session is Complete
    void OnJoinSessionComplete (FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
-   // --- DESTROYING a Session
-   virtual void OnDestroySessionComplete (FName SessionName, bool bWasSuccessful);
+protected:
+   // Joined
+   FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
+   FDelegateHandle                OnJoinSessionCompleteDelegateHandle;
+
+   //==========================================================================
+   //                   Leave Session
+   //==========================================================================
+public:
+   // Stop Session and Quit Game
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      void DestroySessionAndLeaveGame ();
+
+   void OnDestroySessionComplete (FName SessionName, bool bWasSuccessful);
+
+protected:
+   // Destryoyed
+   FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
+   FDelegateHandle                   OnDestroySessionCompleteDelegateHandle;
 };
 
