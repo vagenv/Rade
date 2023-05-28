@@ -20,16 +20,16 @@ struct FRAvaiableSessionsData
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString OwnerName = "Not Set";
+      FString Hostname;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Ping = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 NumberOfConnections = 0;
+      int32 ConnectionsMax = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 NumberOfAvaiableConnections = 0;
+      int32 ConnectionsBusy = 0;
 
    // Keep copy
    FOnlineSessionSearchResult SessionData;
@@ -75,8 +75,7 @@ public:
 
    // Find all available Online Sessions
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void FindOnlineGames ();
-
+      void FindSessions ();
 
    // --- Find Sessions
    // @param UserId user that initiated the request

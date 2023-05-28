@@ -16,13 +16,13 @@ FRAvaiableSessionsData::FRAvaiableSessionsData ()
 {
 }
 
-FRAvaiableSessionsData::FRAvaiableSessionsData (const FOnlineSessionSearchResult &newSessionData)
+FRAvaiableSessionsData::FRAvaiableSessionsData (const FOnlineSessionSearchResult &SessionData_)
 {
-   SessionData                 = FOnlineSessionSearchResult (newSessionData);
-   OwnerName                   = newSessionData.Session.OwningUserName;
-   Ping                        = newSessionData.PingInMs;
-   NumberOfConnections         = newSessionData.Session.SessionSettings.NumPublicConnections;
-   NumberOfAvaiableConnections = NumberOfConnections - newSessionData.Session.NumOpenPublicConnections;
+   SessionData     = FOnlineSessionSearchResult (SessionData_);
+   Hostname        = SessionData_.Session.OwningUserName;
+   Ping            = SessionData_.PingInMs;
+   ConnectionsMax  = SessionData_.Session.SessionSettings.NumPublicConnections;
+   ConnectionsBusy = ConnectionsMax - SessionData_.Session.NumOpenPublicConnections;
 }
 
 
@@ -61,7 +61,7 @@ bool URGameInstance::GetSessionList (TArray<FRAvaiableSessionsData> &Result) con
    return true;
 }
 
-void URGameInstance::FindOnlineGames ()
+void URGameInstance::FindSessions ()
 {
    ULocalPlayer* const Player = GetFirstGamePlayer ();
    if (!ensure (Player)) return;
@@ -163,7 +163,7 @@ bool URGameInstance::HostSession (
    bool                           bIsPresence,
    int32                          MaxNumPlayers)
 {
-   if (!UserId.IsValid()) {
+   if (!UserId.IsValid ()) {
       R_LOG ("Invalid UserId");
       return false;
    }
