@@ -20,7 +20,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RTargetableLib",
+			"Name": "RTargetLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},

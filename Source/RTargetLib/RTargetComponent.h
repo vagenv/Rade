@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetEvent);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RTARGETABLELIB_API URTargetComponent : public USceneComponent
+class RTARGETLIB_API URTargetComponent : public USceneComponent
 {
    GENERATED_BODY()
 public:

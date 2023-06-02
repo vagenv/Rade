@@ -12,7 +12,7 @@ class URTargetComponent;
 class URWorldTargetMgr;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RTARGETABLELIB_API URTargetingComponent : public USceneComponent
+class RTARGETLIB_API URTargetingComponent : public USceneComponent
 {
 	GENERATED_BODY()
 public:

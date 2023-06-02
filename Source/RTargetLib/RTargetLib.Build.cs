@@ -1,9 +1,9 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 using UnrealBuildTool;
-public class RTargetableLib: ModuleRules
+public class RTargetLib: ModuleRules
 {
-   public RTargetableLib (ReadOnlyTargetRules Target) : base (Target)
+   public RTargetLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {

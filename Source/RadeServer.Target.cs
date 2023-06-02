@@ -16,7 +16,7 @@ public class RadeServerTarget : TargetRules
       ExtraModuleNames.Add ("RUtilLib");
       ExtraModuleNames.Add ("RDamageLib");
       ExtraModuleNames.Add ("RExperienceLib");
-      ExtraModuleNames.Add ("RTargetableLib");
+      ExtraModuleNames.Add ("RTargetLib");
       ExtraModuleNames.Add ("RUILib");
       ExtraModuleNames.Add ("RSaveLib");
       ExtraModuleNames.Add ("ROptionsLib");
