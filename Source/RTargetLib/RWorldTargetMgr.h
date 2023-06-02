@@ -32,11 +32,11 @@ public:
 
    // Distance at which target can be searched
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
-      float SearchDistance = 2000;
+      float SearchDistance = 3000;
 
    // FOV angle to search targets
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
-      float SearchAngle = 40;
+      float SearchAngle = 50;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
       float InputHWeight = 1;
