@@ -11,7 +11,7 @@ public class RadeTarget : TargetRules
       Type = TargetType.Game;
 	   bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V2;
-      IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+      IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;
 	  
       ExtraModuleNames.Add ("RUtilLib");
       ExtraModuleNames.Add ("RDamageLib");

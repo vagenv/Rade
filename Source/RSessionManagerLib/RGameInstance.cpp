@@ -5,6 +5,8 @@
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
+#include "Online/OnlineSessionNames.h"
+
 const FName RSessionName ("RadeSessionName");
 
 

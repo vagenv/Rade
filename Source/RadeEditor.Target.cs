@@ -11,7 +11,7 @@ public class RadeEditorTarget : TargetRules
       Type = TargetType.Editor;
       bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V2;
-      IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+      IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;
 	  
       ExtraModuleNames.Add ("RUtilLib");
       ExtraModuleNames.Add ("RDamageLib");

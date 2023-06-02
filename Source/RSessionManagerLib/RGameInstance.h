@@ -4,6 +4,7 @@
 
 #include "Engine/GameInstance.h"
 #include "Online.h"
+#include "OnlineSessionSettings.h"
 #include "RGameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSessionEvent);
