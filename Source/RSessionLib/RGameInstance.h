@@ -16,7 +16,7 @@ class FOnlineSessionSearch;
 // ============================================================================
 
 USTRUCT(BlueprintType)
-struct FRAvaiableSessionsData
+struct RSESSIONLIB_API FRAvaiableSessionsData
 {
    GENERATED_BODY()
 
@@ -44,7 +44,7 @@ struct FRAvaiableSessionsData
 // ============================================================================
 
 UCLASS(Blueprintable, ClassGroup=(_Rade))
-class RSESSIONMANAGERLIB_API URGameInstance : public UGameInstance
+class RSESSIONLIB_API URGameInstance : public UGameInstance
 {
    GENERATED_BODY()
 public:

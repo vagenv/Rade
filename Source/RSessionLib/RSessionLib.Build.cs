@@ -2,15 +2,16 @@
 
 using UnrealBuildTool;
 
-public class RSessionManagerLib : ModuleRules
+public class RSessionLib : ModuleRules
 {
-   public RSessionManagerLib (ReadOnlyTargetRules Target) : base (Target)
+   public RSessionLib (ReadOnlyTargetRules Target) : base (Target)
    {
       PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
          "Core",
          "CoreUObject",
          "Engine",
+         "EngineSettings",
          "HTTP",
          "OnlineSubsystem",
          "OnlineSubsystemUtils",
