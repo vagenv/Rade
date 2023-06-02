@@ -30,7 +30,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RSessionManagerLib",
+			"Name": "RSessionLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
