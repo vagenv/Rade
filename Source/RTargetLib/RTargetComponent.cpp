@@ -1,11 +1,11 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RTargetableComponent.h"
+#include "RTargetComponent.h"
 #include "RWorldTargetMgr.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
-void URTargetableComponent::BeginPlay ()
+void URTargetComponent::BeginPlay ()
 {
    Super::BeginPlay ();
    if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
@@ -13,7 +13,7 @@ void URTargetableComponent::BeginPlay ()
    }
 }
 
-void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
+void URTargetComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
       Mgr->RmTarget (this);
@@ -25,13 +25,13 @@ void URTargetableComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 //         Can this target be selected
 //=============================================================================
 
-void URTargetableComponent::SetIsTargetable (bool CanFind)
+void URTargetComponent::SetIsTargetable (bool CanFind)
 {
    IsTargetable = CanFind;
    if (R_IS_VALID_WORLD && OnIsTargetable.IsBound ()) OnIsTargetable.Broadcast ();
 }
 
-bool URTargetableComponent::GetIsTargetable () const
+bool URTargetComponent::GetIsTargetable () const
 {
    return IsTargetable;
 }
@@ -40,13 +40,13 @@ bool URTargetableComponent::GetIsTargetable () const
 //         Is this target be selected
 //=============================================================================
 
-void URTargetableComponent::SetIsTargeted (bool CanTarget)
+void URTargetComponent::SetIsTargeted (bool CanTarget)
 {
    IsTargeted = CanTarget;
    if (R_IS_VALID_WORLD && OnIsTargeted.IsBound ()) OnIsTargeted.Broadcast ();
 }
 
-bool URTargetableComponent::GetIsTargeted () const
+bool URTargetComponent::GetIsTargeted () const
 {
    return IsTargeted;
 }

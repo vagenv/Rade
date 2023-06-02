@@ -8,7 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetingEvent);
 
-class URTargetableComponent;
+class URTargetComponent;
 class URWorldTargetMgr;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -68,7 +68,7 @@ public:
       virtual FRotator GetTargetRotation () const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
-      virtual URTargetableComponent* GetCurrentTarget () const;
+      virtual URTargetComponent* GetCurrentTarget () const;
 
    // Broadcasted when TargetCurrent has changed
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
@@ -86,7 +86,7 @@ protected:
 
 	// Current focus target
    UPROPERTY()
-      URTargetableComponent* TargetCurrent = nullptr;
+      URTargetComponent* TargetCurrent = nullptr;
 
    // Direction where to look. Capsule direction
    UPROPERTY()
@@ -114,7 +114,7 @@ protected:
 
    // In case user is targeting someone, notify server
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Targetable")
-              void SetTarget_Server                (URTargetableComponent* TargetCurrent_);
-      virtual void SetTarget_Server_Implementation (URTargetableComponent* TargetCurrent_);
+              void SetTarget_Server                (URTargetComponent* TargetCurrent_);
+      virtual void SetTarget_Server_Implementation (URTargetComponent* TargetCurrent_);
 };
 

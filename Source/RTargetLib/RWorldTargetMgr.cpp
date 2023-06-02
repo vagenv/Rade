@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RWorldTargetMgr.h"
-#include "RTargetableComponent.h"
+#include "RTargetComponent.h"
 #include "RTargetingComponent.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RUtil.h"
@@ -24,23 +24,23 @@ URWorldTargetMgr::URWorldTargetMgr ()
 {
 }
 
-void URWorldTargetMgr::AddTarget (URTargetableComponent* Target)
+void URWorldTargetMgr::AddTarget (URTargetComponent* Target)
 {
    if (!ensure (IsValid (Target))) return;
    TargetableList.Add (Target);
    if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
-void URWorldTargetMgr::RmTarget  (URTargetableComponent* Target)
+void URWorldTargetMgr::RmTarget  (URTargetComponent* Target)
 {
    if (!ensure (IsValid (Target))) return;
    TargetableList.Remove (Target);
    if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
-URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,
+URTargetComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,
                                                TArray<AActor*>                FilterOutActors,
-                                               TArray<URTargetableComponent*> FilterOutTargets)
+                                               TArray<URTargetComponent*> FilterOutTargets)
 {
    if (!ensure (IsValid (Targeter))) return nullptr;
    FVector  Origin    = Targeter->GetComponentLocation ();
@@ -49,10 +49,10 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
    // Camera look direction
    FVector SearchDir = Direction.Vector ();
    SearchDir.Normalize ();
-   URTargetableComponent* CurrentTarget = nullptr;
+   URTargetComponent* CurrentTarget = nullptr;
 
    // --- Iterate over available Targets
-   for (URTargetableComponent* ItTarget : TargetableList) {
+   for (URTargetComponent* ItTarget : TargetableList) {
       if (!IsValid (ItTarget)) continue;
       if (!ItTarget->GetIsTargetable ()) continue;
 
@@ -88,12 +88,12 @@ URTargetableComponent* URWorldTargetMgr::Find (URTargetingComponent*          Ta
    return CurrentTarget;
 }
 
-URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Targeter,
-                                                   URTargetableComponent*         CurrentTarget,
+URTargetComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Targeter,
+                                                   URTargetComponent*         CurrentTarget,
                                                    float                          InputOffsetX,
                                                    float                          InputOffsetY,
                                                    TArray<AActor*>                FilterOutActors,
-                                                   TArray<URTargetableComponent*> FilterOutTargets)
+                                                   TArray<URTargetComponent*> FilterOutTargets)
 {
    if (!ensure (IsValid (Targeter)))      return nullptr;
    if (!ensure (IsValid (CurrentTarget))) return nullptr;
@@ -114,13 +114,13 @@ URTargetableComponent* URWorldTargetMgr::FindNear (URTargetingComponent*        
    float MinDot = 0.3;
 
    // New Target values
-   URTargetableComponent* NewTarget         = nullptr;
+   URTargetComponent* NewTarget         = nullptr;
    float                  NewTargetValue    = 0;
    float                  NewTargetDot      = 0;
    float                  NewTargetDistance = 0;
 
    // --- Iterate over available Targets
-   for (URTargetableComponent* ItTarget : TargetableList) {
+   for (URTargetComponent* ItTarget : TargetableList) {
       if (!IsValid (ItTarget)) continue;
       if (!ItTarget->GetIsTargetable ()) continue;
 

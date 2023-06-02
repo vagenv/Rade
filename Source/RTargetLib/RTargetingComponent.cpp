@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RTargetingComponent.h"
-#include "RTargetableComponent.h"
+#include "RTargetComponent.h"
 #include "RWorldTargetMgr.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
@@ -59,7 +59,7 @@ FRotator URTargetingComponent::GetTargetRotation () const
 	return TargetRotation;
 }
 
-URTargetableComponent* URTargetingComponent::GetCurrentTarget () const
+URTargetComponent* URTargetingComponent::GetCurrentTarget () const
 {
    return TargetCurrent;
 }
@@ -127,7 +127,7 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
 // Targeting enabled/disabled
 void URTargetingComponent::TargetToggle ()
 {
-   URTargetableComponent *TargetLast = TargetCurrent;
+   URTargetComponent *TargetLast = TargetCurrent;
 
    if (IsValid (TargetCurrent)) {
       TargetCurrent->SetIsTargeted (false);
@@ -177,10 +177,10 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
    LastTargetSearch = CurrentTime;
 
    TArray<AActor*>                blacklistActors;
-   TArray<URTargetableComponent*> blacklistTargets;
+   TArray<URTargetComponent*> blacklistTargets;
    blacklistActors.Add (GetOwner ());
 
-   URTargetableComponent* TargetNew = nullptr;
+   URTargetComponent* TargetNew = nullptr;
 
    if (IsValid (TargetCurrent)) {
       // --- Adjust target
@@ -212,7 +212,7 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
    }
 }
 
-void URTargetingComponent::SetTarget_Server_Implementation (URTargetableComponent* TargetCurrent_)
+void URTargetingComponent::SetTarget_Server_Implementation (URTargetComponent* TargetCurrent_)
 {
    TargetCurrent = TargetCurrent_;
 }

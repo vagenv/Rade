@@ -3,12 +3,12 @@
 #pragma once
 
 #include "Components/SceneComponent.h"
-#include "RTargetableComponent.generated.h"
+#include "RTargetComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetEvent);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RTARGETABLELIB_API URTargetableComponent : public USceneComponent
+class RTARGETABLELIB_API URTargetComponent : public USceneComponent
 {
    GENERATED_BODY()
 public:
@@ -21,7 +21,7 @@ public:
    //==========================================================================
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
-      FRTargetableEvent OnIsTargetable;
+      FRTargetEvent OnIsTargetable;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
       void SetIsTargetable (bool CanFind);
@@ -34,7 +34,7 @@ public:
    //==========================================================================
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
-      FRTargetableEvent OnIsTargeted;
+      FRTargetEvent OnIsTargeted;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
       void SetIsTargeted (bool CanTarget);

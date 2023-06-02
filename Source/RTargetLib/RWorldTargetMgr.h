@@ -7,7 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableMgrEvent);
 
-class URTargetableComponent;
+class URTargetComponent;
 class URTargetingComponent;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -24,7 +24,7 @@ public:
 protected:
    // Container for current targets
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
-      TArray<URTargetableComponent*> TargetableList;
+      TArray<URTargetComponent*> TargetableList;
 public:
    // Called when target list has been modified
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
@@ -49,27 +49,27 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual void AddTarget (URTargetableComponent * Target);
+      virtual void AddTarget (URTargetComponent * Target);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual void RmTarget  (URTargetableComponent * Target);
+      virtual void RmTarget  (URTargetComponent * Target);
 
    //==========================================================================
    //          Functions called by targeting components
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual URTargetableComponent* Find (URTargetingComponent*          Targeter,
+      virtual URTargetComponent* Find (URTargetingComponent*          Targeter,
                                            TArray<AActor*>                FilterOutActors,
-                                           TArray<URTargetableComponent*> FilterOutTargets);
+                                           TArray<URTargetComponent*> FilterOutTargets);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual URTargetableComponent* FindNear (URTargetingComponent*          Targeter,
-                                               URTargetableComponent*         CurrentTarget,
+      virtual URTargetComponent* FindNear (URTargetingComponent*          Targeter,
+                                               URTargetComponent*         CurrentTarget,
                                                float                          InputOffsetX,
                                                float                          InputOffsetY,
                                                TArray<AActor*>                FilterOutActors,
-                                               TArray<URTargetableComponent*> FilterOutTargets);
+                                               TArray<URTargetComponent*> FilterOutTargets);
 
    //==========================================================================
    //                  Get instance -> GameState component
