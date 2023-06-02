@@ -34,20 +34,39 @@ FRAvaiableSessionsData::FRAvaiableSessionsData (const FOnlineSessionSearchResult
 
 URGameInstance::URGameInstance ()
 {
-
    // Bind function for FINDING a Session
-   OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &URGameInstance::OnFindSessionsComplete);
+   OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject (
+      this, &URGameInstance::OnFindSessionsComplete);
 
    // Bind function for CREATING a Session
-   OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnCreateSessionComplete);
-   OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnStartOnlineGameComplete);
+   OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject (
+      this, &URGameInstance::OnCreateSessionComplete);
+   OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject (
+      this, &URGameInstance::OnStartSessionComplete);
 
    // Bind function for JOINING a Session
-   OnJoinSessionCompleteDelegate = FOnJoinSessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnJoinSessionComplete);
+   OnJoinSessionCompleteDelegate = FOnJoinSessionCompleteDelegate::CreateUObject (
+      this, &URGameInstance::OnJoinSessionComplete);
 
    // Bind function for DESTROYING a Session
-   OnDestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &URGameInstance::OnDestroySessionComplete);
+   OnDestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject (
+      this, &URGameInstance::OnDestroySessionComplete);
 }
+
+
+bool URGameInstance::HasSession () const
+{
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return false;
+
+   if (World->GetNetMode () == ENetMode::NM_Client)       return true;
+   if (World->GetNetMode () == ENetMode::NM_ListenServer) return true;
+
+   // TODO: Check SessionSettings?
+
+   return false;
+}
+
 
 // ============================================================================
 //          Search Session list
@@ -104,7 +123,7 @@ void URGameInstance::FindSessions (
    SessionSearch = MakeShareable(new FOnlineSessionSearch());
 
    SessionSearch->bIsLanQuery = bIsLAN;
-   SessionSearch->MaxSearchResults = 20;
+   SessionSearch->MaxSearchResults = 32;
    SessionSearch->PingBucketSize = 50;
 
    // We only want to set this Query Setting if "bIsPresence" is true
@@ -143,15 +162,19 @@ void URGameInstance::OnFindSessionsComplete (bool bWasSuccessful)
 //          Start Session
 // ============================================================================
 
-void URGameInstance::StartOnlineGameMap (FString MapName, int32 MaxPlayerNumber)
+void URGameInstance::HostSession (int32 MaxPlayerNumber)
 {
+   if (HasSession ()) {
+      R_LOG ("Already in session");
+      return;
+   }
+
    ULocalPlayer* const Player = GetFirstGamePlayer ();
    if (!ensure (Player)) return;
 
    // Call our custom HostSession function. GameSessionName is a GameInstance variable
    HostSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
                 RSessionName,
-                MapName,
                 true,
                 true,
                 MaxPlayerNumber);
@@ -160,7 +183,6 @@ void URGameInstance::StartOnlineGameMap (FString MapName, int32 MaxPlayerNumber)
 bool URGameInstance::HostSession (
    TSharedPtr<const FUniqueNetId> UserId,
    FName                          SessionName,
-   FString                        MapName,
    bool                           bIsLAN,
    bool                           bIsPresence,
    int32                          MaxNumPlayers)
@@ -191,8 +213,6 @@ bool URGameInstance::HostSession (
    SessionSettings->bAllowJoinViaPresence = true;
    SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 
-   SessionSettings->Set (SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
-
    // Set the delegate to the Handle of the SessionInterface
    OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle (OnCreateSessionCompleteDelegate);
 
@@ -215,8 +235,10 @@ void URGameInstance::OnCreateSessionComplete (FName SessionName, bool bWasSucces
 
    // Clear the SessionComplete delegate handle, since we finished this call
    Sessions->ClearOnCreateSessionCompleteDelegate_Handle (OnCreateSessionCompleteDelegateHandle);
-   if (!bWasSuccessful) return;
-
+   if (!bWasSuccessful) {
+      R_LOG ("Failed to create session");
+      return;
+   }
 
    // Set the StartSession delegate handle
    OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
@@ -226,7 +248,7 @@ void URGameInstance::OnCreateSessionComplete (FName SessionName, bool bWasSucces
 }
 
 
-void URGameInstance::OnStartOnlineGameComplete (FName SessionName, bool bWasSuccessful)
+void URGameInstance::OnStartSessionComplete (FName SessionName, bool bWasSuccessful)
 {
    IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
    if (!ensure (OnlineSub)) return;
@@ -240,18 +262,22 @@ void URGameInstance::OnStartOnlineGameComplete (FName SessionName, bool bWasSucc
    // Clear the delegate, since we are done with this call
    Sessions->ClearOnStartSessionCompleteDelegate_Handle (OnStartSessionCompleteDelegateHandle);
 
-   if (!bWasSuccessful) return;
+   if (!bWasSuccessful) {
+      R_LOG ("Failed to start session");
+      return;
+   }
 
-   if (!SessionSettings.IsValid ()) return;
+   if (!SessionSettings.IsValid ()) {
+      R_LOG ("Invalid session settings");
+      return;
+   }
 
-   FString MapName;  
-   if (!SessionSettings->Get (SETTING_MAPNAME, MapName)) return;
+   // --- Change to listen server
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
 
-   // TODO : Notify that Session has been started and load level
-   UGameplayStatics::OpenLevel (GetWorld (),
-                                *MapName,
-                                true,
-                                "listen");
+   FURL Url (nullptr, *World->GetLocalURL (), TRAVEL_Absolute);
+	World->Listen (Url);
 }
 
 
@@ -262,6 +288,11 @@ void URGameInstance::OnStartOnlineGameComplete (FName SessionName, bool bWasSucc
 // Join Selected Online Session
 void URGameInstance::JoinSession (FRAvaiableSessionsData SessionData)
 {
+    if (HasSession ()) {
+      R_LOG ("Already in session");
+      return;
+   }
+
    ULocalPlayer* const Player = GetFirstGamePlayer ();
    if (!ensure (Player)) return;
 
@@ -289,11 +320,17 @@ bool URGameInstance::JoinSession (
       return false;
    }
 
+   // Save backup of current level
+   LastLevelMap = GetWorld ()->GetPackage ()->GetPathName ();
+   if (!LastLevelMap.IsEmpty ()) {
+      R_LOG ("Set default map to: " + UGameMapsSettings::GetGameDefaultMap () + " => " + LastLevelMap);
+      UGameMapsSettings::SetGameDefaultMap (LastLevelMap);  
+   }
+
    // Set the Handle again
    OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegate);
 
-   // Call the "JoinSession" Function with the passed "SearchResult". The "SessionSearch->SearchResults" can be used to get such a
-   // "FOnlineSessionSearchResult" and pass it. Pretty straight forward!
+   // Join
    return Sessions->JoinSession (*UserId,
                                  SessionName,
                                  SearchResult);
@@ -315,26 +352,40 @@ void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCom
 
    // Get the first local PlayerController, so we can call "ClientTravel" to get to the Server Map
    // This is something the Blueprint Node "Join Session" does automatically!
-   APlayerController * const PlayerController = GetFirstLocalPlayerController ();
+   APlayerController* const PlayerController = GetFirstLocalPlayerController ();
+
+
+   if (!PlayerController) {
+      R_LOG ("No Player controller.");
+      return;
+   }
 
    // We need a FString to use ClientTravel and we can let the SessionInterface construct such a
    // String for us by giving him the SessionName and an empty String. We want to do this, because
    // Every OnlineSubsystem uses different TravelURLs
    FString TravelURL;
 
-   if (PlayerController && Sessions->GetResolvedConnectString (SessionName, TravelURL)) {
-      // Finally call the ClienTravel. If you want, you could print the TravelURL to see
-      // how it really looks like
-      PlayerController->ClientTravel (TravelURL, ETravelType::TRAVEL_Absolute);
+   if (!Sessions->GetResolvedConnectString (SessionName, TravelURL)) {
+      R_LOG ("Failed to get target TravelURL");
+      return;
    }
+
+   // Finally call the ClienTravel. If you want, you could print the TravelURL to see
+   // how it really looks like
+   PlayerController->ClientTravel (TravelURL, ETravelType::TRAVEL_Absolute);
 }
 
 // ============================================================================
 //          Leave session
 // ============================================================================
 
-void URGameInstance::DestroySessionAndLeaveGame ()
+void URGameInstance::LeaveSession ()
 {
+   if (!HasSession ()) {
+      R_LOG ("No session");
+      return;
+   }
+
    IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
    if (!ensure (OnlineSub)) return;
 
@@ -344,7 +395,8 @@ void URGameInstance::DestroySessionAndLeaveGame ()
       return;
    }
 
-   Sessions->AddOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegate);
+   OnDestroySessionCompleteDelegateHandle
+      = Sessions->AddOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegate);
    Sessions->DestroySession (RSessionName);
 }
 
@@ -363,9 +415,29 @@ void URGameInstance::OnDestroySessionComplete (FName SessionName, bool bWasSucce
    // Clear the Delegate
    Sessions->ClearOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegateHandle);
 
-   if (!bWasSuccessful) return;
+   if (!bWasSuccessful) {
+      R_LOG ("Failed to destroy session");
+      return;
+   }
 
-   // TODO : Notify that Session ended and return to main screen.
-   //UGameplayStatics::OpenLevel (GetWorld (), "SelectMap", true);
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
+
+   // Client
+   if (World->GetNetMode () == ENetMode::NM_Client) {
+
+      // Return to previous level
+      if (!LastLevelMap.IsEmpty ()) {
+         UGameplayStatics::OpenLevel (World, *LastLevelMap);
+         LastLevelMap = "";
+      }
+   }
+
+   // Server
+   if (World->GetNetMode () == ENetMode::NM_ListenServer) {
+
+      // Disconnect all players
+      GetEngine ()->ShutdownWorldNetDriver (World);
+   }
 }
 

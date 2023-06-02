@@ -61,6 +61,21 @@ protected:
    // Session Setting
    TSharedPtr<FOnlineSessionSettings> SessionSettings;
 
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Network")
+      TSoftObjectPtr<UWorld> DefaultLevel;
+
+private:
+   // Level before client connection
+   FString LastLevelMap;
+
+   //==========================================================================
+   //               Session Status
+   //==========================================================================
+public:
+   
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Network")
+      bool HasSession () const;
+
    //==========================================================================
    //               Search Session
    //==========================================================================
@@ -100,8 +115,7 @@ protected:
 public:
    // Host Specific Online Map Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void StartOnlineGameMap (FString MapName, int32 MaxPlayerNumber = 16);
-
+      void HostSession (int32 MaxPlayerNumber = 16);
 
    // --- Host A Game
    // @Param      UserID         User that started the request
@@ -109,13 +123,17 @@ public:
    // @Param      bIsLAN         Is this is LAN Game?
    // @Param      bIsPresence    "Is the Session to create a presence Session"
    // @Param      MaxNumPlayers
-   bool HostSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
+   bool HostSession (TSharedPtr<const FUniqueNetId> UserId,
+                     FName                          SessionName,
+                     bool                           bIsLAN,
+                     bool                           bIsPresence,
+                     int32                          MaxNumPlayers);
 
    // --- Create Session Complete
    void OnCreateSessionComplete (FName SessionName, bool bWasSuccessful);
 
    // --- Start Online Game Complete
-   void OnStartOnlineGameComplete (FName SessionName, bool bWasSuccessful);
+   void OnStartSessionComplete (FName SessionName, bool bWasSuccessful);
    
 protected:
    // Created
@@ -155,9 +173,10 @@ protected:
    //                   Leave Session
    //==========================================================================
 public:
+
    // Stop Session and Quit Game
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void DestroySessionAndLeaveGame ();
+      void LeaveSession ();
 
    void OnDestroySessionComplete (FName SessionName, bool bWasSuccessful);
 
