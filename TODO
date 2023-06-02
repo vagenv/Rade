@@ -78,23 +78,14 @@ Join Session Black Screen flickers
    Online Subsystem
 =================================================
 
-Cleanup RSessionManager
-- Add components to GameInstance, GameState and PlayerState
+Authenticate user before login
 
 ==============
-Session
+UI
 ==============
-Network Session
-- Deep dive / Analysis / Simplification of core functionality
-- Persistent data between sessions with PlayerId storing data
-- Real time data. (Latency, Player count)
-- Disconnect and return to main screen
-- Kick Player
 
-
-=================================================
-   Game Session
-=================================================
+Server
+- Kick a specific player
 
 ==============
 GameMode
@@ -106,41 +97,42 @@ GameMode
 ==============
 GameState
 ==============
-- Score
+- Score / Kill count
 - Chat
 
 ==============
 PlayerState
 ==============
-- Recconect -> Get values from old data
-- Description (player name, UUID, icon)
-Additional Character info
-- ping
-- color
-- icon
-
-==============
-UI
-==============
-Connected Players:
+Player Info to PlayerState component?
 - Name
+- icon
+- color
 - Ping
 - Level
 - HP
 - Distance
 
 
-=================================================
-   Network
-=================================================
+
+
+==============
+Other
+==============
+
+Spawn as invisible -> Particle Effect -> Set Visible / Animation
+Disconnect -> ParticleEffect -> Set Hidden / Animation
+
+
+Cleanup RSessionManager
+- Move components to GameInstance, GameState and PlayerState
+
+
+
 
 ==============
 Spawn Menu
 ==============
 Select spawn point
-
-
-
 
 
 =================================================
@@ -150,6 +142,15 @@ Select spawn point
 - Travel to the Transition Level
 - Mark Actors that will persist to the Final Level
 - Travel to the Final Level
+
+
+
+==============
+Persistent data
+==============
+- Persistent data between sessions with PlayerId storing data
+- Recconect -> Get values from old data
+
 
 
 
