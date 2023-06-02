@@ -1,14 +1,13 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Online/OnlineSessionNames.h"
 
-const FName RSessionName ("RadeSessionName");
-
+const FName RSessionName ("RSession");
 
 // ============================================================================
 //          R Game Instance
@@ -35,6 +34,9 @@ URGameInstance::URGameInstance ()
       this, &URGameInstance::OnDestroySessionComplete);
 }
 
+//=============================================================================
+//               Session Status
+//=============================================================================
 
 bool URGameInstance::HasSession () const
 {
@@ -48,7 +50,6 @@ bool URGameInstance::HasSession () const
 
    return false;
 }
-
 
 // ============================================================================
 //          Search Session list

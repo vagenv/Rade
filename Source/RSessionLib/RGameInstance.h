@@ -7,7 +7,7 @@
 #include "RSessionTypes.h"
 #include "RGameInstance.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSessionEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSessionMgrEvent);
 
 // ============================================================================
 //          R Game Instance
@@ -56,7 +56,7 @@ public:
 
    // Delegate when Item list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
-      FRSessionEvent OnSessionListUpdated;
+      FRSessionMgrEvent OnSessionListUpdated;
 
 
    // Find all available Online Sessions
