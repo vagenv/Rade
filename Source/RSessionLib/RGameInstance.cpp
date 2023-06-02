@@ -11,24 +11,6 @@ const FName RSessionName ("RadeSessionName");
 
 
 // ============================================================================
-//          Available session information
-// ============================================================================
-
-FRAvaiableSessionsData::FRAvaiableSessionsData ()
-{
-}
-
-FRAvaiableSessionsData::FRAvaiableSessionsData (const FOnlineSessionSearchResult &SessionData_)
-{
-   SessionData     = FOnlineSessionSearchResult (SessionData_);
-   Hostname        = SessionData_.Session.OwningUserName;
-   Ping            = SessionData_.PingInMs;
-   ConnectionsMax  = SessionData_.Session.SessionSettings.NumPublicConnections;
-   ConnectionsBusy = ConnectionsMax - SessionData_.Session.NumOpenPublicConnections;
-}
-
-
-// ============================================================================
 //          R Game Instance
 // ============================================================================
 

@@ -4,40 +4,10 @@
 
 #include "Engine/GameInstance.h"
 #include "Online.h"
-#include "OnlineSessionSettings.h"
+#include "RSessionTypes.h"
 #include "RGameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRSessionEvent);
-
-class FOnlineSessionSearch;
-
-// ============================================================================
-//          Available session information
-// ============================================================================
-
-USTRUCT(BlueprintType)
-struct RSESSIONLIB_API FRAvaiableSessionsData
-{
-   GENERATED_BODY()
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Hostname;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 Ping = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 ConnectionsMax = 0;
-
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      int32 ConnectionsBusy = 0;
-
-   // Keep copy
-   FOnlineSessionSearchResult SessionData;
-
-   FRAvaiableSessionsData ();
-   FRAvaiableSessionsData (const FOnlineSessionSearchResult &newSessionData);
-};
 
 // ============================================================================
 //          R Game Instance
