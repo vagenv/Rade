@@ -4,7 +4,7 @@
 
 #include "GameFramework/DamageType.h"
 #include "RUILib/RUIDescription.h"
-#include "RDamageType.generated.h"
+#include "RDamageTypes.generated.h"
 
 struct FDamageEvent;
 class AController;

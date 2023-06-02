@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RInventoryLib/RItemTypes.h"
-#include "RDamageLib/RDamageType.h"
+#include "RDamageLib/RDamageTypes.h"
 #include "RStatusLib/RStatusTypes.h"
 #include "RStatusLib/RPassiveStatusEffect.h"
 #include "REquipmentTypes.generated.h"

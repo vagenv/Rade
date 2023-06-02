@@ -7,7 +7,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
-#include "RDamageLib/RDamageType.h"
+#include "RDamageLib/RDamageTypes.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
 

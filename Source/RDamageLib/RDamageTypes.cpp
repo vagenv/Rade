@@ -1,6 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RDamageType.h"
+#include "RDamageTypes.h"
 #include "RUtilLib/RLog.h"
 
 //=============================================================================
@@ -49,3 +49,4 @@ TArray<FRDamageResistance> URDamageUtilLibrary::MergeResistance (
    }
    return Result;
 }
+
