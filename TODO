@@ -27,6 +27,7 @@ Pickup
 Inventory
 ==============
 Craft/Break item on server
+Inventory replication only for owner?
 JSON data replication on Item. Very expensive.
 
 
@@ -617,6 +618,42 @@ Custom plugin
 =================================================
    Game Design
 =================================================
+
+==============
+Character Status Effects
+==============
+Stagger
+- Flash white
+- Cancel Anim/Attack
+- Push back.
+- Flashing effect.
+
+Stun
+- Flash yellow
+- No action for N seconds
+- Can't Anim?
+
+Bleed? (Too graphic?)
+- Flash red
+- % Health drain
+- No regen?
+- Blood trail?
+
+Poison
+- Flash green
+- Flat Health drain
+- No regen?
+
+Burn
+- Flash orange
+- % Health drain
+- Stagger ever few seconds
+
+Frozen
+- Flash blue
+- Flat Health drain
+- Slow status effect
+
 
 ==============
 Attack types
