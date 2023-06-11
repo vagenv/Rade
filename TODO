@@ -73,10 +73,7 @@ Other
 
 Authenticate user before login
 
-==============
-UI
-==============
-- Kick a specific player
+Event when player list updated.
 
 ==============
 GameMode
@@ -84,6 +81,12 @@ GameMode
 - OnPostLogin.
 - Pauseable
 - ChangeName?
+
+==============
+Pause
+==============
+Only Server Pause running game
+Client can move camera?
 
 ==============
 GameState
@@ -106,32 +109,26 @@ Player Info to PlayerState component?
 ==============
 Connect
 ==============
-Select spawn point?
-Not spawn pawn instantly
-
-==============
-Disconnect
-==============
-Client Disconnect / Kick -> Fade Out first
-Join Session Black Screen flickers
+Create controller without pawn
+Select
+- pawn type
+- color
+- name
+- spawn point
 
 ==============
 Effect
 ==============
-Spawn as invisible -> Particle Effect -> Set Visible / Animation
+Spawn pawn as invisible -> Particle Effect -> Set Visible / Animation
 Disconnect -> ParticleEffect -> Set Hidden / Animation
 
 ==============
-Pause
+Reconnect
 ==============
-Only Server Pause running game
-Client can move camera?
-
-==============
-Persistent data
-==============
+- Location
+- Level
+- Info
 - Persistent data between sessions with PlayerId storing data
-- Recconect -> Get values from old data
 
 
 =================================================
