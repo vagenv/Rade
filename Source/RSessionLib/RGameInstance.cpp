@@ -359,6 +359,41 @@ void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCom
 }
 
 // ============================================================================
+//          Kick player
+// ============================================================================
+
+bool URGameInstance::KickPlayer (APlayerController* KickedPlayer)
+{ 
+   if (KickedPlayer == NULL) {
+      R_LOG ("Invalid controller ptr");
+      return false;
+   }
+
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return false;
+
+   if (World->GetNetMode () == ENetMode::NM_Client) {
+      R_LOG ("Client can't kick players.");
+      return false;
+   }
+
+   AGameModeBase *GameMode = World->GetAuthGameMode ();
+   if (!GameMode) {
+      R_LOG ("Invalid Game Mode object.");
+      return false;
+   }
+
+   if (!IsValid (GameMode->GameSession)) {
+      R_LOG ("Invalid Game Session object.");
+      return false;
+   }
+
+   FText KickReason = FText::FromString (TEXT ("Server Kick"));
+
+   return GameMode->GameSession->KickPlayer (KickedPlayer, KickReason);
+}
+
+// ============================================================================
 //          Leave session
 // ============================================================================
 

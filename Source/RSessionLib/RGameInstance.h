@@ -140,6 +140,15 @@ protected:
    FDelegateHandle                OnJoinSessionCompleteDelegateHandle;
 
    //==========================================================================
+   //                   Kick Player
+   //==========================================================================
+  
+   // Kick specific player
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      bool KickPlayer (APlayerController* KickedPlayer);
+
+
+   //==========================================================================
    //                   Leave Session
    //==========================================================================
 public:
