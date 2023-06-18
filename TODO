@@ -71,9 +71,8 @@ Other
          Online Subsystem
 =================================================
 
-Authenticate user before login
-
 Event when player list updated.
+
 
 ==============
 GameMode
@@ -83,16 +82,9 @@ GameMode
 - ChangeName?
 
 ==============
-Pause
-==============
-Only Server Pause running game
-Client can move camera?
-
-==============
 GameState
 ==============
 - Score / Kill count
-- Chat
 
 ==============
 PlayerState
@@ -564,6 +556,30 @@ Epic network services
 Dedicated server instance
 - Linux / Windows
 - Optimization
+
+=================================================
+         Online Subsystem Redesign
+=================================================
+
+Lobby System
+
+Authenticate user before login
+Client:
+- Auth with remote server and get token
+- Connect with token
+
+Server
+- A connection request with token.
+- Check with remote server if token is valid
+- Connect / kick user.
+
+
+=================================================
+         Pause Game
+=================================================
+Doesn't work with enhanced input
+Only Server Pause running game
+Client can move camera?
 
 
 =================================================
