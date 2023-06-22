@@ -73,30 +73,19 @@ Other
 
 Event when player list updated.
 
+Update UI
+- Connect / Disconnect / status
 
-==============
-GameMode
-==============
-- OnPostLogin.
-- Pauseable
-- ChangeName?
-
-==============
-GameState
-==============
-- Score / Kill count
 
 ==============
 PlayerState
 ==============
-Player Info to PlayerState component?
+UI Select (StartGame / Realtime)
 - Name
-- icon
-- color
-- Ping
-- Level
-- HP
-- Distance
+- Icon
+- Color
+Server/Client Replication
+
 
 ==============
 Connect
@@ -107,6 +96,7 @@ Select
 - color
 - name
 - spawn point
+
 
 ==============
 Effect
@@ -122,6 +112,17 @@ Reconnect
 - Info
 - Persistent data between sessions with PlayerId storing data
 
+==============
+GameMode
+==============
+- OnPostLogin.
+- Pauseable
+- ChangeName?
+
+==============
+GameState
+==============
+- Score / Kill count
 
 =================================================
    Level Transition.
