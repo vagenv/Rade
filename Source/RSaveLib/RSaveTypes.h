@@ -21,6 +21,9 @@ struct RSAVELIB_API FRSaveGameMeta
   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Map;
 
+  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+     TSoftObjectPtr<UWorld> Level;
+
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Date;
 
