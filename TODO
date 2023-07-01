@@ -43,6 +43,7 @@ R2 + L2 Mega Action?
 ==============
 UI
 ==============
+- Bug: UI scroll stuck if scroll up with loop and last item empty list
 - Unify Main Menu and StartMenu
 - Endless scroll with mouse -> disable?
 
@@ -71,52 +72,7 @@ Other
          Online Subsystem
 =================================================
 
-???
-- Quit
-- Map
-- Characters
-- Enemies
-- Save / Load
-- Quests / Tasks
-
-
-Status
-- Status
-- Equipment
-- Ability
-- Level Up
-
-
-Inventory
-- All
-- Weapon
-- Armor
-- Potion
-- Craft
-- Other
-- Quest
-
-
-Network
-- Session
-- Team
-- Chat
-- Setting?
-
-
-Dev/Debug
-- FPS
-- Start Trace
-- Stop Trace
-
-
-Setting
-- Gameplay
-- Graphics
-- Audio
-- Input / Controls
-
-
+Event when player list updated.
 
 
 ==============
@@ -124,15 +80,6 @@ Save
 ==============
 AutoSave.
 Overwrite Save.
-
-
-==============
-Session
-==============
-Event when player list updated.
-
-Update UI
-- Connect / Disconnect / Status
 
 
 ==============
