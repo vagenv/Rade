@@ -57,7 +57,8 @@ Save
 ==============
 Autosave
 Save with name
-
+Overwrite Save.
+UI popup
 
 ==============
 Other
@@ -72,15 +73,7 @@ Other
          Online Subsystem
 =================================================
 
-Event when player list updated.
-
-
-==============
-Save
-==============
-AutoSave.
-Overwrite Save.
-
+Event when connected player list updated.
 
 ==============
 PlayerState
@@ -88,62 +81,34 @@ PlayerState
 UI Select (StartGame / Realtime)
 - Name
 - Icon
-- Color
-Server/Client Replication
 
 
 ==============
-Connect
+On start new game
 ==============
-Create controller without pawn
-Select
+Controller without pawn
+
+UI Select
 - pawn type
 - color
 - name
 - spawn point
 
+Create character and set params
 
 ==============
-Effect
+On load game
 ==============
+Load characters params from disk
+Create character and set params
+
+==============
+On Posses
+==============
+
 Spawn pawn as invisible -> Particle Effect -> Set Visible / Animation
 Disconnect -> ParticleEffect -> Set Hidden / Animation
 
-==============
-Reconnect
-==============
-- Location
-- Level
-- Info
-- Persistent data between sessions with PlayerId storing data
-
-==============
-GameMode
-==============
-- OnPostLogin.
-- Pauseable
-- ChangeName?
-
-==============
-GameState
-==============
-- Score / Kill count
-
-=================================================
-   Level Transition.
-=================================================
-
-==============
-'Seamless' travel to next level
-==============
-- Mark Actors that will persist to the Transition Level
-- Travel to the Transition Level
-- Mark Actors that will persist to the Final Level
-- Travel to the Final Level
-
-- Posses / Unposses ?
-- Hide / show pawn?
-- Enable / Disable Input?
 
 =================================================
          Weapons
@@ -244,6 +209,21 @@ Emotions
 Audio Messages?
 
 
+=================================================
+   Level Transition.
+=================================================
+
+==============
+'Seamless' travel to next level
+==============
+- Mark Actors that will persist to the Transition Level
+- Travel to the Transition Level
+- Mark Actors that will persist to the Final Level
+- Travel to the Final Level
+
+- Posses / Unposses ?
+- Hide / show pawn?
+- Enable / Disable Input?
 
 
 =================================================
@@ -567,17 +547,36 @@ Dedicated server instance
          Online Subsystem Redesign
 =================================================
 
+==============
 Lobby System
+==============
 
 Authenticate user before login
 Client:
-- Auth with remote server and get token
-- Connect with token
+- Auth with Token Server and access token
+- Connect to Game Server with token
 
-Server
-- A connection request with token.
-- Check with remote server if token is valid
+==============
+Game Server
+==============
+- A connection request with access token.
+- Check with Token Server if token is valid
 - Connect / kick user.
+
+==============
+Reconnect
+==============
+- Location
+- Level
+- Info
+- Persistent data between sessions with PlayerId storing data
+
+==============
+GameMode
+==============
+- OnPostLogin.
+- Pauseable
+- ChangeName?
 
 
 =================================================
