@@ -40,17 +40,6 @@ R2 + L2 Mega Action?
 - Long hold?
 - Double Tap?
 
-==============
-UI
-==============
-- Bug: UI scroll stuck if scroll up with loop and last item empty list
-- Unify Main Menu and StartMenu
-- Endless scroll with mouse -> disable?
-
-Unreal Common UI UMG (Replace RUI)
-- Unreal Standard.
-- Define Label and Button archetypes.
-- Stacks.
 
 ==============
 Save
@@ -72,8 +61,6 @@ Other
 =================================================
          Online Subsystem
 =================================================
-
-Event when connected player list updated.
 
 ==============
 PlayerState
@@ -175,6 +162,29 @@ Melee
 - Basic AI
 
 
+=================================================
+         UI
+=================================================
+
+List which ignores:
+- Non RUI_Widget
+- Disabled
+- Hidden
+
+- Bug: UI scroll stuck if scroll up with loop and last item empty list
+- Unify Main Menu and StartMenu
+- Endless scroll with mouse -> disable?
+
+Unreal Common UI UMG (Replace RUI)
+- Unreal Standard.
+- Define Label and Button archetypes.
+- Stacks.
+
+
+
+Grid of RUI_UserWidgets
+- Up/Down/Left/Right dynamic
+- Icons/Buttons/Descriptions
 
 =================================================
          Teams
