@@ -52,3 +52,17 @@ struct RSAVELIB_API FRSaveGameMeta
    static void List (TArray<FRSaveGameMeta> &SaveSlots);
 };
 
+
+// ============================================================================
+//                   Save Slot Meta Util Library
+// ============================================================================
+
+UCLASS(ClassGroup=(_Rade))
+class RSAVELIB_API URSaveGameMetaUtilLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Status")
+      static bool IsValidSave (const FRSaveGameMeta& MetaFile);
+};

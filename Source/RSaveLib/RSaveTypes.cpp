@@ -9,11 +9,35 @@
 
 bool FRSaveGameMeta::IsValidSave () const
 {
-   return (
-         !SlotName.IsEmpty ()
-      && !Map.IsEmpty ()
-      && !Date.IsEmpty ()
-      );
+   // --- Verify meta information
+   if (SlotName.IsEmpty ()) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: SlotName", *SlotName);
+      return false;
+   }
+   if (Map.IsEmpty ()) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: Map", *SlotName);
+      return false;
+   }
+   if (Level.IsNull ()) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: Level", *SlotName);
+      return false;
+   }
+   if (Date.IsEmpty ()) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: Date", *SlotName);
+      return false;
+   }
+
+   // --- Verify data file
+   IFileManager& FileMgr = IFileManager::Get ();
+   const FString SaveDir = FRSaveGameMeta::GetSaveDir ();
+
+   FFileStatData DataFile = FileMgr.GetStatData (*(SaveDir + SlotName + "/save.data"));
+   if (!DataFile.bIsValid || !DataFile.FileSize) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: data file", *SlotName);
+      return false;
+   }
+
+   return true;
 }
 
 FString FRSaveGameMeta::GetSaveDir ()
@@ -57,20 +81,35 @@ bool FRSaveGameMeta::Read (FRSaveGameMeta& SaveMeta, const FString &SlotName)
    FString SaveFileDir = FRSaveGameMeta::GetSaveDir () + SlotName + "/";
    FString MetaFilePath = SaveFileDir + "save.json";
 
-   if (!FileMgr.FileExists (*MetaFilePath)) return false;
+   // --- Check that file exists and non-zero in size
+   FFileStatData MetaFile = FileMgr.GetStatData (*(MetaFilePath));
+   if (!MetaFile.bIsValid || !MetaFile.FileSize) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: meta file", *MetaFilePath);
+      return false;
+   }
 
+   // --- Read binary data
    TArray<uint8> BinaryArray;
    if (!FFileHelper::LoadFileToArray (BinaryArray, *MetaFilePath)){
       return false;
    }
 
+   // --- Parse json data
    FString JsonData;
    FFileHelper::BufferToString (JsonData, BinaryArray.GetData (), BinaryArray.Num ());
    if (!RJSON::ToStruct (JsonData, SaveMeta)) {
+      //R_LOG_STATIC_PRINTF ("[%s] Failed to parse json data: [%s]", *MetaFilePath, *JsonData);
       return false;
    }
 
    SaveMeta.SlotName = SlotName;
+
+   // --- Validate save slot
+   if (!SaveMeta.IsValidSave ()) {
+      //R_LOG_STATIC_PRINTF ("[%s] Invalid: save file", *MetaFilePath);
+      return false;
+   }
+
    return true;
 }
 
@@ -87,33 +126,17 @@ void FRSaveGameMeta::List (TArray<FRSaveGameMeta> &Result)
 
    // Iterate in reverse order
    for (int i = DirList.Num () - 1; i >= 0; i--) {
-      const FString &It = DirList[i];
-
-      FFileStatData DataFile = FileMgr.GetStatData (*(SaveDir + It + "/save.data"));
-      FFileStatData MetaFile = FileMgr.GetStatData (*(SaveDir + It + "/save.json"));
-
-      if (!DataFile.bIsValid || !DataFile.FileSize) {
-         //R_LOG_STATIC_PRINTF ("[%s] Invalid: data file", *It);
-         continue;
-      }
-
-      if (!MetaFile.bIsValid || !MetaFile.FileSize) {
-         //R_LOG_STATIC_PRINTF ("[%s] Invalid: meta file", *It);
-         continue;
-      }
-
       FRSaveGameMeta MetaData;
-      if (!FRSaveGameMeta::Read (MetaData, It)) {
-         //R_LOG_STATIC_PRINTF ("[%s] Corrupt: meta file", *It);
-         continue;
-      }
-
-      if (!MetaData.IsValidSave ()) {
-         //R_LOG_STATIC_PRINTF ("[%s] Invalid save meta data", *It);
+      if (!FRSaveGameMeta::Read (MetaData, DirList[i])) {
+         //R_LOG_STATIC_PRINTF ("[%s] Corrupt: meta file", *DirList[i]);
          continue;
       }
 
       Result.Add (MetaData);
    }
+}
+
+bool URSaveGameMetaUtilLibrary::IsValidSave (const FRSaveGameMeta& MetaFile) {
+   return MetaFile.IsValidSave ();
 }
 
