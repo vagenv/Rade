@@ -46,8 +46,11 @@ Save
 ==============
 Autosave
 Save with name
-Overwrite Save.
-UI popup
+Overwrite Save
+UI popup of game saved
+Persistent current save data
+On BeginPlay -> Get data from RSaveFile (Dynamic Loading/UnLoading of assets)
+
 
 ==============
 Other
@@ -62,12 +65,13 @@ Other
          Online Subsystem
 =================================================
 
+
 ==============
-PlayerState
+Spawn point selection menu
 ==============
-UI Select (StartGame / Realtime)
-- Name
-- Icon
+
+List of Actors.
+While switching -> Update camera location
 
 
 ==============
