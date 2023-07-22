@@ -4,11 +4,12 @@
 
 DEFINE_LOG_CATEGORY (RadeLog);
 
-FString RLog_GetAuthStr (const UObject* WorldContext) {
-   if (!IsValid (WorldContext)) return "[STATIC]";
+FString RLog_GetAuthStr (const UObject* WorldContext)
+{
+   if (!IsValid (WorldContext)) return "STATIC";
    UWorld* World = WorldContext->GetWorld ();
-   if (!ensure (World))         return "[No World]";
-   return World->IsNetMode (NM_Client) ? "[CLIENT] " : "[SERVER] ";
+   if (!ensure (World)) return "NO_WORLD";
+   return ToString (World->GetNetMode ());
 }
 
 void __rlog_raw (const FString &msg)
@@ -33,7 +34,7 @@ void __rlog_internal (const UObject* WorldContext,
    args.Add (FStringFormatArg (line));
    args.Add (FStringFormatArg (func));
    args.Add (FStringFormatArg (msg));
-   FString res = FString::Format (TEXT ("{0}[{1} +{2}] {3}: {4}"), args);
+   FString res = FString::Format (TEXT ("[{0}][{1} +{2}] {3}: {4}"), args);
 
    __rlog_raw   (res);
    __rprint_raw (res);

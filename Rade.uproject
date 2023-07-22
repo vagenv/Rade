@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.1",
+	"EngineAssociation": "5.2",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -20,7 +20,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RTargetableLib",
+			"Name": "RTargetLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
@@ -30,7 +30,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "RSessionManagerLib",
+			"Name": "RSessionLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
@@ -227,7 +227,7 @@
 		},
 		{
 			"Name": "VisualStudioTools",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/362651520df94e4fa65492dbcba44ae2",
 			"SupportedTargetPlatforms": [
 				"Win64"

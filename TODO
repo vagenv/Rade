@@ -1,5 +1,5 @@
 =================================================
-   TODO / Issues
+         TODO / Issues
 =================================================
 
 ==============
@@ -15,31 +15,20 @@ Automatically turn camera to move direction after n seconds of moving.
 ==============
 Ability
 ==============
-Chance to apply active status effect. (Burning / Poisoned)
+Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
 
 ==============
 Pickup
 ==============
 - Magentic
-- [Open/Close/Take All]
+- Drop Item sack
 
 ==============
-Other
-==============
-- Deploy to Windows PC in same nework.
-- Look into DDC (Derived Data Cache)
-- FWeakObjectPtr for pointer to object
-- SoftPtr to SubClass (will not create dependency)
-- Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
-
-==============
-Fixes
+Inventory
 ==============
 Craft/Break item on server
-
+Inventory replication only for owner?
 JSON data replication on Item. Very expensive.
-
-TSubclassOf -> TSoftClassPtr
 
 
 ==============
@@ -53,115 +42,29 @@ R2 + L2 Mega Action?
 
 
 ==============
-UI
+Save
 ==============
-
-- Unify Main Menu and StartMenu
-- Endless scroll with mouse -> disable?
-
-Unreal Common UI UMG.
-- Unreal Standard.
-- Define Label and Button archetypes.
-- Stacks.
-- Replace RUI
+Autosave
+Save with name
+Overwrite Save
+UI popup of game saved
 
 
 ==============
-Session
+Other
 ==============
-
-Network Disconnect -> Fade Out first
-Join Session Black Screen flickers
-
-
-=================================================
-   Online Subsystem
-=================================================
-
-Cleanup RSessionManager
-- Add components to GameInstance, GameState and PlayerState
-
-==============
-Session
-==============
-Network Session
-- Deep dive / Analysis / Simplification of core functionality
-- Persistent data between sessions with PlayerId storing data
-- Real time data. (Latency, Player count)
-- Disconnect and return to main screen
-- Kick Player
-
-
-=================================================
-   Game Session
-=================================================
-
-==============
-GameMode
-==============
-- OnPostLogin. Add list of players
-- Pauseable
-- ChangeName?
-
-==============
-GameState
-==============
-- Score
-- Chat
-
-==============
-PlayerState
-==============
-- Recconect -> Get values from old data
-- Description (player name, UUID, icon)
-Additional Character info
-- ping
-- color
-- icon
-
-==============
-UI
-==============
-Connected Players:
-- Name
-- Ping
-- Level
-- HP
-- Distance
-
-
-=================================================
-   Network
-=================================================
-
-==============
-Spawn Menu
-==============
-Select spawn point
-
-
+- Look into DDC (Derived Data Cache)
+- FWeakObjectPtr for pointer to object
+- TSubclassOf -> TSoftClassPtr (will not create dependency)
+- Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
 
 
 
 =================================================
-   'Seamless' travel in party
-=================================================
-- Mark Actors that will persist to the Transition Level
-- Travel to the Transition Level
-- Mark Actors that will persist to the Final Level
-- Travel to the Final Level
-
-
-
-
-
-
-
-=================================================
-   Weapons
+         Weapons
 =================================================
 
-Track Equiped Items
+Track Equiped Item Ids
 
 Add UniqueId to ItemData?
 - Differentiate Dublicates
@@ -203,7 +106,6 @@ Weapons to Implement
 - Magic Staff / Wand
 - Shield
 
-
 ==============
 UI Weapon bar (Left bottom)
 ==============
@@ -214,7 +116,7 @@ Melee
 
 
 =================================================
-   First Enemy Character
+         First Enemy Character
 =================================================
 - Animation
 - Material
@@ -223,15 +125,53 @@ Melee
 - Basic AI
 
 
+=================================================
+         UI
+=================================================
+
+List which ignores:
+- Non RUI_Widget
+- Disabled
+- Hidden
+
+- Bug: UI scroll stuck if scroll up with loop and last item empty list
+- Unify Main Menu and StartMenu
+- Endless scroll with mouse -> disable?
+
+Unreal Common UI UMG (Replace RUI)
+- Unreal Standard.
+- Define Label and Button archetypes.
+- Stacks.
+
+
+
+Grid of RUI_UserWidgets
+- Up/Down/Left/Right dynamic
+- Icons/Buttons/Descriptions
+
 
 =================================================
-   Teams
+         Session Player Info
+=================================================
+
+==============
+On Connect / New Game
+==============
+Select:
+- Spawn Location
+- Name
+- Icon
+- Color
+- Pawn Class
+
+
+=================================================
+         Teams
 =================================================
 
 Join team
 Get Team List
 FriendlyFire enabled/disabled
-
 
 
 ==============
@@ -242,7 +182,7 @@ Radial effect by GroupId (Allies/Enemies)
 - Damage / Heal / StatusEffect
 
 =================================================
-   Chat
+         Chat
 =================================================
 
 URChatMgr.
@@ -259,17 +199,24 @@ Audio Messages?
 
 
 =================================================
-   Level Transition. Map change.
+   Level Transition.
 =================================================
-- Pawn between levels / worlds
-- Posses / Unposses
-- Hide / show pawn
-- Enable / Disable Input (Player State)
-- VFX, sound
+
+==============
+'Seamless' travel to next level
+==============
+- Mark Actors that will persist to the Transition Level
+- Travel to the Transition Level
+- Mark Actors that will persist to the Final Level
+- Travel to the Final Level
+
+- Posses / Unposses ?
+- Hide / show pawn?
+- Enable / Disable Input?
 
 
 =================================================
-   Animation
+         Animation
 =================================================
 
 Animation Blueprint (Network)
@@ -294,18 +241,14 @@ Animations:
 
 
 =================================================
-   Shaders
+         Shaders
 =================================================
-
-Look into shaders
-
-OutLined overlap.
-
-Toon Shaders
-
+- Look into shaders
+- OutLined overlap.
+- Toon Shaders
 
 =================================================
-   AI
+         AI
 =================================================
 - pathfinding
 - patrol
@@ -316,7 +259,7 @@ Toon Shaders
 
 
 =================================================
-   Sound
+         Sound
 =================================================
 - Jump / Land
 - Running
@@ -327,18 +270,15 @@ Toon Shaders
 
 
 =================================================
-   Spline
+         Spline
 =================================================
-
-Road
-
-Moving Snake
-
-Paricle effects
+- Road
+- Moving Snake
+- Paricle effects
 
 
 =================================================
-   VFX
+         VFX
 =================================================
 
 Enemy Death -> Bunny Explosion
@@ -354,16 +294,17 @@ Enemy Death -> Bunny Explosion
 - GPU particles
 - Niagara
 
+=================================================
+         Camera
+=================================================
+Texture Effects and Shake
+- Damage
+- Status Effect
+- Attack
+
 
 =================================================
-   Crafting
-=================================================
-Actor custom craft list
-Add Item to List
-
-
-=================================================
-   UI World Map
+         World Map
 =================================================
 Right Top Corner
 
@@ -375,7 +316,7 @@ Custom icons for
 
 
 =================================================
-   Dialogue system
+         Dialogue system
 =================================================
 
 Find Plugins
@@ -390,20 +331,23 @@ UI
 
 
 =================================================
-   Health Bars
+         Health Bars
 =================================================
-
 Health/Stamina/Mana
 - Smooth movement.
 - Colors when increase (green) / decrease (red)
 
 =================================================
-   UI
+      UI Rework
 =================================================
+- Real Mono Font
+- Less is more
 
 ==============
-Real Mono Font
+Border
 ==============
+- Transparent
+- Thin border around window only.
 
 ==============
 Settings
@@ -414,20 +358,8 @@ Settings
 ==============
 Other
 ==============
-
-Hide Status / Abilities if not in fight
-
-UI Scale 100% - 300% / SizeBox
-
-MiniMap
-
-Action Popup redesign
-- On top of select widget
-
-Remove / Replace borders
-
-Drop down list for selection
-
+- Hide Status / Abilities if not in fight
+- UI Scale 100% - 300% / SizeBox
 
 ==============
 Grid Inventory
@@ -438,7 +370,7 @@ Grid Inventory
 
 
 =================================================
-   Random Equipment / Weapon Generation
+         Random Equipment / Weapon Generation
 =================================================
 Blueprint function which generate Weapon/Equipment randomly. With schema.
 - Price
@@ -447,16 +379,15 @@ Blueprint function which generate Weapon/Equipment randomly. With schema.
 - Color
 
 =================================================
-   Status
+         Status
 =================================================
-
 MoveSpeed and Critical Substat used
 
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
 
 =================================================
-   Resistance from stats
+         Resistance from stats
 =================================================
 
 Physical / Magical / Environment / Elemental
@@ -483,16 +414,21 @@ Physical / Magical / Environment / Elemental
 
 
 =================================================
-   Store
+         Store
 =================================================
 - Sell Items for gold
 - Re-buy?
 
 
 =================================================
-   Attack combo
+         Crafting
 =================================================
+- Personal craft list. Recipes
 
+
+=================================================
+         Attack combo
+=================================================
 Each anim style must have:
 - Simple Attack
 - Strong Attack
@@ -500,7 +436,7 @@ Each anim style must have:
 
 
 =================================================
-   Balancing
+         Balancing
 =================================================
 Folder with all curves;
 - Items link them
@@ -508,26 +444,23 @@ Folder with all curves;
 
 
 =================================================
-   Validation
+         Validation
 =================================================
-Item Table validation
-
-Blueprint naming scheme validation
-
-
-=================================================
-   Attack Rating
-=================================================
-Chain attack tracking
-DMC style E / D / C / B / A / S / SS / SSS damage multiplier
-Reset if recieved damage
+- Item Table validation
+- Blueprint naming scheme validation
 
 
 =================================================
-   Save / Load Advanced
+         Attack Rating
 =================================================
+- Chain attack tracking
+- DMC style E / D / C / B / A / S / SS / SSS damage multiplier
+- Reset if recieved damage
 
 
+=================================================
+         Save / Load Advanced
+=================================================
 SaveOrder Index
 
 Async Save/Load
@@ -539,7 +472,7 @@ Ensure everything is saved before continue.
 
 
 =================================================
-   Open World
+         Open World
 =================================================
 - Deterministic Perlin Noise Map
 - Level breaking and layering
@@ -547,9 +480,8 @@ Ensure everything is saved before continue.
 - Forrest with random tree placement
 
 
-
 =================================================
-   Procedural Content
+         Procedural Content
 =================================================
 Unreal Engine Procedural Content Generation
 Level
@@ -561,23 +493,22 @@ Dyanmic Time of Day
 
 
 =================================================
-   Nanite and lumen
+         Nanite and lumen
 =================================================
 - Load high detail models on demand
 - Analyse budget, resource usage and disk read pattern
 
 
 =================================================
-   Epic / Steam / Dedicated Server Online Subsystem
+         Epic / Steam / Dedicated Server Online Subsystem
 =================================================
-
-Deploy server on WPS
-
-Default:SubsystemNULL -> Only LAN sessions
+- Deploy server on WPS
+- Default:SubsystemNULL -> Only LAN sessions
+- Steam/Epic subsystems
 
 
 =================================================
-   Online
+         Online
 =================================================
 
 Stress test low bandwidth and lagging.
@@ -601,9 +532,52 @@ Dedicated server instance
 - Linux / Windows
 - Optimization
 
+=================================================
+         Online Subsystem Redesign
+=================================================
+
+==============
+Lobby System
+==============
+
+Authenticate user before login
+Client:
+- Auth with Token Server and access token
+- Connect to Game Server with token
+
+==============
+Game Server
+==============
+- A connection request with access token.
+- Check with Token Server if token is valid
+- Connect / kick user.
+
+==============
+Reconnect
+==============
+- Location
+- Level
+- Info
+- Persistent data between sessions with PlayerId storing data
+
+==============
+GameMode
+==============
+- OnPostLogin.
+- Pauseable
+- ChangeName?
+
 
 =================================================
-Hit Component Damage Multiplier
+         Pause Game
+=================================================
+Doesn't work with enhanced input
+Only Server Pause running game
+Client can move camera?
+
+
+=================================================
+         Hit Component Damage Multiplier
 =================================================
 ApplyRDamage (based on what body part was hit) (bone name?):
 - Headshot
@@ -611,7 +585,7 @@ ApplyRDamage (based on what body part was hit) (bone name?):
 
 
 =================================================
-   Face animation.
+         Face animation.
 =================================================
 - Rig meshes
 - Camera recording
@@ -620,7 +594,7 @@ ApplyRDamage (based on what body part was hit) (bone name?):
 - Expression
 
 =================================================
-   Chaos System
+         Chaos System
 =================================================
 Destructable Level
 - Trees
@@ -628,9 +602,8 @@ Destructable Level
 
 
 =================================================
-   Remove all float and int?
+         Remove all float and int?
 =================================================
-
 For now ok.
 
 Others cases are not as a big of an issue because:
@@ -645,7 +618,7 @@ int -> int32
 
 
 =================================================
-   Other
+         Other
 =================================================
 
 Gameplay Ability System
@@ -656,36 +629,46 @@ VCPP
 Custom plugin
 - Block constructor or something new
 
-=================================================
-   UI
-=================================================
-
-- Less is more
-- Transparent
-- Thin border around window only.
-
 
 =================================================
    Game Design
 =================================================
 
 ==============
-Movement
+Character Status Effects
 ==============
-- Jump
-- Wall jump
-- Double jump
-- Phase forward
-- Roll
-- Sprint
+Stagger
+- Flash white
+- Cancel Anim/Attack
+- Push back.
+- Flashing effect.
 
+Stun
+- Flash yellow
+- No action for N seconds
+- Can't Anim?
 
-==============
-Character status
-==============
-- Stun
-- On ground
-- Slow/Fast status effect
+Bleed? (Too graphic?)
+- Flash red
+- % Health drain
+- No regen?
+- Blood trail?
+
+Poison
+- Flash green
+- Flat Health drain
+- No regen?
+
+Burn
+- Flash orange
+- % Health drain
+- Stagger ever few seconds
+
+Frozen
+- Flash blue
+- Flat Health drain
+- Slow status effect
+
 
 ==============
 Attack types
