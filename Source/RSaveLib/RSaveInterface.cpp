@@ -21,6 +21,11 @@ void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FStrin
 
    SaveMgr->OnSave.AddDynamic (this, &IRSaveInterface::OnSave_Internal);
    SaveMgr->OnLoad.AddDynamic (this, &IRSaveInterface::OnLoad_Internal);
+
+   // Check if save is already loaded => Manually trigger event
+   if (SaveMgr && !SaveMgr->SaveGameObject.IsNull () && SaveMgr->SaveGameObject->IsAlreadyLoaded) {
+      OnLoad_Internal (SaveMgr->SaveGameObject);
+   }
 }
 
 void IRSaveInterface::OnSave_Internal (URSaveGame* SaveGame)

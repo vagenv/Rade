@@ -274,7 +274,6 @@ void ULoadSaveGameSlotAsync::ReportEnd (bool success)
 
       // --- Cleanup
       WorldContextObject = nullptr;
-      SaveBinary.Empty ();
       SaveGameObject = nullptr;
    });
 }

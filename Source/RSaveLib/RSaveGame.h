@@ -15,12 +15,15 @@ public:
       TArray<uint8> Data;
 };
 
-// Blueprint subclass can add it's on data types.
+// Blueprint subclass can add it's own data types.
 UCLASS(BlueprintType, ClassGroup=(_Rade))
 class RSAVELIB_API URSaveGame : public USaveGame
 {
    GENERATED_BODY()
 public:
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Rade|Save")
+      bool IsAlreadyLoaded = false;
 
    // --- String Get/Set
 

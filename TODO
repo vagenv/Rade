@@ -48,8 +48,6 @@ Autosave
 Save with name
 Overwrite Save
 UI popup of game saved
-Persistent current save data
-On BeginPlay -> Get data from RSaveFile (Dynamic Loading/UnLoading of assets)
 
 
 ==============

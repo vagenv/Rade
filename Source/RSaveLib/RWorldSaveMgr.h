@@ -22,6 +22,10 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Rade|Save")
       TSubclassOf<URSaveGame> SaveClass;
 
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Rade|Save")
+      TObjectPtr<URSaveGame> SaveGameObject;
+
 public:
 
    //==========================================================================

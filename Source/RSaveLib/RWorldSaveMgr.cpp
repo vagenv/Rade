@@ -4,6 +4,7 @@
 #include "RSaveGame.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RLog.h"
 
 //=============================================================================
 //                   Static calls
@@ -25,13 +26,17 @@ URWorldSaveMgr::URWorldSaveMgr ()
 void URWorldSaveMgr::ReportSave (URSaveGame* SaveGame)
 {
    if (!IsValid (SaveGame)) return;
-   if (R_IS_VALID_WORLD && OnSave.IsBound ()) OnSave.Broadcast (SaveGame);
+   SaveGameObject = SaveGame;
+   if (R_IS_VALID_WORLD && OnSave.IsBound ()) OnSave.Broadcast (SaveGameObject);
 }
 
 void URWorldSaveMgr::ReportLoad (URSaveGame* SaveGame)
 {
    if (!IsValid (SaveGame)) return;
-   if (R_IS_VALID_WORLD && OnLoad.IsBound ()) OnLoad.Broadcast (SaveGame);
+   SaveGameObject = SaveGame;
+   SaveGameObject->IsAlreadyLoaded = false;
+   if (R_IS_VALID_WORLD && OnLoad.IsBound ()) OnLoad.Broadcast (SaveGameObject);
+   SaveGameObject->IsAlreadyLoaded = true;
 }
 
 void URWorldSaveMgr::ReportSaveListUpdated ()
