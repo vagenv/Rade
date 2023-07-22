@@ -59,17 +59,6 @@ Other
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
 
 
-=================================================
-         Online Subsystem
-=================================================
-
-==============
-On Posses
-==============
-
-Spawn pawn as invisible -> Particle Effect -> Set Visible / Animation
-Disconnect -> ParticleEffect -> Set Hidden / Animation
-
 
 =================================================
          Weapons
