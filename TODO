@@ -63,34 +63,6 @@ Other
          Online Subsystem
 =================================================
 
-
-==============
-Spawn point selection menu
-==============
-
-List of Actors.
-While switching -> Update camera location
-
-
-==============
-On start new game
-==============
-Controller without pawn
-
-UI Select
-- pawn type
-- color
-- name
-- spawn point
-
-Create character and set params
-
-==============
-On load game
-==============
-Load characters params from disk
-Create character and set params
-
 ==============
 On Posses
 ==============
@@ -187,6 +159,22 @@ Unreal Common UI UMG (Replace RUI)
 Grid of RUI_UserWidgets
 - Up/Down/Left/Right dynamic
 - Icons/Buttons/Descriptions
+
+
+=================================================
+         Session Player Info
+=================================================
+
+==============
+On Connect / New Game
+==============
+Select:
+- Spawn Location
+- Name
+- Icon
+- Color
+- Pawn Class
+
 
 =================================================
          Teams
