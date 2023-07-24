@@ -49,27 +49,27 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual void AddTarget (URTargetComponent * Target);
+      virtual void AddTarget (URTargetComponent* Target);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual void RmTarget  (URTargetComponent * Target);
+      virtual void RmTarget  (URTargetComponent* Target);
 
    //==========================================================================
    //          Functions called by targeting components
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual URTargetComponent* Find (URTargetingComponent*          Targeter,
-                                           TArray<AActor*>                FilterOutActors,
-                                           TArray<URTargetComponent*> FilterOutTargets);
+      virtual URTargetComponent* Find (URTargetingComponent*      Targeter,
+                                       TArray<AActor*>            FilterOutActors,
+                                       TArray<URTargetComponent*> FilterOutTargets);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
-      virtual URTargetComponent* FindNear (URTargetingComponent*          Targeter,
-                                               URTargetComponent*         CurrentTarget,
-                                               float                          InputOffsetX,
-                                               float                          InputOffsetY,
-                                               TArray<AActor*>                FilterOutActors,
-                                               TArray<URTargetComponent*> FilterOutTargets);
+      virtual URTargetComponent* FindNear (URTargetingComponent*      Targeter,
+                                           URTargetComponent*         CurrentTarget,
+                                           float                      InputOffsetX,
+                                           float                      InputOffsetY,
+                                           TArray<AActor*>            FilterOutActors,
+                                           TArray<URTargetComponent*> FilterOutTargets);
 
    //==========================================================================
    //                  Get instance -> GameState component

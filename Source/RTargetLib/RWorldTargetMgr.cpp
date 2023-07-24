@@ -38,9 +38,9 @@ void URWorldTargetMgr::RmTarget  (URTargetComponent* Target)
    if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
-URTargetComponent* URWorldTargetMgr::Find (URTargetingComponent*          Targeter,
-                                               TArray<AActor*>                FilterOutActors,
-                                               TArray<URTargetComponent*> FilterOutTargets)
+URTargetComponent* URWorldTargetMgr::Find (URTargetingComponent*      Targeter,
+                                           TArray<AActor*>            FilterOutActors,
+                                           TArray<URTargetComponent*> FilterOutTargets)
 {
    if (!ensure (IsValid (Targeter))) return nullptr;
    FVector  Origin    = Targeter->GetComponentLocation ();
@@ -88,12 +88,12 @@ URTargetComponent* URWorldTargetMgr::Find (URTargetingComponent*          Target
    return CurrentTarget;
 }
 
-URTargetComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Targeter,
-                                                   URTargetComponent*         CurrentTarget,
-                                                   float                          InputOffsetX,
-                                                   float                          InputOffsetY,
-                                                   TArray<AActor*>                FilterOutActors,
-                                                   TArray<URTargetComponent*> FilterOutTargets)
+URTargetComponent* URWorldTargetMgr::FindNear (URTargetingComponent*      Targeter,
+                                               URTargetComponent*         CurrentTarget,
+                                               float                      InputOffsetX,
+                                               float                      InputOffsetY,
+                                               TArray<AActor*>            FilterOutActors,
+                                               TArray<URTargetComponent*> FilterOutTargets)
 {
    if (!ensure (IsValid (Targeter)))      return nullptr;
    if (!ensure (IsValid (CurrentTarget))) return nullptr;
@@ -104,8 +104,8 @@ URTargetComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Ta
    FVector TargetLoc  = CurrentTarget->GetComponentLocation ();
 
    // Direction of search
-   FVector InputDir = UpDir    * InputOffsetY * -1 *InputVWeight // Reverse vertical offset
-                    + RightDir * InputOffsetX *     InputHWeight;
+   FVector InputDir = UpDir    * InputOffsetY * -1 * InputVWeight // Reverse vertical offset
+                    + RightDir * InputOffsetX *      InputHWeight;
    InputDir.Normalize ();
 
    //DrawDebugLine (GetWorld (), TargetLoc, TargetLoc + InputDir * 500, FColor::Green, false, 5, 0, 5);
@@ -115,9 +115,9 @@ URTargetComponent* URWorldTargetMgr::FindNear (URTargetingComponent*          Ta
 
    // New Target values
    URTargetComponent* NewTarget         = nullptr;
-   float                  NewTargetValue    = 0;
-   float                  NewTargetDot      = 0;
-   float                  NewTargetDistance = 0;
+   float              NewTargetValue    = 0;
+   float              NewTargetDot      = 0;
+   float              NewTargetDistance = 0;
 
    // --- Iterate over available Targets
    for (URTargetComponent* ItTarget : TargetableList) {
