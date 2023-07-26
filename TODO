@@ -3,32 +3,15 @@
 =================================================
 
 ==============
-Cleanup
-==============
-Performance check of Blueprintevent vs Dynamic OnEvent
-
-==============
 Camera
 ==============
 Automatically turn camera to move direction after n seconds of moving.
 
-==============
-Ability
-==============
-Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
 
 ==============
-Pickup
+Cleanup
 ==============
-- Magentic
-- Drop Item sack
-
-==============
-Inventory
-==============
-Craft/Break item on server
-Inventory replication only for owner?
-JSON data replication on Item. Very expensive.
+Performance check of Blueprintevent vs Dynamic OnEvent
 
 
 ==============
@@ -51,13 +34,33 @@ UI popup of game saved
 
 
 ==============
+Editor UI
+==============
+- Custom Widget for FRItemDataHandle
+
+
+==============
+Ability
+==============
+Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
+
+
+==============
+Inventory
+==============
+Craft/Break item on server
+Inventory replication only for owner?
+JSON data replication on Item. Very expensive.
+
+
+==============
 Other
 ==============
+
 - Look into DDC (Derived Data Cache)
 - FWeakObjectPtr for pointer to object
 - TSubclassOf -> TSoftClassPtr (will not create dependency)
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
-
 
 
 =================================================
