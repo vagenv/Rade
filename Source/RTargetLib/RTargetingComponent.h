@@ -23,6 +23,7 @@ public:
 
 	URTargetingComponent ();
 
+   virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 	virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent (float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -43,10 +44,11 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
       FRuntimeFloatCurve TargetAngleToLerpPower;
 
-	// How soon after a new target can be searched
+	// How often can a new target can be searched
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
 		float TargetSearchDelay = 0.2f;
 
+   // Minimum input to start new target search
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
       float TargetAdjustMinOffset = 0.3f;
 
@@ -85,7 +87,7 @@ protected:
       URWorldTargetMgr* TargetMgr = nullptr;
 
 	// Current focus target
-   UPROPERTY()
+   UPROPERTY(ReplicatedUsing = "OnRep_TargetCurrent", Replicated)
       URTargetComponent* TargetCurrent = nullptr;
 
    // Direction where to look. Capsule direction
@@ -111,10 +113,16 @@ protected:
    UFUNCTION()
       virtual void SearchNewTarget (float InputOffsetX = 0, float InputOffsetY = 0);
 
+   // Change the current target and notify the old and new target
+   UFUNCTION()
+      void SetTargetCurrent (URTargetComponent* NewTarget);
 
-   // In case user is targeting someone, notify server
-   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Targetable")
-              void SetTarget_Server                (URTargetComponent* TargetCurrent_);
-      virtual void SetTarget_Server_Implementation (URTargetComponent* TargetCurrent_);
+   // Network replication event
+   UFUNCTION()
+      void OnRep_TargetCurrent ();
+
+   // Called when target is updated to broadcast event
+   UFUNCTION()
+      void ReportTargetUpdate () const;
 };
 

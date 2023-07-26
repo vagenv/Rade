@@ -7,6 +7,8 @@
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
 
+#include "Net/UnrealNetwork.h"
+
 //=============================================================================
 //                         Core
 //=============================================================================
@@ -22,6 +24,13 @@ URTargetingComponent::URTargetingComponent ()
    TargetAngleToLerpPowerData->AddKey (5,   7);
    TargetAngleToLerpPowerData->AddKey (20,  4);
    TargetAngleToLerpPowerData->AddKey (40,  5);
+}
+
+// Replication
+void URTargetingComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+   Super::GetLifetimeReplicatedProps (OutLifetimeProps);
+   DOREPLIFETIME (URTargetingComponent, TargetCurrent);
 }
 
 void URTargetingComponent::BeginPlay ()
@@ -127,14 +136,9 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
 // Targeting enabled/disabled
 void URTargetingComponent::TargetToggle ()
 {
-   URTargetComponent *TargetLast = TargetCurrent;
-
    if (IsValid (TargetCurrent)) {
-      TargetCurrent->SetIsTargeted (false);
-      TargetCurrent = nullptr;
-      if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
+      SetTargetCurrent (nullptr);
    } else {
-
       SearchNewTarget ();
 
       // No Target. Focus forward
@@ -158,15 +162,13 @@ void URTargetingComponent::TargetCheck ()
 
       // Remove
       if (RemoveTarget) {
-         TargetCurrent->SetIsTargeted (false);
-         TargetCurrent = nullptr;
-         if (!R_IS_NET_ADMIN) SetTarget_Server (nullptr);
-         if (R_IS_VALID_WORLD && OnTargetUpdated.IsBound ()) OnTargetUpdated.Broadcast ();
+         SetTargetCurrent (nullptr);
          SearchNewTarget ();
       }
    }
 }
 
+// Perform search for new target
 void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffsetY)
 {
    if (!IsValid (TargetMgr)) return;
@@ -200,19 +202,37 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
                                    blacklistTargets);
    }
 
-   if (IsValid (TargetNew)) {
-      // Unset old one
-      if (IsValid (TargetCurrent)) TargetCurrent->SetIsTargeted (false);
-
-      // Set new one
-      TargetCurrent = TargetNew;
-      TargetCurrent->SetIsTargeted (true);
-      if (!R_IS_NET_ADMIN) SetTarget_Server (TargetCurrent);
-      if (R_IS_VALID_WORLD && OnTargetUpdated.IsBound ()) OnTargetUpdated.Broadcast ();
-   }
+   if (IsValid (TargetNew)) SetTargetCurrent (TargetNew);
 }
 
-void URTargetingComponent::SetTarget_Server_Implementation (URTargetComponent* TargetCurrent_)
+// Change the current target and notify the old and new target
+void URTargetingComponent::SetTargetCurrent (URTargetComponent* NewTarget)
 {
-   TargetCurrent = TargetCurrent_;
+   // Notify the old target
+   if (IsValid (TargetCurrent)) {
+      TargetCurrent->SetIsTargeted (false);
+   }
+
+   // Reset the state
+   TargetCurrent = nullptr;
+
+   // Set new target and notify it
+   if (IsValid (NewTarget)) {
+      TargetCurrent = NewTarget;
+      TargetCurrent->SetIsTargeted (true);
+   }
+
+   // Report
+   ReportTargetUpdate ();
 }
+
+void URTargetingComponent::OnRep_TargetCurrent ()
+{
+   ReportTargetUpdate ();
+}
+
+void URTargetingComponent::ReportTargetUpdate () const
+{
+   if (R_IS_VALID_WORLD && OnTargetUpdated.IsBound ()) OnTargetUpdated.Broadcast ();
+}
+
