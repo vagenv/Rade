@@ -3,18 +3,6 @@
 =================================================
 
 ==============
-Camera
-==============
-Automatically turn camera to move direction after n seconds of moving.
-
-
-==============
-Cleanup
-==============
-Performance check of Blueprintevent vs Dynamic OnEvent
-
-
-==============
 Input
 ==============
 R1 + L1 Super Action?
