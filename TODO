@@ -2,6 +2,9 @@
          TODO / Issues
 =================================================
 
+Deplyoyed Camera focus not working correctly
+Focus forward wrong turn direction
+
 ==============
 Input
 ==============
@@ -49,6 +52,33 @@ Other
 - FWeakObjectPtr for pointer to object
 - TSubclassOf -> TSoftClassPtr (will not create dependency)
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
+
+
+=================================================
+         Switch to Common UI
+=================================================
+
+List which ignores:
+- Non RUI_Widget
+- Disabled
+- Hidden
+
+- Bug: UI scroll stuck if scroll up with loop and last item empty list
+- Unify Main Menu and StartMenu
+- Endless scroll with mouse -> disable?
+
+Unreal Common UI UMG (Replace RUI)
+- Unreal Standard.
+- Define Label and Button archetypes.
+- Stacks.
+
+
+Grid of RUI_UserWidgets
+- Up/Down/Left/Right dynamic
+- Icons/Buttons/Descriptions
+
+Break
+Quit Popup
 
 
 =================================================
@@ -114,31 +144,6 @@ Melee
 - Character blueprint
 - Attack
 - Basic AI
-
-
-=================================================
-         UI
-=================================================
-
-List which ignores:
-- Non RUI_Widget
-- Disabled
-- Hidden
-
-- Bug: UI scroll stuck if scroll up with loop and last item empty list
-- Unify Main Menu and StartMenu
-- Endless scroll with mouse -> disable?
-
-Unreal Common UI UMG (Replace RUI)
-- Unreal Standard.
-- Define Label and Button archetypes.
-- Stacks.
-
-
-
-Grid of RUI_UserWidgets
-- Up/Down/Left/Right dynamic
-- Icons/Buttons/Descriptions
 
 
 =================================================
