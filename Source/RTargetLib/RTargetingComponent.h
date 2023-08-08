@@ -66,10 +66,15 @@ public:
       virtual bool IsTargeting () const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
-      virtual FRotator GetTargetRotation ();
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       virtual URTargetComponent* GetCurrentTarget () const;
+
+   // Direction of current target
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+      virtual FVector GetTargetDir () const;
+
+   // Value should be fed to SetControlRotation
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+      virtual FRotator GetControlRotation ();
 
    // Broadcasted when TargetCurrent has changed
    UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")

@@ -57,24 +57,35 @@ bool URTargetingComponent::IsTargeting () const
 	return (IsValid (TargetCurrent) || !CustomTargetDir.IsNearlyZero ());
 }
 
-FRotator URTargetingComponent::GetTargetRotation ()
+URTargetComponent* URTargetingComponent::GetCurrentTarget () const
+{
+   return TargetCurrent;
+}
+
+FVector URTargetingComponent::GetTargetDir () const
+{
+   FVector Result = FVector::Zero ();
+
+   // --- Focus Target
+   if (IsValid (TargetCurrent)) {
+      FVector TargetLocation = TargetCurrent->GetComponentLocation ();
+      Result = TargetLocation - GetComponentLocation ();
+      Result.Normalize ();
+
+   // --- Focus Angle
+   } else if (!CustomTargetDir.IsNearlyZero ()) {
+      Result = CustomTargetDir;
+   }
+   return Result;
+}
+
+FRotator URTargetingComponent::GetControlRotation ()
 {
    // Current rotation
    FRotator Result = GetComponentRotation ();
 
    FVector CurrentDir = Result.Vector ();
-   FVector TargetDir  = FVector::Zero ();
-
-   // --- Focus Target
-   if (IsValid (TargetCurrent)) {
-      FVector TargetLocation = TargetCurrent->GetComponentLocation ();
-      TargetDir = TargetLocation - GetComponentLocation ();
-      TargetDir.Normalize ();
-
-   // --- Focus Angle
-   } else if (!CustomTargetDir.IsNearlyZero ()) {
-      TargetDir = CustomTargetDir;
-   }
+   FVector TargetDir  = GetTargetDir ();
 
    // --- Is there a target
    if (!TargetDir.IsNearlyZero ()) {
@@ -104,10 +115,6 @@ FRotator URTargetingComponent::GetTargetRotation ()
    return Result;
 }
 
-URTargetComponent* URTargetingComponent::GetCurrentTarget () const
-{
-   return TargetCurrent;
-}
 
 //=============================================================================
 //                         Functions
