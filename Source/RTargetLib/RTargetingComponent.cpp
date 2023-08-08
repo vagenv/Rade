@@ -48,12 +48,6 @@ void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
-void URTargetingComponent::TickComponent (float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
-	TargetingTick (DeltaTime);
-}
-
 //=============================================================================
 //                         Get functions
 //=============================================================================
@@ -63,26 +57,13 @@ bool URTargetingComponent::IsTargeting () const
 	return (IsValid (TargetCurrent) || !CustomTargetDir.IsNearlyZero ());
 }
 
-FRotator URTargetingComponent::GetTargetRotation () const
+FRotator URTargetingComponent::GetTargetRotation ()
 {
-	return TargetRotation;
-}
+   // Current rotation
+   FRotator Result = GetComponentRotation ();
 
-URTargetComponent* URTargetingComponent::GetCurrentTarget () const
-{
-   return TargetCurrent;
-}
-
-//=============================================================================
-//                         Functions
-//=============================================================================
-
-// Creating smooth rotation to target
-void URTargetingComponent::TargetingTick (float DeltaTime)
-{
-   FRotator CurrentRot = GetComponentRotation ();
-   FVector  CurrentDir = CurrentRot.Vector ();
-   FVector  TargetDir  = FVector::Zero ();
+   FVector CurrentDir = Result.Vector ();
+   FVector TargetDir  = FVector::Zero ();
 
    // --- Focus Target
    if (IsValid (TargetCurrent)) {
@@ -113,11 +94,24 @@ void URTargetingComponent::TargetingTick (float DeltaTime)
       // Remove targeting
       if (!CustomTargetDir.IsNearlyZero () && Angle < TargetStopAngle) CustomTargetDir = FVector::Zero ();
 
+      // Tick DeltaTime
+      float DeltaTime = GetWorld ()->GetDeltaSeconds ();
+
       // Lerp to Target Rotation
       float LerpValue = FMath::Clamp (DeltaTime * LerpPower, 0, 1);
-      TargetRotation = FMath::Lerp (CurrentDir, TargetDir, LerpValue).Rotation ();
+      Result = FMath::Lerp (CurrentDir, TargetDir, LerpValue).Rotation ();
    }
+   return Result;
 }
+
+URTargetComponent* URTargetingComponent::GetCurrentTarget () const
+{
+   return TargetCurrent;
+}
+
+//=============================================================================
+//                         Functions
+//=============================================================================
 
 // Camera input to change target
 void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)

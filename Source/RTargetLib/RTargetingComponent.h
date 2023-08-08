@@ -26,7 +26,6 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 	virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
-	virtual void TickComponent (float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
    //==========================================================================
    //                         Params
@@ -67,7 +66,7 @@ public:
       virtual bool IsTargeting () const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
-      virtual FRotator GetTargetRotation () const;
+      virtual FRotator GetTargetRotation ();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
       virtual URTargetComponent* GetCurrentTarget () const;
@@ -78,10 +77,6 @@ public:
 
 protected:
 
-	// What should be used
-	UPROPERTY()
-		FRotator TargetRotation;
-
    // Manager containing all available targets
    UPROPERTY()
       URWorldTargetMgr* TargetMgr = nullptr;
@@ -90,7 +85,7 @@ protected:
    UPROPERTY(ReplicatedUsing = "OnRep_TargetCurrent", Replicated)
       URTargetComponent* TargetCurrent = nullptr;
 
-   // Direction where to look. Capsule direction
+   // Direction where to look. Owner root forward direction
    UPROPERTY()
       FVector CustomTargetDir;
 
@@ -100,10 +95,6 @@ protected:
    // Handle to TargetCheck
    UPROPERTY()
       FTimerHandle TargetCheckHandle;
-
-	// Called by Tick. Adjusts camera angle
-   UFUNCTION()
-      virtual void TargetingTick (float DeltaTime);
 
    // Checks if Targeting actor is valid and within range
    UFUNCTION()
