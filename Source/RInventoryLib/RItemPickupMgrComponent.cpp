@@ -63,7 +63,6 @@ void URItemPickupMgrComponent::ReportClosestPickupUpdated ()
 
 void URItemPickupMgrComponent::CheckClosestPickup ()
 {
-
    FVector  MgrLoc = GetComponentLocation ();
    FRotator MgrRot = GetComponentRotation ();
    FVector  MgrDir = MgrRot.Vector ();
