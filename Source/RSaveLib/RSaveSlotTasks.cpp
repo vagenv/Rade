@@ -134,10 +134,12 @@ void URemoveSaveGameSlotAsync::Activate ()
 // ============================================================================
 
 UCreateSaveGameSlotAsync* UCreateSaveGameSlotAsync::CreateSaveGameSlotAsync (
-   UObject* WorldContextObject)
+   UObject* WorldContextObject,
+   const FString &SlotName)
 {
 	UCreateSaveGameSlotAsync* BlueprintNode = NewObject<UCreateSaveGameSlotAsync>(WorldContextObject);
    BlueprintNode->WorldContextObject = WorldContextObject;
+   BlueprintNode->SlotName = SlotName;
 	return BlueprintNode;
 }
 
@@ -162,11 +164,14 @@ void UCreateSaveGameSlotAsync::Activate ()
    // Create screenshot
    ARViewCapture::GetScreenShot (WorldContextObject, ScreenShotData);
 
+   FString NewSave = SlotName;
+
    // Schedule a background lambda thread
-   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this] () {
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this, NewSave] () {
 
       // Create Save Meta data
       FRSaveGameMeta SaveMeta;
+      SaveMeta.SlotName = NewSave;
       if (!FRSaveGameMeta::Create (SaveMeta, WorldContextObject)) {
          return ReportEnd (false);
       }

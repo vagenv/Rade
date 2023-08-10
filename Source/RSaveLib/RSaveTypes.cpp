@@ -52,10 +52,12 @@ bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObje
 {
    if (!IsValid (WorldContextObject)) return false;
 
-   SaveMeta.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));
-   SaveMeta.Date     = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
-   SaveMeta.Map      = WorldContextObject->GetWorld ()->GetMapName ();
-   SaveMeta.Level    = WorldContextObject->GetWorld ();
+   if (SaveMeta.SlotName.IsEmpty ())
+      SaveMeta.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));
+
+   SaveMeta.Date  = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
+   SaveMeta.Map   = WorldContextObject->GetWorld ()->GetMapName ();
+   SaveMeta.Level = WorldContextObject->GetWorld ();
 
    return true;
 }

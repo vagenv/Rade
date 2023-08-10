@@ -122,7 +122,8 @@ public:
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
-	   static UCreateSaveGameSlotAsync* CreateSaveGameSlotAsync (UObject* WorldContextObject);
+	   static UCreateSaveGameSlotAsync* CreateSaveGameSlotAsync (UObject* WorldContextObject,
+                                                                const FString &SlotName);
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRCreateSaveSlotsEvent, bool, Success);
@@ -138,6 +139,9 @@ protected:
 
    UPROPERTY()
       UObject* WorldContextObject = nullptr;
+
+   UPROPERTY()
+      FString SlotName;
 
    UPROPERTY();
       TObjectPtr<URSaveGame> SaveGameObject;
