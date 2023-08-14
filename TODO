@@ -3,20 +3,12 @@
 =================================================
 
 ==============
-Input
-==============
-R1 + L1 Super Action?
-R2 + L2 Mega Action?
-- Short press?
-- Long hold?
-- Double Tap?
-
-
-==============
 Editor UI
 ==============
 - Custom Widget for FRItemDataHandle
-
+https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
+https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
+https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
 
 ==============
 Ability
@@ -41,6 +33,53 @@ Other
 - TSubclassOf -> TSoftClassPtr (will not create dependency)
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
 
+=================================================
+   RInput
+=================================================
+
+R1 + L1 Super Action?
+R2 + L2 Mega Action?
+- Short press?
+- Long hold?
+- Double Tap?
+
+
+RInputTrigger
+- One input blocks another
+
+
+
+// .h
+UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Double Tap", NotInputConfigurable = "true"))
+class UInputTriggerDoubleTap : public UInputTrigger
+{
+   GENERATED_BODY()
+ 
+protected:
+   virtual ETriggerState UpdateState_Implementation (const UEnhancedPlayerInput* PlayerInput, FInputActionValue ModifiedValue, float DeltaTime) override;
+public:
+ 
+   UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Trigger Settings", meta = (DisplayThumbnail = "false"))
+      float Delay = .5f;
+ 
+private:
+   float LastTappedTime = 0.f;
+};
+ 
+// .cpp
+ETriggerState UInputTriggerDoubleTap::UpdateState_Implementation (const UEnhancedPlayerInput* PlayerInput,
+                                                                  FInputActionValue ModifiedValue, float DeltaTime)
+{
+   if (IsActuated (ModifiedValue) && !IsActuated (LastValue)) {
+      const float CurrentTime = PlayerInput->GetOuterAPlayerController ()->GetWorld ()->GetRealTimeSeconds ();
+      if (CurrentTime - LastTappedTime < Delay) {
+         LastTappedTime = 0;
+         return ETriggerState::Triggered;
+      }
+      LastTappedTime = CurrentTime;
+   }
+   return ETriggerState::None;
+}
 
 =================================================
          Switch to Common UI
