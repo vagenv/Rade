@@ -165,3 +165,44 @@ void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src, FRActionItemD
    else     Outcome = ERActionResult::Failure;
 }
 
+bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, UDataTable* BreakItemTable)
+{
+   if (!BreakItemTable) return false;
+
+   FString ContextString;
+   TArray<FName> RowNames = BreakItemTable->GetRowNames ();
+   for (const FName& ItRowName : RowNames) {
+      FRItemData ItItem;
+      FRCraftRecipe* ItRow = BreakItemTable->FindRow<FRCraftRecipe> (ItRowName, ContextString);
+      if (ItRow && ItRow->CreateItem.ToItem (ItItem)) {
+         if (ItItem.Name == BreakItem.Name) {
+            return true;
+         }
+      }
+   }
+   return false;
+}
+
+bool URItemUtilLibrary::Item_GetBreakList (const FRItemData &BreakItem, UDataTable* BreakItemTable,
+                                           TArray<FRItemDataHandle> &ResultItems)
+{
+   if (!BreakItemTable) return false;
+
+   ResultItems.Empty ();
+
+   FString ContextString;
+   TArray<FName> RowNames = BreakItemTable->GetRowNames ();
+   for (const FName& ItRowName : RowNames) {
+      FRItemData ItItem;
+      FRCraftRecipe* ItRow = BreakItemTable->FindRow<FRCraftRecipe> (ItRowName, ContextString);
+      if (ItRow && ItRow->CreateItem.ToItem (ItItem)) {
+         if (ItItem.Name == BreakItem.Name) {
+            ResultItems = ItRow->RequiredItems;
+            return true;
+         }
+      }
+   }
+   return false;
+}
+
+

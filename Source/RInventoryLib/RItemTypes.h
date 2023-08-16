@@ -209,5 +209,14 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
       static void Item_To_ActionItem (const FRItemData &src, FRActionItemData &ItemData,
                                       ERActionResult &Outcome);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      static bool Item_IsBreakable (const FRItemData &BreakItem, UDataTable* BreakItemTable);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      static bool Item_GetBreakList (const FRItemData &BreakItem, UDataTable* BreakItemTable,
+                                     TArray<FRItemDataHandle> &ResultItems);
+
+
 };
 

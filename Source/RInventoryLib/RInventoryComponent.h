@@ -140,6 +140,21 @@ public:
                                  int32 SrcItemCount);
 
    //==========================================================================
+   //                 Break Item
+   //==========================================================================
+
+   // Breaks item into components
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool BreakItem (int32 ItemIdx, UDataTable* BreakItemTable);
+
+   //==========================================================================
+   //                 Craft Item
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool CraftItem (const FDataTableRowHandle &CraftItem);
+
+   //==========================================================================
    //                 Item use / drop events
    //==========================================================================
 
@@ -150,7 +165,7 @@ public:
       virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0);
 
    //==========================================================================
-   //                 Server versions of the functions
+   //                 Server versions of functions
    //==========================================================================
 
    // --- Add Item
@@ -206,6 +221,19 @@ public:
          URInventoryComponent *SrcInventory, int32 ItemIdx, int32 Count = 0) const;
       void DropItem_Server_Implementation (
          URInventoryComponent *SrcInventory, int32 ItemIdx, int32 Count = 0) const;
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void BreakItem_Server (
+         URInventoryComponent *SrcInventory, int32 ItemIdx, UDataTable* BreakItemTable) const;
+      void BreakItem_Server_Implementation (
+         URInventoryComponent *SrcInventory, int32 ItemIdx, UDataTable* BreakItemTable) const;
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
+      void CraftItem_Server (
+         URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
+      void CraftItem_Server_Implementation (
+         URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
+      
 
    //==========================================================================
    //                 Events
