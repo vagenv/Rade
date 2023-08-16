@@ -15,14 +15,6 @@ Ability
 ==============
 Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
 
-
-==============
-Inventory
-==============
-Inventory replication only for owner?
-JSON data replication on Item. Very expensive.
-
-
 ==============
 Other
 ==============
@@ -637,6 +629,27 @@ float -> double:
 - GetRuntimeFloatCurveValue used for balancing
 
 int -> int32
+
+
+=================================================
+         Optimization
+=================================================
+
+==============
+Graphics
+==============
+Set Graphics settings custom profiles.
+- *.ini files
+- Shadow range
+- LOD distances
+
+
+==============
+Network
+==============
+Inventory
+- Replication only for owner?
+- JsonData is a large FString member variable. Very expensive to replicate.
 
 
 =================================================
