@@ -19,7 +19,6 @@ Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
 ==============
 Inventory
 ==============
-Craft/Break item on server
 Inventory replication only for owner?
 JSON data replication on Item. Very expensive.
 
