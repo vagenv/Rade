@@ -31,7 +31,7 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<TSubclassOf<URActiveStatusEffect> > ActiveEffects;
+      TArray<TSubclassOf<URActiveStatusEffect> > ActiveEffects;
 
    static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
 
