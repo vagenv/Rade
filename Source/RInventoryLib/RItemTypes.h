@@ -216,7 +216,5 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       static bool Item_GetBreakList (const FRItemData &BreakItem, UDataTable* BreakItemTable,
                                      TArray<FRItemDataHandle> &ResultItems);
-
-
 };
 
