@@ -3,11 +3,6 @@
 =================================================
 
 ==============
-Ability
-==============
-Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
-
-==============
 Other
 ==============
 - Look into DDC (Derived Data Cache)
@@ -158,9 +153,9 @@ WeaponItem : EquipmentItem
 - AttackSpeed
 - AnimStyle
 
-List of Struct:
+List of effect on attack:
 - Chances
-- Active status effect
+- Active status effect [Burning] / [Poisoned] / [Slow] / [Haste]
 
 ==============
 MeleeWeaponItem : WeaponItem
