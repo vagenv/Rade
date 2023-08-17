@@ -3,14 +3,6 @@
 =================================================
 
 ==============
-Editor UI
-==============
-- Custom Widget for FRItemDataHandle
-https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
-https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
-https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
-
-==============
 Ability
 ==============
 Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
@@ -18,11 +10,11 @@ Chance to apply active status effect. [Burning] / [Poisoned] / [Slow] / [Haste]
 ==============
 Other
 ==============
-
 - Look into DDC (Derived Data Cache)
 - FWeakObjectPtr for pointer to object
 - TSubclassOf -> TSoftClassPtr (will not create dependency)
 - Hard define for PreBeginPlay / BeginPlay / PostBeginPlay. For reference linking during object initialization
+
 
 =================================================
    RInput
@@ -38,7 +30,9 @@ R2 + L2 Mega Action?
 RInputTrigger
 - One input blocks another
 
-
+==============
+DoubleTapInput
+==============
 
 // .h
 UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Double Tap", NotInputConfigurable = "true"))
@@ -98,6 +92,51 @@ Grid of RUI_UserWidgets
 Break
 Quit Popup
 
+
+=================================================
+   Editor UI
+=================================================
+
+https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
+https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
+https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
+
+
+Custom Module with "Editor" suffix.
+
+RadeTypesEditor / RadeEditor
+
+==============
+Custom Widget for:
+==============
+
+[FRCoreStats]
+
+[FRSubStats]
+
+[FRStatusValue]
+
+[FRPassiveStatusEffect]
+
+[FREnemyExp]
+
+[RUI_Description]
+| Icon |[  LABEL  ]
+| Icon |[ Tooltip ]
+
+[FRItemDataHandle]
+[Table] [Item]  [<] x[Cound] [>]
+
+[FRItemData]
+[Rarity] [Name] [RUI_Description] [Max Count] [Weight] [Price] [PickupMesh] [Pickup class]
+
+[FRActionItemData]
+[AutoDestroy] [Action class] [FRItemData]
+
+[FRConsumableItemData]
+[Effect List] [FRActionItemData]
+
+[FREquipmentData]
 
 =================================================
          Weapons
