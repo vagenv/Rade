@@ -14,6 +14,7 @@ public class RadeEditorTarget : TargetRules
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;
 	  
       ExtraModuleNames.Add ("RUtilLib");
+      ExtraModuleNames.Add ("RInputLib");
       ExtraModuleNames.Add ("RDamageLib");
       ExtraModuleNames.Add ("RExperienceLib");
       ExtraModuleNames.Add ("RTargetLib");
