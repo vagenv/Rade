@@ -2,51 +2,12 @@
    RInput
 =================================================
 
-R1 + L1 Super Action?
-R2 + L2 Mega Action?
-- Short press?
-- Long hold?
-- Double Tap?
+R1 + L1 Super Action
+R2 + L2 Mega Action
+R1 and L1 are not triggered until released?
 
+Hold + progress
 
-RInputTrigger
-- One input blocks another
-
-==============
-DoubleTapInput
-==============
-
-// .h
-UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Double Tap", NotInputConfigurable = "true"))
-class UInputTriggerDoubleTap : public UInputTrigger
-{
-   GENERATED_BODY()
- 
-protected:
-   virtual ETriggerState UpdateState_Implementation (const UEnhancedPlayerInput* PlayerInput, FInputActionValue ModifiedValue, float DeltaTime) override;
-public:
- 
-   UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Trigger Settings", meta = (DisplayThumbnail = "false"))
-      float Delay = .5f;
- 
-private:
-   float LastTappedTime = 0.f;
-};
- 
-// .cpp
-ETriggerState UInputTriggerDoubleTap::UpdateState_Implementation (const UEnhancedPlayerInput* PlayerInput,
-                                                                  FInputActionValue ModifiedValue, float DeltaTime)
-{
-   if (IsActuated (ModifiedValue) && !IsActuated (LastValue)) {
-      const float CurrentTime = PlayerInput->GetOuterAPlayerController ()->GetWorld ()->GetRealTimeSeconds ();
-      if (CurrentTime - LastTappedTime < Delay) {
-         LastTappedTime = 0;
-         return ETriggerState::Triggered;
-      }
-      LastTappedTime = CurrentTime;
-   }
-   return ETriggerState::None;
-}
 
 =================================================
          Switch to Common UI
