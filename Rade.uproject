@@ -12,7 +12,10 @@
 		{
 			"Name": "RInputLib",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"EnhancedInput"
+			]
 		},
 		{
 			"Name": "RDamageLib",
