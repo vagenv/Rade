@@ -6,7 +6,11 @@ R1 + L1 Super Action
 R2 + L2 Mega Action
 R1 and L1 are not triggered until released?
 
-Hold + progress
+Hold + circular progress to destroy
+
+Hold to use ability?
+
+Chanelling?
 
 
 =================================================
@@ -485,7 +489,16 @@ Terrain
 Buildings
 Trees (With animation of wind)
 Grass (With animation of wind)
-Dyanmic Time of Day
+Dynamic Time of Day
+
+
+=================================================
+         Instanced static mesh + Procedural Content
+=================================================
+Genrate PCG terrain
+InstanceMesh->Add/Rm based on range
+
+https://www.youtube.com/watch?v=XMKFTzfPqXs
 
 
 =================================================
