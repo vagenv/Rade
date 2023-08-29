@@ -577,6 +577,20 @@ GameMode
 - ChangeName?
 
 
+==============
+VPS
+==============
+- Static URL
+- Automatic lobby management
+
+==============
+P2P
+==============
+- Search for available instances
+- Connect manually
+- Static URL to manage session list?
+
+
 =================================================
          Pause Game
 =================================================
