@@ -20,26 +20,26 @@ public:
    //         Can this target be selected
    //==========================================================================
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetEvent OnIsTargetable;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       void SetIsTargetable (bool CanFind);
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       bool GetIsTargetable () const;
 
    //==========================================================================
    //         Is this target be selected
    //==========================================================================
 
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetEvent OnIsTargeted;
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       void SetIsTargeted (bool CanTarget);
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       bool GetIsTargeted () const;
 
 protected:

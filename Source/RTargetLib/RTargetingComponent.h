@@ -32,23 +32,23 @@ public:
    //==========================================================================
 
    // Offset when turning to look at target
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       float TargetVerticalOffset = -0.1f;
 
 	// Angle at which targeting will stop
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       float TargetStopAngle = 1.;
 
    // Speed at which camera turns to required direction
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       FRuntimeFloatCurve TargetAngleToLerpPower;
 
 	// How often can a new target can be searched
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
 		float TargetSearchDelay = 0.2f;
 
    // Minimum input to start new target search
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       float TargetAdjustMinOffset = 0.3f;
 
    //==========================================================================
@@ -56,28 +56,28 @@ public:
    //==========================================================================
 
    // Searches for new focus target
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual void TargetToggle ();
 
-	UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+	UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual void TargetAdjust (float OffsetX, float OffsetY);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       virtual bool IsTargeting () const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       virtual URTargetComponent* GetCurrentTarget () const;
 
    // Direction of current target
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       virtual FVector GetTargetDir () const;
 
    // Value should be fed to SetControlRotation
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Targetable")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       virtual FRotator GetControlRotation ();
 
    // Broadcasted when TargetCurrent has changed
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetingEvent OnTargetUpdated;
 
 protected:

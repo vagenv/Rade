@@ -23,47 +23,47 @@ public:
    //==========================================================================
 protected:
    // Container for current targets
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Targetable")
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Target")
       TArray<URTargetComponent*> TargetableList;
 public:
    // Called when target list has been modified
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Targetable")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetableMgrEvent OnListUpdated;
 
    // Distance at which target can be searched
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
       float SearchDistance = 3000;
 
    // FOV angle to search targets
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
       float SearchAngle = 50;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
       float InputHWeight = 1;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Targetable")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
       float InputVWeight = 0.5f;
 
    //==========================================================================
    //          Functions called by targetable components
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual void AddTarget (URTargetComponent* Target);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual void RmTarget  (URTargetComponent* Target);
 
    //==========================================================================
    //          Functions called by targeting components
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual URTargetComponent* Find (URTargetingComponent*      Targeter,
                                        TArray<AActor*>            FilterOutActors,
                                        TArray<URTargetComponent*> FilterOutTargets);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Targetable")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual URTargetComponent* FindNear (URTargetingComponent*      Targeter,
                                            URTargetComponent*         CurrentTarget,
                                            float                      InputOffsetX,
@@ -76,7 +76,7 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure,
-             Category = "Rade|Targetable",
+             Category = "Rade|Target",
              meta = (HidePin          = "WorldContextObject",
                      DefaultToSelf    = "WorldContextObject",
                      DisplayName      = "World Target Mgr",
