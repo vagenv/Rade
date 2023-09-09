@@ -1,12 +1,3 @@
-=================================================
-   RInput
-=================================================
-
-Hold to:
-- Destroy
-- Drop
-- Scroll
-- Increase/Descrease
 
 =================================================
          Switch to Common UI
@@ -428,6 +419,17 @@ Each anim style must have:
 - Simple Attack
 - Strong Attack
 - Combo with damage multiplier
+
+
+=================================================
+   RInput
+=================================================
+
+Hold to:
+- Destroy
+- Drop
+- Scroll
+- Increase/Descrease
 
 
 =================================================
