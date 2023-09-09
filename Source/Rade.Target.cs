@@ -10,8 +10,8 @@ public class RadeTarget : TargetRules
    {
       Type = TargetType.Game;
 	   bUsesSteam = true;
-      DefaultBuildSettings = BuildSettingsVersion.V2;
-      IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;
+      DefaultBuildSettings = BuildSettingsVersion.V4;
+      IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 	  
       ExtraModuleNames.Add ("RUtilLib");
       ExtraModuleNames.Add ("RInputLib");
