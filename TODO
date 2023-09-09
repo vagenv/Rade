@@ -2,16 +2,11 @@
    RInput
 =================================================
 
-R1 + L1 Super Action
-R2 + L2 Mega Action
-R1 and L1 are not triggered until released?
-
-Hold + circular progress to destroy
-
-Hold to use ability?
-
-Chanelling?
-
+Hold to:
+- Destroy
+- Drop
+- Scroll
+- Increase/Descrease
 
 =================================================
          Switch to Common UI
