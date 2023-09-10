@@ -3,7 +3,21 @@
          Switch to Common UI
 =================================================
 
-List which ignores:
+Switch to Unreal Common UI UMG
+
+Popup window with Stacks
+
+Break Popup
+- Are you sure you want to break the item.
+- Current -> Result
+
+Quit Popup
+- Quit game?
+- [Yes] [No]
+
+
+RUI_List select should ignore:
+- Automatically refresh select list
 - Non RUI_Widget
 - Disabled
 - Hidden
@@ -12,18 +26,10 @@ List which ignores:
 - Unify Main Menu and StartMenu
 - Endless scroll with mouse -> disable?
 
-Unreal Common UI UMG (Replace RUI)
-- Unreal Standard.
-- Define Label and Button archetypes.
-- Stacks.
-
 
 Grid of RUI_UserWidgets
 - Up/Down/Left/Right dynamic
 - Icons/Buttons/Descriptions
-
-Break
-Quit Popup
 
 
 =================================================
