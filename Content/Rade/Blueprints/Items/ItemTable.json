@@ -1,17 +1,18 @@
 [
 	{
 		"Name": "Rock",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Rock",
 			"Tooltip": "Picked from ground. I will make it a traveler",
-			"Icon": "/Game/Rade/Sprites/Icons/alarm.alarm"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/alarm.alarm"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 5,
 		"Weight": 100,
@@ -22,17 +23,18 @@
 	},
 	{
 		"Name": "MusicNotes",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "QUEST",
 		"Description":
 		{
 			"Label": "Music Notes",
 			"Tooltip": "A quest item to delivery.",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-down.arrow-badge-down"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-badge-down.arrow-badge-down"
 		},
+		"Rarity": "QUEST",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 10,
@@ -43,17 +45,18 @@
 	},
 	{
 		"Name": "HeavyRocks",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "MAINQUEST",
 		"Description":
 		{
 			"Label": "Heavy Rocks",
 			"Tooltip": "Why am I even carrying it?",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-badge-right.arrow-badge-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-badge-right.arrow-badge-right"
 		},
+		"Rarity": "MAINQUEST",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 5000,
@@ -64,17 +67,18 @@
 	},
 	{
 		"Name": "Gold",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Gold",
 			"Tooltip": "Current used in exchange of goods and services",
-			"Icon": "/Game/Rade/Sprites/Icons/coins.coins"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/coins.coins"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 9999,
 		"Weight": 10,

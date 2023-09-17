@@ -38,19 +38,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Sword",
 			"Tooltip": "I poke!",
-			"Icon": "/Game/Rade/Sprites/Icons/browser.browser"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/browser.browser"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 3500,
@@ -76,19 +77,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Pistol",
 			"Tooltip": "I shoot!",
-			"Icon": "/Game/Rade/Sprites/Icons/bug.bug"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/bug.bug"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 900,
@@ -114,19 +116,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "D",
 		"Description":
 		{
 			"Label": "Wooden Shield",
 			"Tooltip": "Better than nothing",
-			"Icon": "/Game/Rade/Sprites/Icons/circle.circle"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/circle.circle"
 		},
+		"Rarity": "D",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 3000,
@@ -152,19 +155,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Shoes Of Speed",
 			"Tooltip": "Gotta go fast",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -190,19 +194,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Cloth Armor",
 			"Tooltip": "Better than naked",
-			"Icon": "/Game/Rade/Sprites/Icons/ball-football.ball-football"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/ball-football.ball-football"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 2000,
@@ -234,19 +239,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Strength",
 			"Tooltip": "ME STRONG!!!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -284,19 +290,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Agility",
 			"Tooltip": "ME FAST!!!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -328,19 +335,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Intelligence",
 			"Tooltip": "ME SMART!!!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -398,19 +406,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "B",
 		"Description":
 		{
 			"Label": "Hat of Bad Boi...  It has effects... good luck...",
 			"Tooltip": "A funny hat that has many questionable effects. Only use this if you really know what you're doing... It's your hat... Do whatever you want man.",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "B",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -442,19 +451,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Regeneration",
 			"Tooltip": "ME HEAL FAST!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -486,19 +496,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Evasion",
 			"Tooltip": "ME SHADOW!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
