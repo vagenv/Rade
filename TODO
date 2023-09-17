@@ -1,11 +1,25 @@
-
 =================================================
          Switch to Common UI
 =================================================
 
-Switch to Unreal Common UI UMG
+EquipmentList
+- Filter by equip slot
 
-Popup window with Stacks
+InventoryList Filter:
+- Subclass. ActionItem, Equipment,  Consumables
+
+RUI_ItemWidget_Icon
+- Icon
+- Label
+
+RUI_GridContainer
+- Use RUI_ItemWidget_Icon
+
+Equipment slot use inventory item for list
+
+===
+Popup Window
+===
 
 Break Popup
 - Are you sure you want to break the item.
@@ -15,22 +29,14 @@ Quit Popup
 - Quit game?
 - [Yes] [No]
 
-
-RUI_List select should ignore:
-- Automatically refresh select list
-- Non RUI_Widget
-- Disabled
-- Hidden
+===
+General
+===
+- Unify Main Menu and StartMenu somehow
 
 - Bug: UI scroll stuck if scroll up with loop and last item empty list
-- Unify Main Menu and StartMenu
-- Endless scroll with mouse -> disable?
 
-
-Grid of RUI_UserWidgets
-- Up/Down/Left/Right dynamic
-- Icons/Buttons/Descriptions
-
+- Loop scroll with mouse -> disable?
 
 =================================================
    Editor UI
