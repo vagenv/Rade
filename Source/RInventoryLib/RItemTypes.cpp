@@ -43,6 +43,7 @@ bool FRItemDataHandle::ToItem (FRItemData &dst) const
 
    // Set RAW data
    Item.SetJSON (JsonData);
+   Item.ID = Arch.RowName.ToString ();
    dst = Item;
    return true;
 }
@@ -149,16 +150,18 @@ bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 //                      URItemUtilLibrary
 // ============================================================================
 
-void URItemUtilLibrary::ItemHandle_To_Item (const FRItemDataHandle &src, FRItemData &dst,
-                                            ERActionResult &Outcome)
+void URItemUtilLibrary::ItemHandle_To_Item (const FRItemDataHandle &src,
+                                            FRItemData             &dst,
+                                            ERActionResult         &Outcome)
 {
    bool res = src.ToItem (dst);
    if (res) Outcome = ERActionResult::Success;
    else     Outcome = ERActionResult::Failure;
 }
 
-void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src, FRActionItemData &dst,
-                                            ERActionResult &Outcome)
+void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src,
+                                            FRActionItemData &dst,
+                                            ERActionResult   &Outcome)
 {
    bool res = FRActionItemData::Cast (src, dst);
    if (res) Outcome = ERActionResult::Success;
@@ -175,7 +178,7 @@ bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, UDataTabl
       FRItemData ItItem;
       FRCraftRecipe* ItRow = BreakItemTable->FindRow<FRCraftRecipe> (ItRowName, ContextString);
       if (ItRow && ItRow->CreateItem.ToItem (ItItem)) {
-         if (ItItem.Name == BreakItem.Name) {
+         if (ItItem.ID == BreakItem.ID) {
             return true;
          }
       }
@@ -183,7 +186,8 @@ bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, UDataTabl
    return false;
 }
 
-bool URItemUtilLibrary::Item_GetBreakList (const FRItemData &BreakItem, UDataTable* BreakItemTable,
+bool URItemUtilLibrary::Item_GetBreakList (const FRItemData         &BreakItem,
+                                           UDataTable*               BreakItemTable,
                                            TArray<FRItemDataHandle> &ResultItems)
 {
    if (!BreakItemTable) return false;
@@ -196,7 +200,7 @@ bool URItemUtilLibrary::Item_GetBreakList (const FRItemData &BreakItem, UDataTab
       FRItemData ItItem;
       FRCraftRecipe* ItRow = BreakItemTable->FindRow<FRCraftRecipe> (ItRowName, ContextString);
       if (ItRow && ItRow->CreateItem.ToItem (ItItem)) {
-         if (ItItem.Name == BreakItem.Name) {
+         if (ItItem.ID == BreakItem.ID) {
             ResultItems = ItRow->RequiredItems;
             return true;
          }

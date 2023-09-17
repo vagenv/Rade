@@ -207,7 +207,7 @@ ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
       if (EquipmentSlot) {
 
          // Item equiped
-         if (EquipmentSlot->EquipmentData.Name == ItemData.Name) {
+         if (EquipmentSlot->EquipmentData.ID == ItemData.ID) {
             UnEquip (EquipmentSlot);
          }
       }
@@ -224,14 +224,14 @@ bool UREquipmentMgrComponent::EquipItem (const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!EquipmentData.EquipmentSlot) {
-      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.ID);
       return false;
    }
 
    UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (EquipmentData.EquipmentSlot);
    if (!EquipmentSlot) {
       R_LOG_PRINTF ("Equipment item [%s] required slot [%s] not found on character",
-         *EquipmentData.Name, *EquipmentData.EquipmentSlot->GetName ());
+         *EquipmentData.ID, *EquipmentData.EquipmentSlot->GetName ());
       return false;
    }
    return Equip (EquipmentSlot, EquipmentData);
@@ -242,7 +242,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (IsValid (EquipmentSlot)))  return false;
    if (!ensure (EquipmentData.EquipmentSlot.Get ())) {
-      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.Name);
+      R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.ID);
       return false;
    }
    if (!ensure (EquipmentSlot->GetClass () == EquipmentData.EquipmentSlot)) {
@@ -256,7 +256,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
    URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
    if (!EquipmentData.RequiredStats.Empty ()) {
       if (!StatusMgr) {
-         R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.Name);
+         R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.ID);
          return false;
       }
       if (!StatusMgr->HasStats (EquipmentData.RequiredStats)) return false;
@@ -266,7 +266,7 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
    if (EquipmentSlot->Busy) {
 
       // If equip has been called on same item -> Only unequip.
-      if (EquipmentSlot->EquipmentData.Name == EquipmentData.Name) {
+      if (EquipmentSlot->EquipmentData.ID == EquipmentData.ID) {
          return UnEquip (EquipmentSlot);
       }
 

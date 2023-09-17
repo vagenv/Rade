@@ -95,7 +95,7 @@ public:
       virtual int GetCountItem (const FRItemData &CheckItem) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual int GetCountItem_Name (const FString &CheckItemname) const;
+      virtual int GetCountItem_ID (const FString &ID) const;
 
    //==========================================================================
    //                 Add to Inventory

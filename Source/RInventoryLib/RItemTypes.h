@@ -91,25 +91,25 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    FRItemData();
 
+   // Data table row Unique ID
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      FString ID;
+
    // Must be defined in all subclasses for type checking and casting
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       FString Type;
 
+   // Into what types can the 'JsonData' be converted to
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       TArray<FString> CastType;
 
-   // --- Base data every item should have
+   // UI Information
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      FRUIDescription Description;
 
    // Rarity
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       ERItemRarity Rarity = ERItemRarity::None;
-
-   // Data table row Unique ID
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString Name;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FRUIDescription Description;
 
    // Number of item instances
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

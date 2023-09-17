@@ -86,7 +86,7 @@ bool URInventoryComponent::HasItem_Data (FRItemData RequireItem) const
 {
    // --- Iterate over inventory items
    for (const FRItemData &ItItem : Items) {
-      if (ItItem.Name != RequireItem.Name) continue;
+      if (ItItem.ID != RequireItem.ID) continue;
       RequireItem.Count -= ItItem.Count;
       if (RequireItem.Count <= 0) break;
    }
@@ -110,7 +110,7 @@ bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems)
       // --- Iterate over required items
       for (int iRequireItem = 0; iRequireItem < RequiredItems.Num (); iRequireItem++) {
          FRItemData &RequireItem = RequiredItems[iRequireItem];
-         if (ItItem.Name != RequireItem.Name) continue;
+         if (ItItem.ID != RequireItem.ID) continue;
 
          RequireItem.Count -= ItItem.Count;
          if (RequireItem.Count <= 0) {
@@ -125,15 +125,15 @@ bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems)
 
 int URInventoryComponent::GetCountItem (const FRItemData &CheckItem) const
 {
-   return GetCountItem_Name (CheckItem.Name);
+   return GetCountItem_ID (CheckItem.ID);
 }
-int URInventoryComponent::GetCountItem_Name (const FString &CheckItemName) const
+int URInventoryComponent::GetCountItem_ID (const FString &ItemId) const
 {
    int Count = 0;
    // --- Find same kind of item
    for (const FRItemData &ItItem : Items) {
       // Not same item type
-      if (ItItem.Name != CheckItemName) continue;
+      if (ItItem.ID != ItemId) continue;
       Count += ItItem.Count;
    }
 
@@ -173,7 +173,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
       for (FRItemData &ItItem : Items) {
 
          // Not same item type
-         if (ItItem.Name != NewItem.Name) continue;
+         if (ItItem.ID != NewItem.ID) continue;
 
          int32 ItItemCountLeft = ItItem.MaxCount - ItItem.Count;
 
@@ -291,7 +291,7 @@ bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
    // Remove until finished
    while (RmItemData.Count > 0) {
       for (int iItem = 0; iItem < Items.Num (); iItem++) {
-         if (Items[iItem].Name != RmItemData.Name) continue;
+         if (Items[iItem].ID != RmItemData.ID) continue;
 
          int Count = FMath::Min (Items[iItem].Count, RmItemData.Count);
          if (!RemoveItem_Index (iItem, Count)) return false;
@@ -423,7 +423,7 @@ bool URInventoryComponent::BreakItem (int32 ItemIdx, UDataTable* BreakItemTable)
       FRItemData ItItem;
       FRCraftRecipe* ItRow = BreakItemTable->FindRow<FRCraftRecipe> (ItRowName, ContextString);
       if (ItRow && ItRow->CreateItem.ToItem (ItItem)) {
-         if (ItItem.Name == BreakItem.Name) {
+         if (ItItem.ID == BreakItem.ID) {
             RemoveItem_Index (ItemIdx);
             for (const auto &ItAddItem : ItRow->RequiredItems) {
                AddItem_Arch (ItAddItem);
