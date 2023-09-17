@@ -233,7 +233,7 @@ public:
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
       void CraftItem_Server_Implementation (
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
-      
+
 
    //==========================================================================
    //                 Events

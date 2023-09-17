@@ -356,9 +356,9 @@ bool URStatusMgrComponent::ApplyActiveStatusEffect (
    if (!ensure (IsValid (Effect_))) return false;
 
    UWorld* World = Target_->GetWorld ();
-   if (!World)                            return false;
+   if (!World) return false;
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target_);
-   if (!ensure (StatusMgr))               return false;
+   if (!ensure (StatusMgr)) return false;
 
    return StatusMgr->AddActiveStatusEffect (Causer_, Effect_);
 }
