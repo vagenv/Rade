@@ -2,11 +2,13 @@
          Switch to Common UI
 =================================================
 
-EquipmentList
-- Filter by equip slot
+Cursor visiblity
 
 InventoryList Filter:
-- Subclass. ActionItem, Equipment,  Consumables
+- Subclass: ActionItem, Equipment,  Consumables
+
+EquipmentList
+- Filter by equip slot
 
 RUI_ItemWidget_Icon
 - Icon
@@ -15,23 +17,15 @@ RUI_ItemWidget_Icon
 RUI_GridContainer
 - Use RUI_ItemWidget_Icon
 
-Equipment slot use inventory item for list
 
-===
-Popup Window
-===
+EquipmentInfoWidget
 
-Break Popup
-- Are you sure you want to break the item.
-- Current -> Result
-
-Quit Popup
-- Quit game?
-- [Yes] [No]
+AbilityInfoWidget
 
 ===
 General
 ===
+
 - Unify Main Menu and StartMenu somehow
 
 - Bug: UI scroll stuck if scroll up with loop and last item empty list
