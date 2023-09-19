@@ -13,26 +13,34 @@ struct RSAVELIB_API FRSaveGameMeta
 {
    GENERATED_BODY()
 
-   // --- Mandatory info
+   // <Path>/SaveGames/<SlotName>
+   // e.g YYMMDD_HHMM
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString SlotName;
 
-   // UI info
-  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   // Map file object
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TSoftObjectPtr<UWorld> Level;
+
+   // Map file name
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Map;
 
-  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-     TSoftObjectPtr<UWorld> Level;
-
+   // YYYY-MM-DD HH:MM
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FString Date;
 
+   // Extra data from blueprints
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+      TMap<FString, FString> ExtraData;
+
+   // Binary data format of <Path>/SaveGames/<SlotName>/save.img
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TEnumAsByte<EPixelFormat> ImageFormat = EPixelFormat::PF_B8G8R8A8;
 
    // Check Values
    bool IsValidSave () const;
-   
+
    // Get absolute path to save folder
    static FString GetSaveDir ();
 

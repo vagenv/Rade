@@ -135,11 +135,13 @@ void URemoveSaveGameSlotAsync::Activate ()
 
 UCreateSaveGameSlotAsync* UCreateSaveGameSlotAsync::CreateSaveGameSlotAsync (
    UObject* WorldContextObject,
-   const FString &SlotName)
+   const FString &SlotName,
+   const TMap<FString, FString> &ExtraData)
 {
 	UCreateSaveGameSlotAsync* BlueprintNode = NewObject<UCreateSaveGameSlotAsync>(WorldContextObject);
    BlueprintNode->WorldContextObject = WorldContextObject;
-   BlueprintNode->SlotName = SlotName;
+   BlueprintNode->SlotName  = SlotName;
+   BlueprintNode->ExtraData = ExtraData;
 	return BlueprintNode;
 }
 
@@ -164,14 +166,16 @@ void UCreateSaveGameSlotAsync::Activate ()
    // Create screenshot
    ARViewCapture::GetScreenShot (WorldContextObject, ScreenShotData);
 
-   FString NewSave = SlotName;
+   FString                NewSave  = SlotName;
+   TMap<FString, FString> NewExtra = ExtraData;
 
    // Schedule a background lambda thread
-   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this, NewSave] () {
+   AsyncTask (ENamedThreads::AnyBackgroundThreadNormalTask, [this, NewSave, NewExtra] () {
 
       // Create Save Meta data
       FRSaveGameMeta SaveMeta;
-      SaveMeta.SlotName = NewSave;
+      SaveMeta.SlotName  = NewSave;
+      SaveMeta.ExtraData = NewExtra;
       if (!FRSaveGameMeta::Create (SaveMeta, WorldContextObject)) {
          return ReportEnd (false);
       }
@@ -186,7 +190,7 @@ void UCreateSaveGameSlotAsync::Activate ()
       if (!FRSaveGameMeta::Write (SaveMeta)) {
          return ReportEnd (false);
       }
-           
+
       // Convert Save File Object to memory and write to disk
       TArray<uint8> SaveFileData;
       if (!UGameplayStatics::SaveGameToMemory (SaveGameObject, SaveFileData)) {
@@ -197,7 +201,7 @@ void UCreateSaveGameSlotAsync::Activate ()
       if (!FFileHelper::SaveArrayToFile (SaveFileData, *(SaveFileDir + "save.data"))) {
          return ReportEnd (false);
       }
-      
+
       return ReportEnd (true);
    });
 }

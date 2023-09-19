@@ -123,7 +123,8 @@ public:
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
 	   static UCreateSaveGameSlotAsync* CreateSaveGameSlotAsync (UObject* WorldContextObject,
-                                                                const FString &SlotName);
+                                                                const FString &SlotName,
+                                                                const TMap<FString, FString> &ExtraData);
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRCreateSaveSlotsEvent, bool, Success);
@@ -142,6 +143,9 @@ protected:
 
    UPROPERTY()
       FString SlotName;
+
+   UPROPERTY()
+      TMap<FString, FString> ExtraData;
 
    UPROPERTY();
       TObjectPtr<URSaveGame> SaveGameObject;
@@ -190,7 +194,7 @@ protected:
 
    UPROPERTY()
       TArray<uint8> SaveBinary;
-   
+
    UPROPERTY()
       TObjectPtr<URSaveGame> SaveGameObject;
 
