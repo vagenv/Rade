@@ -1,36 +1,98 @@
 =================================================
          Switch to Common UI
 =================================================
+==============
+Ability Window
+==============
 
-Cursor visiblity
+AbilityInfoWidget
+- Ability info
 
-InventoryList Filter:
+SelectAbilityWindow
+- List for slot
+
+LearnAbilityWindow
+- List with learned
+
+
+==============
+Stat Window
+==============
+Current STR/AGI/ING
+
+Use available stat
+
+
+==============
+Equipment Window
+==============
+
+EquipmentInfoWidget
+
+
+==============
+Fixes
+==============
+
+- SliderList with all 3 text widgets must be of same size.
+
+- Cursor still visible after switch.
+
+- Unify Main Menu and StartMenu somehow
+
+(Verify that fixed)
+- Bug: UI scroll stuck if scroll up with loop and last item empty list
+
+
+==============
+Inventory
+==============
+
+ItemList Filter:
 - Subclass: ActionItem, Equipment,  Consumables
 
-EquipmentList
+EquipmentList : ItemList
 - Filter by equip slot
 
-RUI_ItemWidget_Icon
-- Icon
-- Label
+
+==============
+RUI_GridContainer
+==============
+Uniform grid size
 
 RUI_GridContainer
 - Use RUI_ItemWidget_Icon
 
+==============
+RItem Redesign?
+==============
 
-EquipmentInfoWidget
+Interfaces and maps?
 
-AbilityInfoWidget
+Data:
+ID
+- Label
+- Tooltip
+- Icon
+- Rarity
+- Count
+- MaxCount
+- Weight
+- Price
+- Item
+- ActionList: TArray<TSubclass<IRAction> >
 
-===
-General
-===
 
-- Unify Main Menu and StartMenu somehow
-
-- Bug: UI scroll stuck if scroll up with loop and last item empty list
-
-- Loop scroll with mouse -> disable?
+Equipment
+- ActionList.Add (IR_Action_Equipment::GetClass ())
+- EquipmentSlot
+- StaticMesh
+- SkeletalMesh
+- CurrentDurability
+- MaxDurability
+- Resistence
+- PassiveEffects
+- RequiredStats
 
 =================================================
    Editor UI
