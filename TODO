@@ -27,7 +27,30 @@ Use available stat
 Equipment Window
 ==============
 
-EquipmentInfoWidget
+[ICON] [Name]
+       [Detail]
+       [Required Stat]?
+       [Resistance List]?
+       [Effect List]?
+
+
+==============
+EventList
+==============
+Right Bottom/Top/Middle
+Max Size
+
+Event
+- Icon
+- Label
+- Count
+- Detail?
+- Lifetime?
+
+Callers
+- Item picked up
+- Damage taken
+- Damage applied?
 
 
 ==============
@@ -63,6 +86,7 @@ Uniform grid size
 RUI_GridContainer
 - Use RUI_ItemWidget_Icon
 
+
 ==============
 RItem Redesign?
 ==============
@@ -93,6 +117,7 @@ Equipment
 - Resistence
 - PassiveEffects
 - RequiredStats
+
 
 =================================================
    Editor UI
