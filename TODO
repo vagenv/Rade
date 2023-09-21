@@ -2,17 +2,38 @@
          Switch to Common UI
 =================================================
 ==============
-Ability Window
+Ability Widgets
 ==============
 
-AbilityInfoWidget
-- Ability info
+<Ability>
+- Description from RWorldAbilitMgr and AbilityTable
+- Requirnment (FRCoreStats, TArray<AbilityInfo>)
+- Cost (Health, Mana, Stamina)
 
-SelectAbilityWindow
-- List for slot
+AbilityWidget
+- <Ability>
+- State (Disabled, <Learn>, <Assign>)
+- Can learn / Learned and Passive / Learned and Active / Can not learn yet
 
+<Learn>
+Popup. Do you want to learn <Ability>
+
+SelectAbilityWindow <Assign>
+- List for <ActionSlot>
+
+SelectSlotWindow <Assign>
+- List of active <Ability>
+
+
+===
 LearnAbilityWindow
-- List with learned
+===
+Grid of AbilityWidget
+
+[Fireball] [Firewall]
+[Heal] [Healing Aura]
+
+[Healthy 1] [Healthy 2]
 
 
 ==============
@@ -51,6 +72,13 @@ Callers
 - Item picked up
 - Damage taken
 - Damage applied?
+
+==============
+Icon
+==============
+Round
+Square
+Diamond
 
 
 ==============
