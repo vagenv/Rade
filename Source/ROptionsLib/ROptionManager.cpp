@@ -27,8 +27,10 @@ bool FRVideoQualitySetting::operator == (const FRVideoQualitySetting &res) const
       VSyncEnabled       == res.VSyncEnabled       &&
       FrameRate          == res.FrameRate          &&
       ResolutionQuality  == res.ResolutionQuality  &&
-      AntiAliasing       == res.AntiAliasing       &&
       DynamicResolution  == res.DynamicResolution  &&
+
+      QualityPreset      == res.QualityPreset      &&
+      AntiAliasing       == res.AntiAliasing       &&
       ViewDistance       == res.ViewDistance       &&
       TextureQuality     == res.TextureQuality     &&
       ShadowQuality      == res.ShadowQuality      &&
@@ -138,6 +140,7 @@ bool UROptionManager::GetCurrentVideoQualitySettings (FRVideoQualitySetting& Qua
    QualitySettings.FrameRate          = Settings->GetFrameRateLimit ();
    QualitySettings.ResolutionQuality  = Settings->GetResolutionScaleNormalized ();
    QualitySettings.DynamicResolution  = Settings->IsDynamicResolutionEnabled ();
+
    QualitySettings.AntiAliasing       = Settings->GetAntiAliasingQuality ();
    QualitySettings.ViewDistance       = Settings->GetViewDistanceQuality ();
    QualitySettings.TextureQuality     = Settings->GetTextureQuality ();
@@ -148,11 +151,30 @@ bool UROptionManager::GetCurrentVideoQualitySettings (FRVideoQualitySetting& Qua
    QualitySettings.FoliageQuality     = Settings->GetFoliageQuality ();
    QualitySettings.EffectQuality      = Settings->GetVisualEffectQuality ();
    QualitySettings.PostProcessQuality = Settings->GetPostProcessingQuality ();
+
+   if (
+      QualitySettings.AntiAliasing       == QualitySettings.ViewDistance       &&
+      QualitySettings.ViewDistance       == QualitySettings.TextureQuality     &&
+      QualitySettings.TextureQuality     == QualitySettings.ShadowQuality      &&
+      QualitySettings.ShadowQuality      == QualitySettings.ShadingQuality     &&
+      QualitySettings.ShadingQuality     == QualitySettings.GlobalIllumination &&
+      QualitySettings.GlobalIllumination == QualitySettings.ReflectionQuality  &&
+      QualitySettings.ReflectionQuality  == QualitySettings.FoliageQuality     &&
+      QualitySettings.FoliageQuality     == QualitySettings.EffectQuality      &&
+      QualitySettings.EffectQuality      == QualitySettings.PostProcessQuality
+      )
+   {
+      QualitySettings.QualityPreset = QualitySettings.AntiAliasing;
+   } else {
+      QualitySettings.QualityPreset = 5;
+   }
+
+
    return true;
 }
 
 // Set Video Quality
-bool UROptionManager::SetVideoQualitySettings (const FRVideoQualitySetting& QualitySettings)
+bool UROptionManager::SetVideoQualitySettings (FRVideoQualitySetting QualitySettings)
 {
    UGameUserSettings* Settings = GetGameUserSettings ();
    if (!ensure (Settings)) return false;
@@ -161,6 +183,19 @@ bool UROptionManager::SetVideoQualitySettings (const FRVideoQualitySetting& Qual
    Settings->SetFrameRateLimit            (QualitySettings.FrameRate         );
    Settings->SetResolutionScaleNormalized (QualitySettings.ResolutionQuality );
    Settings->SetDynamicResolutionEnabled  (QualitySettings.DynamicResolution );
+
+   if (QualitySettings.QualityPreset != 5) {
+      QualitySettings.AntiAliasing       = QualitySettings.QualityPreset;
+      QualitySettings.ViewDistance       = QualitySettings.QualityPreset;
+      QualitySettings.TextureQuality     = QualitySettings.QualityPreset;
+      QualitySettings.ShadowQuality      = QualitySettings.QualityPreset;
+      QualitySettings.ShadingQuality     = QualitySettings.QualityPreset;
+      QualitySettings.GlobalIllumination = QualitySettings.QualityPreset;
+      QualitySettings.ReflectionQuality  = QualitySettings.QualityPreset;
+      QualitySettings.FoliageQuality     = QualitySettings.QualityPreset;
+      QualitySettings.EffectQuality      = QualitySettings.QualityPreset;
+      QualitySettings.PostProcessQuality = QualitySettings.QualityPreset;
+   }
 
    Settings->SetAntiAliasingQuality       (QualitySettings.AntiAliasing      );
    Settings->SetViewDistanceQuality       (QualitySettings.ViewDistance      );

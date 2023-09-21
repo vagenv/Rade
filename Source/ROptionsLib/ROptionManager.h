@@ -43,6 +43,10 @@ struct ROPTIONSLIB_API FRVideoQualitySetting
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
       bool DynamicResolution = false;
 
+   // 5 == Custom
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0, ClampMax = 5))
+      int32 QualityPreset = 0;
+
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0, ClampMax = 4))
       int32 AntiAliasing = 0;
@@ -143,7 +147,7 @@ public:
 
    // Set Video Quality Settings
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool SetVideoQualitySettings (const FRVideoQualitySetting& QualitySettings);
+      static bool SetVideoQualitySettings (FRVideoQualitySetting QualitySettings);
 
    //==========================================================================
    //               Input Settings
