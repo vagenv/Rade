@@ -27,14 +27,7 @@ void URAbility::BeginPlay ()
    if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
       Mgr->ReportAbilityListUpdated ();
 
-   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
-      WorldMgr->ReportAddAbility (this);
-      AbilityInfo = WorldMgr->GetAbilityInfo (this);
-   }
-
-   if (!AbilityInfo.IsValid ()) {
-      R_LOG_PRINTF ("Error. [%s] Ability info is invalid.", *GetPathName ());
-   }
+   PullAbilityInfo ();
 }
 
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -49,6 +42,23 @@ void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
       WorldMgr->ReportRmAbility (this);
    }
    Super::EndPlay (EndPlayReason);
+}
+
+void URAbility::PullAbilityInfo ()
+{
+   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
+      WorldMgr->ReportAddAbility (this);
+      AbilityInfo = WorldMgr->GetAbilityInfo (this);
+   }
+
+   if (!AbilityInfo.IsValid ()) {
+      // R_LOG_PRINTF ("Error. [%s] Ability info is invalid.", *GetPathName ());
+
+      FTimerHandle RepeatTimer;
+      GetWorld ()->GetTimerManager ().SetTimer (RepeatTimer,
+                                                this, &URAbility_Aura::PullAbilityInfo,
+                                                1);
+   }
 }
 
 void URAbility::SetIsEnabled (bool IsEnabled_)

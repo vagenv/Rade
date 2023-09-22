@@ -72,6 +72,9 @@ private:
    // Value must be defined in table
    UPROPERTY()
       FRAbilityInfo AbilityInfo;
+
+   UFUNCTION()
+      void PullAbilityInfo ();
 };
 
 
