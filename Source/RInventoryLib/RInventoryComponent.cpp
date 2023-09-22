@@ -537,10 +537,10 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
    AActor *Player = GetOwner ();
 
    // Get Player Rotation
-   FRotator rot = Player->GetActorRotation();
-   FVector forwardVector = rot.Vector() * 300;
+   FRotator rot = Player->GetActorRotation ();
+   FVector forwardVector = rot.Vector () * 300;
            forwardVector.Z = 0;
-   FVector spawnLoc = Player->GetActorLocation() + forwardVector + FVector(0, 0, 50);
+   FVector spawnLoc = Player->GetActorLocation () + forwardVector + FVector(0, 0, 50);
 
    // Create pickup
    ARItemPickup *Pickup = nullptr;

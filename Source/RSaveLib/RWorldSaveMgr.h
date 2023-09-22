@@ -61,7 +61,7 @@ public:
       FRSaveGameEvent OnLoad;
 
 
-      
+
    DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRSaveListEvent);
 
    UFUNCTION()
