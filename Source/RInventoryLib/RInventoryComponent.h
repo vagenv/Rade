@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 
 class ARItemPickup;
+struct FStreamableHandle;
 
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -159,15 +160,20 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool UseItem           (int32 ItemIdx);
+      virtual bool UseItem  (int32 ItemIdx);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0);
+      virtual bool DropItem (int32 ItemIdx, int32 Count = 0);
+
+private:
+   TSharedPtr<FStreamableHandle> PickupLoadHandle;
+
+   ARItemPickup* SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData);
 
    //==========================================================================
    //                 Server versions of functions
    //==========================================================================
-
+public:
    // --- Add Item
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void AddItem_Server (
@@ -240,10 +246,10 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Used (int32 ItemIdx);
+      void BP_Used (FRItemData ItemData);
 
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Droped (int32 ItemIdx, ARItemPickup *Pickup);
+      void BP_Droped (ARItemPickup *Pickup);
 
    //==========================================================================
    //                 Save / Load

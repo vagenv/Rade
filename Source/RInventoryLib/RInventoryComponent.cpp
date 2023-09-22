@@ -5,6 +5,7 @@
 
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RWorldAssetMgr.h"
 #include "RSaveLib/RWorldSaveMgr.h"
 
 #include "Net/UnrealNetwork.h"
@@ -498,7 +499,7 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 
    if (ItemData.Used (GetOwner (), this)) return false;
 
-   BP_Used (ItemIdx);
+   BP_Used (ItemData);
 
    // Consumable
    if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
@@ -511,18 +512,24 @@ void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent 
    if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->DropItem (ItemIdx, Count);
 }
-ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
+bool URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   R_RETURN_IF_NOT_ADMIN_NULL;
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // Valid index
    if (!Items.IsValidIndex (ItemIdx)) {
       R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
          ItemIdx, Items.Num ());
-      return nullptr;
+      return false;
    }
 
    FRItemData ItemData = Items[ItemIdx];
+
+   // No Item drop type set
+   if (ItemData.Pickup.IsNull () && ItemData.PickupMesh.IsNull ()) {
+      R_LOG_PRINTF ("Neither pickup class or mesh specified for %s", *ItemData.Description.Label);
+      return false;
+   }
 
    // Everything
    if (Count <= 0)             Count = ItemData.Count;
@@ -531,43 +538,82 @@ ARItemPickup* URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
 
    ItemData.Count = Count;
 
-   // Error will be logged.
-   if (!RemoveItem_Index (ItemIdx, Count)) return nullptr;
+   // Get async load object
+   URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
+   if (!AssetMgr) return false;
 
+   // Check that async load is not already in process
+   if (PickupLoadHandle.IsValid ()) return false;
+
+   // Error will be logged.
+   if (!RemoveItem_Index (ItemIdx, Count)) return false;
+
+   // Load pickup class async
+   if (!ItemData.Pickup.IsNull ()) {
+
+      PickupLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (ItemData.Pickup.GetUniqueID (),
+         [this, ItemData] () {
+            if (!PickupLoadHandle.IsValid ()) return;
+            if (PickupLoadHandle->HasLoadCompleted ()) {
+               if (UObject* Obj = PickupLoadHandle->GetLoadedAsset ()) {
+                  if (UClass* PickupClass = Cast<UClass> (Obj)) {
+                     SpawnPickup (PickupClass, ItemData);
+                  }
+               }
+            }
+
+            // Release data from memory
+            PickupLoadHandle->ReleaseHandle ();
+            PickupLoadHandle.Reset ();
+         });
+
+   // Load pickup model async
+   } else if (!ItemData.PickupMesh.IsNull ()) {
+
+      PickupLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (ItemData.PickupMesh.GetUniqueID (),
+         [this, ItemData] () {
+            if (!PickupLoadHandle.IsValid ()) return;
+            if (PickupLoadHandle->HasLoadCompleted ()) {
+               if (UObject* Obj = PickupLoadHandle->GetLoadedAsset ()) {
+                  if (UStaticMesh* PickupMesh = Cast<UStaticMesh> (Obj)) {
+                     ARItemPickup* Pickup = SpawnPickup (ARItemPickup::StaticClass (), ItemData);
+                     if (Pickup) Pickup->MeshComponent->SetStaticMesh (PickupMesh);
+                  }
+               }
+            }
+
+            // Release data from memory
+            PickupLoadHandle->ReleaseHandle ();
+            PickupLoadHandle.Reset ();
+         });
+   }
+   return true;
+}
+
+ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData)
+{
    AActor *Player = GetOwner ();
 
    // Get Player Rotation
    FRotator rot = Player->GetActorRotation ();
-   FVector forwardVector = rot.Vector () * 300;
+   FVector forwardVector   = rot.Vector () * 300;
            forwardVector.Z = 0;
    FVector spawnLoc = Player->GetActorLocation () + forwardVector + FVector(0, 0, 50);
 
    // Create pickup
-   ARItemPickup *Pickup = nullptr;
+   ARItemPickup *Pickup = GetWorld ()->SpawnActor<ARItemPickup> (PickupClass, spawnLoc, rot);
+   if (!Pickup) return nullptr;
 
-   // Custom Pickup Type
-   if (ItemData.Pickup) {
-      Pickup = GetWorld ()->SpawnActor<ARItemPickup>(ItemData.Pickup, spawnLoc, rot);
-   } else {
-      // Default Pickup type
-      Pickup = GetWorld ()->SpawnActor<ARItemPickup>(ARItemPickup::StaticClass (), spawnLoc, rot);
-      // Custom mesh pickup
-      if (ItemData.PickupMesh) {
-         // TODO
-         //Pickup->MeshComponent->SetStaticMesh (ItemData.PickupMesh);
-      }
-   }
-   Pickup->SetOwner (GetOwner ());
+   // Set pickup info
+   Pickup->SetOwner (Player);
    Pickup->bAutoPickup  = false;
    Pickup->bAutoDestroy = true;
 
    Pickup->Inventory->DefaultItems.Empty ();
    Pickup->Inventory->Items.Empty ();
-
    Pickup->Inventory->Items.Add (ItemData);
 
-   BP_Droped (ItemIdx, Pickup);
-
+   BP_Droped (Pickup);
    return Pickup;
 }
 

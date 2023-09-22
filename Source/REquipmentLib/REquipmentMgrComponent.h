@@ -31,8 +31,8 @@ public:
    //==========================================================================
    //                 Use / Drop override. Check if Item equiped.
    //==========================================================================
-   virtual bool          UseItem  (int32 ItemIdx) override;
-   virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0) override;
+   virtual bool UseItem  (int32 ItemIdx) override;
+   virtual bool DropItem (int32 ItemIdx, int32 Count = 0) override;
 
    //==========================================================================
    //                 Equip/unequip

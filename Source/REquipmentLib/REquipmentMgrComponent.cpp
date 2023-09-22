@@ -170,7 +170,7 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       FRConsumableItemData ItemData;
       if (FRConsumableItemData::Cast (Items[ItemIdx], ItemData)) {
          if (!ItemData.Used (GetOwner (), this)) return false;
-         BP_Used (ItemIdx);
+         BP_Used (ItemData);
          if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
          return true;
       }
@@ -187,14 +187,14 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
    // --- If Custom Action is defined
    if (success && ItemData.Action) {
       if (!ItemData.Used (GetOwner (), this)) return false;
-      BP_Used (ItemIdx);
+      BP_Used (ItemData);
    }
    return success;
 }
 
-ARItemPickup* UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
+bool UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
 {
-   R_RETURN_IF_NOT_ADMIN_NULL;
+   R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // --- Check if Item should be unequiped
    FREquipmentData ItemData;

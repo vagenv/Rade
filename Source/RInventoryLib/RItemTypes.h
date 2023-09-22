@@ -138,7 +138,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    // Custom pickup class. Will be used if set.
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<ARItemPickup> Pickup;
+      TSoftClassPtr<ARItemPickup> Pickup;
 
    // --- Internal Runtime information
 
