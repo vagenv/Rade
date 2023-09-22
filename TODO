@@ -1,6 +1,26 @@
 =================================================
          Switch to Common UI
 =================================================
+
+
+URWorldAbilityMgr::InitializeComponent
+- Loads all class objects from table (a lot of loaded data)
+
+WorldAbilitMgr::GetAbilityInfo
+- replace with soft class pointer
+
+
+Replace TSubclassOf<T> with TSoftClassPtr<T>
+
+==============
+Equipment / Loadout Widget
+==============
+
+Vertical / Horizontal / Grid of Icons
+- Equipment Slots
+- Ability Slots
+- ???
+
 ==============
 Ability Widgets
 ==============
@@ -85,14 +105,7 @@ Diamond
 Fixes
 ==============
 
-- SliderList with all 3 text widgets must be of same size.
-
 - Cursor still visible after switch.
-
-- Unify Main Menu and StartMenu somehow
-
-(Verify that fixed)
-- Bug: UI scroll stuck if scroll up with loop and last item empty list
 
 
 ==============
