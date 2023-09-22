@@ -20,7 +20,7 @@ struct RDAMAGELIB_API FRDamageResistance
    GENERATED_BODY()
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URDamageType> DamageType;
+      TSoftClassPtr<URDamageType> DamageType;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       float Flat = 0;

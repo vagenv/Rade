@@ -34,7 +34,7 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<UClass *, FRAbilityInfo> MapAbility;
+      TMap<FTopLevelAssetPath, FRAbilityInfo> MapAbility;
 protected:
    // List of abilties
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability",

@@ -163,7 +163,7 @@ void URWorldStatusMgr::InitializeComponent ()
       for (const FName& ItRowName : RowNames) {
          FRActiveStatusEffectInfo* ItRow = StatusEffectTable->FindRow<FRActiveStatusEffectInfo> (ItRowName, ContextString);
          if (ItRow && ItRow->EffectClass) {
-            MapStatusEffect.Add (ItRow->EffectClass, *ItRow);
+            MapStatusEffect.Add (ItRow->EffectClass->GetClassPathName (), *ItRow);
          }
       }
    }
@@ -178,8 +178,9 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 {
    FRActiveStatusEffectInfo Result;
    if (ensure (IsValid (StatusEffect))) {
-      if (MapStatusEffect.Contains (StatusEffect->GetClass ())) {
-         Result = MapStatusEffect[StatusEffect->GetClass ()];
+      FTopLevelAssetPath Path = StatusEffect->GetClass ()->GetClassPathName ();
+      if (MapStatusEffect.Contains (Path)) {
+         Result = MapStatusEffect[Path];
       } else {
          R_LOG_PRINTF ("Error. [%s] Effect not found in [StatusEffectTable]", *StatusEffect->GetPathName ());
       }

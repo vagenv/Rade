@@ -16,7 +16,7 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
    GENERATED_BODY()
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URAbility> AbilityClass;
+      TSoftClassPtr<URAbility> AbilityClass;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRUIDescription Description;
@@ -119,7 +119,7 @@ public:
       float Range = 1000;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
-      TSubclassOf<AActor> AffectedType;
+      TSoftClassPtr<AActor> AffectedType;
 
    // Actors currently within range.
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")

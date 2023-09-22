@@ -35,7 +35,7 @@ void URWorldAbilityMgr::InitializeComponent ()
       for (const FName& ItRowName : RowNames) {
          FRAbilityInfo* ItRow = AbilityTable->FindRow<FRAbilityInfo> (ItRowName, ContextString);
          if (ItRow && ItRow->AbilityClass) {
-            MapAbility.Add (ItRow->AbilityClass, *ItRow);
+            MapAbility.Add (ItRow->AbilityClass->GetClassPathName (), *ItRow);
          }
       }
    }
@@ -50,8 +50,9 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo (const URAbility* Ability) const
 {
    FRAbilityInfo Result;
    if (ensure (IsValid (Ability))) {
-      if (MapAbility.Contains (Ability->GetClass ())) {
-         Result = MapAbility[Ability->GetClass ()];
+      FTopLevelAssetPath Path = Ability->GetClass()->GetClassPathName();
+      if (MapAbility.Contains (Path)) {
+         Result = MapAbility[Path];
       } else {
          R_LOG_PRINTF ("Error. [%s] Ability not found in [AbilityTable]", *Ability->GetPathName ());
       }

@@ -24,7 +24,7 @@ struct RSTATUSLIB_API FRActiveStatusEffectInfo : public FTableRowBase
 public:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URActiveStatusEffect> EffectClass;
+      TSoftClassPtr<URActiveStatusEffect> EffectClass;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRUIDescription Description;

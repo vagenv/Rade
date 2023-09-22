@@ -38,7 +38,7 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<UClass *, FRActiveStatusEffectInfo> MapStatusEffect;
+      TMap<FTopLevelAssetPath, FRActiveStatusEffectInfo> MapStatusEffect;
 protected:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status",

@@ -177,7 +177,7 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 
    // Use interface callback
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URItemAction> Action;
+      TSoftClassPtr<URItemAction> Action;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       bool DestroyOnAction = false;

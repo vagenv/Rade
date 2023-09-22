@@ -112,12 +112,16 @@ void URAbility_Aura::CheckRange ()
    FVector OwnerLocation = GetOwner ()->GetActorLocation ();
 
    TArray<AActor*> SearchResult;
-   UGameplayStatics::GetAllActorsOfClass (this, AffectedType, SearchResult);
+   UGameplayStatics::GetAllActorsOfClass (this, AActor::StaticClass (), SearchResult);
+
+   FTopLevelAssetPath TargetClass = AffectedType->GetClass ()->GetClassPathName ();
 
    TArray<AActor*> Result;
    for (AActor* ItActor : SearchResult) {
       if (!IsValid (ItActor)) continue;
       if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
+      if (ItActor->GetClass()->GetClassPathName() != TargetClass) continue;
+
       Result.Add (ItActor);
    }
 
