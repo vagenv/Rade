@@ -207,10 +207,6 @@
 			"Enabled": false
 		},
 		{
-			"Name": "TextureFormatOodle",
-			"Enabled": false
-		},
-		{
 			"Name": "SubversionSourceControl",
 			"Enabled": false
 		},
