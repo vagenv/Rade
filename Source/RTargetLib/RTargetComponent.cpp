@@ -8,17 +8,31 @@
 void URTargetComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->AddTarget (this);
-   }
+   RegisterTarget ();
 }
 
 void URTargetComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
+   UnregisterTarget ();
+   Super::EndPlay (EndPlayReason);
+}
+
+void URTargetComponent::RegisterTarget ()
+{
+   if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
+      Mgr->AddTarget (this);
+   } else {
+      FTimerHandle RepeatTimer;
+      GetWorld ()->GetTimerManager ().SetTimer (RepeatTimer,
+                                                this, &URTargetComponent::RegisterTarget,
+                                                1);
+   }
+}
+void URTargetComponent::UnregisterTarget ()
+{
    if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
       Mgr->RmTarget (this);
    }
-   Super::EndPlay (EndPlayReason);
 }
 
 //=============================================================================
