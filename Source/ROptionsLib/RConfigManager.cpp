@@ -108,8 +108,8 @@ bool URConfigManager::ReloadConfig ()
 
 FORCEINLINE FString URConfigManager::GetConfigFullAddress (const FString &FileName)
 {
-   return ((FileName.Len () < 1 || FileName.Equals (" "))
-      ? (FPaths::ProjectConfigDir () + TEXT ("DefaultGameUserSettings.ini"))\
-      : (FPaths::ProjectConfigDir () + FileName + TEXT(".ini")));
+   return FileName.TrimChar (TEXT(' ')).IsEmpty ()
+      ? FConfigCacheIni::NormalizeConfigIniPath ("DefaultGameUserSettings.ini")
+      : FConfigCacheIni::NormalizeConfigIniPath (FileName + TEXT(".ini"));
 }
 
