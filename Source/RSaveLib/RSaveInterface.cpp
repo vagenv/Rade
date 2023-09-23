@@ -5,19 +5,19 @@
 #include "RWorldSaveMgr.h"
 #include "RUtilLib/RLog.h"
 
-void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId)
+void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId_)
 {
    if (!ensure (IsValid (WorldContextObject))) return;
-   if (!ensure (!SaveId.IsEmpty ()))           return;
+   if (!ensure (!SaveId_.IsEmpty ()))          return;
 
    const UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (IsValid (World_))) return;
    URWorldSaveMgr *SaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
    if (!ensure (IsValid (SaveMgr_))) return;
 
-   ObjectSaveId = SaveId;
-   World        = World_;
-   SaveMgr      = SaveMgr_;
+   SaveId  = SaveId_;
+   World   = World_;
+   SaveMgr = SaveMgr_;
 
    SaveMgr->OnSave.AddDynamic (this, &IRSaveInterface::OnSave_Internal);
    SaveMgr->OnLoad.AddDynamic (this, &IRSaveInterface::OnLoad_Internal);
@@ -36,7 +36,7 @@ void IRSaveInterface::OnSave_Internal (URSaveGame* SaveGame)
    FBufferArchive ToBinary;
    OnSave (ToBinary);
 
-   SaveGame->SetBuffer (ObjectSaveId, ToBinary);
+   SaveGame->SetBuffer (SaveId, ToBinary);
 }
 
 void IRSaveInterface::OnLoad_Internal (URSaveGame* SaveGame)
@@ -46,7 +46,7 @@ void IRSaveInterface::OnLoad_Internal (URSaveGame* SaveGame)
 
 
    TArray<uint8> Data;
-   if (!SaveGame->GetBuffer (ObjectSaveId, Data)) return;
+   if (!SaveGame->GetBuffer (SaveId, Data)) return;
 
    FMemoryReader FromBinary = FMemoryReader (Data, true);
    FromBinary.Seek(0);

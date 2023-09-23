@@ -30,7 +30,7 @@ protected:
 
 	// Must be called on BeginPlay
 	UFUNCTION()
-		virtual void Init_Save (const UObject* WorldContextObject, const FString &SaveId);
+		virtual void Init_Save (const UObject* WorldContextObject, const FString &SaveId_);
 
 	// --- Must be implemented
 	virtual void OnSave (FBufferArchive &SaveData) = 0;
@@ -46,7 +46,7 @@ protected:
 private:
 
 	// Values for internal tracking
-	FString  	          ObjectSaveId;
+	FString  	          SaveId;
 	const UWorld*         World   = nullptr;
 			URWorldSaveMgr* SaveMgr = nullptr;
 };
