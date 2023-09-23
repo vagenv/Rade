@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "RUILib/RUIDescription.h"
 #include "RItemPickup.generated.h"
 
 class USphereComponent;
@@ -13,7 +14,8 @@ class URInventoryComponent;
 
 // General pickup Class for Any Child of class "Item"
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RINVENTORYLIB_API ARItemPickup : public AActor
+class RINVENTORYLIB_API ARItemPickup : public AActor,
+                                       public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 
@@ -54,6 +56,11 @@ public:
    // Auto Pickup
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       bool bAutoDestroy = true;
+
+   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
+      FRUIDescription Description;
+
+   virtual FRUIDescription GetDescription_Implementation () override;
 
    //==========================================================================
    //          Events

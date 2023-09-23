@@ -49,7 +49,8 @@ struct RDAMAGELIB_API FRDamageResistanceWithTag
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RDAMAGELIB_API URDamageType : public UDamageType
+class RDAMAGELIB_API URDamageType : public UDamageType,
+                                    public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 public:
@@ -58,6 +59,8 @@ public:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRUIDescription Description;
+
+   virtual FRUIDescription GetDescription_Implementation () override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;

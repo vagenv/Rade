@@ -33,7 +33,8 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RABILITYLIB_API URAbility : public UActorComponent
+class RABILITYLIB_API URAbility : public UActorComponent,
+                                  public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 public:
@@ -50,8 +51,8 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRAbilityInfo GetAbilityInfo () const;
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-      FRUIDescription GetDescription () const;
+   // Wrapper around GetAbilityInfo ().Description
+   virtual FRUIDescription GetDescription_Implementation () override;
 
    //==========================================================================
    //                 Core Functions

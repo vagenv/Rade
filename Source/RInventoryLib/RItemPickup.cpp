@@ -37,6 +37,8 @@ ARItemPickup::ARItemPickup ()
    Inventory = CreateDefaultSubobject<URInventoryComponent>(TEXT("Inventory"));
    Inventory->SetIsReplicated (true);
 
+   Description.Label = "Item Pickup";
+
    bReplicates = true;
    SetReplicatingMovement (true);
 }
@@ -52,6 +54,12 @@ void ARItemPickup::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLif
    DOREPLIFETIME (ARItemPickup, PickupActivationDelay);
    DOREPLIFETIME (ARItemPickup, bAutoPickup);
    DOREPLIFETIME (ARItemPickup, bAutoDestroy);
+   DOREPLIFETIME (ARItemPickup, Description);
+}
+
+FRUIDescription ARItemPickup::GetDescription_Implementation ()
+{
+   return Description;
 }
 
 void ARItemPickup::BeginPlay ()

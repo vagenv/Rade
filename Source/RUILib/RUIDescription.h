@@ -10,15 +10,33 @@ struct RUILIB_API FRUIDescription
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Label = FString ("?");
+      FString Label;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      FString Tooltip = FString ("???");
+      FString Tooltip;
 
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSoftObjectPtr<UTexture2D> Icon;
 
    bool operator == (const FRUIDescription &res) const noexcept;
+};
+
+
+// This class does not need to be modified.
+UINTERFACE(MinimalAPI)
+class URGetDescriptionInterface : public UInterface
+{
+	GENERATED_BODY()
+};
+
+class RUILIB_API IRGetDescriptionInterface
+{
+	GENERATED_BODY()
+
+public:
+
+   UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Rade|UI")
+      FRUIDescription GetDescription ();
 };
 
 // ============================================================================
@@ -34,3 +52,4 @@ public:
    UFUNCTION(BlueprintPure, Category = "Rade|Util", meta=(DisplayName="==", CompactNodeTitle="=="))
 	   static bool FRUIDescription_EqualEqual (const FRUIDescription& A, const FRUIDescription& B);
 };
+

@@ -11,7 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FREquipmentSlotEvent);
 
 // Status Manager Component.
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class REQUIPMENTLIB_API UREquipmentSlotComponent : public USceneComponent
+class REQUIPMENTLIB_API UREquipmentSlotComponent : public USceneComponent,
+                                                   public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 public:
@@ -28,6 +29,8 @@ public:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRUIDescription Description;
+
+   virtual FRUIDescription GetDescription_Implementation () override;
 
    UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       bool Busy = false;
