@@ -33,9 +33,14 @@ bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
    return Super::Used (Owner, Inventory);
 }
 
+bool FRConsumableItemData::IsValid (const FRItemData &src)
+{
+   return src.CastType.Contains (FRConsumableItemData().Type);
+}
+
 bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
 {
-   if (!src.CastType.Contains (dst.Type)) return false;
+   if (!IsValid (src)) return false;
    return RJSON::ToStruct (src.GetJSON (), dst);
 }
 
@@ -78,6 +83,10 @@ FREquipmentData::FREquipmentData ()
    CastType.AddUnique (Type);
 }
 
+bool FREquipmentData::IsValid (const FRItemData &src)
+{
+   return src.CastType.Contains (FREquipmentData().Type);
+}
 
 bool FREquipmentData::Cast (const FRItemData &src, FREquipmentData &dst)
 {
@@ -120,12 +129,22 @@ bool FREquipmentData::WriteJSON ()
 //                      UREquipmentUtilLibrary
 // ============================================================================
 
+bool UREquipmentUtilLibrary::Item_Is_ConsumableItem (const FRItemData &src)
+{
+   return FRConsumableItemData::IsValid (src);
+}
+
 void UREquipmentUtilLibrary::Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &dst,
                                                      ERActionResult &Branches)
 {
    bool res = FRConsumableItemData::Cast (src, dst);
    if (res) Branches = ERActionResult::Success;
    else     Branches = ERActionResult::Failure;
+}
+
+bool UREquipmentUtilLibrary::Item_Is_EquipmentItem (const FRItemData &src)
+{
+   return FREquipmentData::IsValid (src);
 }
 
 void UREquipmentUtilLibrary::Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &dst,

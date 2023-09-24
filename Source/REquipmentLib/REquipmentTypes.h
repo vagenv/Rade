@@ -33,8 +33,9 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       TArray<TSubclassOf<URActiveStatusEffect> > ActiveEffects;
 
-   static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
 
+   static bool IsValid (const FRItemData &src);
+   static bool Cast    (const FRItemData &src, FRConsumableItemData &dst);
 
    virtual bool ReadJSON () override;
    virtual bool WriteJSON () override;
@@ -76,7 +77,8 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRCoreStats RequiredStats;
 
-   static bool Cast (const FRItemData &src, FREquipmentData &dst);
+   static bool IsValid (const FRItemData &src);
+   static bool Cast    (const FRItemData &src, FREquipmentData &dst);
 
    virtual bool ReadJSON () override;
    virtual bool WriteJSON () override;
@@ -88,9 +90,15 @@ class REQUIPMENTLIB_API UREquipmentUtilLibrary : public UBlueprintFunctionLibrar
    GENERATED_BODY()
 public:
 
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      static bool Item_Is_ConsumableItem (const FRItemData &src);
+
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &ItemData,
                                           ERActionResult &Branches);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      static bool Item_Is_EquipmentItem (const FRItemData &src);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
       static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,

@@ -418,32 +418,40 @@ bool URInventoryComponent::BreakItem (int32 ItemIdx, UDataTable* BreakItemTable)
 
    FRItemData BreakItem = Items[ItemIdx];
 
-   FString ContextString;
-   TArray<FName> RowNames = BreakItemTable->GetRowNames ();
-   for (const FName& ItRowName : RowNames) {
-      FRItemData ItItem;
-      FRCraftRecipe* ItRow = BreakItemTable->FindRow<FRCraftRecipe> (ItRowName, ContextString);
-      if (ItRow && ItRow->CreateItem.ToItem (ItItem)) {
-         if (ItItem.ID == BreakItem.ID) {
-            RemoveItem_Index (ItemIdx);
-            for (const auto &ItAddItem : ItRow->RequiredItems) {
-               AddItem_Arch (ItAddItem);
-            }
-            return true;
-         }
-      }
+   FRCraftRecipe Recipe;
+   if (!URItemUtilLibrary::Item_GetRecipe (BreakItemTable, BreakItem, Recipe)) return false;
+
+   // Remove break item and add parts
+   RemoveItem_Index (ItemIdx);
+   for (const auto &ItAddItem : Recipe.RequiredItems) {
+      AddItem_Arch (ItAddItem);
    }
+   return true;
 
-   return false;
 }
-
 
 //=============================================================================
 //                 Craft Item
 //=============================================================================
 
+
+bool URInventoryComponent::CanCraftItem (const FDataTableRowHandle& CraftItem)
+{
+   FString ContextString;
+   FRCraftRecipe* Recipe = CraftItem.GetRow<FRCraftRecipe>(ContextString);
+
+   if (!Recipe) return false;
+
+   FRItemData ToCraftItem;
+   if (!Recipe->CreateItem.ToItem (ToCraftItem)) return false;
+
+   if (!HasItems (Recipe->RequiredItems)) return false;
+   return true;
+}
+
 void URInventoryComponent::CraftItem_Server_Implementation (
-         URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const
+         URInventoryComponent      *SrcInventory,
+         const FDataTableRowHandle &CraftItem) const
 {
    if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->CraftItem (CraftItem);

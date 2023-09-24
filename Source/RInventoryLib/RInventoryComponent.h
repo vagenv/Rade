@@ -152,6 +152,9 @@ public:
    //                 Craft Item
    //==========================================================================
 
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      virtual bool CanCraftItem (const FDataTableRowHandle& CraftItem);
+
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool CraftItem (const FDataTableRowHandle &CraftItem);
 

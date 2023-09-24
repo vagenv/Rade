@@ -185,7 +185,8 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    virtual bool ReadJSON  () override;
    virtual bool WriteJSON () override;
 
-   static bool Cast (const FRItemData &src, FRActionItemData &dst);
+   static bool IsValid (const FRItemData &src);
+   static bool Cast    (const FRItemData &src, FRActionItemData &dst);
 
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory);
 };
@@ -202,19 +203,36 @@ class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
-      static void ItemHandle_To_Item (const FRItemDataHandle &src, FRItemData &ItemData,
-                                      ERActionResult &Outcome);
+   /// --- Item casts
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
-      static void Item_To_ActionItem (const FRItemData &src, FRActionItemData &ItemData,
-                                      ERActionResult &Outcome);
+      static void ItemHandle_To_Item (const FRItemDataHandle &src,
+                                      FRItemData             &ItemData,
+                                      ERActionResult         &Outcome);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Inventory")
+      static bool Item_Is_ActionItem (const FRItemData &src);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
+      static void Item_To_ActionItem (const FRItemData &src,
+                                      FRActionItemData &ItemData,
+                                      ERActionResult   &Outcome);
+
+
+   /// --- Recipe / break operations
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool Item_IsBreakable (const FRItemData &BreakItem, UDataTable* BreakItemTable);
+      static bool Item_GetRecipe (const UDataTable *RecipeTable,
+                                  const FRItemData &Item,
+                                  FRCraftRecipe    &Recipe);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool Item_GetBreakList (const FRItemData &BreakItem, UDataTable* BreakItemTable,
+      static bool Item_IsBreakable (const FRItemData &BreakItem,
+                                    UDataTable       *BreakItemTable);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      static bool Item_GetBreakList (const FRItemData         &BreakItem,
+                                     UDataTable               *BreakItemTable,
                                      TArray<FRItemDataHandle> &ResultItems);
 };
 
