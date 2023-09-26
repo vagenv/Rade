@@ -201,6 +201,11 @@ void URPlayerStatusMgrComponent::RecalcStatusValues ()
       if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Flat) / 100.);
       if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Flat) / 100.);
    }
+
+   // Clamp current values;
+   Health.Current  = FMath::Clamp (Health.Current, 0, Health.Max);
+   Mana.Current    = FMath::Clamp (Mana.Current, 0, Mana.Max);
+   Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
 }
 
 //=============================================================================

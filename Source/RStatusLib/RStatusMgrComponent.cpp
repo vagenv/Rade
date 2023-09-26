@@ -172,9 +172,12 @@ void URStatusMgrComponent::RecalcStatusValues ()
    if (!ensure (IsValid (WorldStatusMgr))) return;
 
    // --- Status
-   Health  = Start_Health;
-   Mana    = Start_Mana;
-   Stamina = Start_Stamina;
+   Health.Max    = Start_Health.Max;
+   Health.Regen  = Start_Health.Regen;
+   Mana.Max      = Start_Mana.Max;
+   Mana.Regen    = Start_Mana.Regen;
+   Stamina.Max   = Start_Stamina.Max;
+   Stamina.Regen = Start_Stamina.Regen;
 
    // Flat
    for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
@@ -194,6 +197,11 @@ void URStatusMgrComponent::RecalcStatusValues ()
       if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Percent) / 100.);
       if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Percent) / 100.);
    }
+
+   // Clamp current values;
+   Health.Current  = FMath::Clamp (Health.Current, 0, Health.Max);
+   Mana.Current    = FMath::Clamp (Mana.Current, 0, Mana.Max);
+   Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
 }
 
 //=============================================================================
