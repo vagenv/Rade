@@ -203,8 +203,8 @@ void URPlayerStatusMgrComponent::RecalcStatusValues ()
    }
 
    // Clamp current values;
-   Health.Current  = FMath::Clamp (Health.Current, 0, Health.Max);
-   Mana.Current    = FMath::Clamp (Mana.Current, 0, Mana.Max);
+   Health.Current  = FMath::Clamp (Health.Current,  0, Health.Max);
+   Mana.Current    = FMath::Clamp (Mana.Current,    0, Mana.Max);
    Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
 }
 
