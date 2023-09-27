@@ -93,9 +93,11 @@ void ARItemPickup::ActivatePickupOverlap ()
       }
    }
 
-   // Enable Overlap Component
-   TriggerSphere->OnComponentBeginOverlap.AddDynamic (this, &ARItemPickup::OnBeginOverlap);
-   TriggerSphere->OnComponentEndOverlap.AddDynamic   (this, &ARItemPickup::OnEndOverlap);
+   // Enable Overlap Component if no pending kill set
+   if (IsValid (this) && IsValid (TriggerSphere)) {
+      TriggerSphere->OnComponentBeginOverlap.AddDynamic (this, &ARItemPickup::OnBeginOverlap);
+      TriggerSphere->OnComponentEndOverlap.AddDynamic   (this, &ARItemPickup::OnEndOverlap);
+   }
 }
 
 // Player Entered The Pickup Area
