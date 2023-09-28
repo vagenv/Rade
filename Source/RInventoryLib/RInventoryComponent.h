@@ -169,8 +169,10 @@ public:
       virtual bool DropItem (int32 ItemIdx, int32 Count = 0);
 
 private:
+   // Handle to async load task
    TSharedPtr<FStreamableHandle> PickupLoadHandle;
 
+   // Wrapper function
    ARItemPickup* SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData);
 
    //==========================================================================

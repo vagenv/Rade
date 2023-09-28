@@ -6,6 +6,7 @@
 #include "RPassiveStatusEffect.h"
 #include "RStatusMgrComponent.generated.h"
 
+struct FStreamableHandle;
 class URDamageType;
 class URActiveStatusEffect;
 class URInventoryComponent;
@@ -46,6 +47,10 @@ protected:
    // For reporting applied status effects
    UPROPERTY()
       URWorldStatusMgr* WorldStatusMgr = nullptr;
+
+private:
+   // Handle to async load task
+   TSharedPtr<FStreamableHandle> EffectLoadHandle;
 
    //==========================================================================
    //                 Dead
@@ -188,12 +193,12 @@ public:
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool AddActiveStatusEffect (AActor* Causer_,
-                                  const TSubclassOf<URActiveStatusEffect> Effect_);
+                                  const TSoftClassPtr<URActiveStatusEffect> Effect_);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       static bool ApplyActiveStatusEffect (AActor* Causer_,
                                            AActor* Target_,
-                                           const TSubclassOf<URActiveStatusEffect> Effect_);
+                                           const TSoftClassPtr<URActiveStatusEffect> Effect_);
 
    //==========================================================================
    //                 Resistance

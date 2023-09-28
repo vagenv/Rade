@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityMgrEvent);
 
+struct FStreamableHandle;
 class URAbility;
 class URWorldAbilityMgr;
 class URExperienceMgrComponent;
@@ -37,6 +38,9 @@ private:
    UPROPERTY()
       URExperienceMgrComponent* ExperienceMgr = nullptr;
 
+   // Handle to async load task
+   TSharedPtr<FStreamableHandle> AbilityLoadHandle;
+
    //==========================================================================
    //                 Level Up
    //==========================================================================
@@ -63,26 +67,26 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
-      URAbility* GetAbility (const TSubclassOf<URAbility> Ability);
+      URAbility* GetAbility (const TSoftClassPtr<URAbility> Ability);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
-      bool AddAbility (const TSubclassOf<URAbility> Ability);
+      bool AddAbility (const TSoftClassPtr<URAbility> Ability);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
-      bool RmAbility  (const TSubclassOf<URAbility> Ability);
+      bool RmAbility  (const TSoftClassPtr<URAbility> Ability);
 
    //==========================================================================
    //                 Server versions of the functions
    //==========================================================================
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
-      void AddAbility_Server                (TSubclassOf<URAbility> Ability);
-      void AddAbility_Server_Implementation (TSubclassOf<URAbility> Ability);
-
+      void AddAbility_Server                (const TSoftClassPtr<URAbility> &Ability);
+      void AddAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability);
+      
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
-      void RmAbility_Server                (TSubclassOf<URAbility> Ability);
-      void RmAbility_Server_Implementation (TSubclassOf<URAbility> Ability);
-
+      void RmAbility_Server                (const TSoftClassPtr<URAbility> &Ability);
+      void RmAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability);
+ 
    //==========================================================================
    //                 Events
    //==========================================================================

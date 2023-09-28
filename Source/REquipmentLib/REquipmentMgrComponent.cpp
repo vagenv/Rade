@@ -79,9 +79,9 @@ void UREquipmentMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
-UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> SlotClass) const
+UREquipmentSlotComponent* UREquipmentMgrComponent::GetEquipmentSlot (const TSoftClassPtr<UREquipmentSlotComponent> SlotClass) const
 {
-   if (!ensure (IsValid (SlotClass))) return nullptr;
+   if (!ensure (!SlotClass.IsNull ())) return nullptr;
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
 

@@ -7,6 +7,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RWorldAssetMgr.h"
 #include "RDamageLib/RDamageTypes.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
@@ -356,12 +357,12 @@ void URStatusMgrComponent::ReporPassiveEffectsUpdated ()
 bool URStatusMgrComponent::ApplyActiveStatusEffect (
    AActor* Causer_,
    AActor* Target_,
-   const TSubclassOf<URActiveStatusEffect> Effect_)
+   const TSoftClassPtr<URActiveStatusEffect> Effect_)
 {
    // --- Check Values
    if (!ensure (IsValid (Causer_))) return false;
    if (!ensure (IsValid (Target_))) return false;
-   if (!ensure (IsValid (Effect_))) return false;
+   if (!ensure (!Effect_.IsNull ())) return false;
 
    UWorld* World = Target_->GetWorld ();
    if (!World) return false;
@@ -374,12 +375,12 @@ bool URStatusMgrComponent::ApplyActiveStatusEffect (
 
 bool URStatusMgrComponent::AddActiveStatusEffect (
    AActor* Causer_,
-   const TSubclassOf<URActiveStatusEffect> Effect_)
+   const TSoftClassPtr<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (IsValid (Causer_))) return false;
-   if (!ensure (IsValid (Effect_))) return false;
-   if (IsDead ())                   return false;
+   if (!ensure (!Effect_.IsNull ())) return false;
+   if (IsDead ())                    return false;
 
    TArray<URActiveStatusEffect*> CurrentEffects;
    GetOwner()->GetComponents (CurrentEffects);
@@ -392,10 +393,30 @@ bool URStatusMgrComponent::AddActiveStatusEffect (
       }
    }
 
-   URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), Effect_);
-   if (Effect) Effect->Causer = Causer_;
+   URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
+   if (!AssetMgr) return false;
 
-   return Effect != nullptr;
+   // Check that async load is not already in process
+   if (EffectLoadHandle.IsValid ()) return false;
+
+   EffectLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (Effect_.GetUniqueID (),
+      [this, Causer_] () {
+         if (!EffectLoadHandle.IsValid ()) return;
+         if (EffectLoadHandle->HasLoadCompleted ()) {
+            if (UObject* Obj = EffectLoadHandle->GetLoadedAsset ()) {
+               if (UClass* EffectClass = Cast<UClass> (Obj)) {
+                  URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), EffectClass);
+                  if (Effect) Effect->Causer = Causer_;
+               }
+            }
+         }
+
+         // Release data from memory
+         EffectLoadHandle->ReleaseHandle ();
+         EffectLoadHandle.Reset ();
+      });
+
+   return true;
 }
 
 void URStatusMgrComponent::ReportActiveEffectsUpdated ()

@@ -31,7 +31,7 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<TSubclassOf<URActiveStatusEffect> > ActiveEffects;
+      TArray<TSoftClassPtr<URActiveStatusEffect> > ActiveEffects;
 
 
    static bool IsValid (const FRItemData &src);
@@ -54,7 +54,7 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
 
    // Slot to which item will be attached on spawn
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<UREquipmentSlotComponent> EquipmentSlot;
+      TSoftClassPtr<UREquipmentSlotComponent> EquipmentSlot;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	   TSoftObjectPtr<UStaticMesh> StaticMesh;

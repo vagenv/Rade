@@ -26,7 +26,7 @@ public:
 
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> Type) const;
+      UREquipmentSlotComponent* GetEquipmentSlot (const TSoftClassPtr<UREquipmentSlotComponent> Type) const;
 
    //==========================================================================
    //                 Use / Drop override. Check if Item equiped.

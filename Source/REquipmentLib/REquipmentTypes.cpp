@@ -25,7 +25,7 @@ bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Owner);
    if (!ensure (StatusMgr)) return false;
 
-   for (const TSubclassOf<URActiveStatusEffect> &ItEffect : ActiveEffects) {
+   for (const TSoftClassPtr<URActiveStatusEffect> &ItEffect : ActiveEffects) {
       if (!StatusMgr->AddActiveStatusEffect (Owner, ItEffect)) {
          return false;
       }
