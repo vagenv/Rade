@@ -21,7 +21,7 @@ resolve_relative_path() (
 )
 
 ROOTDIR=$(pwd)
-UE_DIR=$(resolve_relative_path $(pwd)/../UE/LINUX)
+UE_DIR=$(resolve_relative_path $(pwd)/../UE/LINUX/UE_5.3)
 
 BUILD_PLATFORM=Linux
 BUILD_CONFIGURATION=Development
