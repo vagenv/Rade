@@ -3,16 +3,47 @@
 =================================================
 
 ==============
-Ability Widgets
+[Item Widget]
 ==============
+===
+Always
+===
+[Description]
 
-<Ability>
-- Description from RWorldAbilitMgr and AbilityTable
-- Requirnment (FRCoreStats, TArray<AbilityInfo>)
-- Cost (Health, Mana, Stamina)
+===
+Check cast and show
+===
+[Required Stat]
+[Resistance List]
+[Effect List]
 
-AbilityWidget
-- <Ability>
+
+==============
+[Ability Widgets]
+==============
+===
+Always
+===
+[Description] from RWorldAbilitMgr and AbilityTable
+
+===
+Check cast and show
+===
+[Requirnment] (FRCoreStats, TArray<AbilityInfo>)
+[Cost] (Health, Mana, Stamina)
+
+
+==============
+LearnAbility Window/Menu
+==============
+List of List of [AbilityWidget]
+
+[Fireball]  [Firewall]     ... [Fire Nova]
+[Heal]      [Healing Aura] ...
+[Healthy 1] [Healthy 2]    ...
+
+
+[Ability Widgets]
 - State (Disabled, <Learn>, <Assign>)
 - Can learn / Learned and Passive / Learned and Active / Can not learn yet
 
@@ -26,38 +57,17 @@ SelectSlotWindow <Assign>
 - List of active <Ability>
 
 
-===
-LearnAbilityWindow
-===
-Grid of AbilityWidget
-
-[Fireball] [Firewall]
-[Heal] [Healing Aura]
-
-[Healthy 1] [Healthy 2]
+==============
+UseStat Window
+==============
+Available stat [Number]
+[-] STR [+]
+[-] AGI [+]
+[-] ING [+]
 
 
 ==============
-Stat Window
-==============
-Current STR/AGI/ING
-
-Use available stat
-
-
-==============
-Equipment Window
-==============
-
-[ICON] [Name]
-       [Detail]
-       [Required Stat]?
-       [Resistance List]?
-       [Effect List]?
-
-
-==============
-EventList
+EventList Sidebar
 ==============
 Right Bottom/Top/Middle
 Max Size
@@ -85,7 +95,6 @@ Diamond
 ==============
 Fixes
 ==============
-
 - Cursor still visible after switch.
 
 
