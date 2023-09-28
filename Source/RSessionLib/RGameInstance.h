@@ -46,6 +46,9 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Network")
       bool HasSession () const;
 
+   UFUNCTION(BlueprintCallable, Category = "Rade|Network")
+      void ResetSession ();
+
    //==========================================================================
    //               Search Session
    //==========================================================================
@@ -54,7 +57,7 @@ public:
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
       bool GetSessionList (TArray<FRAvaiableSessionsData> &Result) const;
 
-   // Delegate when Item list updated
+   // Delegate when session list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
       FRSessionMgrEvent OnSessionListUpdated;
 
@@ -119,20 +122,23 @@ protected:
    //==========================================================================
 public:
 
-   
    // Disable join methods
    virtual bool JoinSession (ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult) override{ return false; }
    virtual bool JoinSession (ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) override { return false; } 
 
    // Join Specific Online Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void JoinSession (FRAvaiableSessionsData SessionData);
+      bool JoinSession (FRAvaiableSessionsData SessionData);
    
    // --- Join Session
    bool JoinSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
 
    // --- Join Session is Complete
    void OnJoinSessionComplete (FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
+   // Delegate load of session failed
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Network")
+      FRSessionMgrEvent OnJoinSessionError;
 
 protected:
    // Joined
@@ -155,7 +161,7 @@ public:
 
    // Stop Session and Quit Game
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
-      void LeaveSession ();
+      bool LeaveSession ();
 
    void OnDestroySessionComplete (FName SessionName, bool bWasSuccessful);
 

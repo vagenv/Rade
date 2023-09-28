@@ -50,6 +50,27 @@ bool URGameInstance::HasSession () const
 
    return false;
 }
+void URGameInstance::ResetSession ()
+{
+   UWorld* World = GetWorld ();
+   if (!ensure (World)) return;
+
+   // Client
+   if (World->GetNetMode () == ENetMode::NM_Client) {
+
+      // Return to previous level
+      if (!LastLevelMap.IsEmpty ()) {
+         UGameplayStatics::OpenLevel (World, *LastLevelMap);
+         LastLevelMap = "";
+      }
+   }
+
+   // Server
+   if (World->GetNetMode () == ENetMode::NM_ListenServer) {
+      // Disconnect all players
+      GetEngine ()->ShutdownWorldNetDriver (World);
+   }
+}
 
 // ============================================================================
 //          Search Session list
@@ -111,13 +132,14 @@ void URGameInstance::FindSessions (
 
    // We only want to set this Query Setting if "bIsPresence" is true
    if (bIsPresence) {
-      SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
+      SessionSearch->QuerySettings.Set (SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
    }
 
    TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef ();
 
    // Set the Delegate to the Delegate Handle of the FindSession function
-   OnFindSessionsCompleteDelegateHandle = Sessions->AddOnFindSessionsCompleteDelegate_Handle (OnFindSessionsCompleteDelegate);
+   OnFindSessionsCompleteDelegateHandle
+      = Sessions->AddOnFindSessionsCompleteDelegate_Handle (OnFindSessionsCompleteDelegate);
 
    // Finally call the SessionInterface function. The Delegate gets called once this is finished
    Sessions->FindSessions (*UserId, SearchSettingsRef);
@@ -197,7 +219,8 @@ bool URGameInstance::HostSession (
    SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 
    // Set the delegate to the Handle of the SessionInterface
-   OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle (OnCreateSessionCompleteDelegate);
+   OnCreateSessionCompleteDelegateHandle
+      = Sessions->AddOnCreateSessionCompleteDelegate_Handle (OnCreateSessionCompleteDelegate);
 
    // Our delegate should get called when this is complete (doesn't need to be successful!)
    return Sessions->CreateSession (*UserId,
@@ -224,7 +247,8 @@ void URGameInstance::OnCreateSessionComplete (FName SessionName, bool bWasSucces
    }
 
    // Set the StartSession delegate handle
-   OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
+   OnStartSessionCompleteDelegateHandle
+      = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
 
    // Our StartSessionComplete delegate should get called after this
    Sessions->StartSession (SessionName);
@@ -269,19 +293,24 @@ void URGameInstance::OnStartSessionComplete (FName SessionName, bool bWasSuccess
 // ============================================================================
 
 // Join Selected Online Session
-void URGameInstance::JoinSession (FRAvaiableSessionsData SessionData)
+bool URGameInstance::JoinSession (FRAvaiableSessionsData SessionData)
 {
-    if (HasSession ()) {
+   if (HasSession ()) {
       R_LOG ("Already in session");
-      return;
+      return false;
+   }
+
+   if (SessionData.ConnectionsBusy == SessionData.ConnectionsMax) {
+      R_LOG ("Session is full");
+      return false;
    }
 
    ULocalPlayer* const Player = GetFirstGamePlayer ();
-   if (!ensure (Player)) return;
+   if (!ensure (Player)) return false;
 
-   JoinSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
-                RSessionName,
-                SessionData.SessionData);
+   return JoinSession (Player->GetPreferredUniqueNetId ().GetUniqueNetId (),
+                       RSessionName,
+                       SessionData.SessionData);
 }
 
 bool URGameInstance::JoinSession (
@@ -306,12 +335,13 @@ bool URGameInstance::JoinSession (
    // Save backup of current level
    LastLevelMap = GetWorld ()->GetPackage ()->GetPathName ();
    if (!LastLevelMap.IsEmpty ()) {
-      R_LOG ("Set default map to: " + UGameMapsSettings::GetGameDefaultMap () + " => " + LastLevelMap);
+      //R_LOG ("Set default map to: " + UGameMapsSettings::GetGameDefaultMap () + " => " + LastLevelMap);
       UGameMapsSettings::SetGameDefaultMap (LastLevelMap);  
    }
 
    // Set the Handle again
-   OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegate);
+   OnJoinSessionCompleteDelegateHandle
+      = Sessions->AddOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegate);
 
    // Join
    return Sessions->JoinSession (*UserId,
@@ -327,19 +357,25 @@ void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCom
    IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
    if (!Sessions.IsValid ()) {
       R_LOG ("Invalid session interface.");
+      if (OnJoinSessionError.IsBound ()) OnJoinSessionError.Broadcast ();
       return;
    }
 
    // Clear the Delegate again
    Sessions->ClearOnJoinSessionCompleteDelegate_Handle (OnJoinSessionCompleteDelegateHandle);
 
+   if (Sessions->GetSessionState (SessionName) == EOnlineSessionState::Type::NoSession) {
+      R_LOG ("No session created.");
+      if (OnJoinSessionError.IsBound ()) OnJoinSessionError.Broadcast ();
+      return;
+   }
+
    // Get the first local PlayerController, so we can call "ClientTravel" to get to the Server Map
    // This is something the Blueprint Node "Join Session" does automatically!
    APlayerController* const PlayerController = GetFirstLocalPlayerController ();
-
-
    if (!PlayerController) {
       R_LOG ("No Player controller.");
+      if (OnJoinSessionError.IsBound ()) OnJoinSessionError.Broadcast ();
       return;
    }
 
@@ -347,14 +383,13 @@ void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCom
    // String for us by giving him the SessionName and an empty String. We want to do this, because
    // Every OnlineSubsystem uses different TravelURLs
    FString TravelURL;
-
    if (!Sessions->GetResolvedConnectString (SessionName, TravelURL)) {
       R_LOG ("Failed to get target TravelURL");
+      if (OnJoinSessionError.IsBound ()) OnJoinSessionError.Broadcast ();
       return;
    }
 
-   // Finally call the ClienTravel. If you want, you could print the TravelURL to see
-   // how it really looks like
+   // Finally call the ClienTravel.
    PlayerController->ClientTravel (TravelURL, ETravelType::TRAVEL_Absolute);
 }
 
@@ -365,7 +400,7 @@ void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCom
 bool URGameInstance::KickPlayer (APlayerController* KickedPlayer)
 { 
    if (KickedPlayer == NULL) {
-      R_LOG ("Invalid controller ptr");
+      R_LOG ("Invalid kick controller");
       return false;
    }
 
@@ -397,25 +432,25 @@ bool URGameInstance::KickPlayer (APlayerController* KickedPlayer)
 //          Leave session
 // ============================================================================
 
-void URGameInstance::LeaveSession ()
+bool URGameInstance::LeaveSession ()
 {
    if (!HasSession ()) {
       R_LOG ("No session");
-      return;
+      return false;
    }
 
    IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get ();
-   if (!ensure (OnlineSub)) return;
+   if (!ensure (OnlineSub)) return false;
 
    IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface ();
    if (!Sessions.IsValid ()) {
       R_LOG ("Invalid session interface.");
-      return;
+      return false;
    }
 
    OnDestroySessionCompleteDelegateHandle
       = Sessions->AddOnDestroySessionCompleteDelegate_Handle (OnDestroySessionCompleteDelegate);
-   Sessions->DestroySession (RSessionName);
+   return Sessions->DestroySession (RSessionName);
 }
 
 // Destroy Session And return to Start Map
@@ -438,24 +473,6 @@ void URGameInstance::OnDestroySessionComplete (FName SessionName, bool bWasSucce
       return;
    }
 
-   UWorld* World = GetWorld ();
-   if (!ensure (World)) return;
-
-   // Client
-   if (World->GetNetMode () == ENetMode::NM_Client) {
-
-      // Return to previous level
-      if (!LastLevelMap.IsEmpty ()) {
-         UGameplayStatics::OpenLevel (World, *LastLevelMap);
-         LastLevelMap = "";
-      }
-   }
-
-   // Server
-   if (World->GetNetMode () == ENetMode::NM_ListenServer) {
-
-      // Disconnect all players
-      GetEngine ()->ShutdownWorldNetDriver (World);
-   }
+   ResetSession ();
 }
 
