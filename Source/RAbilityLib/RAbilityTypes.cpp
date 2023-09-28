@@ -52,8 +52,6 @@ void URAbility::PullAbilityInfo ()
    }
 
    if (!AbilityInfo.IsValid ()) {
-      // R_LOG_PRINTF ("Error. [%s] Ability info is invalid.", *GetPathName ());
-
       FTimerHandle RepeatTimer;
       GetWorld ()->GetTimerManager ().SetTimer (RepeatTimer,
                                                 this, &URAbility_Aura::PullAbilityInfo,
