@@ -2,7 +2,7 @@
 
 #include "RLog.h"
 
-DEFINE_LOG_CATEGORY (RadeLog);
+DEFINE_LOG_CATEGORY(RadeLog);
 
 FString RLog_GetAuthStr (const UObject* WorldContext)
 {
@@ -14,12 +14,12 @@ FString RLog_GetAuthStr (const UObject* WorldContext)
 
 void __rlog_raw (const FString &msg)
 {
-   UE_LOG (RadeLog, Log, TEXT ("%s"), *msg);
+   UE_LOG (RadeLog, Error, TEXT ("%s"), *msg);
 }
 
 void __rprint_raw (const FString &msg)
 {
-   if (GEngine) GEngine->AddOnScreenDebugMessage (-1, 3, FColor::White, msg);
+   if (GEngine) GEngine->AddOnScreenDebugMessage (-1, 3, FColor::Red, msg);
 }
 
 void __rlog_internal (const UObject* WorldContext,
