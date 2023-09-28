@@ -2,28 +2,6 @@
          Switch to Common UI
 =================================================
 
-On Connect to server fail
-
-Switch between list of lists:
-- do not move to first/last if not same direction
-
-Ability and Equipment select empty
-
-
-==============
-Loadout Widget
-==============
-First Menu in Status Window
-
-Vertical List with Header
-- Equipment Slots (Horizontal Icons)
-- Ability Slots (Horizontal Icons)
-
-Basic
-- Ability Select Window
-- Equipment Select Winndow
-
-
 ==============
 Ability Widgets
 ==============
