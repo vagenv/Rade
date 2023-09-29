@@ -154,6 +154,17 @@ bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 // ============================================================================
 //                      URItemUtilLibrary
 // ============================================================================
+bool URItemUtilLibrary::Item_EqualEqual (const FRItemData& A,
+                                         const FRItemData& B)
+{
+   return A.ID == B.ID;
+}
+
+bool URItemUtilLibrary::Item_NotEqual (const FRItemData& A,
+                                       const FRItemData& B)
+{
+   return !URItemUtilLibrary::Item_EqualEqual (A, B);
+}
 
 void URItemUtilLibrary::ItemHandle_To_Item (const FRItemDataHandle &src,
                                             FRItemData             &dst,

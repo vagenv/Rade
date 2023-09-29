@@ -203,6 +203,16 @@ class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="Equal (FRItemData)", CompactNodeTitle="=="))
+	   static bool Item_EqualEqual (const FRItemData& A,
+                                   const FRItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="NotEqual (FRItemData)", CompactNodeTitle="!="))
+	   static bool Item_NotEqual (const FRItemData& A,
+                                 const FRItemData& B);
+
    /// --- Item casts
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
