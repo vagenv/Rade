@@ -2,9 +2,9 @@
 	{
 		"Name": "HealthPack",
 		"ActiveEffects": [
-			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C'"
+			"/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C"
 		],
-		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C'",
+		"Action": "/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C",
 		"DestroyOnAction": true,
 		"ID": "",
 		"Type": "FRConsumableItemData",
@@ -25,15 +25,15 @@
 		"Weight": 200,
 		"Price": 20,
 		"PickupMesh": "None",
-		"Pickup": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C'",
+		"Pickup": "/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C",
 		"JsonData": ""
 	},
 	{
 		"Name": "ManaPack",
 		"ActiveEffects": [
-			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C'"
+			"/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C"
 		],
-		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C'",
+		"Action": "/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C",
 		"DestroyOnAction": true,
 		"ID": "",
 		"Type": "FRConsumableItemData",
