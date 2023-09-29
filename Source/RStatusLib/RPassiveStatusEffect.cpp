@@ -21,8 +21,9 @@ TArray<FRPassiveStatusEffect> URPassiveStatusEffectUtilLibrary::MergeEffects (
             break;
          }
       }
-      // Add new entry
-      if (!found) Result.Add (ItEffects.Value);
+      // Add new entry and not zero
+      if (!found && (ItEffects.Value.Flat || ItEffects.Value.Percent ))
+         Result.Add (ItEffects.Value);
    }
 
    return Result;
