@@ -35,7 +35,6 @@ struct RSTATUSLIB_API FRCoreStats
    FRCoreStats  operator -  (const FRCoreStats &stat) const;
    FRCoreStats& operator += (const FRCoreStats &stat);
 
-
    friend FArchive& operator << (FArchive& Ar, FRCoreStats &Data) {
       Ar << Data.STR;
       Ar << Data.AGI;
@@ -120,6 +119,14 @@ class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
 {
    GENERATED_BODY()
 public:
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="IsEmpty (FRCoreStats)", CompactNodeTitle="IsEmpty"))
+      static bool FRCoreStats_IsEmpty (const FRCoreStats &Value);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="IsEmpty (FRSubStats)", CompactNodeTitle="IsEmpty"))
+      static bool FRSubStats_IsEmpty (const FRSubStats &Value);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="ToString (FRStatusValue)", CompactNodeTitle="ToString"))

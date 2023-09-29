@@ -103,6 +103,20 @@ void FRStatusValue::Tick (float DeltaTime)
    Current = FMath::Clamp (Current, 0, Max);
 }
 
+//=============================================================================
+//                 Status Library
+//=============================================================================
+
+bool URStatusUtilLibrary::FRCoreStats_IsEmpty (const FRCoreStats &Value)
+{
+   return !(Value.STR || Value.AGI || Value.STR);
+}
+
+bool URStatusUtilLibrary::FRSubStats_IsEmpty (const FRSubStats &Value)
+{
+   return !(Value.AttackPower || Value.AttackSpeed || Value.Critical || Value.Evasion || Value.MoveSpeed);
+}
+
 FString URStatusUtilLibrary::FRStatusValue_ToString (const FRStatusValue &Value)
 {
    return FString::Printf (
