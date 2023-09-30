@@ -205,29 +205,45 @@ class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
+   
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+	   static bool Item_IsValid (const FRItemData& ItemData);
+
+
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
-             meta=(DisplayName="Equal (FRItemData)", CompactNodeTitle="=="))
+             meta=(DisplayName="Equal (FRItemData, FRItemData)", CompactNodeTitle="=="))
 	   static bool Item_EqualEqual (const FRItemData& A,
                                    const FRItemData& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
-             meta=(DisplayName="NotEqual (FRItemData)", CompactNodeTitle="!="))
+             meta=(DisplayName="NotEqual (FRItemData, FRItemData)", CompactNodeTitle="!="))
 	   static bool Item_NotEqual (const FRItemData& A,
                                  const FRItemData& B);
+
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="Equal (FRItemData, FRActionItemData)", CompactNodeTitle="=="))
+	   static bool ActionItem_EqualEqual (const FRItemData& A,
+                                             const FRActionItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="NotEqual (FRItemData, FRActionItemData)", CompactNodeTitle="!="))
+	   static bool ActionItem_NotEqual (const FRItemData& A,
+                                           const FRActionItemData& B);
 
    /// --- Item casts
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
-      static void ItemHandle_To_Item (const FRItemDataHandle &src,
+      static void ItemHandle_To_Item (const FRItemDataHandle &ItemHandle,
                                       FRItemData             &ItemData,
                                       ERActionResult         &Outcome);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Inventory")
-      static bool Item_Is_ActionItem (const FRItemData &src);
+      static bool Item_Is_ActionItem (const FRItemData &ItemData);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
-      static void Item_To_ActionItem (const FRItemData &src,
-                                      FRActionItemData &ItemData,
+      static void Item_To_ActionItem (const FRItemData &ItemData,
+                                      FRActionItemData &ActionItem,
                                       ERActionResult   &Outcome);
 
 
@@ -235,7 +251,7 @@ public:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       static bool Item_GetRecipe (const UDataTable *RecipeTable,
-                                  const FRItemData &Item,
+                                  const FRItemData &ItemData,
                                   FRCraftRecipe    &Recipe);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")

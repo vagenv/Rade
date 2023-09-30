@@ -90,18 +90,43 @@ class REQUIPMENTLIB_API UREquipmentUtilLibrary : public UBlueprintFunctionLibrar
    GENERATED_BODY()
 public:
 
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="Equal (FRItemData, FRConsumableItemData)", CompactNodeTitle="=="))
+	   static bool ConsumableItem_EqualEqual (const FRItemData& A,
+                                             const FRConsumableItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="NotEqual (FRItemData, FRConsumableItemData)", CompactNodeTitle="!="))
+	   static bool ConsumableItem_NotEqual (const FRItemData& A,
+                                           const FRConsumableItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="Equal (FRItemData, FREquipmentData)", CompactNodeTitle="=="))
+	   static bool Equipment_EqualEqual (const FRItemData& A,
+                                        const FREquipmentData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="NotEqual (FRItemData, FREquipmentData)", CompactNodeTitle="!="))
+	   static bool Equipment_NotEqual (const FRItemData& A,
+                                      const FREquipmentData& B);
+
+
+
+
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
-      static bool Item_Is_ConsumableItem (const FRItemData &src);
+      static bool Item_Is_ConsumableItem (const FRItemData &ItemData);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
-      static void Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &ItemData,
-                                          ERActionResult &Branches);
+      static void Item_To_ConsumableItem (const FRItemData     &ItemData,
+                                          FRConsumableItemData &ConsumableItem,
+                                          ERActionResult       &Branches);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
-      static bool Item_Is_EquipmentItem (const FRItemData &src);
+      static bool Item_Is_EquipmentItem (const FRItemData &ItemData);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
-      static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
-                                         ERActionResult &Branches);
+      static void Item_To_EquipmentItem (const FRItemData &ItemData,
+                                         FREquipmentData  &EquipmentData,
+                                         ERActionResult   &Branches);
 };
 

@@ -136,6 +136,35 @@ bool FREquipmentData::WriteJSON ()
 //                      UREquipmentUtilLibrary
 // ============================================================================
 
+
+bool UREquipmentUtilLibrary::ConsumableItem_EqualEqual (
+   const FRItemData& A,
+   const FRConsumableItemData& B)
+{
+   return A.ID == B.ID;
+}
+
+bool UREquipmentUtilLibrary::ConsumableItem_NotEqual (
+   const FRItemData& A,
+   const FRConsumableItemData& B)
+{
+   return !UREquipmentUtilLibrary::ConsumableItem_EqualEqual (A, B);
+}
+
+bool UREquipmentUtilLibrary::Equipment_EqualEqual (
+   const FRItemData& A,
+   const FREquipmentData& B)
+{
+   return A.ID == B.ID;
+}
+
+bool UREquipmentUtilLibrary::Equipment_NotEqual (
+   const FRItemData& A,
+   const FREquipmentData& B)
+{
+   return !UREquipmentUtilLibrary::Equipment_EqualEqual (A, B);
+}
+
 bool UREquipmentUtilLibrary::Item_Is_ConsumableItem (const FRItemData &src)
 {
    return FRConsumableItemData::CanCast (src);
