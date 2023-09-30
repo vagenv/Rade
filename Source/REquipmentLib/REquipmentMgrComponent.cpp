@@ -155,7 +155,7 @@ void UREquipmentMgrComponent::OnStatsUpdated ()
 //                 Use / Drop override
 //=============================================================================
 
-bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
+bool UREquipmentMgrComponent::UseItem_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
 
@@ -166,63 +166,172 @@ bool UREquipmentMgrComponent::UseItem (int32 ItemIdx)
       return false;
    }
 
-   {
-      FRConsumableItemData ItemData;
-      if (FRConsumableItemData::Cast (Items[ItemIdx], ItemData)) {
-         if (!ItemData.Used (GetOwner (), this)) return false;
-         BP_Used (ItemData);
-         if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
+   FRItemData ItemData = Items[ItemIdx];
+
+   if (FRConsumableItemData::CanCast (ItemData))  {
+      FRConsumableItemData ConsumeData;
+      if (FRConsumableItemData::Cast (ItemData, ConsumeData)) {
+         if (!ConsumeData.Used (GetOwner (), this)) return false;
+         if (ConsumeData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
          return true;
       }
    }
 
    // --- Not an equipment item. Pass management to Inventory.
-   FREquipmentData ItemData;
-   if (!FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
-      return Super::UseItem (ItemIdx);
+   if (!FREquipmentData::CanCast (ItemData)) {
+      return Super::UseItem_Index (ItemIdx);
    }
 
-   bool success = EquipItem (ItemData);
+   FREquipmentData EquipmentData;
+   if (!FREquipmentData::Cast (ItemData, EquipmentData)) {
+      return Super::UseItem_Index (ItemIdx);
+   }
+
+   bool success = Equip_Equipment (EquipmentData);
 
    // --- If Custom Action is defined
-   if (success && ItemData.Action) {
-      if (!ItemData.Used (GetOwner (), this)) return false;
-      BP_Used (ItemData);
+   if (success && !EquipmentData.Action.IsNull ()) {
+      if (!EquipmentData.Used (GetOwner (), this)) return false;
    }
    return success;
 }
 
-bool UREquipmentMgrComponent::DropItem (int32 ItemIdx, int32 Count)
+bool UREquipmentMgrComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
 
    // --- Check if Item should be unequiped
-   FREquipmentData ItemData;
+   FREquipmentData EquipmentData;
    // Is Equipment item
-   if (FREquipmentData::Cast (Items[ItemIdx], ItemData)) {
+   if (FREquipmentData::Cast (Items[ItemIdx], EquipmentData)) {
 
       // Get target slot type
-      UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (ItemData.EquipmentSlot);
+      UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (EquipmentData.EquipmentSlot);
 
       if (EquipmentSlot) {
 
          // Item equiped
-         if (EquipmentSlot->EquipmentData.ID == ItemData.ID) {
-            UnEquip (EquipmentSlot);
+         if (EquipmentSlot->EquipmentData.ID == EquipmentData.ID) {
+            UnEquip_Slot (EquipmentSlot);
          }
       }
    }
 
-   return Super::DropItem (ItemIdx, Count);
+   return Super::DropItem_Index (ItemIdx, Count);
+}
+
+bool UREquipmentMgrComponent::BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return false;
+   }
+
+   // Unequip, if equiped.
+   UnEquip_Index (ItemIdx);
+
+   return Super::BreakItem_Index (ItemIdx, BreakItemTable);
 }
 
 //=============================================================================
-//                 Equip / Unequip
+//                 Is Equiped
 //=============================================================================
 
-bool UREquipmentMgrComponent::EquipItem (const FREquipmentData &EquipmentData)
+bool UREquipmentMgrComponent::IsEquiped_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return false;
+   }
+
+   return IsEquiped_Item (Items[ItemIdx]);
+}
+
+bool UREquipmentMgrComponent::IsEquiped_Item (const FRItemData &ItemData)
+{
+   if (!ItemData.IsValid ()) return false;
+   if (!FREquipmentData::CanCast (ItemData)) return false;
+
+   FREquipmentData EquipmentData;
+   if (FREquipmentData::Cast (ItemData, EquipmentData)) {
+      return IsEquiped_Equipment (EquipmentData);
+   }
+   return false;
+}
+
+bool UREquipmentMgrComponent::IsEquiped_Equipment (const FREquipmentData &EquipmentData)
+{
+   if (!EquipmentData.IsValid ()) return false;
+   // Get target slot type
+   UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (EquipmentData.EquipmentSlot);
+   if (!EquipmentSlot) return false;
+   return EquipmentSlot->EquipmentData.ID == EquipmentData.ID;
+}
+
+//=============================================================================
+//                 Equip
+//=============================================================================
+
+void UREquipmentMgrComponent::Equip_Index_Server_Implementation (
+   UREquipmentMgrComponent *DstEquipment, int32 ItemIdx)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->Equip_Index (ItemIdx);
+}
+
+bool UREquipmentMgrComponent::Equip_Index (int32 ItemIdx)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return false;
+   }
+
+   return Equip_Item (Items[ItemIdx]);
+}
+
+void UREquipmentMgrComponent::Equip_Item_Server_Implementation (
+   UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->Equip_Item (ItemData);
+}
+
+bool UREquipmentMgrComponent::Equip_Item (const FRItemData &ItemData)
+{
+   if (!ItemData.IsValid ()) return false;
+   if (!FREquipmentData::CanCast (ItemData)) return false;
+
+   FREquipmentData EquipmentData;
+   if (FREquipmentData::Cast (ItemData, EquipmentData)) {
+      return Equip_Equipment (EquipmentData);
+   }
+   return false;
+}
+
+void UREquipmentMgrComponent::Equip_Equipment_Server_Implementation (
+   UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->Equip_Equipment (EquipmentData);
+}
+
+bool UREquipmentMgrComponent::Equip_Equipment (const FREquipmentData &EquipmentData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!EquipmentData.IsValid ()) return false;
+
    if (!EquipmentData.EquipmentSlot) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.ID);
       return false;
@@ -234,13 +343,23 @@ bool UREquipmentMgrComponent::EquipItem (const FREquipmentData &EquipmentData)
          *EquipmentData.ID, *EquipmentData.EquipmentSlot->GetName ());
       return false;
    }
-   return Equip (EquipmentSlot, EquipmentData);
+   return Equip_Slot (EquipmentSlot, EquipmentData);
 }
 
-bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
+void UREquipmentMgrComponent::Equip_Slot_Server_Implementation (
+   UREquipmentMgrComponent  *DstEquipment,
+   UREquipmentSlotComponent *EquipmentSlot,
+   const FREquipmentData    &EquipmentData)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->Equip_Slot (EquipmentSlot, EquipmentData);
+}
+
+bool UREquipmentMgrComponent::Equip_Slot (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (IsValid (EquipmentSlot)))  return false;
+   if (!EquipmentData.IsValid ()) return false;
    if (!ensure (EquipmentData.EquipmentSlot.Get ())) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.ID);
       return false;
@@ -267,10 +386,10 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
 
       // If equip has been called on same item -> Only unequip.
       if (EquipmentSlot->EquipmentData.ID == EquipmentData.ID) {
-         return UnEquip (EquipmentSlot);
+         return UnEquip_Slot (EquipmentSlot);
       }
 
-      if (!UnEquip (EquipmentSlot)) return false;
+      if (!UnEquip_Slot (EquipmentSlot)) return false;
    }
 
    // --- Add Stats and Effects
@@ -288,7 +407,85 @@ bool UREquipmentMgrComponent::Equip (UREquipmentSlotComponent *EquipmentSlot, co
    return true;
 }
 
-bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
+//=============================================================================
+//                 Unequip
+//=============================================================================
+
+void UREquipmentMgrComponent::UnEquip_Index_Server_Implementation (
+   UREquipmentMgrComponent *DstEquipment, int32 ItemIdx)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->UnEquip_Index (ItemIdx);
+}
+
+bool UREquipmentMgrComponent::UnEquip_Index (int32 ItemIdx)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return false;
+   }
+
+   return UnEquip_Item (Items[ItemIdx]);
+}
+
+void UREquipmentMgrComponent::UnEquip_Item_Server_Implementation (
+   UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->UnEquip_Item (ItemData);
+}
+
+bool UREquipmentMgrComponent::UnEquip_Item (const FRItemData &ItemData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ItemData.IsValid ()) return false;
+   if (!FREquipmentData::CanCast (ItemData)) return false;
+
+   FREquipmentData EquipmentData;
+   if (FREquipmentData::Cast (ItemData, EquipmentData)) {
+      return UnEquip_Equipment (EquipmentData);
+   }
+   return false;
+}
+
+
+
+void UREquipmentMgrComponent::UnEquip_Equipment_Server_Implementation (
+   UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->UnEquip_Equipment (EquipmentData);
+}
+
+bool UREquipmentMgrComponent::UnEquip_Equipment (const FREquipmentData &EquipmentData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   if (!EquipmentData.IsValid ()) return false;
+
+   // Get target slot type
+   UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (EquipmentData.EquipmentSlot);
+   if (EquipmentSlot) {
+      if (EquipmentSlot->EquipmentData.ID == EquipmentData.ID) {
+         return UnEquip_Slot (EquipmentSlot);
+      }
+   }
+   return false;
+}
+
+void UREquipmentMgrComponent::UnEquip_Slot_Server_Implementation (
+   UREquipmentMgrComponent  *DstEquipment,
+   UREquipmentSlotComponent *EquipmentSlot)
+{
+   if (!ensure (IsValid (DstEquipment))) return;
+   DstEquipment->UnEquip_Slot (EquipmentSlot);
+}
+
+bool UREquipmentMgrComponent::UnEquip_Slot (UREquipmentSlotComponent *EquipmentSlot)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (IsValid (EquipmentSlot))) return false;
@@ -305,27 +502,6 @@ bool UREquipmentMgrComponent::UnEquip (UREquipmentSlotComponent *EquipmentSlot)
    ReportEquipmentUpdated ();
 
    return true;
-}
-
-//=============================================================================
-//                 Equip / Unequip server version
-//=============================================================================
-
-void UREquipmentMgrComponent::EquipItem_Server_Implementation (const FREquipmentData &EquipmentData)
-{
-   EquipItem (EquipmentData);
-}
-
-void UREquipmentMgrComponent::Equip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot,
-                                                           const FREquipmentData    &EquipmentData)
-{
-   if (!ensure (IsValid (EquipmentSlot))) return;
-   Equip (EquipmentSlot, EquipmentData);
-}
-
-void UREquipmentMgrComponent::UnEquip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot)
-{
-   UnEquip (EquipmentSlot);
 }
 
 //=============================================================================
@@ -358,7 +534,7 @@ void UREquipmentMgrComponent::OnLoad (FMemoryReader &LoadData)
    TArray<UREquipmentSlotComponent*> CurrentEquipmentSlots;
    GetOwner ()->GetComponents (CurrentEquipmentSlots);
    for (UREquipmentSlotComponent* ItSlot : CurrentEquipmentSlots) {
-      UnEquip (ItSlot);
+      UnEquip_Slot (ItSlot);
    }
 
    TArray<FString> EquipedItemsRaw;
@@ -367,7 +543,7 @@ void UREquipmentMgrComponent::OnLoad (FMemoryReader &LoadData)
    // --- Equip Items
    for (const FString &ItRaw : EquipedItemsRaw) {
       FREquipmentData EquipData;
-      if (RJSON::ToStruct (ItRaw, EquipData)) EquipItem (EquipData);
+      if (RJSON::ToStruct (ItRaw, EquipData)) Equip_Equipment (EquipData);
    }
 }
 

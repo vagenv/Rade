@@ -87,6 +87,11 @@ bool FRItemData::WriteJSON ()
    return true;
 }
 
+bool FRItemData::IsValid () const
+{
+   return !ID.IsEmpty () && !Type.IsEmpty () && !CastType.IsEmpty ();
+}
+
 
 // ============================================================================
 //                      FRActionItemData
@@ -127,25 +132,27 @@ bool FRActionItemData::WriteJSON ()
    return true;
 }
 
-bool FRActionItemData::IsValid (const FRItemData &src)
+bool FRActionItemData::CanCast (const FRItemData &src)
 {
-   return src.CastType.Contains (FRActionItemData().Type);
+   return src.IsValid () && src.CastType.Contains (FRActionItemData().Type);
 }
 
 bool FRActionItemData::Cast (const FRItemData &src, FRActionItemData &dst)
 {
-   if (!IsValid (src)) return false;
-   return RJSON::ToStruct (src.GetJSON (), dst);
+   if (!src.IsValid ()) return false;
+   if (!CanCast (src)) return false;
+   bool res = RJSON::ToStruct (src.GetJSON (), dst);
+   dst.ID = src.ID;
+   return res;
 }
 
 bool FRActionItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
 {
    // valid archetype
-   if (!Action) return false;
+   if (Action.IsNull ()) return false;
 
-   URItemAction *ItemBP = Action->GetDefaultObject<URItemAction>();
-   if (!ensure (ItemBP)) return false;
-   ItemBP->Used (Owner, Inventory, *this);
+   //URItemAction *ItemBP = Action->GetDefaultObject<URItemAction>();
+   //if (!ensure (ItemBP)) return false;
 
    return true;
 }
@@ -177,7 +184,7 @@ void URItemUtilLibrary::ItemHandle_To_Item (const FRItemDataHandle &src,
 
 bool URItemUtilLibrary::Item_Is_ActionItem (const FRItemData &src)
 {
-   return FRActionItemData::IsValid (src);
+   return FRActionItemData::CanCast (src);
 }
 
 void URItemUtilLibrary::Item_To_ActionItem (const FRItemData &src,
@@ -194,7 +201,7 @@ bool URItemUtilLibrary::Item_GetRecipe (const UDataTable *RecipeTable,
                                         FRCraftRecipe    &Recipe)
 {
    if (!IsValid (RecipeTable)) return false;
-   if (!IsValid (RecipeTable)) return false;
+   if (!Item.IsValid ()) return false;
    FString ContextString;
    TArray<FName> RowNames = RecipeTable->GetRowNames ();
    for (const FName& ItRowName : RowNames) {
@@ -212,6 +219,7 @@ bool URItemUtilLibrary::Item_GetRecipe (const UDataTable *RecipeTable,
 
 bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, UDataTable* BreakItemTable)
 {
+   if (!BreakItem.IsValid ()) return false;
    FRCraftRecipe Recipe;
    return Item_GetRecipe (BreakItemTable, BreakItem, Recipe);
 }
@@ -220,6 +228,7 @@ bool URItemUtilLibrary::Item_GetBreakList (const FRItemData         &BreakItem,
                                            UDataTable               *BreakItemTable,
                                            TArray<FRItemDataHandle> &ResultItems)
 {
+   if (!BreakItem.IsValid ()) return false;
    FRCraftRecipe Recipe;
    if (!Item_GetRecipe (BreakItemTable, BreakItem, Recipe)) return false;
 

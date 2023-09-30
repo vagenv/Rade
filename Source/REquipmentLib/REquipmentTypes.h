@@ -34,7 +34,7 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
       TArray<TSoftClassPtr<URActiveStatusEffect> > ActiveEffects;
 
 
-   static bool IsValid (const FRItemData &src);
+   static bool CanCast (const FRItemData &src);
    static bool Cast    (const FRItemData &src, FRConsumableItemData &dst);
 
    virtual bool ReadJSON () override;
@@ -77,7 +77,7 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
       FRCoreStats RequiredStats;
 
-   static bool IsValid (const FRItemData &src);
+   static bool CanCast (const FRItemData &src);
    static bool Cast    (const FRItemData &src, FREquipmentData &dst);
 
    virtual bool ReadJSON () override;

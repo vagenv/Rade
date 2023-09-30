@@ -157,6 +157,8 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    // Sets the internal value
    void    SetJSON (const FString &data) { JsonData = data; };
 
+   bool    IsValid () const;
+
 protected:
 
    // This data will be serialized. Subclasses must write data into here
@@ -185,7 +187,7 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    virtual bool ReadJSON  () override;
    virtual bool WriteJSON () override;
 
-   static bool IsValid (const FRItemData &src);
+   static bool CanCast (const FRItemData &src);
    static bool Cast    (const FRItemData &src, FRActionItemData &dst);
 
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory);

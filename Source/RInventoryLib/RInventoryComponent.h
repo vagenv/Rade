@@ -83,20 +83,20 @@ public:
       virtual bool HasItem_Arch (const FRItemDataHandle &CheckItem) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual bool HasItem_Data (FRItemData CheckItem) const;
+      virtual bool HasItem_Item (FRItemData CheckItem) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual bool HasItems (const TArray<FRItemDataHandle> &CheckItems) const;
+      virtual bool HasItems_Handles (const TArray<FRItemDataHandle> &CheckItems) const;
 
    //==========================================================================
    //                 Get item count
    //==========================================================================
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual int GetCountItem (const FRItemData &CheckItem) const;
+      virtual int GetItemCount_ID (const FString &ID) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual int GetCountItem_ID (const FString &ID) const;
+      virtual int GetItemCount_Item (const FRItemData &CheckItem) const;
 
    //==========================================================================
    //                 Add to Inventory
@@ -108,7 +108,7 @@ public:
 
    // Add Item struct
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool AddItem (FRItemData ItemData);
+      virtual bool AddItem_Item (FRItemData ItemData);
 
    //==========================================================================
    //                 Remove from Inventory
@@ -146,7 +146,10 @@ public:
 
    // Breaks item into components
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool BreakItem (int32 ItemIdx, UDataTable* BreakItemTable);
+      virtual bool BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool BreakItem_Item (const FRItemData &ItemData, UDataTable* BreakItemTable);
 
    //==========================================================================
    //                 Craft Item
@@ -159,14 +162,28 @@ public:
       virtual bool CraftItem (const FDataTableRowHandle &CraftItem);
 
    //==========================================================================
-   //                 Item use / drop events
+   //                 Use Item
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool UseItem  (int32 ItemIdx);
+      virtual bool UseItem_Index  (int32 ItemIdx);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool DropItem (int32 ItemIdx, int32 Count = 0);
+      virtual bool UseItem_Item  (const FRItemData &ItemData);
+
+   //==========================================================================
+   //                 Drop Item
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool DropItem_Index (int32 ItemIdx, int32 Count = 0);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool DropItem_ItemData (const FRItemData &ItemData);
+
+   //==========================================================================
+   //                 Util
+   //==========================================================================
 
 private:
    // Handle to async load task
@@ -244,17 +261,6 @@ public:
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
       void CraftItem_Server_Implementation (
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
-
-
-   //==========================================================================
-   //                 Events
-   //==========================================================================
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Used (FRItemData ItemData);
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Droped (ARItemPickup *Pickup);
 
    //==========================================================================
    //                 Save / Load

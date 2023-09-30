@@ -80,11 +80,12 @@ bool URInventoryComponent::HasItem_Arch (const FRItemDataHandle &CheckItem) cons
    // --- Create required item info
    FRItemData RequireItem;
    if (!CheckItem.ToItem (RequireItem)) return false;
-   return HasItem_Data (RequireItem);
+   return HasItem_Item (RequireItem);
 }
 
-bool URInventoryComponent::HasItem_Data (FRItemData RequireItem) const
+bool URInventoryComponent::HasItem_Item (FRItemData RequireItem) const
 {
+   if (!RequireItem.IsValid ()) return false;
    // --- Iterate over inventory items
    for (const FRItemData &ItItem : Items) {
       if (ItItem.ID != RequireItem.ID) continue;
@@ -94,8 +95,7 @@ bool URInventoryComponent::HasItem_Data (FRItemData RequireItem) const
    return (RequireItem.Count <= 0);
 }
 
-
-bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems) const
+bool URInventoryComponent::HasItems_Handles (const TArray<FRItemDataHandle> &CheckItems) const
 {
    // --- Create list of required item infos
    TArray<FRItemData> RequiredItems;
@@ -124,11 +124,11 @@ bool URInventoryComponent::HasItems (const TArray<FRItemDataHandle> &CheckItems)
    return RequiredItems.Num () == 0;
 }
 
-int URInventoryComponent::GetCountItem (const FRItemData &CheckItem) const
-{
-   return GetCountItem_ID (CheckItem.ID);
-}
-int URInventoryComponent::GetCountItem_ID (const FString &ItemId) const
+//=============================================================================
+//                 Get Count
+//=============================================================================
+
+int URInventoryComponent::GetItemCount_ID (const FString &ItemId) const
 {
    int Count = 0;
    // --- Find same kind of item
@@ -141,6 +141,12 @@ int URInventoryComponent::GetCountItem_ID (const FString &ItemId) const
    return Count;
 }
 
+int URInventoryComponent::GetItemCount_Item (const FRItemData &CheckItem) const
+{
+   if (!CheckItem.IsValid ()) return 0;
+   return GetItemCount_ID (CheckItem.ID);
+}
+
 //=============================================================================
 //                 Add item
 //=============================================================================
@@ -150,18 +156,20 @@ bool URInventoryComponent::AddItem_Arch (const FRItemDataHandle &ItemHandle)
    R_RETURN_IF_NOT_ADMIN_BOOL;
    FRItemData newItem;
    if (!ItemHandle.ToItem (newItem)) return false;
-   return AddItem (newItem);
+   return AddItem_Item (newItem);
 }
 
 void URInventoryComponent::AddItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                           FRItemData NewItem) const
 {
    if (!ensure (IsValid (SrcInventory))) return;
-   SrcInventory->AddItem (NewItem);
+   SrcInventory->AddItem_Item (NewItem);
 }
-bool URInventoryComponent::AddItem (FRItemData NewItem)
+bool URInventoryComponent::AddItem_Item (FRItemData NewItem)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   if (!NewItem.IsValid ()) return false;
 
    // --- Limit weight being used
    int32 WeightAdd = NewItem.Count * NewItem.Weight;
@@ -224,7 +232,7 @@ bool URInventoryComponent::AddItem (FRItemData NewItem)
 }
 
 //=============================================================================
-//                 Remove Item index
+//                 Remove Item
 //=============================================================================
 
 void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryComponent *SrcInventory,
@@ -233,6 +241,7 @@ void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryCo
    if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->RemoveItem_Index (ItemIdx, Count);
 }
+
 bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
@@ -254,9 +263,6 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
    return true;
 }
 
-//=============================================================================
-//                 Remove Item Arch
-//=============================================================================
 
 void URInventoryComponent::RemoveItem_Arch_Server_Implementation (URInventoryComponent *SrcInventory,
                                                                   const FRItemDataHandle &RmItemHandle) const
@@ -272,10 +278,6 @@ bool URInventoryComponent::RemoveItem_Arch (const FRItemDataHandle &RmItemHandle
    return RemoveItem_Data (RmItemData);
 }
 
-//=============================================================================
-//                 Remove Item Data
-//=============================================================================
-
 void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryComponent *SrcInventory,
                                                                   FRItemData RmItemData) const
 {
@@ -286,8 +288,11 @@ void URInventoryComponent::RemoveItem_Data_Server_Implementation (URInventoryCom
 bool URInventoryComponent::RemoveItem_Data (FRItemData RmItemData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   if (!RmItemData.IsValid ()) return false;
+
    // Last check that user has required item
-   if (!HasItem_Data (RmItemData)) return false;
+   if (!HasItem_Item (RmItemData)) return false;
 
    // Remove until finished
    while (RmItemData.Count > 0) {
@@ -374,7 +379,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
    ItemData.Count = SrcItemCount;
 
    // Try to add item
-   if (!DstInventory->AddItem (ItemData)) return false;
+   if (!DstInventory->AddItem_Item (ItemData)) return false;
 
    // Cleanup
    return RemoveItem_Index (SrcItemIdx, SrcItemCount);
@@ -402,9 +407,10 @@ void URInventoryComponent::BreakItem_Server_Implementation (URInventoryComponent
                                                             UDataTable* BreakItemTable) const
 {
    if (!ensure (IsValid (SrcInventory))) return;
-   SrcInventory->BreakItem (ItemIdx, BreakItemTable);
+   SrcInventory->BreakItem_Index (ItemIdx, BreakItemTable);
 }
-bool URInventoryComponent::BreakItem (int32 ItemIdx, UDataTable* BreakItemTable)
+
+bool URInventoryComponent::BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    // Valid index
@@ -430,10 +436,22 @@ bool URInventoryComponent::BreakItem (int32 ItemIdx, UDataTable* BreakItemTable)
 
 }
 
+bool URInventoryComponent::BreakItem_Item (const FRItemData &ItemData, UDataTable* BreakItemTable)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ItemData.IsValid ()) return false;
+
+   for (int iItem = 0; iItem < Items.Num (); iItem++) {
+      if (Items[iItem].ID == ItemData.ID) {
+         return BreakItem_Index (iItem, BreakItemTable);
+      }
+   }
+   return false;
+}
+
 //=============================================================================
 //                 Craft Item
 //=============================================================================
-
 
 bool URInventoryComponent::CanCraftItem (const FDataTableRowHandle& CraftItem)
 {
@@ -445,7 +463,7 @@ bool URInventoryComponent::CanCraftItem (const FDataTableRowHandle& CraftItem)
    FRItemData ToCraftItem;
    if (!Recipe->CreateItem.ToItem (ToCraftItem)) return false;
 
-   if (!HasItems (Recipe->RequiredItems)) return false;
+   if (!HasItems_Handles (Recipe->RequiredItems)) return false;
    return true;
 }
 
@@ -469,28 +487,28 @@ bool URInventoryComponent::CraftItem (const FDataTableRowHandle &CraftItem)
    FRItemData ToCraftItem;
    if (!Recipe->CreateItem.ToItem (ToCraftItem)) return false;
 
-   if (!HasItems (Recipe->RequiredItems)) return false;
+   if (!HasItems_Handles (Recipe->RequiredItems)) return false;
 
    for (const auto &ItRmItem : Recipe->RequiredItems) {
       RemoveItem_Arch (ItRmItem);
    }
 
-   AddItem (ToCraftItem);
+   AddItem_Item (ToCraftItem);
 
    return true;
 }
 
 //=============================================================================
-//                 Item action
+//                 Use item
 //=============================================================================
 
 void URInventoryComponent::UseItem_Server_Implementation (URInventoryComponent *DstInventory,
                                                           int32 ItemIdx) const
 {
    if (!ensure (IsValid (DstInventory))) return;
-   DstInventory->UseItem (ItemIdx);
+   DstInventory->UseItem_Index (ItemIdx);
 }
-bool URInventoryComponent::UseItem (int32 ItemIdx)
+bool URInventoryComponent::UseItem_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    // Valid index
@@ -507,20 +525,50 @@ bool URInventoryComponent::UseItem (int32 ItemIdx)
 
    if (ItemData.Used (GetOwner (), this)) return false;
 
-   BP_Used (ItemData);
-
    // Consumable
    if (ItemData.DestroyOnAction) return RemoveItem_Index (ItemIdx, 1);
    return true;
 }
 
+bool URInventoryComponent::UseItem_Item (const FRItemData &ItemData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ItemData.IsValid ()) return false;
+
+   for (int iItem = 0; iItem < Items.Num (); iItem++) {
+      if (Items[iItem].ID == ItemData.ID) {
+         return UseItem_Index (iItem);
+      }
+   }
+   return false;
+}
+
+//=============================================================================
+//                 Drop item
+//=============================================================================
+
+
 void URInventoryComponent::DropItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                            int32 ItemIdx, int32 Count) const
 {
    if (!ensure (IsValid (SrcInventory))) return;
-   SrcInventory->DropItem (ItemIdx, Count);
+   SrcInventory->DropItem_Index (ItemIdx, Count);
 }
-bool URInventoryComponent::DropItem (int32 ItemIdx, int32 Count)
+
+bool URInventoryComponent::DropItem_ItemData (const FRItemData &ItemData)
+{
+   R_RETURN_IF_NOT_ADMIN_BOOL;
+   if (!ItemData.IsValid ()) return false;
+
+   for (int iItem = 0; iItem < Items.Num (); iItem++) {
+      if (Items[iItem].ID == ItemData.ID) {
+         return DropItem_Index (iItem);
+      }
+   }
+   return false;
+}
+
+bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
 
@@ -621,7 +669,6 @@ ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> Picku
    Pickup->Inventory->Items.Empty ();
    Pickup->Inventory->Items.Add (ItemData);
 
-   BP_Droped (Pickup);
    return Pickup;
 }
 
