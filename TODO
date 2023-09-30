@@ -2,15 +2,31 @@
          Switch to Common UI
 =================================================
 
+==============
+Inventory filter
+==============
 
+ItemList Filter:
+- Subclass: ActionItem, Equipment,  Consumables
+
+EquipmentList : ItemList
+- Filter by equip slot
 
 
 ==============
-[Ability Widgets]
+Equipment Equip Window
 ==============
-===
-Always
-===
+[Slot]            [Equipment List]
+[Equipment Info]
+
+AbilitySlot
+- Select Ability List
+
+==============
+Ability Equip Window
+==============
+[Slot]            [Ability List]
+[Ability Info]
 [Description] from RWorldAbilitMgr and AbilityTable
 
 ===
@@ -83,17 +99,6 @@ Diamond
 Fixes
 ==============
 - Cursor still visible after switch.
-
-
-==============
-Inventory
-==============
-
-ItemList Filter:
-- Subclass: ActionItem, Equipment,  Consumables
-
-EquipmentList : ItemList
-- Filter by equip slot
 
 
 ==============
@@ -260,6 +265,14 @@ Select:
 - Icon
 - Color
 - Pawn Class
+
+
+==============
+UI Rework
+==============
+- Team List
+- Player Info in Session
+- Session List simplify
 
 
 =================================================
