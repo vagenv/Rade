@@ -3,26 +3,6 @@
 =================================================
 
 ==============
-Inventory filter
-==============
-
-ItemList Filter:
-- Subclass: ActionItem, Equipment,  Consumables
-
-EquipmentList : ItemList
-- Filter by equip slot
-
-
-==============
-Equipment Equip Window
-==============
-[Slot]            [Equipment List]
-[Equipment Info]
-
-AbilitySlot
-- Select Ability List
-
-==============
 Ability Equip Window
 ==============
 [Slot]            [Ability List]
