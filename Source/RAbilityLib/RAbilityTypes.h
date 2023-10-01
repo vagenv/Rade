@@ -10,6 +10,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
 
 class URAbility;
 
+// ============================================================================
+//                   AbilityInfo
+// ============================================================================
+
 USTRUCT(BlueprintType)
 struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
 {
@@ -26,6 +30,16 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
    bool IsValid () const {
       return AbilityClass != nullptr && !Description.Label.IsEmpty ();
    };
+};
+
+UCLASS(ClassGroup=(_Rade))
+class RABILITYLIB_API URAbilityInfolLibrary : public UBlueprintFunctionLibrary
+{
+   GENERATED_BODY()
+public:
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Ability")
+	   static bool AbilityInfo_IsValid (const FRAbilityInfo& AbilityInfo);
 };
 
 // ============================================================================
@@ -48,7 +62,7 @@ public:
    //                 Core Params
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       FRAbilityInfo GetAbilityInfo () const;
 
    // Wrapper around GetAbilityInfo ().Description

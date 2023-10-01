@@ -8,6 +8,15 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
+// ============================================================================
+//                   AbilityInfo
+// ============================================================================
+
+bool URAbilityInfolLibrary::AbilityInfo_IsValid (const FRAbilityInfo& AbilityInfo)
+{
+   return AbilityInfo.IsValid ();
+}
+
 //=============================================================================
 //                 Passsive Ability
 //=============================================================================
