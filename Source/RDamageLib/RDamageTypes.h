@@ -14,32 +14,32 @@ class AActor;
 //                   Resistance
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RDAMAGELIB_API FRDamageResistance
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftClassPtr<URDamageType> DamageType;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Flat = 0;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Percent = 0;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RDAMAGELIB_API FRDamageResistanceWithTag
 {
    GENERATED_BODY()
 
    // Who or What is applying Resistance
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FString Tag;
 
    // What value is added
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRDamageResistance Value;
 };
 

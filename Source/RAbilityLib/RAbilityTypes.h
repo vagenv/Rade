@@ -14,15 +14,15 @@ class URAbility;
 //                   AbilityInfo
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSoftClassPtr<URAbility> AbilityClass;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       FRUIDescription Description;
 
    // Level -> scaling info?

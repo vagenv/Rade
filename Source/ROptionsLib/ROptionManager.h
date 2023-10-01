@@ -8,16 +8,16 @@
 //                   Screen Resolution
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct ROPTIONSLIB_API FRScreenResolution
 {
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Width = 0;
+	   int32 Width = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Height = 0;
+	   int32 Height = 0;
 
    bool operator == (const FRScreenResolution &res) const noexcept;
 };
@@ -26,7 +26,7 @@ struct ROPTIONSLIB_API FRScreenResolution
 //                   Video Quality
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct ROPTIONSLIB_API FRVideoQualitySetting
 {
    GENERATED_BODY()

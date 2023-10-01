@@ -33,7 +33,7 @@ enum class ELoadingWidgetType : uint8
 };
 
 /** Alignment for widget*/
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FWidgetAlignment
 {
 	GENERATED_BODY()
@@ -47,7 +47,7 @@ struct FWidgetAlignment
 };
 
 // Text appearance settings
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FTextAppearance
 {
 	GENERATED_BODY()
@@ -73,7 +73,7 @@ struct FTextAppearance
 	TEnumAsByte <ETextJustify::Type> Justification = ETextJustify::Left;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FThrobberSettings
 {
 	GENERATED_BODY()
@@ -99,7 +99,7 @@ struct FThrobberSettings
 	FSlateBrush Image;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FCircularThrobberSettings
 {
 	GENERATED_BODY()
@@ -121,7 +121,7 @@ struct FCircularThrobberSettings
 	FSlateBrush Image;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FImageSequenceSettings
 {
 	GENERATED_BODY()
@@ -148,7 +148,7 @@ struct FImageSequenceSettings
 /**
  * Background widget for the widget loading screen
  */
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RLOADINGSCREENLIB_API FBackgroundSettings
 {
 	GENERATED_BODY()
@@ -180,7 +180,7 @@ struct RLOADINGSCREENLIB_API FBackgroundSettings
 /**
  * Loading widget settings
  */
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RLOADINGSCREENLIB_API FLoadingWidgetSettings
 {
 	GENERATED_BODY()
@@ -256,7 +256,7 @@ struct RLOADINGSCREENLIB_API FLoadingWidgetSettings
 /**
  * Tips text settings
  */
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RLOADINGSCREENLIB_API FTipSettings
 {
 	GENERATED_BODY()
@@ -284,7 +284,7 @@ struct RLOADINGSCREENLIB_API FTipSettings
 /**
  * The text that displayed when loading is complete. Ignore this if you don't set "bShowLoadingCompletedText" = true
  */
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RLOADINGSCREENLIB_API FLoadingCompleteTextSettings
 {
 	GENERATED_BODY()
@@ -321,7 +321,7 @@ struct RLOADINGSCREENLIB_API FLoadingCompleteTextSettings
 /**
  * Loading Screen Settings
  */
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RLOADINGSCREENLIB_API FALoadingScreenSettings
 {
 	GENERATED_BODY()
@@ -417,7 +417,7 @@ struct RLOADINGSCREENLIB_API FALoadingScreenSettings
 
 
 // Classic Layout settings
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FStartLayoutSettings
 {
 	GENERATED_BODY()
@@ -453,7 +453,7 @@ struct FStartLayoutSettings
 
 
 // Classic Layout settings
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct FLoadingLayoutSettings
 {
 	GENERATED_BODY()

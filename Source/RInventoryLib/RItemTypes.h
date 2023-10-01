@@ -23,15 +23,15 @@ struct FRItemData;
 //          Handle for ItemData defined in a table
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRItemDataHandle
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
       FDataTableRowHandle Arch;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Count = 1;
 
    // Converts Handle to ItemData;
@@ -42,15 +42,15 @@ struct RINVENTORYLIB_API FRItemDataHandle
 //          Item Recipe. Mapping Item <=> Array Of Items
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(RowType="/Script/RInventoryLib.RItemData"))
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(RowType="/Script/RInventoryLib.RItemData"))
       FRItemDataHandle CreateItem;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRItemDataHandle> RequiredItems;
 };
 
@@ -84,7 +84,7 @@ enum class ERItemRarity : uint8
 // ============================================================================
 //          Minimal data for Item Descrption
 // ============================================================================
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
@@ -104,40 +104,40 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
       TArray<FString> CastType;
 
    // UI Information
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRUIDescription Description;
 
    // Rarity
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       ERItemRarity Rarity = ERItemRarity::None;
 
    // Number of item instances
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       int32 Count = 1;
 
    // Max number of item instances per item slot
    // Stackable: MaxCount > 1
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       int32 MaxCount = 100;
 
    // Item Weight of each instance. In gramms.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (ClampMin = 0))
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0))
       int32 Weight = 0;
 
    // Selling price
    // 0 -> Can't sell
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Price = 0;
 
    // --- Pickup
    //    If both are empty, item can not be dropped.
 
    // Pickup mesh
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftObjectPtr<UStaticMesh> PickupMesh;
 
    // Custom pickup class. Will be used if set.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftClassPtr<ARItemPickup> Pickup;
 
    // --- Internal Runtime information
@@ -170,7 +170,7 @@ protected:
 //          Item with use action
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 {
    GENERATED_BODY()
@@ -178,10 +178,10 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    FRActionItemData ();
 
    // Use interface callback
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftClassPtr<URItemAction> Action;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       bool DestroyOnAction = false;
 
    virtual bool ReadJSON  () override;

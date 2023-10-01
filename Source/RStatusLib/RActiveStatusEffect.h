@@ -17,25 +17,25 @@ class URActiveStatusEffect;
 //                   Active Status Effect Info
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRActiveStatusEffectInfo : public FTableRowBase
 {
    GENERATED_BODY()
 public:
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftClassPtr<URActiveStatusEffect> EffectClass;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRUIDescription Description;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Duration = 5;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<float> StackScaling;
 
    bool IsValid () const {

@@ -34,7 +34,7 @@ public:
       bool CapturePlayersView (int32 Resolution, TArray<FColor> &ColorData);
 
 
-   UPROPERTY(EditAnywhere, Transient)
+   UPROPERTY(VisibleAnywhere, Transient)
       USceneCaptureComponent2D* Camera;
 
 	UFUNCTION(BlueprintCallable,

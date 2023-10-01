@@ -4,7 +4,7 @@
 
 #include "RUIDescription.generated.h"
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RUILIB_API FRUIDescription
 {
    GENERATED_BODY()

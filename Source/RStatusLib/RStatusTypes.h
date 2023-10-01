@@ -8,7 +8,7 @@
 //                   Core Stat
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRCoreStats
 {
    GENERATED_BODY()
@@ -16,13 +16,13 @@ struct RSTATUSLIB_API FRCoreStats
    FRCoreStats ();
    FRCoreStats (float Value);
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float STR = 0;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float AGI = 0;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float INT = 0;
 
    // Are any values set
@@ -47,24 +47,24 @@ struct RSTATUSLIB_API FRCoreStats
 //                   Extra Stat
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRSubStats
 {
    GENERATED_BODY()
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float Evasion = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float Critical = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float MoveSpeed = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float AttackSpeed = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float AttackPower = 0;
 
    FRSubStats  operator +  (const FRSubStats &stat) const;
@@ -85,19 +85,19 @@ struct RSTATUSLIB_API FRSubStats
 //                   Status Value (Health, Stamina, Mana)
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRStatusValue
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Current = 50;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Max = 100;
 
    // Per second
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Regen = 1;
 
    void Tick (float DeltaTime);

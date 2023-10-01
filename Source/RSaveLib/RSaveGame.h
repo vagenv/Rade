@@ -6,7 +6,7 @@
 #include "RSaveGame.generated.h"
 
 // Wrapper for Data.
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSAVELIB_API FRSaveData
 {
    GENERATED_BODY()

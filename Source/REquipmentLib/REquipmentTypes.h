@@ -21,7 +21,7 @@ class UWorld;
 //                Consumable Items
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
@@ -30,9 +30,8 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<TSoftClassPtr<URActiveStatusEffect> > ActiveEffects;
-
 
    static bool CanCast (const FRItemData &src);
    static bool Cast    (const FRItemData &src, FRConsumableItemData &dst);
@@ -45,7 +44,7 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 //          Equipment
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
@@ -53,28 +52,28 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
    FREquipmentData ();
 
    // Slot to which item will be attached on spawn
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftClassPtr<UREquipmentSlotComponent> EquipmentSlot;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	   TSoftObjectPtr<UStaticMesh> StaticMesh;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	   TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float CurrentDurability = 100;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float MaxDurability = 100;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRDamageResistance> Resistence;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRCoreStats RequiredStats;
 
    static bool CanCast (const FRItemData &src);
