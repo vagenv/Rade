@@ -2,43 +2,7 @@
          Switch to Common UI
 =================================================
 
-==============
-Ability Equip Window
-==============
-[Slot]            [Ability List]
-[Ability Info]
-[Description] from RWorldAbilitMgr and AbilityTable
-
-===
-Check cast and show
-===
-[Requirnment] (FRCoreStats, TArray<AbilityInfo>)
-[Cost] (Health, Mana, Stamina)
-
-
-==============
-LearnAbility Window/Menu
-==============
-List of List of [AbilityWidget]
-
-[Fireball]  [Firewall]     ... [Fire Nova]
-[Heal]      [Healing Aura] ...
-[Healthy 1] [Healthy 2]    ...
-
-
-[Ability Widgets]
-- State (Disabled, <Learn>, <Assign>)
-- Can learn / Learned and Passive / Learned and Active / Can not learn yet
-
-<Learn>
-Popup. Do you want to learn <Ability>
-
-SelectAbilityWindow <Assign>
-- List for <ActionSlot>
-
-SelectSlotWindow <Assign>
-- List of active <Ability>
-
+Level Up
 
 ==============
 UseStat Window
@@ -47,6 +11,38 @@ Available stat [Number]
 [-] STR [+]
 [-] AGI [+]
 [-] ING [+]
+
+
+
+==============
+LearnAbility Window/Menu
+==============
+List of List of [AbilityWidget]
+
+[Fireball]  [Firewall]     ... [Fire Nova] |  
+[Heal]      [Healing Aura] ...             |    AbilityInfoWidget
+[Healthy 1] [Healthy 2]    ...             |
+
+
+[Ability Widgets]
+- State (Disabled, <Learn>, <Assign>)
+- Can learn / Learned and Passive / Learned and Active / Can not learn yet
+
+===
+Learn confirmation window
+===
+Popup Window.
+[Do you want to learn <Ability>?]
+[Cost?]
+
+
+==============
+SelectAbilitySlotWindow
+==============
+                    |
+ [AbilitInfoWidget] | List of <ActionSlot>
+                    |
+
 
 
 ==============
@@ -90,11 +86,12 @@ RUI_GridContainer
 - Use RUI_ItemWidget_Icon
 
 
-==============
-RItem Redesign?
-==============
+=================================================
+   RItem Redesign?
+=================================================
 
 Interfaces and maps?
+Will remove subclasses of structs.
 
 Data:
 ID
@@ -108,13 +105,25 @@ ID
 - Price
 - Item
 - ActionList: TArray<TSubclass<IRAction> >
+- Map of additional data (Contain sub class data?)
 
+IRAction_DestroyOnUse
+IRAction_Equip
 
-Equipment
-- ActionList.Add (IR_Action_Equipment::GetClass ())
+bool FREffectItem::Get (ItemData)
+- TArray<TSoftClassPtr<URActiveStatusEffect> > ActiveEffects;
+
+bool FREquipmentItem::Get (ItemData)
 - EquipmentSlot
 - StaticMesh
 - SkeletalMesh
+- CurrentDurability
+- MaxDurability
+- Resistence
+- PassiveEffects
+- RequiredStats
+
+bool FRWeaponItem::Get (ItemData)
 - CurrentDurability
 - MaxDurability
 - Resistence
