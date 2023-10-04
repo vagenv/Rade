@@ -24,7 +24,7 @@ void URPlayerStatusMgrComponent::GetLifetimeReplicatedProps (TArray<FLifetimePro
 
    DOREPLIFETIME (URPlayerStatusMgrComponent, CoreStats_Base);
    DOREPLIFETIME (URPlayerStatusMgrComponent, CoreStats_Added);
-   DOREPLIFETIME (URPlayerStatusMgrComponent, CoreStats_Extra);
+   DOREPLIFETIME (URPlayerStatusMgrComponent, LevelUpExtraStat);
    DOREPLIFETIME (URPlayerStatusMgrComponent, SubStats_Base);
    DOREPLIFETIME (URPlayerStatusMgrComponent, SubStats_Added);
 }
@@ -81,9 +81,9 @@ void URPlayerStatusMgrComponent::LeveledUp ()
    if (!ensure (IsValid (WorldStatusMgr))) return;
    if (!ensure (IsValid (ExperienceMgr)))  return;
 
-   float ExtraStats = WorldStatusMgr->GetLevelUpExtraStatGain (ExperienceMgr->GetCurrentLevel ());
+   float ExtraStats = WorldStatusMgr->GetLevelUpExtraGain (ExperienceMgr->GetCurrentLevel ());
 
-   if (ExtraStats) CoreStats_Extra += ExtraStats;
+   if (ExtraStats) LevelUpExtraStat += ExtraStats;
 
    FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
    if (!DeltaStats.Empty ()) CoreStats_Base += DeltaStats;
@@ -209,29 +209,29 @@ void URPlayerStatusMgrComponent::RecalcStatusValues ()
 }
 
 //=============================================================================
-//                 Extra stat Points
+//                 Level Up Extra stat Points
 //=============================================================================
 
-float URPlayerStatusMgrComponent::GetCoreStats_Extra () const
+float URPlayerStatusMgrComponent::GetLevelUpExtraStat () const
 {
-   return CoreStats_Extra;
+   return LevelUpExtraStat;
 }
 
-bool URPlayerStatusMgrComponent::AddExtraStat (FRCoreStats ExtraStat)
+bool URPlayerStatusMgrComponent::AssignLevelUpExtraStat (FRCoreStats StatValues)
 {
-   float TotalUse = ExtraStat.STR + ExtraStat.AGI + ExtraStat.INT;
-   if (TotalUse > GetCoreStats_Extra ()) return false;
+   float TotalUse = StatValues.STR + StatValues.AGI + StatValues.INT;
+   if (TotalUse > GetLevelUpExtraStat ()) return false;
 
-   CoreStats_Base  += ExtraStat;
-   CoreStats_Extra -= TotalUse;
+   CoreStats_Base   += StatValues;
+   LevelUpExtraStat -= TotalUse;
 
    RecalcStatus ();
    return true;
 }
 
-void URPlayerStatusMgrComponent::AddExtraStat_Server_Implementation (FRCoreStats ExtraStat)
+void URPlayerStatusMgrComponent::AssignLevelUpExtraStat_Server_Implementation (FRCoreStats StatValues)
 {
-   AddExtraStat (ExtraStat);
+   AssignLevelUpExtraStat (StatValues);
 }
 
 //=============================================================================
@@ -276,13 +276,13 @@ bool URPlayerStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) con
 void URPlayerStatusMgrComponent::OnSave (FBufferArchive &SaveData)
 {
    SaveData << Health << Mana << Stamina;
-   SaveData << CoreStats_Base << CoreStats_Extra;
+   SaveData << CoreStats_Base << LevelUpExtraStat;
 }
 
 void URPlayerStatusMgrComponent::OnLoad (FMemoryReader &LoadData)
 {
    LoadData << Health << Mana << Stamina;
-   LoadData << CoreStats_Base << CoreStats_Extra;
+   LoadData << CoreStats_Base << LevelUpExtraStat;
 
    ReportStatsUpdated ();
 }

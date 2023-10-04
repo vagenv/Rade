@@ -52,18 +52,18 @@ protected:
 protected:
    // To be assigned to core stats
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      float CoreStats_Extra = 0;
+      float LevelUpExtraStat = 0;
 public:
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      float GetCoreStats_Extra () const;
+      float GetLevelUpExtraStat () const;
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool AddExtraStat (FRCoreStats ExtraStat);
+      bool AssignLevelUpExtraStat (FRCoreStats StatValues);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Status")
-      void AddExtraStat_Server                (FRCoreStats ExtraStat);
-      void AddExtraStat_Server_Implementation (FRCoreStats ExtraStat);
+      void AssignLevelUpExtraStat_Server                (FRCoreStats StatValues);
+      void AssignLevelUpExtraStat_Server_Implementation (FRCoreStats StatValues);
 
    //==========================================================================
    //                 Core and Sub Stats

@@ -54,13 +54,13 @@ URWorldStatusMgr::URWorldStatusMgr ()
    //                 Extra Stat
    //==========================================================================
 
-   FRichCurve* LevelUpExtraStatGainCurveData = LevelUpExtraStatGainCurve.GetRichCurve ();
-   LevelUpExtraStatGainCurveData->AddKey (  0, 3.0);
-   LevelUpExtraStatGainCurveData->AddKey ( 10, 2.8);
-   LevelUpExtraStatGainCurveData->AddKey ( 20, 2.5);
-   LevelUpExtraStatGainCurveData->AddKey ( 50, 2.0);
-   LevelUpExtraStatGainCurveData->AddKey (100, 1.5);
-   LevelUpExtraStatGainCurveData->AddKey (200, 1.0);
+   FRichCurve* LevelUpExtraGainCurveData = LevelUpExtraGainCurve.GetRichCurve ();
+   LevelUpExtraGainCurveData->AddKey (  0, 3.0);
+   LevelUpExtraGainCurveData->AddKey ( 10, 2.8);
+   LevelUpExtraGainCurveData->AddKey ( 20, 2.5);
+   LevelUpExtraGainCurveData->AddKey ( 50, 2.0);
+   LevelUpExtraGainCurveData->AddKey (100, 1.5);
+   LevelUpExtraGainCurveData->AddKey (200, 1.0);
 
    //==========================================================================
    //                 Status Value Curves
@@ -222,9 +222,9 @@ void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 //                Level Function
 //=============================================================================
 
-float URWorldStatusMgr::GetLevelUpExtraStatGain (int CurrentLevel) const
+float URWorldStatusMgr::GetLevelUpExtraGain (int CurrentLevel) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpExtraStatGainCurve, CurrentLevel);
+   return URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpExtraGainCurve, CurrentLevel);
 }
 
 FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
