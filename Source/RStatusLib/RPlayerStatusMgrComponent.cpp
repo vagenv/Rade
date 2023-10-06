@@ -86,8 +86,8 @@ void URPlayerStatusMgrComponent::LeveledUp ()
    if (ExtraStats) LevelUpExtraStat += ExtraStats;
 
    FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
-   if (!DeltaStats.Empty ()) CoreStats_Base += DeltaStats;
-   if (!DeltaStats.Empty () || ExtraStats)
+   if (!DeltaStats.IsEmpty ()) CoreStats_Base += DeltaStats;
+   if (!DeltaStats.IsEmpty () || ExtraStats)
       RecalcStatus ();
 }
 
@@ -220,7 +220,7 @@ float URPlayerStatusMgrComponent::GetLevelUpExtraStat () const
 bool URPlayerStatusMgrComponent::AssignLevelUpExtraStat (FRCoreStats StatValues)
 {
    float TotalUse = StatValues.STR + StatValues.AGI + StatValues.INT;
-   if (TotalUse > GetLevelUpExtraStat ()) return false;
+   if (TotalUse > 0 && TotalUse > GetLevelUpExtraStat ()) return false;
 
    CoreStats_Base   += StatValues;
    LevelUpExtraStat -= TotalUse;

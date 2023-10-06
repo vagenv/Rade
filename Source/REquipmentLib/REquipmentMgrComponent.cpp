@@ -373,7 +373,7 @@ bool UREquipmentMgrComponent::Equip_Slot (UREquipmentSlotComponent *EquipmentSlo
    }
 
    URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
-   if (!EquipmentData.RequiredStats.Empty ()) {
+   if (!EquipmentData.RequiredStats.IsEmpty ()) {
       if (!StatusMgr) {
          R_LOG_PRINTF ("Equipment item [%s] failed. URStatusMgrComponent not found", *EquipmentData.ID);
          return false;

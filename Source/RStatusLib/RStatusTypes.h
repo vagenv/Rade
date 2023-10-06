@@ -26,11 +26,13 @@ struct RSTATUSLIB_API FRCoreStats
       float INT = 0;
 
    // Are any values set
-   bool Empty () const;
+   bool IsEmpty () const;
 
    // All values are higher than
    bool MoreThan (const FRCoreStats &stat) const;
 
+   bool         operator == (const FRCoreStats &stat) const;
+   bool         operator != (const FRCoreStats &stat) const;
    FRCoreStats  operator +  (const FRCoreStats &stat) const;
    FRCoreStats  operator -  (const FRCoreStats &stat) const;
    FRCoreStats& operator += (const FRCoreStats &stat);
@@ -67,6 +69,11 @@ struct RSTATUSLIB_API FRSubStats
    UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float AttackPower = 0;
 
+   // Are any values set
+   bool IsEmpty () const;
+
+   bool        operator == (const FRSubStats &stat) const;
+   bool        operator != (const FRSubStats &stat) const;
    FRSubStats  operator +  (const FRSubStats &stat) const;
    FRSubStats  operator -  (const FRSubStats &stat) const;
    FRSubStats& operator += (const FRSubStats &stat);
@@ -120,13 +127,36 @@ class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
+   
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="IsEmpty (FRCoreStats)", CompactNodeTitle="IsEmpty"))
       static bool FRCoreStats_IsEmpty (const FRCoreStats &Value);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="Equal (FRCoreStats)", CompactNodeTitle="=="))
+	   static bool FRCoreStats_EqualEqual (const FRCoreStats& A,
+                                          const FRCoreStats& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="NotEqual (FRCoreStats)", CompactNodeTitle="!="))
+	   static bool FRCoreStats_NotEqual (const FRCoreStats& A,
+                                        const FRCoreStats& B);
+
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="IsEmpty (FRSubStats)", CompactNodeTitle="IsEmpty"))
       static bool FRSubStats_IsEmpty (const FRSubStats &Value);
+
+      UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="Equal (FRSubStats)", CompactNodeTitle="=="))
+	   static bool FRSubStats_EqualEqual (const FRSubStats& A,
+                                         const FRSubStats& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="NotEqual (FRCoreStats)", CompactNodeTitle="!="))
+	   static bool FRSubStats_NotEqual (const FRSubStats& A,
+                                       const FRSubStats& B);
+
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="ToString (FRStatusValue)", CompactNodeTitle="ToString"))
