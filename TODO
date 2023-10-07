@@ -2,46 +2,34 @@
          Switch to Common UI
 =================================================
 
-Level Up
-
 ==============
-UseStat Window
+Targeting
 ==============
-Available stat [Number]
-[-] STR [+]
-[-] AGI [+]
-[-] ING [+]
-
+- unify new target search
+- Weight of distance vs angle
 
 
 ==============
-LearnAbility Window/Menu
+Issues
 ==============
-List of List of [AbilityWidget]
 
-[Fireball]  [Firewall]     ... [Fire Nova] |  
-[Heal]      [Healing Aura] ...             |    AbilityInfoWidget
-[Healthy 1] [Healthy 2]    ...             |
+Click issue with ability select
 
 
-[Ability Widgets]
-- State (Disabled, <Learn>, <Assign>)
-- Can learn / Learned and Passive / Learned and Active / Can not learn yet
+Kick team mate widget
 
-===
-Learn confirmation window
-===
-Popup Window.
-[Do you want to learn <Ability>?]
-[Cost?]
+
+Fireball Ability is not saved/loaded
 
 
 ==============
-SelectAbilitySlotWindow
+Ability with stats
 ==============
-                    |
- [AbilitInfoWidget] | List of <ActionSlot>
-                    |
+Ability damage / effect scale from stat
+Fireball:
+- 10 + 5 * Int
+Heal:
+- 10 + 2 * Int
 
 
 
