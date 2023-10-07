@@ -44,7 +44,11 @@ public:
 
    // Get ability info and scaling.
    UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-      FRAbilityInfo GetAbilityInfo (const URAbility* Ability) const;
+      FRAbilityInfo GetAbilityInfo_Object (const URAbility* Ability) const;
+
+   // Get ability info and scaling.
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      FRAbilityInfo GetAbilityInfo_Class (const TSoftClassPtr<URAbility> AbilityClass) const;
 
    UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       TArray<FRAbilityInfo> GetAllAbilities () const;

@@ -46,7 +46,7 @@ void URWorldAbilityMgr::BeginPlay ()
    Super::BeginPlay ();
 }
 
-FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo (const URAbility* Ability) const
+FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Object (const URAbility* Ability) const
 {
    FRAbilityInfo Result;
    if (ensure (IsValid (Ability))) {
@@ -60,6 +60,22 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo (const URAbility* Ability) const
 
    return Result;
 }
+
+FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Class (const TSoftClassPtr<URAbility> AbilityClass) const
+{
+   FRAbilityInfo Result;
+   if (ensure (!AbilityClass.IsNull ())) {
+      FTopLevelAssetPath Path = AbilityClass->GetClassPathName();
+      if (MapAbility.Contains (Path)) {
+         Result = MapAbility[Path];
+      } else {
+         R_LOG_PRINTF ("Error. [%s] Ability not found in [AbilityTable]", *Path.ToString ());
+      }
+   }
+
+   return Result;
+}
+
 
 TArray<FRAbilityInfo> URWorldAbilityMgr::GetAllAbilities () const
 {

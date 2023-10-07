@@ -57,7 +57,7 @@ void URAbility::PullAbilityInfo ()
 {
    if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
       WorldMgr->ReportAddAbility (this);
-      AbilityInfo = WorldMgr->GetAbilityInfo (this);
+      AbilityInfo = WorldMgr->GetAbilityInfo_Object (this);
    }
 
    if (!AbilityInfo.IsValid ()) {
