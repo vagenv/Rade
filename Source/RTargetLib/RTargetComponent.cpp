@@ -20,7 +20,7 @@ void URTargetComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URTargetComponent::RegisterTarget ()
 {
    if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->AddTarget (this);
+      Mgr->RegisterTarget (this);
    } else {
       FTimerHandle RepeatTimer;
       GetWorld ()->GetTimerManager ().SetTimer (RepeatTimer,
@@ -31,7 +31,7 @@ void URTargetComponent::RegisterTarget ()
 void URTargetComponent::UnregisterTarget ()
 {
    if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->RmTarget (this);
+      Mgr->UnregisterTarget (this);
    }
 }
 
@@ -51,7 +51,7 @@ bool URTargetComponent::GetIsTargetable () const
 }
 
 //=============================================================================
-//         Is this target be selected
+//         Is this target selected by someone
 //=============================================================================
 
 void URTargetComponent::SetIsTargeted (bool CanTarget)

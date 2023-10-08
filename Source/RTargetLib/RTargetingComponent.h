@@ -107,7 +107,7 @@ protected:
 
    // Perform search for new target
    UFUNCTION()
-      virtual void SearchNewTarget (float InputOffsetX = 0, float InputOffsetY = 0);
+      virtual void SearchNewTarget (FVector2D InputVector = FVector2D::ZeroVector);
 
    // Change the current target and notify the old and new target
    UFUNCTION()

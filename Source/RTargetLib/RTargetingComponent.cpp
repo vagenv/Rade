@@ -39,7 +39,11 @@ void URTargetingComponent::BeginPlay ()
 
    TargetMgr = URWorldTargetMgr::GetInstance (this);
 
-	GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle, this, &URTargetingComponent::TargetCheck, 1, true);
+	GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle,
+                                                  this,
+                                                  &URTargetingComponent::TargetCheck,
+                                                  1,
+                                                  true);
 }
 
 void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -115,7 +119,6 @@ FRotator URTargetingComponent::GetControlRotation ()
    return Result;
 }
 
-
 //=============================================================================
 //                         Functions
 //=============================================================================
@@ -130,7 +133,7 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
       && (  FMath::Abs (OffsetX) > TargetAdjustMinOffset
          || FMath::Abs (OffsetY) > TargetAdjustMinOffset))
    {
-      SearchNewTarget (OffsetX, OffsetY);
+      SearchNewTarget (FVector2D (OffsetX, OffsetY));
    }
 }
 
@@ -156,7 +159,7 @@ void URTargetingComponent::TargetCheck ()
 
       // --- Check distance
       float Distance = FVector::Dist (GetOwner ()->GetActorLocation (), TargetCurrent->GetComponentLocation ());
-      if (Distance > TargetMgr->SearchDistance) RemoveTarget = true;
+      if (Distance > TargetMgr->SearchDistanceMax) RemoveTarget = true;
 
       // Check if target was disabled
       if (!TargetCurrent->GetIsTargetable ()) RemoveTarget = true;
@@ -170,7 +173,7 @@ void URTargetingComponent::TargetCheck ()
 }
 
 // Perform search for new target
-void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffsetY)
+void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 {
    if (!IsValid (TargetMgr)) return;
 
@@ -179,28 +182,22 @@ void URTargetingComponent::SearchNewTarget (float InputOffsetX, float InputOffse
    if (CurrentTime < LastTargetSearch + TargetSearchDelay) return;
    LastTargetSearch = CurrentTime;
 
-   TArray<AActor*>                blacklistActors;
-   TArray<URTargetComponent*> blacklistTargets;
-   blacklistActors.Add (GetOwner ());
-
    URTargetComponent* TargetNew = nullptr;
 
    if (IsValid (TargetCurrent)) {
+      TArray<URTargetComponent*> ExcludeTargets;
+      ExcludeTargets.Add (TargetCurrent);
+
       // --- Adjust target
-      blacklistTargets.Add (TargetCurrent);
-
-      TargetNew = TargetMgr->FindNear (this,
-                                       TargetCurrent,
-                                       InputOffsetX,
-                                       InputOffsetY,
-                                       blacklistActors,
-                                       blacklistTargets);
-
+      TargetNew = TargetMgr->Find_Screen (this,
+                                          InputVector,
+                                          TArray<AActor*>(),
+                                          ExcludeTargets);
    } else {
       // --- Search new target
-      TargetNew = TargetMgr->Find (this,
-                                   blacklistActors,
-                                   blacklistTargets);
+      TargetNew = TargetMgr->Find_Target (this,
+                                          TArray<AActor*>(),
+                                          TArray<URTargetComponent*>());
    }
 
    if (IsValid (TargetNew)) SetTargetCurrent (TargetNew);
