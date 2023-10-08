@@ -15,7 +15,7 @@ struct REXPERIENCELIB_API FREnemyExp : public FTableRowBase
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      TSubclassOf<ACharacter> TargetClass;
+      TSoftClassPtr<ACharacter> TargetClass;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float PerDamage = 1;
@@ -40,7 +40,7 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<UClass *, FREnemyExp> MapEnemyExp;
+      TMap<FTopLevelAssetPath, FREnemyExp> MapEnemyExp;
 public:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Experience",

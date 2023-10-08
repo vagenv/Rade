@@ -133,7 +133,7 @@ void URWorldExperienceMgr::InitializeComponent ()
       for (const FName& ItRowName : RowNames) {
          FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
          if (ItRow && ItRow->TargetClass) {
-            MapEnemyExp.Add (ItRow->TargetClass, *ItRow);
+            MapEnemyExp.Add (ItRow->TargetClass->GetClassPathName (), *ItRow);
          }
       }
    }
@@ -165,9 +165,11 @@ void URWorldExperienceMgr::OnDamage (AActor*             Victim,
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
-   if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
+   FTopLevelAssetPath VictimClassName = Victim->GetClass ()->GetClassPathName ();
 
-   ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDamage * Amount);
+   if (!MapEnemyExp.Contains (VictimClassName)) return;
+
+   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassName].PerDamage * Amount);
 }
 
 void URWorldExperienceMgr::OnDeath (AActor* Victim,
@@ -182,8 +184,10 @@ void URWorldExperienceMgr::OnDeath (AActor* Victim,
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
-   if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
+   FTopLevelAssetPath VictimClassName = Victim->GetClass ()->GetClassPathName ();
 
-   ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDeath);
+   if (!MapEnemyExp.Contains (VictimClassName)) return;
+
+   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassName].PerDeath);
 }
 
