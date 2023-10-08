@@ -30,13 +30,6 @@ public:
    //                 Stored pointers
    //==========================================================================
 private:
-   // For ability point curve calculations
-   UPROPERTY()
-      URWorldAbilityMgr* WorldAbilityMgr = nullptr;
-
-   // Experience
-   UPROPERTY()
-      URExperienceMgrComponent* ExperienceMgr = nullptr;
 
    // Handle to async load task
    TSharedPtr<FStreamableHandle> AbilityLoadHandle;

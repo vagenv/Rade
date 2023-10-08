@@ -2,7 +2,6 @@
 
 #include "RAbilityMgrComponent.h"
 #include "RAbilityTypes.h"
-#include "RWorldAbilityMgr.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
@@ -38,15 +37,12 @@ void URAbilityMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
 
-   // Balancing Mgr
-   WorldAbilityMgr = URWorldAbilityMgr::GetInstance (this);
-
    // Exp Mgr
-   ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
+   URExperienceMgrComponent* ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
 
    if (R_IS_NET_ADMIN) {
 
-      if (IsValid (ExperienceMgr)) {
+      if (ExperienceMgr) {
          ExperienceMgr->OnLevelUp.AddDynamic (this, &URAbilityMgrComponent::LeveledUp);
       }
 
@@ -72,14 +68,9 @@ void URAbilityMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
 
-   // --- Points per level?
-   // if (!ensure (IsValid (WorldAbilityMgr))) return;
-   // if (!ensure (IsValid (ExperienceMgr)))  return;
-
    AbilityPoints++;
    ReportAbilityPointUpdated ();
 }
-
 
 int URAbilityMgrComponent::GetAbilityPoint () const
 {
