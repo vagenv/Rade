@@ -151,7 +151,7 @@ protected:
    UFUNCTION()
       void OnStatsUpdated ();
 private:
-   // To evade endless when:
+   // To evade endless loop when:
    // OnStatusUpdated -> CalcWeight -> SetEffect -> OnStatusUpdated
    int32 LastWeightMax = 0;
 
