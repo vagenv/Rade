@@ -32,14 +32,13 @@ public:
    //                 Pickups
    //==========================================================================
 
-protected:
+private:
    // List of currently available pickup
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory",
-             meta = (GetByRef))
-      TArray<const ARItemPickup*> CurrentPickups;
-
+   UPROPERTY()
+      TArray<TWeakObjectPtr<const ARItemPickup> > CurrentPickups;
+protected:
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      const ARItemPickup* ClosestPickup = nullptr;
+      TWeakObjectPtr<const ARItemPickup> ClosestPickup = nullptr;
 
 
    UFUNCTION()
@@ -64,7 +63,6 @@ public:
    bool Pickup_Unregister (const ARItemPickup* Pickup);
 
 protected:
-
 
    FTimerHandle TimerClosestPickup;
 

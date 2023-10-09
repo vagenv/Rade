@@ -68,18 +68,18 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
    FVector  MgrDir = MgrRot.Vector ();
    MgrDir.Normalize ();
 
-   const ARItemPickup * newClosestPickup = nullptr;
+   TWeakObjectPtr<const ARItemPickup> newClosestPickup;
 
-   TArray<const ARItemPickup*> NewList;
+   TArray<TWeakObjectPtr<const ARItemPickup> > NewList;
 
-   for (const ARItemPickup *ItPickup : CurrentPickups) {
-      if (!ensure (IsValid (ItPickup))) continue;
+   for (TWeakObjectPtr<const ARItemPickup> ItPickup : CurrentPickups) {
+      if (!ItPickup.IsValid ()) continue;
 
       // If valid
       NewList.Add (ItPickup);
 
       // First one
-      if (!newClosestPickup) {
+      if (!newClosestPickup.IsValid ()) {
          newClosestPickup = ItPickup;
          continue;
       }
