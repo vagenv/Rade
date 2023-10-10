@@ -3,34 +3,46 @@
 =================================================
 
 ==============
-Targeting
-==============
-- unify new target search
-- Weight of distance vs angle
-
-
-==============
 Issues
 ==============
 
-Click issue with ability select
+LINUX
+- setfocused not showing up
+- item list empty
+
+Re-implement kick team mate widget
+
+==============
+Pickup
+==============
+
+Rework pickup.
+- Should be WindowWidget
+- Refocus on it (Register/unregister)
+
+Pickup target class
+
+Magnetic pickup without physics. Direct move.
 
 
-Kick team mate widget
-
+==============
+Ability
+==============
 
 Fireball Ability is not saved/loaded
 
+Poison aura ability not working
 
-==============
-Ability with stats
-==============
+Ability
+- Equipable / Not equipable
+- Learn requirnment (Cost N point + other ability as dependency)
+
+
 Ability damage / effect scale from stat
 Fireball:
 - 10 + 5 * Int
 Heal:
 - 10 + 2 * Int
-
 
 
 ==============
