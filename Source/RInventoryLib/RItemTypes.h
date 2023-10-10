@@ -204,7 +204,7 @@ class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   
+
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
 	   static bool Item_IsValid (const FRItemData& ItemData);
 

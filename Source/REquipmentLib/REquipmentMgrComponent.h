@@ -61,7 +61,7 @@ public:
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
       virtual bool Equip_Equipment (const FREquipmentData &EquipmentData);
-      
+
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
       virtual bool Equip_Slot (UREquipmentSlotComponent *EquipmentSlot,
                                const FREquipmentData &EquipmentData);
@@ -111,7 +111,7 @@ public:
          UREquipmentSlotComponent *EquipmentSlot,
          const FREquipmentData    &EquipmentData);
       virtual void Equip_Slot_Server_Implementation (
-         UREquipmentMgrComponent  *DstEquipment, 
+         UREquipmentMgrComponent  *DstEquipment,
          UREquipmentSlotComponent *EquipmentSlot,
          const FREquipmentData    &EquipmentData);
 
@@ -138,7 +138,7 @@ public:
          UREquipmentMgrComponent  *DstEquipment,
          UREquipmentSlotComponent *EquipmentSlot);
       virtual void UnEquip_Slot_Server_Implementation (
-         UREquipmentMgrComponent  *DstEquipment, 
+         UREquipmentMgrComponent  *DstEquipment,
          UREquipmentSlotComponent *EquipmentSlot);
 
    //==========================================================================

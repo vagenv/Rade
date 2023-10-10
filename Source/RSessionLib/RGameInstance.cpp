@@ -122,7 +122,7 @@ void URGameInstance::FindSessions (
       R_LOG ("Invalid UserId");
       return;
    }
-      
+
    // Fill in all the SearchSettings, like if we are searching for a LAN game and how many results we want to have!
    SessionSearch = MakeShareable(new FOnlineSessionSearch());
 
@@ -336,7 +336,7 @@ bool URGameInstance::JoinSession (
    LastLevelMap = GetWorld ()->GetPackage ()->GetPathName ();
    if (!LastLevelMap.IsEmpty ()) {
       //R_LOG ("Set default map to: " + UGameMapsSettings::GetGameDefaultMap () + " => " + LastLevelMap);
-      UGameMapsSettings::SetGameDefaultMap (LastLevelMap);  
+      UGameMapsSettings::SetGameDefaultMap (LastLevelMap);
    }
 
    // Set the Handle again
@@ -398,7 +398,7 @@ void URGameInstance::OnJoinSessionComplete (FName SessionName, EOnJoinSessionCom
 // ============================================================================
 
 bool URGameInstance::KickPlayer (APlayerController* KickedPlayer)
-{ 
+{
    if (KickedPlayer == NULL) {
       R_LOG ("Invalid kick controller");
       return false;

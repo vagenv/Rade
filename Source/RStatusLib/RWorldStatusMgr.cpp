@@ -206,7 +206,6 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 //                Status Effect
 //=============================================================================
 
-
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
    if (!ensure (IsValid (Effect))) return;

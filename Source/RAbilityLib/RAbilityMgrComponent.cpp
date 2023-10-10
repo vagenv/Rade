@@ -126,7 +126,7 @@ bool URAbilityMgrComponent::AddAbility (const TSoftClassPtr<URAbility> Ability_)
          if (AbilityLoadHandle->HasLoadCompleted ()) {
             if (UObject* Obj = AbilityLoadHandle->GetLoadedAsset ()) {
                if (UClass* AbilityClass = Cast<UClass> (Obj)) {
-  
+
                   URAbility* Ability = URUtil::AddComponent<URAbility> (GetOwner (), AbilityClass);
                   if (IsValid (Ability)) {
                      AbilityPoints--;

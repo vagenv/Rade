@@ -70,16 +70,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Loading Screen")
 		static void PreloadBackgroundImages();
 
-	// 
+	//
 	// Remove all preloaded background images
-	// 
+	//
 	// Only need to use this function when
 	// "bPreloadBackgroundImages" is checked.
-	// 
+	//
 	// You need to call "PreloadBackgroundImages"
 	// to manually load all background images again.
-	// 
-	// 
+	//
+	//
 	UFUNCTION(BlueprintCallable, Category = "Loading Screen")
 		static void RemovePreloadedBackgroundImages();
 };

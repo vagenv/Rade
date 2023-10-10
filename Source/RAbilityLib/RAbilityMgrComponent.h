@@ -75,11 +75,11 @@ public:
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
       void AddAbility_Server                (const TSoftClassPtr<URAbility> &Ability);
       void AddAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability);
-      
+
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
       void RmAbility_Server                (const TSoftClassPtr<URAbility> &Ability);
       void RmAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability);
- 
+
    //==========================================================================
    //                 Events
    //==========================================================================

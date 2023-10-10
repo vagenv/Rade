@@ -223,7 +223,7 @@ URTargetComponent* URWorldTargetMgr::Find_Screen (
 
    float ScreenMaxDistance = FMath::Sqrt ( FMath::Square<float> (ViewportSizeX)
                                          + FMath::Square<float> (ViewportSizeY));
-   
+
    // Get current target screen position
    bool bPlayerViewportRelative = false;
 
@@ -237,8 +237,8 @@ URTargetComponent* URWorldTargetMgr::Find_Screen (
 
 
       FVector2D ItScreenLocation;
-      if (!UGameplayStatics::ProjectWorldToScreen (PlayerController, 
-                                                   ItTarget->GetComponentLocation (), 
+      if (!UGameplayStatics::ProjectWorldToScreen (PlayerController,
+                                                   ItTarget->GetComponentLocation (),
                                                    ItScreenLocation,
                                                    bPlayerViewportRelative))
       {

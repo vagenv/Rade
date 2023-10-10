@@ -127,7 +127,6 @@ class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="IsEmpty (FRCoreStats)", CompactNodeTitle="IsEmpty"))
       static bool FRCoreStats_IsEmpty (const FRCoreStats &Value);

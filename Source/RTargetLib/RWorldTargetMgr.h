@@ -54,7 +54,7 @@ public:
    // FOV angle to search targets
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
       float SearchAngleMax = 70;
-      
+
    // Check if target can be targeted
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       bool IsValidTarget (
@@ -68,7 +68,7 @@ public:
    //==========================================================================
    //          Target to point
    //==========================================================================
-     
+
    // Angle in degrees to point
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       FRuntimeFloatCurve SearchAnglePoint;
@@ -76,7 +76,7 @@ public:
    // Distance to point
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       FRuntimeFloatCurve SearchDistancePoint;
-      
+
    // Calculate target point value
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       float GetTargetPoint (
@@ -86,7 +86,7 @@ public:
          const TArray<AActor*>            &ExcludeActors,
          const TArray<URTargetComponent*> &ExcludeTargets) const;
 
-      
+
    //==========================================================================
    //          Find Target
    //==========================================================================
@@ -108,7 +108,7 @@ public:
 
    //==========================================================================
    //         Adjust target
-   //========================================================================== 
+   //==========================================================================
 
    // Dot value to point. [0-1]
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")

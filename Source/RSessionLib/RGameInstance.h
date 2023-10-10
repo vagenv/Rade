@@ -42,7 +42,7 @@ private:
    //               Session Status
    //==========================================================================
 public:
-   
+
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Network")
       bool HasSession () const;
 
@@ -107,7 +107,7 @@ public:
 
    // --- Start Online Game Complete
    void OnStartSessionComplete (FName SessionName, bool bWasSuccessful);
-   
+
 protected:
    // Created
    FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
@@ -124,12 +124,12 @@ public:
 
    // Disable join methods
    virtual bool JoinSession (ULocalPlayer* LocalPlayer, const FOnlineSessionSearchResult& SearchResult) override{ return false; }
-   virtual bool JoinSession (ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) override { return false; } 
+   virtual bool JoinSession (ULocalPlayer* LocalPlayer, int32 SessionIndexInSearchResults) override { return false; }
 
    // Join Specific Online Session
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
       bool JoinSession (FRAvaiableSessionsData SessionData);
-   
+
    // --- Join Session
    bool JoinSession (TSharedPtr<const FUniqueNetId> UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
 
@@ -148,7 +148,7 @@ protected:
    //==========================================================================
    //                   Kick Player
    //==========================================================================
-  
+
    // Kick specific player
    UFUNCTION(BlueprintCallable, Category = "Rade|Network")
       bool KickPlayer (APlayerController* KickedPlayer);
