@@ -28,7 +28,7 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
    // Level -> scaling info?
 
    bool IsValid () const {
-      return AbilityClass != nullptr && !Description.Label.IsEmpty ();
+      return !AbilityClass.IsNull () && !Description.Label.IsEmpty ();
    };
 };
 

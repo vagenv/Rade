@@ -40,12 +40,12 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<FTopLevelAssetPath, FREnemyExp> MapEnemyExp;
+      TMap<FString, FREnemyExp> MapEnemyExp;
 public:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Experience",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RExperienceLib.REnemyExp"))
-      UDataTable* EnemyExpTable = nullptr;
+      const UDataTable* EnemyExpTable = nullptr;
 
 public:
    // Provides experience required for level

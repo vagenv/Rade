@@ -88,5 +88,9 @@ public:
    // Gets angle in degrees between two vectors
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Util")
       static float GetAngle (FVector v1, FVector v2);
+
+   // Gets path to table
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Util")
+      static FString GetTablePath (const UDataTable* Table);
 };
 

@@ -33,3 +33,7 @@ float URUtilLibrary::GetAngle (FVector v1, FVector v2)
    return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
 }
 
+FString URUtilLibrary::GetTablePath (const UDataTable* Table)
+{
+   return Table ? Table->GetPathName () : "NULL";
+}

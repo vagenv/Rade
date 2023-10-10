@@ -111,7 +111,7 @@ URAbility_Aura::URAbility_Aura ()
 void URAbility_Aura::BeginPlay ()
 {
    Super::BeginPlay ();
-   if (ensure (AffectedType)) {
+   if (ensure (!AffectedType.IsNull ())) {
       GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
                                                 this, &URAbility_Aura::CheckRange,
                                                 CheckRangeInterval, true, 0);
@@ -131,13 +131,13 @@ void URAbility_Aura::CheckRange ()
    TArray<AActor*> SearchResult;
    UGameplayStatics::GetAllActorsOfClass (this, AActor::StaticClass (), SearchResult);
 
-   FTopLevelAssetPath TargetClass = AffectedType->GetClass ()->GetClassPathName ();
+   FString TargetClassPath = AffectedType->GetClass ()->GetPathName ();
 
    TArray<AActor*> Result;
    for (AActor* ItActor : SearchResult) {
       if (!IsValid (ItActor)) continue;
       if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
-      if (ItActor->GetClass()->GetClassPathName() != TargetClass) continue;
+      if (ItActor->GetClass ()->GetPathName () != TargetClassPath) continue;
 
       Result.Add (ItActor);
    }

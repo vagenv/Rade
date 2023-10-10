@@ -26,17 +26,28 @@ URWorldAbilityMgr::URWorldAbilityMgr ()
 void URWorldAbilityMgr::InitializeComponent ()
 {
    Super::InitializeComponent ();
-
    // --- Parse Table and create Map for fast search
    if (AbilityTable) {
+
       MapAbility.Empty ();
+      FString TablePath = URUtilLibrary::GetTablePath (AbilityTable);
       FString ContextString;
       TArray<FName> RowNames = AbilityTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
          FRAbilityInfo* ItRow = AbilityTable->FindRow<FRAbilityInfo> (ItRowName, ContextString);
-         if (ItRow && ItRow->AbilityClass) {
-            MapAbility.Add (ItRow->AbilityClass->GetClassPathName (), *ItRow);
+
+         if (!ItRow) {
+            R_LOG_PRINTF ("Invalid FRAbilityInfo in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
          }
+
+         if (ItRow->AbilityClass.IsNull ()) {
+            R_LOG_PRINTF ("Invalid Ability Class in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         FString AbilityClassPath = ItRow->AbilityClass.ToString ();
+         MapAbility.Add (AbilityClassPath, *ItRow);
       }
    }
 }
@@ -50,13 +61,13 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Object (const URAbility* Ability
 {
    FRAbilityInfo Result;
    if (ensure (IsValid (Ability))) {
-      FTopLevelAssetPath Path = Ability->GetClass()->GetClassPathName();
-      if (MapAbility.Contains (Path)) {
-         Result = MapAbility[Path];
+      FString AbilityClassPath = Ability->GetClass ()->GetPathName();
+      if (MapAbility.Contains (AbilityClassPath)) {
+         Result = MapAbility[AbilityClassPath];
       } else {
-         FString AbilityTablePath = "NULL";
-         if (AbilityTable) AbilityTablePath = AbilityTable->GetPackage ()->GetFName ().ToString ();
-         R_LOG_PRINTF ("Error. [%s] Ability not found in [%s]", *Ability->GetPathName (), *AbilityTablePath);
+         R_LOG_PRINTF ("Error. [%s] Ability not found in [%s]",
+                       *AbilityClassPath,
+                       *URUtilLibrary::GetTablePath (AbilityTable));
       }
    }
 
@@ -67,19 +78,18 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Class (const TSoftClassPtr<URAbi
 {
    FRAbilityInfo Result;
    if (ensure (!AbilityClass.IsNull ())) {
-      FTopLevelAssetPath Path = AbilityClass->GetClassPathName ();
-      if (MapAbility.Contains (Path)) {
-         Result = MapAbility[Path];
+      FString AbilityClassPath = AbilityClass->GetPathName ();
+      if (MapAbility.Contains (AbilityClassPath)) {
+         Result = MapAbility[AbilityClassPath];
       } else {
-         FString AbilityTablePath = "NULL";
-         if (AbilityTable) AbilityTablePath = AbilityTable->GetPackage ()->GetFName ().ToString ();
-         R_LOG_PRINTF ("Error. [%s] Ability not found in [%s]", *Path.ToString (), *AbilityTablePath);
+         R_LOG_PRINTF ("Error. [%s] Ability not found in [%s]",
+                       *AbilityClassPath,
+                       *URUtilLibrary::GetTablePath (AbilityTable));
       }
    }
 
    return Result;
 }
-
 
 TArray<FRAbilityInfo> URWorldAbilityMgr::GetAllAbilities () const
 {

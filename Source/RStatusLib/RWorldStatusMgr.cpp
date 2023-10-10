@@ -157,14 +157,25 @@ void URWorldStatusMgr::InitializeComponent ()
 
    // --- Parse Table and create Map for fast search
    if (StatusEffectTable) {
+
       MapStatusEffect.Empty ();
+      FString TablePath = URUtilLibrary::GetTablePath (StatusEffectTable);
       FString ContextString;
       TArray<FName> RowNames = StatusEffectTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
          FRActiveStatusEffectInfo* ItRow = StatusEffectTable->FindRow<FRActiveStatusEffectInfo> (ItRowName, ContextString);
-         if (ItRow && ItRow->EffectClass) {
-            MapStatusEffect.Add (ItRow->EffectClass->GetClassPathName (), *ItRow);
+
+         if (!ItRow) {
+            R_LOG_PRINTF ("Invalid FRActiveStatusEffectInfo in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
          }
+
+         if (ItRow->EffectClass.IsNull ()) {
+            R_LOG_PRINTF ("Invalid Effect Class in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         MapStatusEffect.Add (ItRow->EffectClass->GetPathName (), *ItRow);
       }
    }
 }
@@ -178,11 +189,13 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 {
    FRActiveStatusEffectInfo Result;
    if (ensure (IsValid (StatusEffect))) {
-      FTopLevelAssetPath Path = StatusEffect->GetClass ()->GetClassPathName ();
-      if (MapStatusEffect.Contains (Path)) {
-         Result = MapStatusEffect[Path];
+      FString StatusClassPath = StatusEffect->GetClass ()->GetPathName ();
+      if (MapStatusEffect.Contains (StatusClassPath)) {
+         Result = MapStatusEffect[StatusClassPath];
       } else {
-         R_LOG_PRINTF ("Error. [%s] Effect not found in [StatusEffectTable]", *StatusEffect->GetPathName ());
+         R_LOG_PRINTF ("Error. [%s] Effect not found in [%s]",
+                       *StatusClassPath,
+                       *URUtilLibrary::GetTablePath (StatusEffectTable));
       }
    }
 

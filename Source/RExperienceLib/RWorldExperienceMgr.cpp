@@ -127,14 +127,25 @@ void URWorldExperienceMgr::InitializeComponent ()
 
    // --- Parse Table and create Map for fast search
    if (EnemyExpTable) {
+
       MapEnemyExp.Empty ();
+      FString TablePath = URUtilLibrary::GetTablePath (EnemyExpTable);
       FString ContextString;
       TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
          FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
-         if (ItRow && ItRow->TargetClass) {
-            MapEnemyExp.Add (ItRow->TargetClass->GetClassPathName (), *ItRow);
+
+         if (!ItRow) {
+            R_LOG_PRINTF ("Invalid FREnemyExp in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
          }
+
+         if (ItRow->TargetClass.IsNull ()) {
+            R_LOG_PRINTF ("Invalid Target Class in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         MapEnemyExp.Add (ItRow->TargetClass->GetPathName (), *ItRow);
       }
    }
 }
@@ -165,11 +176,9 @@ void URWorldExperienceMgr::OnDamage (AActor*             Victim,
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
-   FTopLevelAssetPath VictimClassName = Victim->GetClass ()->GetClassPathName ();
-
-   if (!MapEnemyExp.Contains (VictimClassName)) return;
-
-   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassName].PerDamage * Amount);
+   FString VictimClassPath = Victim->GetClass ()->GetPathName ();
+   if (!MapEnemyExp.Contains (VictimClassPath)) return;
+   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassPath].PerDamage * Amount);
 }
 
 void URWorldExperienceMgr::OnDeath (AActor* Victim,
@@ -184,10 +193,8 @@ void URWorldExperienceMgr::OnDeath (AActor* Victim,
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
-   FTopLevelAssetPath VictimClassName = Victim->GetClass ()->GetClassPathName ();
-
-   if (!MapEnemyExp.Contains (VictimClassName)) return;
-
-   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassName].PerDeath);
+   FString VictimClassPath = Victim->GetClass ()->GetPathName ();
+   if (!MapEnemyExp.Contains (VictimClassPath)) return;
+   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassPath].PerDeath);
 }
 

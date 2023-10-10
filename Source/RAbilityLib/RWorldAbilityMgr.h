@@ -34,12 +34,12 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<FTopLevelAssetPath, FRAbilityInfo> MapAbility;
+      TMap<FString, FRAbilityInfo> MapAbility;
 protected:
    // List of abilties
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RAbilityLib.RAbilityInfo"))
-      UDataTable* AbilityTable = nullptr;
+      const UDataTable* AbilityTable = nullptr;
 public:
 
    // Get ability info and scaling.

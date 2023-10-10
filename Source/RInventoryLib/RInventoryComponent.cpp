@@ -404,13 +404,14 @@ void URInventoryComponent::CalcWeight ()
 
 void URInventoryComponent::BreakItem_Server_Implementation (URInventoryComponent *SrcInventory,
                                                             int32 ItemIdx,
-                                                            UDataTable* BreakItemTable) const
+                                                            const UDataTable* BreakItemTable) const
 {
    if (!ensure (IsValid (SrcInventory))) return;
    SrcInventory->BreakItem_Index (ItemIdx, BreakItemTable);
 }
 
-bool URInventoryComponent::BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable)
+bool URInventoryComponent::BreakItem_Index (int32 ItemIdx,
+                                            const UDataTable* BreakItemTable)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    // Valid index
@@ -436,7 +437,8 @@ bool URInventoryComponent::BreakItem_Index (int32 ItemIdx, UDataTable* BreakItem
 
 }
 
-bool URInventoryComponent::BreakItem_Item (const FRItemData &ItemData, UDataTable* BreakItemTable)
+bool URInventoryComponent::BreakItem_Item (const FRItemData &ItemData,
+                                           const UDataTable* BreakItemTable)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ItemData.IsValid ()) return false;

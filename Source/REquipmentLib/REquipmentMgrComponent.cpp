@@ -220,7 +220,7 @@ bool UREquipmentMgrComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    return Super::DropItem_Index (ItemIdx, Count);
 }
 
-bool UREquipmentMgrComponent::BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable)
+bool UREquipmentMgrComponent::BreakItem_Index (int32 ItemIdx, const UDataTable* BreakItemTable)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
 

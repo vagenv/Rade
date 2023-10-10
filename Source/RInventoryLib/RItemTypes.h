@@ -255,11 +255,11 @@ public:
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       static bool Item_IsBreakable (const FRItemData &BreakItem,
-                                    UDataTable       *BreakItemTable);
+                                    const UDataTable *BreakItemTable);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
       static bool Item_GetBreakList (const FRItemData         &BreakItem,
-                                     UDataTable               *BreakItemTable,
+                                     const UDataTable         *BreakItemTable,
                                      TArray<FRItemDataHandle> &ResultItems);
 };
 

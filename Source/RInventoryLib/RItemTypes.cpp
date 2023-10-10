@@ -236,7 +236,7 @@ bool URItemUtilLibrary::Item_GetRecipe (const UDataTable *RecipeTable,
    return false;
 }
 
-bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, UDataTable* BreakItemTable)
+bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, const UDataTable* BreakItemTable)
 {
    if (!BreakItem.IsValid ()) return false;
    FRCraftRecipe Recipe;
@@ -244,7 +244,7 @@ bool URItemUtilLibrary::Item_IsBreakable (const FRItemData &BreakItem, UDataTabl
 }
 
 bool URItemUtilLibrary::Item_GetBreakList (const FRItemData         &BreakItem,
-                                           UDataTable               *BreakItemTable,
+                                           const UDataTable         *BreakItemTable,
                                            TArray<FRItemDataHandle> &ResultItems)
 {
    if (!BreakItem.IsValid ()) return false;

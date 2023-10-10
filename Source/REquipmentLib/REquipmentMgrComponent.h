@@ -33,7 +33,7 @@ public:
    //==========================================================================
    virtual bool UseItem_Index   (int32 ItemIdx) override;
    virtual bool DropItem_Index  (int32 ItemIdx, int32 Count = 0) override;
-   virtual bool BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable) override;
+   virtual bool BreakItem_Index (int32 ItemIdx, const UDataTable* BreakItemTable) override;
 
    //==========================================================================
    //                 Is Equiped

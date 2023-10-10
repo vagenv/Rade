@@ -146,10 +146,12 @@ public:
 
    // Breaks item into components
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool BreakItem_Index (int32 ItemIdx, UDataTable* BreakItemTable);
+      virtual bool BreakItem_Index (int32 ItemIdx,
+                                    const UDataTable* BreakItemTable);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool BreakItem_Item (const FRItemData &ItemData, UDataTable* BreakItemTable);
+      virtual bool BreakItem_Item (const FRItemData &ItemData,
+                                   const UDataTable* BreakItemTable);
 
    //==========================================================================
    //                 Craft Item
@@ -252,9 +254,9 @@ public:
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void BreakItem_Server (
-         URInventoryComponent *SrcInventory, int32 ItemIdx, UDataTable* BreakItemTable) const;
+         URInventoryComponent *SrcInventory, int32 ItemIdx, const UDataTable* BreakItemTable) const;
       void BreakItem_Server_Implementation (
-         URInventoryComponent *SrcInventory, int32 ItemIdx, UDataTable* BreakItemTable) const;
+         URInventoryComponent *SrcInventory, int32 ItemIdx, const UDataTable* BreakItemTable) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void CraftItem_Server (
