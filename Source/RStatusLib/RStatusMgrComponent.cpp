@@ -444,7 +444,7 @@ FRDamageResistance URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageTy
    if (!ensure (DamageType)) return Result;
    for (const FRDamageResistanceWithTag& ItResistance : Resistance) {
       if (!ItResistance.Value.DamageType) continue;
-      if (DamageType->GetPathName () == ItResistance.Value.DamageType->GetPathName ()) {
+      if (DamageType->GetPathName () == ItResistance.Value.DamageType.ToString ()) {
          Result.Flat    += ItResistance.Value.Flat;
          Result.Percent += ItResistance.Value.Percent;
       }

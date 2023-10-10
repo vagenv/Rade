@@ -46,8 +46,7 @@ void URWorldAbilityMgr::InitializeComponent ()
             continue;
          }
 
-         FString AbilityClassPath = ItRow->AbilityClass.ToString ();
-         MapAbility.Add (AbilityClassPath, *ItRow);
+         MapAbility.Add (ItRow->AbilityClass.ToString (), *ItRow);
       }
    }
 }
@@ -61,7 +60,7 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Object (const URAbility* Ability
 {
    FRAbilityInfo Result;
    if (ensure (IsValid (Ability))) {
-      FString AbilityClassPath = Ability->GetClass ()->GetPathName();
+      FString AbilityClassPath = Ability->GetClass ()->GetPathName ();
       if (MapAbility.Contains (AbilityClassPath)) {
          Result = MapAbility[AbilityClassPath];
       } else {
@@ -78,7 +77,7 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Class (const TSoftClassPtr<URAbi
 {
    FRAbilityInfo Result;
    if (ensure (!AbilityClass.IsNull ())) {
-      FString AbilityClassPath = AbilityClass->GetPathName ();
+      FString AbilityClassPath = AbilityClass.ToString ();
       if (MapAbility.Contains (AbilityClassPath)) {
          Result = MapAbility[AbilityClassPath];
       } else {

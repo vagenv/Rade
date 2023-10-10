@@ -175,7 +175,7 @@ void URWorldStatusMgr::InitializeComponent ()
             continue;
          }
 
-         MapStatusEffect.Add (ItRow->EffectClass->GetPathName (), *ItRow);
+         MapStatusEffect.Add (ItRow->EffectClass.ToString (), *ItRow);
       }
    }
 }

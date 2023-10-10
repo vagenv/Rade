@@ -131,7 +131,7 @@ void URAbility_Aura::CheckRange ()
    TArray<AActor*> SearchResult;
    UGameplayStatics::GetAllActorsOfClass (this, AActor::StaticClass (), SearchResult);
 
-   FString TargetClassPath = AffectedType->GetClass ()->GetPathName ();
+   FString TargetClassPath = AffectedType.ToString ();
 
    TArray<AActor*> Result;
    for (AActor* ItActor : SearchResult) {

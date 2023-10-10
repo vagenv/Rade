@@ -145,7 +145,7 @@ void URWorldExperienceMgr::InitializeComponent ()
             continue;
          }
 
-         MapEnemyExp.Add (ItRow->TargetClass->GetPathName (), *ItRow);
+         MapEnemyExp.Add (ItRow->TargetClass.ToString (), *ItRow);
       }
    }
 }
