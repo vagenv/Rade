@@ -128,12 +128,12 @@ void URAbility_Aura::CheckRange ()
 {
    FVector OwnerLocation = GetOwner ()->GetActorLocation ();
 
-   TArray<AActor*> SearchResult;
+   TArray<AActor* > SearchResult;
    UGameplayStatics::GetAllActorsOfClass (this, AActor::StaticClass (), SearchResult);
 
    FString TargetClassPath = AffectedType.ToString ();
 
-   TArray<AActor*> Result;
+   TArray<TWeakObjectPtr<AActor> > Result;
    for (AActor* ItActor : SearchResult) {
       if (!IsValid (ItActor)) continue;
       if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
@@ -145,6 +145,15 @@ void URAbility_Aura::CheckRange ()
    AffectedActors = Result;
 
    if (R_IS_VALID_WORLD && OnUpdated.IsBound ()) OnUpdated.Broadcast ();
+}
+
+const TArray<AActor* > URAbility_Aura::GetAffectedActors() const
+{
+   TArray<AActor*> Result;
+   for (const auto &ItActor : AffectedActors) {
+      if (ItActor.IsValid ()) Result.Add (ItActor.Get ());
+   }
+   return Result;
 }
 
 //=============================================================================

@@ -66,7 +66,8 @@ public:
 	virtual void Activate () override;
 private:
 
-   UObject*      Outer = nullptr;
+   UPROPERTY ()
+      TObjectPtr<UObject> Outer = nullptr;
    TArray<uint8> PixelData;
    int32         SizeX = 0;
    int32         SizeY = 0;

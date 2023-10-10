@@ -35,7 +35,7 @@ public:
 
 
    UPROPERTY(VisibleAnywhere, Transient)
-      USceneCaptureComponent2D* Camera;
+      TObjectPtr<USceneCaptureComponent2D> Camera;
 
 	UFUNCTION(BlueprintCallable,
              Category = "Rade|UI",

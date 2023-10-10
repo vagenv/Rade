@@ -56,9 +56,12 @@ URWorldTargetMgr::URWorldTargetMgr ()
 
 const TArray<URTargetComponent*> URWorldTargetMgr::GetTargetList () const
 {
-   return TargetList;
+   TArray<URTargetComponent*> Result;
+   for (const auto &ItTarget : TargetList) {
+      if (ItTarget.IsValid ()) Result.Add (ItTarget.Get ());
+   }
+   return Result;
 }
-
 
 bool URWorldTargetMgr::IsValidTarget (
    const URTargetComponent*          Target,

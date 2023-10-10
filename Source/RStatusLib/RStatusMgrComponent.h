@@ -42,11 +42,11 @@ public:
 protected:
    // Owners Movement Component. For stamina Regen.
    UPROPERTY()
-      UCharacterMovementComponent* MovementComponent = nullptr;
+      TObjectPtr<UCharacterMovementComponent> MovementComponent = nullptr;
 
    // For reporting applied status effects
    UPROPERTY()
-      URWorldStatusMgr* WorldStatusMgr = nullptr;
+      TObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
 
 private:
    // Handle to async load task

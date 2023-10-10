@@ -99,32 +99,27 @@ public:
 
    // Must be set by server
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      AActor* Causer = nullptr;
-
-protected:
-
-   //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-   //   URStatusMgrComponent* StatusMgr = nullptr;
+      TObjectPtr<AActor> Causer = nullptr;
 
    //==========================================================================
    //                 Events
    //==========================================================================
 public:
-    // Component created
-    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-       FRActiveStatusEffectEvent OnStart;
+   // Component created
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRActiveStatusEffectEvent OnStart;
 
-    // Canceled
-    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-       FRActiveStatusEffectEvent OnStop;
+   // Canceled
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRActiveStatusEffectEvent OnStop;
 
    // Effect was re-applied
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRActiveStatusEffectEvent OnRefresh;
 
-    // Destroying component
-    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-       FRActiveStatusEffectEvent OnEnd;
+   // Destroying component
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRActiveStatusEffectEvent OnEnd;
 
 protected:
 

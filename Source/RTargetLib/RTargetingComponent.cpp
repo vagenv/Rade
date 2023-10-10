@@ -58,12 +58,12 @@ void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 bool URTargetingComponent::IsTargeting () const
 {
-	return (IsValid (TargetCurrent) || !CustomTargetDir.IsNearlyZero ());
+	return (TargetCurrent.IsValid () || !CustomTargetDir.IsNearlyZero ());
 }
 
 URTargetComponent* URTargetingComponent::GetCurrentTarget () const
 {
-   return TargetCurrent;
+   return TargetCurrent.IsValid () ? TargetCurrent.Get () : nullptr;
 }
 
 FVector URTargetingComponent::GetTargetDir () const
@@ -71,7 +71,7 @@ FVector URTargetingComponent::GetTargetDir () const
    FVector Result = FVector::Zero ();
 
    // --- Focus Target
-   if (IsValid (TargetCurrent)) {
+   if (TargetCurrent.IsValid ()) {
       FVector TargetLocation = TargetCurrent->GetComponentLocation ();
       Result = TargetLocation - GetComponentLocation ();
       Result.Normalize ();
@@ -129,7 +129,7 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
    // If there was input stop turning
    if (!CustomTargetDir.IsNearlyZero ()) CustomTargetDir = FVector::Zero ();
 
-   if (   IsValid (TargetCurrent)
+   if (   TargetCurrent.IsValid ()
       && (  FMath::Abs (OffsetX) > TargetAdjustMinOffset
          || FMath::Abs (OffsetY) > TargetAdjustMinOffset))
    {
@@ -140,20 +140,20 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
 // Targeting enabled/disabled
 void URTargetingComponent::TargetToggle ()
 {
-   if (IsValid (TargetCurrent)) {
+   if (TargetCurrent.IsValid ()) {
       SetTargetCurrent (nullptr);
    } else {
       SearchNewTarget ();
 
       // No Target. Focus forward
-      if (!IsValid (TargetCurrent)) CustomTargetDir = GetOwner ()->GetActorRotation ().Vector ();
+      if (!TargetCurrent.IsValid ()) CustomTargetDir = GetOwner ()->GetActorRotation ().Vector ();
    }
 }
 
 // Check if target is valid
 void URTargetingComponent::TargetCheck ()
 {
-   if (IsValid (TargetCurrent) && IsValid (TargetMgr)) {
+   if (TargetCurrent.IsValid () && IsValid (TargetMgr)) {
 
       bool RemoveTarget = false;
 
@@ -184,9 +184,9 @@ void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 
    URTargetComponent* TargetNew = nullptr;
 
-   if (IsValid (TargetCurrent)) {
+   if (TargetCurrent.IsValid ()) {
       TArray<URTargetComponent*> ExcludeTargets;
-      ExcludeTargets.Add (TargetCurrent);
+      ExcludeTargets.Add (TargetCurrent.Get ());
 
       // --- Adjust target
       TargetNew = TargetMgr->Find_Screen (this,
@@ -207,7 +207,7 @@ void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 void URTargetingComponent::SetTargetCurrent (URTargetComponent* NewTarget)
 {
    // Notify the old target
-   if (IsValid (TargetCurrent)) {
+   if (TargetCurrent.IsValid ()) {
       TargetCurrent->SetIsTargeted (false);
    }
 

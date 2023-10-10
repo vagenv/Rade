@@ -139,14 +139,18 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       TSoftClassPtr<AActor> AffectedType;
 
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      const TArray<AActor*> GetAffectedActors () const;
+
+private:
    // Actors currently within range.
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
-      TArray<AActor*> AffectedActors;
+   UPROPERTY()
+      TArray<TWeakObjectPtr<AActor> > AffectedActors;
 
    //==========================================================================
    //                 Events
    //==========================================================================
-
+public:
    // Called after AffectedActors list is updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityEvent OnUpdated;

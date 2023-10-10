@@ -61,11 +61,11 @@ private:
 
 	// Startup background images array
 	UPROPERTY()
-		TArray<UTexture2D*> StartupBackgroundImages;
+		TArray<TObjectPtr<UTexture2D> > StartupBackgroundImages;
 
 	// Default background images array
 	UPROPERTY()
-		TArray<UTexture2D*> DefaultBackgroundImages;
+		TArray<TObjectPtr<UTexture2D> > DefaultBackgroundImages;
 
 	bool bIsStartupLoadingScreen = false;
 };

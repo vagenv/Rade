@@ -43,7 +43,7 @@ protected:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RStatusLib.RActiveStatusEffectInfo"))
-      const UDataTable* StatusEffectTable = nullptr;
+      TObjectPtr<const UDataTable> StatusEffectTable = nullptr;
 public:
    // Gets Effect info and scaling
    UFUNCTION (BlueprintPure, Category = "Rade|Status")

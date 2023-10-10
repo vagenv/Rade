@@ -103,7 +103,7 @@ protected:
       FRSaveGameMeta SaveMeta;
 
    UPROPERTY()
-      UObject* WorldContextObject = nullptr;
+      TObjectPtr<UObject> WorldContextObject = nullptr;
 };
 
 
@@ -139,7 +139,7 @@ public:
 protected:
 
    UPROPERTY()
-      UObject* WorldContextObject = nullptr;
+      TObjectPtr<UObject> WorldContextObject = nullptr;
 
    UPROPERTY()
       FString SlotName;
@@ -190,7 +190,7 @@ protected:
       FRSaveGameMeta SaveMeta;
 
    UPROPERTY()
-      UObject* WorldContextObject = nullptr;
+      TObjectPtr<UObject> WorldContextObject = nullptr;
 
    UPROPERTY()
       TArray<uint8> SaveBinary;

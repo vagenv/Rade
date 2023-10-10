@@ -45,7 +45,7 @@ public:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Experience",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RExperienceLib.REnemyExp"))
-      const UDataTable* EnemyExpTable = nullptr;
+      TObjectPtr<const UDataTable> EnemyExpTable = nullptr;
 
 public:
    // Provides experience required for level

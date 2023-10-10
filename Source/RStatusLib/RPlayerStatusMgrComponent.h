@@ -28,7 +28,7 @@ protected:
 
    // Experience
    UPROPERTY()
-      URExperienceMgrComponent* ExperienceMgr = nullptr;
+      TObjectPtr<URExperienceMgrComponent> ExperienceMgr = nullptr;
 
    //==========================================================================
    //                 Level Up

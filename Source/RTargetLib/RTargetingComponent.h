@@ -84,11 +84,11 @@ protected:
 
    // Manager containing all available targets
    UPROPERTY()
-      URWorldTargetMgr* TargetMgr = nullptr;
+      TObjectPtr<URWorldTargetMgr> TargetMgr = nullptr;
 
 	// Current focus target
    UPROPERTY(ReplicatedUsing = "OnRep_TargetCurrent", Replicated)
-      URTargetComponent* TargetCurrent = nullptr;
+      TWeakObjectPtr<URTargetComponent> TargetCurrent = nullptr;
 
    // Direction where to look. Owner root forward direction
    UPROPERTY()

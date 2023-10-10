@@ -39,7 +39,7 @@ protected:
    // List of abilties
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RAbilityLib.RAbilityInfo"))
-      const UDataTable* AbilityTable = nullptr;
+      TObjectPtr<const UDataTable> AbilityTable = nullptr;
 public:
 
    // Get ability info and scaling.

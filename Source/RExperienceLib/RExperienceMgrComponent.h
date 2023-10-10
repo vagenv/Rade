@@ -73,7 +73,7 @@ protected:
       void LeveledUp ();
 
    UPROPERTY()
-      URWorldExperienceMgr* GlobalMgr = nullptr;
+      TObjectPtr<URWorldExperienceMgr> GlobalMgr = nullptr;
 
 
    //==========================================================================

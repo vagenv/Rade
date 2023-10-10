@@ -24,7 +24,7 @@ public:
 private:
    // Container for current targets
    UPROPERTY()
-      TArray<URTargetComponent*> TargetList;
+      TArray<TWeakObjectPtr<URTargetComponent> > TargetList;
 protected:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
       const TArray<URTargetComponent*> GetTargetList () const;
