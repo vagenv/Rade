@@ -12,6 +12,8 @@ class UPrimitiveComponent;
 class AActor;
 class URInventoryComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRItemPickupEvent);
+
 // General pickup Class for Any Child of class "Item"
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade))
 class RINVENTORYLIB_API ARItemPickup : public AActor,
@@ -57,9 +59,10 @@ public:
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       bool bAutoDestroy = true;
 
+protected:
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       FRUIDescription Description;
-
+public:
    virtual FRUIDescription GetDescription_Implementation () override;
 
    //==========================================================================
@@ -81,9 +84,8 @@ public:
    UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
       void BP_PlayerLeft (AActor* InventoryOwner);
 
-   // BP Event that all items have been removed
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_InventoryEmptied ();
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRItemPickupEvent OnPickupEmptied;
 
 protected:
 

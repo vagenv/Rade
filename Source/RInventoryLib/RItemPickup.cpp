@@ -5,6 +5,7 @@
 #include "RItemPickupMgrComponent.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
+#include "RUtilLib/RCheck.h"
 
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -151,7 +152,7 @@ void ARItemPickup::OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
 void ARItemPickup::OnInventoryUpdate ()
 {
    if (Inventory->GetItems ().Num () == 0) {
-      BP_InventoryEmptied ();
+      if (R_IS_VALID_WORLD && OnPickupEmptied.IsBound ()) OnPickupEmptied.Broadcast ();
       if (bAutoDestroy) Destroy ();
    }
 }
