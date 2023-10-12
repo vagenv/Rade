@@ -7,6 +7,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RWorldAssetMgr.h"
 
 // ============================================================================
 //                   AbilityInfo
@@ -105,46 +106,89 @@ URAbility_Passive::URAbility_Passive ()
 
 URAbility_Aura::URAbility_Aura ()
 {
-   AffectedType = ACharacter::StaticClass ();
+   TargetClass = AActor::StaticClass ();
 }
 
 void URAbility_Aura::BeginPlay ()
 {
    Super::BeginPlay ();
-   if (ensure (!AffectedType.IsNull ())) {
-      GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
-                                                this, &URAbility_Aura::CheckRange,
-                                                CheckRangeInterval, true, 0);
-   }
+   LoadTargetClass ();
 }
 
 void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   GetWorld ()->GetTimerManager ().ClearTimer (TimerCheckRange);
+   SetCheckRangeActive (false);
    Super::EndPlay (EndPlayReason);
+}
+
+void URAbility_Aura::LoadTargetClass ()
+{
+   if (ensure (!TargetClass.IsNull ())) {
+      URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
+      if (AssetMgr) {
+         TargetClassLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (TargetClass.GetUniqueID (),
+            [this] () {
+               if (!TargetClassLoadHandle.IsValid ()) return;
+               if (TargetClassLoadHandle->HasLoadCompleted ()) {
+                  if (UObject* Obj = TargetClassLoadHandle->GetLoadedAsset ()) {
+                     if (UClass* LoadedClass = Cast<UClass> (Obj)) {
+                        TargetClassLoaded = LoadedClass;
+                     }
+                  }
+               }
+
+               // Release data from memory
+               TargetClassLoadHandle->ReleaseHandle ();
+               TargetClassLoadHandle.Reset ();
+
+               SetCheckRangeActive (true);
+            });
+      } else {
+         FTimerHandle RetryHandle;
+         GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
+                                                   this,
+                                                   &URAbility_Aura::LoadTargetClass,
+                                                   1,
+                                                   false);
+      }
+   }
+}
+
+void URAbility_Aura::SetCheckRangeActive (bool enable)
+{
+   if (enable) {
+      if (!TimerCheckRange.IsValid () && TargetClassLoaded)
+         GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
+                                                   this,
+                                                   &URAbility_Aura::CheckRange,
+                                                   CheckRangeInterval,
+                                                   true,
+                                                   0);
+
+   } else {
+      if (TimerCheckRange.IsValid ())
+         GetWorld ()->GetTimerManager ().ClearTimer (TimerCheckRange);
+   }
 }
 
 void URAbility_Aura::CheckRange ()
 {
+   if (!TargetClassLoaded) return;
+
    FVector OwnerLocation = GetOwner ()->GetActorLocation ();
-
-   TArray<AActor* > SearchResult;
-   UGameplayStatics::GetAllActorsOfClass (this, AActor::StaticClass (), SearchResult);
-
-   FString TargetClassPath = AffectedType.ToString ();
+   TArray<AActor*> SearchResult;
+   UGameplayStatics::GetAllActorsOfClass (this, TargetClassLoaded, SearchResult);
 
    TArray<TWeakObjectPtr<AActor> > Result;
    for (AActor* ItActor : SearchResult) {
       if (!IsValid (ItActor)) continue;
       if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
-      if (ItActor->GetClass ()->GetPathName () != TargetClassPath) continue;
 
       Result.Add (ItActor);
    }
 
    AffectedActors = Result;
-
-   if (R_IS_VALID_WORLD && OnUpdated.IsBound ()) OnUpdated.Broadcast ();
+   if (R_IS_VALID_WORLD && OnCheckRange.IsBound ()) OnCheckRange.Broadcast ();
 }
 
 const TArray<AActor* > URAbility_Aura::GetAffectedActors() const

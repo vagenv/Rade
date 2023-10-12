@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
 
+struct FStreamableHandle;
 class URAbility;
 
 // ============================================================================
@@ -121,24 +122,53 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   // Called in interval to create AffectedActirs list
-   virtual void CheckRange ();
+   //==========================================================================
+   //                 Range checking
+   //==========================================================================
 
-   //==========================================================================
-   //                 Params
-   //==========================================================================
+   // Start/Stop timer
+   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
+      void SetCheckRangeActive (bool enable);
+
+   // Called in interval to create AffectedActirs list
+   UFUNCTION()
+      virtual void CheckRange ();
 
    // How often to check if target is within range
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       float CheckRangeInterval = 1;
 
    // Range for actor search
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability",
+             meta=(UIMin = "100.0", UIMax = "2000.0"))
       float Range = 1000;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
-      TSoftClassPtr<AActor> AffectedType;
+private:
+   UPROPERTY()
+      FTimerHandle TimerCheckRange;
 
+   //==========================================================================
+   //                 Target
+   //==========================================================================
+public:
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      TSoftClassPtr<AActor> TargetClass;
+
+private:
+
+   UFUNCTION()
+      void LoadTargetClass ();
+
+   UPROPERTY()
+      TObjectPtr<UClass> TargetClassLoaded;
+
+   // Handle to async load task
+   TSharedPtr<FStreamableHandle> TargetClassLoadHandle;
+
+   //==========================================================================
+   //                 Get info
+   //==========================================================================
+public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       const TArray<AActor*> GetAffectedActors () const;
 
@@ -147,17 +177,14 @@ private:
    UPROPERTY()
       TArray<TWeakObjectPtr<AActor> > AffectedActors;
 
+
    //==========================================================================
    //                 Events
    //==========================================================================
 public:
-   // Called after AffectedActors list is updated
+   // Called after interal check range and target list updated
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
-      FRAbilityEvent OnUpdated;
-
-protected:
-   UPROPERTY()
-      FTimerHandle TimerCheckRange;
+      FRAbilityEvent OnCheckRange;
 };
 
 //=============================================================================
