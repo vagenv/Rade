@@ -12,8 +12,6 @@ class RUTILLIB_API URWorldAssetMgr : public UActorComponent
    GENERATED_BODY()
 public:
 
-   URWorldAssetMgr ();
-
    //==========================================================================
    //                  Components
    //==========================================================================

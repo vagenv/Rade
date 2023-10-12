@@ -14,11 +14,3 @@ URWorldAssetMgr* URWorldAssetMgr::GetInstance (const UObject* WorldContextObject
    return URUtil::GetWorldInstance<URWorldAssetMgr> (WorldContextObject);
 }
 
-//=============================================================================
-//                   Member calls
-//=============================================================================
-
-URWorldAssetMgr::URWorldAssetMgr ()
-{
-}
-
