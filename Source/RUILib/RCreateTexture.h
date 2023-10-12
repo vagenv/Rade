@@ -67,7 +67,7 @@ public:
 private:
 
    UPROPERTY ()
-      TObjectPtr<UObject> Outer = nullptr;
+      TWeakObjectPtr<UObject> Outer = nullptr;
    TArray<uint8> PixelData;
    int32         SizeX = 0;
    int32         SizeY = 0;

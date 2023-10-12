@@ -54,7 +54,7 @@ void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URTargetingComponent::FindWorldTargetMgr ()
 {
    WorldTargetMgr = URWorldTargetMgr::GetInstance (this);
-   if (!WorldTargetMgr) {
+   if (!WorldTargetMgr.IsValid ()) {
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
                     this, &URTargetingComponent::FindWorldTargetMgr,
@@ -117,7 +117,7 @@ FRotator URTargetingComponent::GetControlRotation ()
    FVector TargetDir  = GetTargetDir ();
 
    // --- Is there a target
-   if (!TargetDir.IsNearlyZero () && World && World->bIsTearingDown) {
+   if (!TargetDir.IsNearlyZero () && World.IsValid () && !World->bIsTearingDown) {
 
       // Normalize Direction and add offset;
       TargetDir.Normalize ();
@@ -178,7 +178,7 @@ void URTargetingComponent::TargetToggle ()
 // Check if target is valid
 void URTargetingComponent::TargetCheck ()
 {
-   if (TargetCurrent.IsValid () && WorldTargetMgr) {
+   if (TargetCurrent.IsValid () && WorldTargetMgr.IsValid ()) {
 
       bool RemoveTarget = false;
 
@@ -200,7 +200,7 @@ void URTargetingComponent::TargetCheck ()
 // Perform search for new target
 void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 {
-   if (!WorldTargetMgr || World) return;
+   if (!WorldTargetMgr.IsValid () || !World.IsValid ()) return;
 
    // --- Limit the amount of camera adjustments
    double CurrentTime = World->GetTimeSeconds ();

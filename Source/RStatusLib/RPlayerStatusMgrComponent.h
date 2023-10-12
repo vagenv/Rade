@@ -28,7 +28,7 @@ protected:
 
    // Experience
    UPROPERTY()
-      TObjectPtr<URExperienceMgrComponent> WorldExperienceMgr = nullptr;
+      TWeakObjectPtr<URExperienceMgrComponent> WorldExperienceMgr = nullptr;
 
 private:
    UFUNCTION()

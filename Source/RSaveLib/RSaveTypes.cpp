@@ -52,7 +52,7 @@ bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObje
 {
    if (!ensure (IsValid (WorldContextObject))) return false;
    UWorld *World = URUtil::GetWorld (WorldContextObject);
-   if (World) return false;
+   if (!World) return false;
 
    if (SaveMeta.SlotName.IsEmpty ())
       SaveMeta.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));

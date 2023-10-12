@@ -78,8 +78,8 @@ int64 URExperienceMgrComponent::GetExperiencePoints () const
 
 void URExperienceMgrComponent::CheckLevel ()
 {
-   if (!WorldExpMgr) WorldExpMgr = URWorldExperienceMgr::GetInstance (this);
-   if (!WorldExpMgr) return;
+   if (!WorldExpMgr.IsValid ()) WorldExpMgr = URWorldExperienceMgr::GetInstance (this);
+   if (!WorldExpMgr.IsValid ()) return;
 
    int NewLevel = WorldExpMgr->ExperienceToLevel (GetExperiencePoints ());
    // R_LOG_PRINTF ("Leveled change [%d => %d]", CurrentLevel, NewLevel);

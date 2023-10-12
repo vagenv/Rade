@@ -89,15 +89,15 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
 
 void URStatusMgrComponent::FindWorldMgrs ()
 {
-   if (!WorldStatusMgr) {
+   if (!WorldStatusMgr.IsValid ()) {
       WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
    }
 
-   if (!WorldDamageMgr) {
+   if (!WorldDamageMgr.IsValid ()) {
       WorldDamageMgr = URWorldDamageMgr::GetInstance (this);
    }
 
-   if (!WorldStatusMgr || !WorldDamageMgr) {
+   if (!WorldStatusMgr.IsValid () || !WorldDamageMgr.IsValid ()) {
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
                     this, &URStatusMgrComponent::FindWorldMgrs,
@@ -123,7 +123,7 @@ void URStatusMgrComponent::SetDead (bool Dead)
       Stamina = Start_Stamina;
 
       ReportRevive ();
-      if (WorldDamageMgr) WorldDamageMgr->ReportRevive (GetOwner ());
+      if (WorldDamageMgr.IsValid ()) WorldDamageMgr->ReportRevive (GetOwner ());
    }
 
    if (Dead) {
@@ -187,7 +187,7 @@ void URStatusMgrComponent::RecalcStatus ()
 void URStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!WorldStatusMgr) return;
+   if (!WorldStatusMgr.IsValid ()) return;
 
    // --- Status
    Health.Max    = Start_Health.Max;
@@ -232,7 +232,7 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
 
-   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
+   if (MovementComponent.IsValid () && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
 FRStatusValue URStatusMgrComponent::GetHealth () const
@@ -410,13 +410,13 @@ bool URStatusMgrComponent::AddActiveStatusEffect (
       }
    }
 
-   URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
-   if (!AssetMgr) return false;
+   URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this);
+   if (!WorldAssetMgr) return false;
 
    // Check that async load is not already in process
    if (EffectLoadHandle.IsValid ()) return false;
 
-   EffectLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (Effect_.GetUniqueID (),
+   EffectLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (Effect_.GetUniqueID (),
       [this, Causer_] () {
          if (!EffectLoadHandle.IsValid ()) return;
          if (EffectLoadHandle->HasLoadCompleted ()) {
@@ -562,11 +562,11 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
 
    UseHealth (Amount);
 
-   if (WorldDamageMgr) WorldDamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
+   if (WorldDamageMgr.IsValid ()) WorldDamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
 
    if (!Health.Current) {
       if (R_IS_NET_ADMIN) SetDead (true);
-      if (WorldDamageMgr) WorldDamageMgr->ReportDeath (GetOwner (), Causer, Type);
+      if (WorldDamageMgr.IsValid ()) WorldDamageMgr->ReportDeath (GetOwner (), Causer, Type);
    }
 
    if (R_IS_VALID_WORLD && OnAnyRDamage.IsBound ()) OnAnyRDamage.Broadcast (Amount, Type, Causer);

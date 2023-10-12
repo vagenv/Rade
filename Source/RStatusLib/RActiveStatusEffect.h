@@ -65,10 +65,10 @@ public:
    //                 Status Mgr
    //==========================================================================
    UPROPERTY()
-      TObjectPtr<URWorldStatusMgr> WorldStatusMgr;
+      TWeakObjectPtr<URWorldStatusMgr> WorldStatusMgr;
 
    UPROPERTY()
-      TObjectPtr<URStatusMgrComponent> OwnerStatusMgr;
+      TWeakObjectPtr<URStatusMgrComponent> OwnerStatusMgr;
     
    UFUNCTION()
       void FindWorldStatusMgr ();
@@ -113,7 +113,7 @@ public:
 
    // Must be set by server
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      TObjectPtr<AActor> Causer = nullptr;
+      TWeakObjectPtr<AActor> Causer = nullptr;
 
    //==========================================================================
    //                 Events

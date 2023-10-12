@@ -8,6 +8,7 @@
 #include "RSaveSlotTasks.generated.h"
 
 class URSaveGame;
+class URWorldSaveMgr;
 
 // ============================================================================
 //                   Get Save Slot Image binary data Async Task
@@ -103,7 +104,7 @@ protected:
       FRSaveGameMeta SaveMeta;
 
    UPROPERTY()
-      TObjectPtr<UObject> WorldContextObject = nullptr;
+      TWeakObjectPtr<UObject> WorldContextObject = nullptr;
 };
 
 
@@ -139,7 +140,7 @@ public:
 protected:
 
    UPROPERTY()
-      TObjectPtr<UObject> WorldContextObject = nullptr;
+      TWeakObjectPtr<UObject> WorldContextObject = nullptr;
 
    UPROPERTY()
       FString SlotName;
@@ -148,13 +149,16 @@ protected:
       TMap<FString, FString> ExtraData;
 
    UPROPERTY();
-      TObjectPtr<URSaveGame> SaveGameObject;
+      TWeakObjectPtr<URSaveGame> SaveGameObject = nullptr;
+
+   UPROPERTY();
+      TWeakObjectPtr<URWorldSaveMgr> WorldSaveMgr = nullptr;
 
    UPROPERTY();
       TArray<uint8> ScreenShotData;
 
    UFUNCTION()
-      void ReportEnd (bool succes);
+      void ReportEnd (bool Success);
 };
 
 // ============================================================================
@@ -190,13 +194,13 @@ protected:
       FRSaveGameMeta SaveMeta;
 
    UPROPERTY()
-      TObjectPtr<UObject> WorldContextObject = nullptr;
+      TWeakObjectPtr<UObject> WorldContextObject = nullptr;
 
    UPROPERTY()
       TArray<uint8> SaveBinary;
 
    UPROPERTY()
-      TObjectPtr<URSaveGame> SaveGameObject;
+      TWeakObjectPtr<URSaveGame> SaveGameObject;
 
    UFUNCTION()
       void ReportEnd (bool succes);

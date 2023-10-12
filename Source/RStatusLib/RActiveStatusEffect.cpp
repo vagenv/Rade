@@ -57,11 +57,12 @@ void URActiveStatusEffect::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URActiveStatusEffect::FindWorldStatusMgr ()
 {
    WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
-   if (!WorldStatusMgr) {
+   if (!WorldStatusMgr.IsValid ()) {
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
                     this, &URActiveStatusEffect::FindWorldStatusMgr,
                     1, false);
+      return;
    }
 
    // Get latest balance from table
@@ -83,8 +84,8 @@ void URActiveStatusEffect::Started ()
 
    // --- Report
    if (R_IS_VALID_WORLD) {
-      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectStart (this);
-      if (OwnerStatusMgr) OwnerStatusMgr->ReportActiveEffectsUpdated ();
+      if (WorldStatusMgr.IsValid ()) WorldStatusMgr->ReportStatusEffectStart (this);
+      if (OwnerStatusMgr.IsValid ()) OwnerStatusMgr->ReportActiveEffectsUpdated ();
       if (OnStart.IsBound ()) OnStart.Broadcast ();
    }
 }
@@ -92,7 +93,7 @@ void URActiveStatusEffect::Started ()
 void URActiveStatusEffect::Stop ()
 {
    if (R_IS_VALID_WORLD) {
-      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectStop (this);
+      if (WorldStatusMgr.IsValid ()) WorldStatusMgr->ReportStatusEffectStop (this);
       if (OnStop.IsBound ()) OnStop.Broadcast ();
    }
 
@@ -125,7 +126,7 @@ void URActiveStatusEffect::Refresh_Implementation ()
 
    // --- Report
    if (R_IS_VALID_WORLD) {
-      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectRefresh (this);
+      if (WorldStatusMgr.IsValid ()) WorldStatusMgr->ReportStatusEffectRefresh (this);
       if (OnRefresh.IsBound ()) OnRefresh.Broadcast ();
    }
 }
@@ -136,9 +137,9 @@ void URActiveStatusEffect::Ended ()
 
    // --- Report
    if (R_IS_VALID_WORLD) {
-      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectEnd (this);
+      if (WorldStatusMgr.IsValid ()) WorldStatusMgr->ReportStatusEffectEnd (this);
 
-      if (OwnerStatusMgr) {
+      if (OwnerStatusMgr.IsValid ()) {
          if (R_IS_NET_ADMIN) OwnerStatusMgr->RmPassiveEffects (EffectInfo.Description.Label);
          OwnerStatusMgr->ReportActiveEffectsUpdated ();
       }
@@ -156,7 +157,7 @@ void URActiveStatusEffect::Apply ()
    StartTime = World->GetTimeSeconds ();
 
    if (R_IS_NET_ADMIN) {
-      if (OwnerStatusMgr) {
+      if (OwnerStatusMgr.IsValid ()) {
          float StackScale = GetStackScale ();
          TArray<FRPassiveStatusEffect> CopyPassiveEffects = EffectInfo.PassiveEffects;
          for (FRPassiveStatusEffect &ItPassiveEffect : CopyPassiveEffects) {

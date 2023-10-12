@@ -24,7 +24,7 @@ public:
 
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Rade|Save")
-      TObjectPtr<URSaveGame> SaveGameObject;
+      TWeakObjectPtr<URSaveGame> SaveGameObject;
 
 public:
 

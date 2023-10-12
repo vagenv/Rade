@@ -41,8 +41,8 @@ void URAbility::BeginPlay ()
 
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   if (OwnerAbilityMgr) OwnerAbilityMgr->ReportAbilityListUpdated ();
-   if (WorldAbilityMgr) WorldAbilityMgr->ReportRmAbility (this);
+   if (OwnerAbilityMgr.IsValid ()) OwnerAbilityMgr->ReportAbilityListUpdated ();
+   if (WorldAbilityMgr.IsValid ()) WorldAbilityMgr->ReportRmAbility (this);
 
    if (URUtil::GetWorld (this) && GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->RemoveInstanceComponent (this);
@@ -53,7 +53,7 @@ void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URAbility::PullAbilityInfo ()
 {
    WorldAbilityMgr = URWorldAbilityMgr::GetInstance (this);
-   if (!WorldAbilityMgr) {
+   if (!WorldAbilityMgr.IsValid ()) {
 
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
@@ -69,7 +69,7 @@ void URAbility::PullAbilityInfo ()
       R_LOG_PRINTF ("[%s] Recieved Invalid Ability Info.", *GetName ());
    }
 
-   if (OwnerAbilityMgr) OwnerAbilityMgr->ReportAbilityListUpdated ();
+   if (OwnerAbilityMgr.IsValid ()) OwnerAbilityMgr->ReportAbilityListUpdated ();
 }
 
 void URAbility::SetIsEnabled (bool IsEnabled_)
@@ -272,7 +272,7 @@ void URAbility_Active::Use_Global_Implementation ()
    UseCooldownLeft = Cooldown;
    IsUseable       = false;
 
-   if (WorldAbilityMgr) WorldAbilityMgr->ReportUseAbility (this);
+   if (WorldAbilityMgr.IsValid ()) WorldAbilityMgr->ReportUseAbility (this);
 
    // Broadcast event
    if (R_IS_VALID_WORLD) {

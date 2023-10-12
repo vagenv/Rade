@@ -19,16 +19,24 @@ URItemPickupMgrComponent::URItemPickupMgrComponent ()
 void URItemPickupMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-
-   RTIMER_START (CheckClosestPickupHandle,
-                 this, &URItemPickupMgrComponent::CheckClosestPickup, 
-                 CheckClosestDelay, true);
+   SetCheckClosestPickupEnabled (true);
 }
 
 void URItemPickupMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   RTIMER_STOP (CheckClosestPickupHandle, this);
+   SetCheckClosestPickupEnabled (false);
    Super::EndPlay (EndPlayReason);
+}
+
+void URItemPickupMgrComponent::SetCheckClosestPickupEnabled (bool Enabled)
+{
+   if (Enabled) {
+      RTIMER_START (CheckClosestPickupHandle,
+                    this, &URItemPickupMgrComponent::CheckClosestPickup, 
+                    CheckClosestDelay, true);
+   } else {
+      RTIMER_STOP (CheckClosestPickupHandle, this);
+   }
 }
 
 //=============================================================================

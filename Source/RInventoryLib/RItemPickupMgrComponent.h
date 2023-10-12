@@ -47,7 +47,6 @@ protected:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRItemPickupMgrEvent OnPickupListUpdated;
 
-
    UFUNCTION()
       void ReportClosestPickupUpdated ();
 
@@ -64,7 +63,11 @@ public:
 
 protected:
 
-   FTimerHandle CheckClosestPickupHandle;
+   UPROPERTY()
+      FTimerHandle CheckClosestPickupHandle;
+
+   UFUNCTION()
+      void SetCheckClosestPickupEnabled (bool Enabled);
 
    UFUNCTION()
       void CheckClosestPickup ();

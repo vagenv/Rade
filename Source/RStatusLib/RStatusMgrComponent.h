@@ -43,14 +43,14 @@ public:
 protected:
    // Owners Movement Component. For stamina Regen.
    UPROPERTY()
-      TObjectPtr<UCharacterMovementComponent> MovementComponent = nullptr;
+      TWeakObjectPtr<UCharacterMovementComponent> MovementComponent = nullptr;
 
    // For reporting applied status effects
    UPROPERTY()
-      TObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
+      TWeakObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
 
    UPROPERTY()
-      TObjectPtr<URWorldDamageMgr> WorldDamageMgr = nullptr;
+      TWeakObjectPtr<URWorldDamageMgr> WorldDamageMgr = nullptr;
 
 private:
 

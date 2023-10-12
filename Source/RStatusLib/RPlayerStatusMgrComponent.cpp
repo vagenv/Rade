@@ -69,7 +69,7 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 void URPlayerStatusMgrComponent::ConnectToExperienceMgr ()
 {
    WorldExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
-   if (!WorldExperienceMgr) {
+   if (!WorldExperienceMgr.IsValid ()) {
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
                     this, &URPlayerStatusMgrComponent::ConnectToExperienceMgr,
@@ -90,7 +90,7 @@ void URPlayerStatusMgrComponent::ConnectToExperienceMgr ()
 void URPlayerStatusMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!WorldStatusMgr || !WorldExperienceMgr) return;
+   if (!WorldStatusMgr.IsValid () || !WorldExperienceMgr.IsValid ()) return;
 
    float ExtraStats = WorldStatusMgr->GetLevelUpExtraGain (WorldExperienceMgr->GetCurrentLevel ());
 
@@ -143,7 +143,7 @@ void URPlayerStatusMgrComponent::RecalcCoreStats ()
 void URPlayerStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!WorldStatusMgr) return;
+   if (!WorldStatusMgr.IsValid ()) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
    float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
@@ -183,7 +183,7 @@ void URPlayerStatusMgrComponent::RecalcSubStats ()
 void URPlayerStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!WorldStatusMgr) return;
+   if (!WorldStatusMgr.IsValid ()) return;
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();

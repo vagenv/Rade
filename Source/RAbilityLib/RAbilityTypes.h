@@ -95,10 +95,10 @@ protected:
       void PullAbilityInfo ();
 
    UPROPERTY()
-      TObjectPtr<URAbilityMgrComponent> OwnerAbilityMgr = nullptr;
+      TWeakObjectPtr<URAbilityMgrComponent> OwnerAbilityMgr = nullptr;
 
    UPROPERTY()
-      TObjectPtr<URWorldAbilityMgr> WorldAbilityMgr = nullptr;
+      TWeakObjectPtr<URWorldAbilityMgr> WorldAbilityMgr = nullptr;
 };
 
 
