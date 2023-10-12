@@ -16,11 +16,10 @@ Re-implement kick team mate widget
 Pickup
 ==============
 
-Rework pickup.
-- Should be WindowWidget
-- Refocus on it (Register/unregister)
+World Interact interface
 
-Pickup target class
+Rework pickup.
+- Action to open
 
 Magnetic pickup without physics. Direct move.
 
@@ -28,6 +27,8 @@ Magnetic pickup without physics. Direct move.
 ==============
 Ability
 ==============
+
+Health regen double entry in active list
 
 Fireball Ability is not saved/loaded
 
