@@ -72,6 +72,8 @@ void URStatusMgrComponent::BeginPlay ()
       // Bind To AActor::OnTakeAnyDamage
       GetOwner ()->OnTakeAnyDamage.AddDynamic (this, &URStatusMgrComponent::AnyDamage);
    }
+
+   FindWorldMgrs ();
 }
 
 void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)

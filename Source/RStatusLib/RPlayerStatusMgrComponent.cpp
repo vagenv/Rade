@@ -44,8 +44,6 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
 
-   ConnectToExperienceMgr ();
-
    if (R_IS_NET_ADMIN) {
 
       FTimerHandle TempHandle;
@@ -64,6 +62,8 @@ void URPlayerStatusMgrComponent::BeginPlay ()
          Init_Save (this, UniqueSaveId);
       }
    }
+
+   ConnectToExperienceMgr ();
 }
 
 void URPlayerStatusMgrComponent::ConnectToExperienceMgr ()

@@ -40,9 +40,9 @@ void URActiveStatusEffect::BeginPlay ()
    if (!GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->AddInstanceComponent (this);
 
-   FindWorldStatusMgr ();
-
    OwnerStatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
+
+   FindWorldStatusMgr ();
 }
 
 void URActiveStatusEffect::EndPlay (const EEndPlayReason::Type EndPlayReason)
