@@ -11,6 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRActiveStatusEffectEvent);
 
 class AActor;
 class URStatusMgrComponent;
+class URWorldStatusMgr;
 class URActiveStatusEffect;
 
 // ============================================================================
@@ -58,6 +59,19 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+
+   
+   //==========================================================================
+   //                 Status Mgr
+   //==========================================================================
+   UPROPERTY()
+      TObjectPtr<URWorldStatusMgr> WorldStatusMgr;
+
+   UPROPERTY()
+      TObjectPtr<URStatusMgrComponent> OwnerStatusMgr;
+    
+   UFUNCTION()
+      void FindWorldStatusMgr ();
 
    //==========================================================================
    //                 Functions
@@ -145,7 +159,7 @@ protected:
       int StackCurrent = 1;
 
    UPROPERTY()
-      FTimerHandle TimerToEnd;
+      FTimerHandle TimeoutHandle;
 
    UPROPERTY()
       bool IsRunning = false;

@@ -12,12 +12,12 @@ void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FStrin
 
    const UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (IsValid (World_))) return;
-   URWorldSaveMgr *SaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
-   if (!ensure (IsValid (SaveMgr_))) return;
+   URWorldSaveMgr *WorldSaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
+   if (!ensure (WorldSaveMgr_)) return;
 
    SaveId  = SaveId_;
    World   = World_;
-   SaveMgr = SaveMgr_;
+   SaveMgr = WorldSaveMgr_;
 
    SaveMgr->OnSave.AddDynamic (this, &IRSaveInterface::OnSave_Internal);
    SaveMgr->OnLoad.AddDynamic (this, &IRSaveInterface::OnLoad_Internal);

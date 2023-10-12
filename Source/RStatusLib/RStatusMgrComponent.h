@@ -8,6 +8,7 @@
 
 struct FStreamableHandle;
 class URDamageType;
+class URWorldDamageMgr;
 class URActiveStatusEffect;
 class URInventoryComponent;
 class URWorldStatusMgr;
@@ -48,7 +49,14 @@ protected:
    UPROPERTY()
       TObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
 
+   UPROPERTY()
+      TObjectPtr<URWorldDamageMgr> WorldDamageMgr = nullptr;
+
 private:
+
+   UFUNCTION()
+      void FindWorldMgrs ();
+
    // Handle to async load task
    TSharedPtr<FStreamableHandle> EffectLoadHandle;
 

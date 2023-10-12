@@ -115,8 +115,8 @@ void URemoveSaveGameSlotAsync::Activate ()
 
          // Report save game list update
          if (success) {
-            if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
-               Mgr->ReportSaveListUpdated ();
+            if (URWorldSaveMgr* WorldSaveMgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
+               WorldSaveMgr->ReportSaveListUpdated ();
             } else {
                R_LOG ("URWorldSaveMgr is not loaded. Can't notify of save list update.");
             }
@@ -149,13 +149,15 @@ UCreateSaveGameSlotAsync* UCreateSaveGameSlotAsync::CreateSaveGameSlotAsync (
 
 void UCreateSaveGameSlotAsync::Activate ()
 {
-   URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject);
-   if (!Mgr) {
+   URWorldSaveMgr* WorldSaveMgr = URWorldSaveMgr::GetInstance (WorldContextObject);
+   if (!WorldSaveMgr) {
       return ReportEnd (false);
    }
 
    // --- Create save object
-   TSubclassOf<URSaveGame> const SaveSlotClass = Mgr->SaveClass ? Mgr->SaveClass : TSubclassOf<URSaveGame>(URSaveGame::StaticClass ());
+   TSubclassOf<URSaveGame> const SaveSlotClass = WorldSaveMgr->SaveClass
+                                               ? WorldSaveMgr->SaveClass
+                                               : TSubclassOf<URSaveGame>(URSaveGame::StaticClass ());
 
    SaveGameObject = Cast<URSaveGame>(UGameplayStatics::CreateSaveGameObject (SaveSlotClass));
    if (!SaveGameObject) {
@@ -163,7 +165,7 @@ void UCreateSaveGameSlotAsync::Activate ()
    }
 
    // Gather save information
-   Mgr->ReportSave (SaveGameObject);
+   WorldSaveMgr->ReportSave (SaveGameObject);
 
    // Create screenshot
    ARViewCapture::GetScreenShot (WorldContextObject, ScreenShotData);
@@ -215,8 +217,8 @@ void UCreateSaveGameSlotAsync::ReportEnd (bool success)
 
       // Report save game list update
       if (success && IsValid (WorldContextObject)) {
-         if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
-            Mgr->ReportSaveListUpdated ();
+         if (URWorldSaveMgr* WorldSaveMgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
+            WorldSaveMgr->ReportSaveListUpdated ();
          } else {
             R_LOG ("URWorldSaveMgr is not loaded. Can't notify of save list update.");
          }
@@ -277,8 +279,8 @@ void ULoadSaveGameSlotAsync::ReportEnd (bool success)
 
       if (success && IsValid (WorldContextObject)) {
          // Provide save data to all registered objects
-         if (URWorldSaveMgr* Mgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
-            Mgr->ReportLoad (SaveGameObject);
+         if (URWorldSaveMgr* WorldSaveMgr = URWorldSaveMgr::GetInstance (WorldContextObject)) {
+            WorldSaveMgr->ReportLoad (SaveGameObject);
          } else {
             R_LOG ("URWorldSaveMgr is not loaded. Can't notify of loaded state.");
          }

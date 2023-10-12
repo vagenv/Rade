@@ -36,20 +36,44 @@ void URTargetingComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 void URTargetingComponent::BeginPlay ()
 {
 	Super::BeginPlay ();
-
-   TargetMgr = URWorldTargetMgr::GetInstance (this);
-
-	GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle,
-                                                  this,
-                                                  &URTargetingComponent::TargetCheck,
-                                                  1,
-                                                  true);
+   FindWorldTargetMgr ();
 }
 
 void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-	GetWorld ()->GetTimerManager ().ClearTimer (TargetCheckHandle);
+   SetTargetCheckEnabled (false);
    Super::EndPlay (EndPlayReason);
+}
+
+//=============================================================================
+//                         Init
+//=============================================================================
+
+void URTargetingComponent::FindWorldTargetMgr ()
+{
+   WorldTargetMgr = URWorldTargetMgr::GetInstance (this);
+   if (!WorldTargetMgr) {
+      FTimerHandle RetryHandle;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
+                                                this, &URTargetingComponent::FindWorldTargetMgr,
+                                                1);
+      return;
+   }
+
+   SetTargetCheckEnabled (true);
+}
+
+void URTargetingComponent::SetTargetCheckEnabled (bool Enabled)
+{
+   if (Enabled) {
+      if (!TargetCheckHandle.IsValid ())
+	      GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle,
+                                                         this, &URTargetingComponent::TargetCheck,
+                                                         1,
+                                                         true);
+   } else {
+      if (TargetCheckHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TargetCheckHandle);
+   }
 }
 
 //=============================================================================
@@ -153,13 +177,13 @@ void URTargetingComponent::TargetToggle ()
 // Check if target is valid
 void URTargetingComponent::TargetCheck ()
 {
-   if (TargetCurrent.IsValid () && IsValid (TargetMgr)) {
+   if (TargetCurrent.IsValid () && WorldTargetMgr) {
 
       bool RemoveTarget = false;
 
       // --- Check distance
       float Distance = FVector::Dist (GetOwner ()->GetActorLocation (), TargetCurrent->GetComponentLocation ());
-      if (Distance > TargetMgr->SearchDistanceMax) RemoveTarget = true;
+      if (Distance > WorldTargetMgr->SearchDistanceMax) RemoveTarget = true;
 
       // Check if target was disabled
       if (!TargetCurrent->GetIsTargetable ()) RemoveTarget = true;
@@ -175,7 +199,7 @@ void URTargetingComponent::TargetCheck ()
 // Perform search for new target
 void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 {
-   if (!IsValid (TargetMgr)) return;
+   if (!WorldTargetMgr) return;
 
    // --- Limit the amount of camera adjustments
    double CurrentTime = GetWorld ()->GetTimeSeconds ();
@@ -189,15 +213,15 @@ void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
       ExcludeTargets.Add (TargetCurrent.Get ());
 
       // --- Adjust target
-      TargetNew = TargetMgr->Find_Screen (this,
-                                          InputVector,
-                                          TArray<AActor*>(),
-                                          ExcludeTargets);
+      TargetNew = WorldTargetMgr->Find_Screen (this,
+                                               InputVector,
+                                               TArray<AActor*>(),
+                                               ExcludeTargets);
    } else {
       // --- Search new target
-      TargetNew = TargetMgr->Find_Target (this,
-                                          TArray<AActor*>(),
-                                          TArray<URTargetComponent*>());
+      TargetNew = WorldTargetMgr->Find_Target (this,
+                                               TArray<AActor*>(),
+                                               TArray<URTargetComponent*>());
    }
 
    if (IsValid (TargetNew)) SetTargetCurrent (TargetNew);

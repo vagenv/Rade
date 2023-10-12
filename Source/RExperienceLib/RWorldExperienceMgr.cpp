@@ -153,12 +153,21 @@ void URWorldExperienceMgr::InitializeComponent ()
 void URWorldExperienceMgr::BeginPlay ()
 {
    Super::BeginPlay ();
+   ConnetToWorldDamageMgr ();
+}
 
+void URWorldExperienceMgr::ConnetToWorldDamageMgr ()
+{
    if (R_IS_NET_ADMIN) {
       // --- Subscribe to Damage and Death Events
       if (URWorldDamageMgr *WorldDamageMgr = URWorldDamageMgr::GetInstance (this)) {
          WorldDamageMgr->OnAnyRDamage.AddDynamic (this, &URWorldExperienceMgr::OnDamage);
          WorldDamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
+      } else {
+         FTimerHandle RetryHandle;
+         GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
+                                                   this, &URWorldExperienceMgr::ConnetToWorldDamageMgr,
+                                                   1);
       }
    }
 }

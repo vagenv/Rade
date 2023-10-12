@@ -64,9 +64,6 @@ void URStatusMgrComponent::BeginPlay ()
       MovementComponent = Character->GetCharacterMovement ();
    }
 
-   // For reporting applied status effect
-   WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
-
    if (R_IS_NET_ADMIN) {
       bDead = false;
 
@@ -86,6 +83,24 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
    StatusRegen (DeltaTime);
 }
 
+void URStatusMgrComponent::FindWorldMgrs ()
+{
+   if (!WorldStatusMgr) {
+      WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
+   }
+
+   if (!WorldDamageMgr) {
+      WorldDamageMgr = URWorldDamageMgr::GetInstance (this);
+   }
+
+   if (!WorldStatusMgr || !WorldDamageMgr) {
+      FTimerHandle RetryHandle;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
+                                                this, &URStatusMgrComponent::FindWorldMgrs,
+                                                1);
+   }
+}
+
 //=============================================================================
 //                 Dead
 //=============================================================================
@@ -96,8 +111,6 @@ void URStatusMgrComponent::SetDead (bool Dead)
    if (Dead == bDead) return;
    bDead = Dead;
 
-   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
-
    // Broadcast only after value has been changed;
    if (!Dead) {
       // --- Reset to original values
@@ -106,7 +119,7 @@ void URStatusMgrComponent::SetDead (bool Dead)
       Stamina = Start_Stamina;
 
       ReportRevive ();
-      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+      if (WorldDamageMgr) WorldDamageMgr->ReportRevive (GetOwner ());
    }
 
    if (Dead) {
@@ -170,7 +183,7 @@ void URStatusMgrComponent::RecalcStatus ()
 void URStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (WorldStatusMgr))) return;
+   if (!WorldStatusMgr) return;
 
    // --- Status
    Health.Max    = Start_Health.Max;
@@ -360,8 +373,8 @@ bool URStatusMgrComponent::ApplyActiveStatusEffect (
    const TSoftClassPtr<URActiveStatusEffect> Effect_)
 {
    // --- Check Values
-   if (!ensure (IsValid (Causer_))) return false;
-   if (!ensure (IsValid (Target_))) return false;
+   if (!ensure (Causer_)) return false;
+   if (!ensure (Target_)) return false;
    if (!ensure (!Effect_.IsNull ())) return false;
 
    UWorld* World = Target_->GetWorld ();
@@ -378,7 +391,7 @@ bool URStatusMgrComponent::AddActiveStatusEffect (
    const TSoftClassPtr<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (Causer_))) return false;
+   if (!ensure (Causer_)) return false;
    if (!ensure (!Effect_.IsNull ())) return false;
    if (IsDead ())                    return false;
 
@@ -511,9 +524,9 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
                                       AActor*            Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Target))) return;
-   if (!ensure (Type_))            return;
-   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Target)) return;
+   if (!ensure (Type_))  return;
+   if (!ensure (Causer)) return;
 
    if (!IsDead ()) {
       const URDamageType* Type = Cast<URDamageType>(Type_);
@@ -533,7 +546,7 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
                                                          const URDamageType* Type,
                                                          AActor*             Causer)
 {
-   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Causer)) return;
 
    if (Type) {
       FRDamageResistance DamageResistance = GetResistanceFor (Type->GetClass ());
@@ -545,12 +558,11 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
 
    UseHealth (Amount);
 
-   URWorldDamageMgr* DamageMgr = URWorldDamageMgr::GetInstance (this);
-   if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
+   if (WorldDamageMgr) WorldDamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
 
    if (!Health.Current) {
       if (R_IS_NET_ADMIN) SetDead (true);
-      if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
+      if (WorldDamageMgr) WorldDamageMgr->ReportDeath (GetOwner (), Causer, Type);
    }
 
    if (R_IS_VALID_WORLD && OnAnyRDamage.IsBound ()) OnAnyRDamage.Broadcast (Amount, Type, Causer);

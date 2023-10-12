@@ -28,7 +28,11 @@ protected:
 
    // Experience
    UPROPERTY()
-      TObjectPtr<URExperienceMgrComponent> ExperienceMgr = nullptr;
+      TObjectPtr<URExperienceMgrComponent> WorldExperienceMgr = nullptr;
+
+private:
+   UFUNCTION()
+      void ConnectToExperienceMgr ();
 
    //==========================================================================
    //                 Level Up

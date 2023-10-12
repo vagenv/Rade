@@ -9,7 +9,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityEvent);
 
 struct FStreamableHandle;
-class URAbility;
+class URAbilityMgrComponent;
+class URWorldAbilityMgr;
 
 // ============================================================================
 //                   AbilityInfo
@@ -88,9 +89,16 @@ private:
    // Value must be defined in table
    UPROPERTY()
       FRAbilityInfo AbilityInfo;
+protected:
 
    UFUNCTION()
       void PullAbilityInfo ();
+
+   UPROPERTY()
+      TObjectPtr<URAbilityMgrComponent> OwnerAbilityMgr = nullptr;
+
+   UPROPERTY()
+      TObjectPtr<URWorldAbilityMgr> WorldAbilityMgr = nullptr;
 };
 
 
@@ -128,7 +136,7 @@ public:
 
    // Start/Stop timer
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
-      void SetCheckRangeActive (bool enable);
+      void SetCheckRangeActive (bool Enable);
 
    // Called in interval to create AffectedActirs list
    UFUNCTION()
@@ -145,7 +153,7 @@ public:
 
 private:
    UPROPERTY()
-      FTimerHandle TimerCheckRange;
+      FTimerHandle CheckRangeHandle;
 
    //==========================================================================
    //                 Target

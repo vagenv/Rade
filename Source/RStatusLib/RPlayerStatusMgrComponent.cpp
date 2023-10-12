@@ -42,25 +42,18 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
 
-   // Exp Mgr
-   ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
+   ConnectToExperienceMgr ();
 
    if (R_IS_NET_ADMIN) {
 
-      FTimerHandle MyHandle;
-      GetOwner ()->GetWorldTimerManager ().SetTimer (MyHandle,
+      FTimerHandle TempHandle;
+      GetOwner ()->GetWorldTimerManager ().SetTimer (TempHandle,
                                                      this,
                                                      &URPlayerStatusMgrComponent::RecalcStatus,
-                                                     1,
-                                                     false);
+                                                     1);
 
       // Recalc on revive
       OnRevive.AddDynamic (this, &URPlayerStatusMgrComponent::RecalcStatus);
-
-
-      if (ExperienceMgr) {
-         ExperienceMgr->OnLevelUp.AddDynamic (this, &URPlayerStatusMgrComponent::LeveledUp);
-      }
 
       // Save/Load Status
       if (bSaveLoad) {
@@ -71,6 +64,23 @@ void URPlayerStatusMgrComponent::BeginPlay ()
    }
 }
 
+void URPlayerStatusMgrComponent::ConnectToExperienceMgr ()
+{
+   WorldExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
+   if (!WorldExperienceMgr) {
+      FTimerHandle RetryHandle;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
+                                                this, &URPlayerStatusMgrComponent::ConnectToExperienceMgr,
+                                                1);
+      return;
+   }
+
+   // Only admin can calculate level up
+   if (R_IS_NET_ADMIN) {
+      WorldExperienceMgr->OnLevelUp.AddDynamic (this, &URPlayerStatusMgrComponent::LeveledUp);
+   }
+}
+
 //=============================================================================
 //                 Level up
 //=============================================================================
@@ -78,14 +88,13 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 void URPlayerStatusMgrComponent::LeveledUp ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (WorldStatusMgr))) return;
-   if (!ensure (IsValid (ExperienceMgr)))  return;
+   if (!WorldStatusMgr || !WorldExperienceMgr) return;
 
-   float ExtraStats = WorldStatusMgr->GetLevelUpExtraGain (ExperienceMgr->GetCurrentLevel ());
+   float ExtraStats = WorldStatusMgr->GetLevelUpExtraGain (WorldExperienceMgr->GetCurrentLevel ());
 
    if (ExtraStats) LevelUpExtraStat += ExtraStats;
 
-   FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (ExperienceMgr->GetCurrentLevel ());
+   FRCoreStats DeltaStats = WorldStatusMgr->GetLevelUpStatGain (WorldExperienceMgr->GetCurrentLevel ());
    if (!DeltaStats.IsEmpty ()) CoreStats_Base += DeltaStats;
    if (!DeltaStats.IsEmpty () || ExtraStats)
       RecalcStatus ();

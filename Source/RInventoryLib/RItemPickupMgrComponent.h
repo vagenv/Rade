@@ -64,7 +64,7 @@ public:
 
 protected:
 
-   FTimerHandle TimerClosestPickup;
+   FTimerHandle CheckClosestPickupHandle;
 
    UFUNCTION()
       void CheckClosestPickup ();

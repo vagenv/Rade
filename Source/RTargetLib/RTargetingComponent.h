@@ -28,9 +28,19 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    //==========================================================================
+   //                         Target Mgr
+   //==========================================================================
+protected:
+   UFUNCTION ()
+      void FindWorldTargetMgr ();
+
+   // Manager containing all available targets
+   UPROPERTY()
+      TObjectPtr<URWorldTargetMgr> WorldTargetMgr = nullptr;
+   //==========================================================================
    //                         Params
    //==========================================================================
-
+public:
    // Offset when turning to look at target
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
       float TargetVerticalOffset = -0.1f;
@@ -82,10 +92,6 @@ public:
 
 protected:
 
-   // Manager containing all available targets
-   UPROPERTY()
-      TObjectPtr<URWorldTargetMgr> TargetMgr = nullptr;
-
 	// Current focus target
    UPROPERTY(ReplicatedUsing = "OnRep_TargetCurrent", Replicated)
       TWeakObjectPtr<URTargetComponent> TargetCurrent = nullptr;
@@ -100,6 +106,9 @@ protected:
    // Handle to TargetCheck
    UPROPERTY()
       FTimerHandle TargetCheckHandle;
+
+   UFUNCTION()
+      virtual void SetTargetCheckEnabled (bool Enabled);
 
    // Checks if Targeting actor is valid and within range
    UFUNCTION()

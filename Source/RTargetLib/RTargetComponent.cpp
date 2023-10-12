@@ -19,19 +19,19 @@ void URTargetComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 void URTargetComponent::RegisterTarget ()
 {
-   if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->RegisterTarget (this);
+   if (URWorldTargetMgr *WorldTargetMgr = URWorldTargetMgr::GetInstance (this)) {
+      WorldTargetMgr->RegisterTarget (this);
    } else {
-      FTimerHandle RetryTimer;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryTimer,
+      FTimerHandle RetryHandle;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
                                                 this, &URTargetComponent::RegisterTarget,
                                                 1);
    }
 }
 void URTargetComponent::UnregisterTarget ()
 {
-   if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->UnregisterTarget (this);
+   if (URWorldTargetMgr *WorldTargetMgr = URWorldTargetMgr::GetInstance (this)) {
+      WorldTargetMgr->UnregisterTarget (this);
    }
 }
 

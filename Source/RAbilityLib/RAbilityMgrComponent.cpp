@@ -114,13 +114,13 @@ bool URAbilityMgrComponent::AddAbility (const TSoftClassPtr<URAbility> Ability_)
    if (!ensure (!Ability_.IsNull ())) return false;
    if (!ensure (!URAbilityMgrComponent::GetAbility (Ability_))) return false;
 
-   URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
-   if (!AssetMgr) return false;
+   URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this);
+   if (!WorldAssetMgr) return false;
 
    // Check that async load is not already in process
    if (AbilityLoadHandle.IsValid ()) return false;
 
-   AbilityLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (Ability_.GetUniqueID (),
+   AbilityLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (Ability_.GetUniqueID (),
       [this] () {
          if (!AbilityLoadHandle.IsValid ()) return;
          if (AbilityLoadHandle->HasLoadCompleted ()) {

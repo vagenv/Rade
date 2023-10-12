@@ -15,19 +15,17 @@ URItemPickupMgrComponent::URItemPickupMgrComponent ()
 {
 }
 
-void URItemPickupMgrComponent::BeginPlay()
+void URItemPickupMgrComponent::BeginPlay ()
 {
-   Super::BeginPlay();
-   const UWorld *world = GetWorld ();
-   if (!ensure (world)) return;
-
-   world->GetTimerManager ().SetTimer (TimerClosestPickup,
-      this, &URItemPickupMgrComponent::CheckClosestPickup, CheckClosestDelay, true);
+   Super::BeginPlay ();
+   GetWorld ()->GetTimerManager ().SetTimer (CheckClosestPickupHandle,
+                                             this, &URItemPickupMgrComponent::CheckClosestPickup, 
+                                             CheckClosestDelay, true);
 }
 
 void URItemPickupMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-	GetWorld ()->GetTimerManager ().ClearTimer (TimerClosestPickup);
+	if (CheckClosestPickupHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (CheckClosestPickupHandle);
    Super::EndPlay (EndPlayReason);
 }
 

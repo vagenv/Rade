@@ -28,7 +28,6 @@ void URExperienceMgrComponent::OnRep_Exp ()
 void URExperienceMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   GlobalMgr = URWorldExperienceMgr::GetInstance (this);
 
    if (R_IS_NET_ADMIN) {
 
@@ -77,9 +76,10 @@ int64 URExperienceMgrComponent::GetExperiencePoints () const
 
 void URExperienceMgrComponent::CheckLevel ()
 {
-   if (!IsValid (GlobalMgr)) return;
+   if (!WorldExpMgr) WorldExpMgr = URWorldExperienceMgr::GetInstance (this);
+   if (!WorldExpMgr) return;
 
-   int NewLevel = GlobalMgr->ExperienceToLevel (GetExperiencePoints ());
+   int NewLevel = WorldExpMgr->ExperienceToLevel (GetExperiencePoints ());
    // R_LOG_PRINTF ("Leveled change [%d => %d]", CurrentLevel, NewLevel);
    int dtLevel = NewLevel - GetCurrentLevel ();
    if (dtLevel <= 0) return;

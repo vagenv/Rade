@@ -39,16 +39,9 @@ void URActiveStatusEffect::BeginPlay ()
    if (!GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->AddInstanceComponent (this);
 
-   // Find instance data on balancer
-   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
-      EffectInfo = WorldMgr->GetEffectInfo (this);
-   }
+   FindWorldStatusMgr ();
 
-   if (!ensure (EffectInfo.IsValid ())) {
-      R_LOG_PRINTF ("Error. [%s] Effect info is invalid.", *GetPathName ());
-   }
-
-   Started ();
+   OwnerStatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
 }
 
 void URActiveStatusEffect::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -58,6 +51,22 @@ void URActiveStatusEffect::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
    Ended ();
    Super::EndPlay (EndPlayReason);
+}
+
+void URActiveStatusEffect::FindWorldStatusMgr ()
+{
+   WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
+   if (!WorldStatusMgr) {
+      FTimerHandle RetryHandle;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
+                                                this, &URActiveStatusEffect::FindWorldStatusMgr,
+                                                1);
+   }
+
+   // Get latest balance from table
+   EffectInfo = WorldStatusMgr->GetEffectInfo (this);
+
+   Started ();
 }
 
 //=============================================================================
@@ -72,31 +81,26 @@ void URActiveStatusEffect::Started ()
    Apply ();
 
    // --- Report
-   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
-      WorldMgr->ReportStatusEffectStart (this);
+   if (R_IS_VALID_WORLD) {
+      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectStart (this);
+      if (OwnerStatusMgr) OwnerStatusMgr->ReportActiveEffectsUpdated ();
+      if (OnStart.IsBound ()) OnStart.Broadcast ();
    }
-
-   if (URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ())) {
-      StatusMgr->ReportActiveEffectsUpdated ();
-   }
-
-   if (R_IS_VALID_WORLD && OnStart.IsBound ()) OnStart.Broadcast ();
 }
 
 void URActiveStatusEffect::Stop ()
 {
-   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
-      WorldMgr->ReportStatusEffectStop (this);
+   if (R_IS_VALID_WORLD) {
+      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectStop (this);
+      if (OnStop.IsBound ()) OnStop.Broadcast ();
    }
-
-   if (R_IS_VALID_WORLD && OnStop.IsBound ()) OnStop.Broadcast ();
 
    DestroyComponent ();
 }
 
 void URActiveStatusEffect::Refresh_Implementation ()
 {
-   if (TimerToEnd.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TimerToEnd);
+   if (TimeoutHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TimeoutHandle);
 
    int StackMax = GetStackMax ();
    if (StackMax > 1 && StackCurrent < StackMax) {
@@ -119,11 +123,10 @@ void URActiveStatusEffect::Refresh_Implementation ()
    Apply ();
 
    // --- Report
-   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
-      WorldMgr->ReportStatusEffectRefresh (this);
+   if (R_IS_VALID_WORLD) {
+      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectRefresh (this);
+      if (OnRefresh.IsBound ()) OnRefresh.Broadcast ();
    }
-
-   if (R_IS_VALID_WORLD && OnRefresh.IsBound ()) OnRefresh.Broadcast ();
 }
 
 void URActiveStatusEffect::Ended ()
@@ -131,41 +134,42 @@ void URActiveStatusEffect::Ended ()
    IsRunning = false;
 
    // --- Report
-   if (URWorldStatusMgr* WorldMgr = URWorldStatusMgr::GetInstance (this)) {
-      WorldMgr->ReportStatusEffectEnd (this);
+   if (R_IS_VALID_WORLD) {
+      if (WorldStatusMgr) WorldStatusMgr->ReportStatusEffectEnd (this);
+
+      if (OwnerStatusMgr) {
+         if (R_IS_NET_ADMIN) OwnerStatusMgr->RmPassiveEffects (EffectInfo.Description.Label);
+         OwnerStatusMgr->ReportActiveEffectsUpdated ();
+      }
+
+      if (OnEnd.IsBound ()) OnEnd.Broadcast ();
    }
 
-   if (URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ())) {
-      if (R_IS_NET_ADMIN) StatusMgr->RmPassiveEffects (EffectInfo.Description.Label);
-      StatusMgr->ReportActiveEffectsUpdated ();
-   }
-
-   if (R_IS_VALID_WORLD && OnEnd.IsBound ()) OnEnd.Broadcast ();
-
-
-   if (TimerToEnd.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TimerToEnd);
+   if (TimeoutHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TimeoutHandle);
 }
 
 void URActiveStatusEffect::Apply ()
 {
    UWorld* World = GetWorld ();
-   if (!ensure (World)) return;
+   if (!World) return;
    StartTime = World->GetTimeSeconds ();
 
    if (R_IS_NET_ADMIN) {
-      if (URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ())) {
+      if (OwnerStatusMgr) {
          float StackScale = GetStackScale ();
          TArray<FRPassiveStatusEffect> CopyPassiveEffects = EffectInfo.PassiveEffects;
          for (FRPassiveStatusEffect &ItPassiveEffect : CopyPassiveEffects) {
             ItPassiveEffect.Flat    = ItPassiveEffect.Flat    * StackScale;
             ItPassiveEffect.Percent = ItPassiveEffect.Percent * StackScale;
          }
-         StatusMgr->SetPassiveEffects (EffectInfo.Description.Label, CopyPassiveEffects);
+         OwnerStatusMgr->SetPassiveEffects (EffectInfo.Description.Label, CopyPassiveEffects);
       }
    }
 
    if (R_IS_NET_ADMIN && EffectInfo.Duration > 0) {
-      World->GetTimerManager ().SetTimer (TimerToEnd, this, &URActiveStatusEffect::Timeout, EffectInfo.Duration, false);
+      World->GetTimerManager ().SetTimer (TimeoutHandle,
+                                          this, &URActiveStatusEffect::Timeout,
+                                          EffectInfo.Duration);
    }
 }
 
@@ -181,7 +185,7 @@ void URActiveStatusEffect::Timeout ()
 double URActiveStatusEffect::GetDurationLeft () const
 {
    UWorld* World = GetWorld ();
-   if (!ensure (World)) return 0;
+   if (!World) return 0;
    return FMath::Clamp (StartTime + EffectInfo.Duration - World->GetTimeSeconds (), 0, EffectInfo.Duration);
 }
 

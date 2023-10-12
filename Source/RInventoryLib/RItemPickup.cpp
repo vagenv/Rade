@@ -70,10 +70,9 @@ void ARItemPickup::BeginPlay ()
    Inventory->OnInventoryUpdated.AddDynamic (this, &ARItemPickup::OnInventoryUpdate);
 
    // Enable overlap after a delay
-   FTimerHandle MyHandle;
-   GetWorldTimerManager().SetTimer (MyHandle,
-                                    this,
-                                    &ARItemPickup::ActivatePickupOverlap,
+   FTimerHandle TempHandle;
+   GetWorldTimerManager().SetTimer (TempHandle,
+                                    this, &ARItemPickup::ActivatePickupOverlap,
                                     PickupActivationDelay,
                                     false);
 }

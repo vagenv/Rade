@@ -35,6 +35,10 @@ public:
    virtual void InitializeComponent () override;
    virtual void BeginPlay () override;
 
+private:
+   UFUNCTION()
+      void ConnetToWorldDamageMgr ();
+
    //==========================================================================
    //          Experience table
    //==========================================================================

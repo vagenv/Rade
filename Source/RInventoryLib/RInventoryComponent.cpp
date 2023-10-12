@@ -598,8 +598,8 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    ItemData.Count = Count;
 
    // Get async load object
-   URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
-   if (!AssetMgr) return false;
+   URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this);
+   if (!WorldAssetMgr) return false;
 
    // Check that async load is not already in process
    if (PickupLoadHandle.IsValid ()) return false;
@@ -610,7 +610,7 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    // Load pickup class async
    if (!ItemData.Pickup.IsNull ()) {
 
-      PickupLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (ItemData.Pickup.GetUniqueID (),
+      PickupLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (ItemData.Pickup.GetUniqueID (),
          [this, ItemData] () {
             if (!PickupLoadHandle.IsValid ()) return;
             if (PickupLoadHandle->HasLoadCompleted ()) {
@@ -629,7 +629,7 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    // Load pickup model async
    } else if (!ItemData.PickupMesh.IsNull ()) {
 
-      PickupLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (ItemData.PickupMesh.GetUniqueID (),
+      PickupLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (ItemData.PickupMesh.GetUniqueID (),
          [this, ItemData] () {
             if (!PickupLoadHandle.IsValid ()) return;
             if (PickupLoadHandle->HasLoadCompleted ()) {
@@ -649,7 +649,7 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    // Load custom inventory drop pickup class async
    } else if (!FallbackDropItemClass.IsNull ()) {
 
-      PickupLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (FallbackDropItemClass.GetUniqueID (),
+      PickupLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (FallbackDropItemClass.GetUniqueID (),
          [this, ItemData] () {
             if (!PickupLoadHandle.IsValid ()) return;
             if (PickupLoadHandle->HasLoadCompleted ()) {

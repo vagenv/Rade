@@ -34,39 +34,40 @@ void URAbility::BeginPlay ()
    if (GetWorld () && !GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->AddInstanceComponent (this);
 
-   if (URAbilityMgrComponent *Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->ReportAbilityListUpdated ();
-
+   OwnerAbilityMgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ());
    PullAbilityInfo ();
 }
 
 void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
+   if (OwnerAbilityMgr) OwnerAbilityMgr->ReportAbilityListUpdated ();
+   if (WorldAbilityMgr) WorldAbilityMgr->ReportRmAbility (this);
+
    if (GetWorld () && GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->RemoveInstanceComponent (this);
-
-   if (URAbilityMgrComponent* Mgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ()))
-      Mgr->ReportAbilityListUpdated ();
-
-   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
-      WorldMgr->ReportRmAbility (this);
-   }
+ 
    Super::EndPlay (EndPlayReason);
 }
 
 void URAbility::PullAbilityInfo ()
 {
-   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
-      WorldMgr->ReportAddAbility (this);
-      AbilityInfo = WorldMgr->GetAbilityInfo_Object (this);
-   }
-
-   if (!AbilityInfo.IsValid ()) {
-      FTimerHandle RepeatTimer;
-      GetWorld ()->GetTimerManager ().SetTimer (RepeatTimer,
+   WorldAbilityMgr = URWorldAbilityMgr::GetInstance (this);
+   if (!WorldAbilityMgr) {
+      FTimerHandle RetryHandle;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
                                                 this, &URAbility_Aura::PullAbilityInfo,
                                                 1);
+      return;
    }
+
+   WorldAbilityMgr->ReportAddAbility (this);
+   AbilityInfo = WorldAbilityMgr->GetAbilityInfo_Object (this);
+
+   if (!AbilityInfo.IsValid ()) {
+      R_LOG_PRINTF ("[%s] Recieved Invalid Ability Info.", *GetName ());
+   }
+
+   if (OwnerAbilityMgr) OwnerAbilityMgr->ReportAbilityListUpdated ();
 }
 
 void URAbility::SetIsEnabled (bool IsEnabled_)
@@ -124,9 +125,8 @@ void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
 void URAbility_Aura::LoadTargetClass ()
 {
    if (ensure (!TargetClass.IsNull ())) {
-      URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
-      if (AssetMgr) {
-         TargetClassLoadHandle = AssetMgr->StreamableManager.RequestAsyncLoad (TargetClass.GetUniqueID (),
+      if (URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this)) {
+         TargetClassLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (TargetClass.GetUniqueID (),
             [this] () {
                if (!TargetClassLoadHandle.IsValid ()) return;
                if (TargetClassLoadHandle->HasLoadCompleted ()) {
@@ -146,28 +146,25 @@ void URAbility_Aura::LoadTargetClass ()
       } else {
          FTimerHandle RetryHandle;
          GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                   this,
-                                                   &URAbility_Aura::LoadTargetClass,
-                                                   1,
-                                                   false);
+                                                   this, &URAbility_Aura::LoadTargetClass,
+                                                   1);
       }
    }
 }
 
-void URAbility_Aura::SetCheckRangeActive (bool enable)
+void URAbility_Aura::SetCheckRangeActive (bool Enable)
 {
-   if (enable) {
-      if (!TimerCheckRange.IsValid () && TargetClassLoaded)
-         GetWorld ()->GetTimerManager ().SetTimer (TimerCheckRange,
-                                                   this,
-                                                   &URAbility_Aura::CheckRange,
+   if (Enable) {
+      if (!CheckRangeHandle.IsValid () && TargetClassLoaded)
+         GetWorld ()->GetTimerManager ().SetTimer (CheckRangeHandle,
+                                                   this, &URAbility_Aura::CheckRange,
                                                    CheckRangeInterval,
                                                    true,
                                                    0);
 
    } else {
-      if (TimerCheckRange.IsValid ())
-         GetWorld ()->GetTimerManager ().ClearTimer (TimerCheckRange);
+      if (CheckRangeHandle.IsValid ())
+         GetWorld ()->GetTimerManager ().ClearTimer (CheckRangeHandle);
    }
 }
 
@@ -267,9 +264,7 @@ void URAbility_Active::Use_Global_Implementation ()
    UseCooldownLeft = Cooldown;
    IsUseable       = false;
 
-   if (URWorldAbilityMgr* WorldMgr = URWorldAbilityMgr::GetInstance (this)) {
-      WorldMgr->ReportUseAbility (this);
-   }
+   if (WorldAbilityMgr) WorldAbilityMgr->ReportUseAbility (this);
 
    // Broadcast event
    if (R_IS_VALID_WORLD) {
