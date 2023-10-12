@@ -6,6 +6,7 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -71,10 +72,10 @@ void ARItemPickup::BeginPlay ()
 
    // Enable overlap after a delay
    FTimerHandle TempHandle;
-   GetWorldTimerManager().SetTimer (TempHandle,
-                                    this, &ARItemPickup::ActivatePickupOverlap,
-                                    PickupActivationDelay,
-                                    false);
+   RTIMER_START (TempHandle,
+                 this, &ARItemPickup::ActivatePickupOverlap,
+                 PickupActivationDelay,
+                 false);
 }
 
 // Activate Overlap detection

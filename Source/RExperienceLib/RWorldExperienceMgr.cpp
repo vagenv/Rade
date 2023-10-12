@@ -5,6 +5,7 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 
 //=============================================================================
@@ -165,9 +166,9 @@ void URWorldExperienceMgr::ConnetToWorldDamageMgr ()
          WorldDamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
       } else {
          FTimerHandle RetryHandle;
-         GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                   this, &URWorldExperienceMgr::ConnetToWorldDamageMgr,
-                                                   1);
+         RTIMER_START (RetryHandle,
+                       this, &URWorldExperienceMgr::ConnetToWorldDamageMgr,
+                       1, false);
       }
    }
 }

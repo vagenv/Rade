@@ -7,7 +7,9 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RUtilLib/RWorldAssetMgr.h"
+
 #include "RDamageLib/RDamageTypes.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
@@ -95,9 +97,9 @@ void URStatusMgrComponent::FindWorldMgrs ()
 
    if (!WorldStatusMgr || !WorldDamageMgr) {
       FTimerHandle RetryHandle;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                this, &URStatusMgrComponent::FindWorldMgrs,
-                                                1);
+      RTIMER_START (RetryHandle,
+                    this, &URStatusMgrComponent::FindWorldMgrs,
+                    1, false);
    }
 }
 

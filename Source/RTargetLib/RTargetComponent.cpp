@@ -4,6 +4,7 @@
 #include "RWorldTargetMgr.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RTimer.h"
 
 void URTargetComponent::BeginPlay ()
 {
@@ -23,9 +24,9 @@ void URTargetComponent::RegisterTarget ()
       WorldTargetMgr->RegisterTarget (this);
    } else {
       FTimerHandle RetryHandle;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                this, &URTargetComponent::RegisterTarget,
-                                                1);
+      RTIMER_START (RetryHandle,
+                    this, &URTargetComponent::RegisterTarget,
+                    1, false);
    }
 }
 void URTargetComponent::UnregisterTarget ()

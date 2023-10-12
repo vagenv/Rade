@@ -7,6 +7,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RUtilLib/RWorldAssetMgr.h"
 
 // ============================================================================
@@ -53,10 +54,11 @@ void URAbility::PullAbilityInfo ()
 {
    WorldAbilityMgr = URWorldAbilityMgr::GetInstance (this);
    if (!WorldAbilityMgr) {
+
       FTimerHandle RetryHandle;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                this, &URAbility_Aura::PullAbilityInfo,
-                                                1);
+      RTIMER_START (RetryHandle,
+                    this, &URAbility_Aura::PullAbilityInfo,
+                    1, false);
       return;
    }
 
@@ -145,9 +147,9 @@ void URAbility_Aura::LoadTargetClass ()
             });
       } else {
          FTimerHandle RetryHandle;
-         GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                   this, &URAbility_Aura::LoadTargetClass,
-                                                   1);
+         RTIMER_START (RetryHandle,
+                       this, &URAbility_Aura::LoadTargetClass,
+                       1, false);																					
       }
    }
 }
@@ -155,16 +157,16 @@ void URAbility_Aura::LoadTargetClass ()
 void URAbility_Aura::SetCheckRangeActive (bool Enable)
 {
    if (Enable) {
-      if (!CheckRangeHandle.IsValid () && TargetClassLoaded)
-         GetWorld ()->GetTimerManager ().SetTimer (CheckRangeHandle,
-                                                   this, &URAbility_Aura::CheckRange,
-                                                   CheckRangeInterval,
-                                                   true,
-                                                   0);
+      if (TargetClassLoaded)
+        RTIMER_START (CheckRangeHandle,
+                      this, &URAbility_Aura::CheckRange,
+                      CheckRangeInterval,
+                      true);
+      // Instantly call
+      CheckRange ();
 
    } else {
-      if (CheckRangeHandle.IsValid ())
-         GetWorld ()->GetTimerManager ().ClearTimer (CheckRangeHandle);
+      RTIMER_STOP (CheckRangeHandle, this);
    }
 }
 

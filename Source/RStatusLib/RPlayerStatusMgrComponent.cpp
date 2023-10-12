@@ -7,6 +7,8 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
+
 #include "RDamageLib/RDamageTypes.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
@@ -47,10 +49,10 @@ void URPlayerStatusMgrComponent::BeginPlay ()
    if (R_IS_NET_ADMIN) {
 
       FTimerHandle TempHandle;
-      GetOwner ()->GetWorldTimerManager ().SetTimer (TempHandle,
-                                                     this,
-                                                     &URPlayerStatusMgrComponent::RecalcStatus,
-                                                     1);
+      RTIMER_START (TempHandle,
+                    this,
+                    &URPlayerStatusMgrComponent::RecalcStatus,
+                    1, false);
 
       // Recalc on revive
       OnRevive.AddDynamic (this, &URPlayerStatusMgrComponent::RecalcStatus);
@@ -69,9 +71,9 @@ void URPlayerStatusMgrComponent::ConnectToExperienceMgr ()
    WorldExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
    if (!WorldExperienceMgr) {
       FTimerHandle RetryHandle;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                this, &URPlayerStatusMgrComponent::ConnectToExperienceMgr,
-                                                1);
+      RTIMER_START (RetryHandle,
+                    this, &URPlayerStatusMgrComponent::ConnectToExperienceMgr,
+                    1, false);
       return;
    }
 

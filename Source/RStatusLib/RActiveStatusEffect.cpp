@@ -7,6 +7,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -58,9 +59,9 @@ void URActiveStatusEffect::FindWorldStatusMgr ()
    WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
    if (!WorldStatusMgr) {
       FTimerHandle RetryHandle;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                this, &URActiveStatusEffect::FindWorldStatusMgr,
-                                                1);
+      RTIMER_START (RetryHandle,
+                    this, &URActiveStatusEffect::FindWorldStatusMgr,
+                    1, false);
    }
 
    // Get latest balance from table
@@ -100,7 +101,7 @@ void URActiveStatusEffect::Stop ()
 
 void URActiveStatusEffect::Refresh_Implementation ()
 {
-   if (TimeoutHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TimeoutHandle);
+   RTIMER_STOP (TimeoutHandle, this);
 
    int StackMax = GetStackMax ();
    if (StackMax > 1 && StackCurrent < StackMax) {
@@ -145,7 +146,7 @@ void URActiveStatusEffect::Ended ()
       if (OnEnd.IsBound ()) OnEnd.Broadcast ();
    }
 
-   if (TimeoutHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TimeoutHandle);
+   RTIMER_STOP (TimeoutHandle, this);
 }
 
 void URActiveStatusEffect::Apply ()
@@ -167,9 +168,9 @@ void URActiveStatusEffect::Apply ()
    }
 
    if (R_IS_NET_ADMIN && EffectInfo.Duration > 0) {
-      World->GetTimerManager ().SetTimer (TimeoutHandle,
-                                          this, &URActiveStatusEffect::Timeout,
-                                          EffectInfo.Duration);
+      RTIMER_START (TimeoutHandle,
+                    this, &URActiveStatusEffect::Timeout,
+                    EffectInfo.Duration, false);
    }
 }
 

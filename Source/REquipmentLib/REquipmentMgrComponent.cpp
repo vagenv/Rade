@@ -7,6 +7,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RUtilLib/RJson.h"
 
 #include "RStatusLib/RPlayerStatusMgrComponent.h"
@@ -66,9 +67,9 @@ void UREquipmentMgrComponent::BeginPlay ()
       }
 
       FTimerHandle TempHandle;
-      GetOwner ()->GetWorldTimerManager ().SetTimer (TempHandle,
-                                                     this, &UREquipmentMgrComponent::OnStatsUpdated,
-                                                     1);
+      RTIMER_START (TempHandle,
+                    this, &UREquipmentMgrComponent::OnStatsUpdated,
+                    1, false);
    }
 }
 

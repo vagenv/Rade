@@ -6,6 +6,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RTimer.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -55,9 +56,9 @@ void URTargetingComponent::FindWorldTargetMgr ()
    WorldTargetMgr = URWorldTargetMgr::GetInstance (this);
    if (!WorldTargetMgr) {
       FTimerHandle RetryHandle;
-      GetWorld ()->GetTimerManager ().SetTimer (RetryHandle,
-                                                this, &URTargetingComponent::FindWorldTargetMgr,
-                                                1);
+      RTIMER_START (RetryHandle,
+                    this, &URTargetingComponent::FindWorldTargetMgr,
+                    1, false);
       return;
    }
 
@@ -67,13 +68,12 @@ void URTargetingComponent::FindWorldTargetMgr ()
 void URTargetingComponent::SetTargetCheckEnabled (bool Enabled)
 {
    if (Enabled) {
-      if (!TargetCheckHandle.IsValid ())
-	      GetOwner ()->GetWorldTimerManager ().SetTimer (TargetCheckHandle,
-                                                         this, &URTargetingComponent::TargetCheck,
-                                                         1,
-                                                         true);
+      RTIMER_START (TargetCheckHandle,
+                    this, &URTargetingComponent::TargetCheck,
+                    1,
+                    true);
    } else {
-      if (TargetCheckHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (TargetCheckHandle);
+      RTIMER_STOP (TargetCheckHandle, this);
    }
 }
 

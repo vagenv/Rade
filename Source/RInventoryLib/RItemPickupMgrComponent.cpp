@@ -6,6 +6,7 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 
 //=============================================================================
 //                 Core
@@ -18,14 +19,15 @@ URItemPickupMgrComponent::URItemPickupMgrComponent ()
 void URItemPickupMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   GetWorld ()->GetTimerManager ().SetTimer (CheckClosestPickupHandle,
-                                             this, &URItemPickupMgrComponent::CheckClosestPickup, 
-                                             CheckClosestDelay, true);
+
+   RTIMER_START (CheckClosestPickupHandle,
+                 this, &URItemPickupMgrComponent::CheckClosestPickup, 
+                 CheckClosestDelay, true);
 }
 
 void URItemPickupMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-	if (CheckClosestPickupHandle.IsValid ()) GetWorld ()->GetTimerManager ().ClearTimer (CheckClosestPickupHandle);
+   RTIMER_STOP (CheckClosestPickupHandle, this);
    Super::EndPlay (EndPlayReason);
 }
 
