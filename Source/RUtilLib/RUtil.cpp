@@ -14,7 +14,7 @@ UWorld* URUtil::GetWorld (const UObject* WorldContextObject)
    return World;
 }
 
-ACharacter* URUtil::GetLocalRadePlayer (UObject* WorldContextObject)
+ACharacter* URUtil::GetLocalRadePlayer (const UObject* WorldContextObject)
 {
    if (!ensure (WorldContextObject)) return nullptr;
    UWorld* World = GEngine->GetWorldFromContextObject (WorldContextObject, EGetWorldErrorMode::ReturnNull);
