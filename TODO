@@ -10,18 +10,9 @@ LINUX
 - setfocused not showing up
 - item list empty
 
+Cursor still visible for a few seconds after switch to gamepad.
+
 Re-implement kick team mate widget
-
-==============
-Pickup
-==============
-
-World Interact interface
-
-Rework pickup.
-- Action to open
-
-Magnetic pickup without physics. Direct move.
 
 
 ==============
@@ -45,6 +36,12 @@ Fireball:
 Heal:
 - 10 + 2 * Int
 
+==============
+RUI_Icon
+==============
+Round
+Square
+Diamond
 
 ==============
 EventList Sidebar
@@ -64,19 +61,6 @@ Callers
 - Damage taken
 - Damage applied?
 
-==============
-Icon
-==============
-Round
-Square
-Diamond
-
-
-==============
-Fixes
-==============
-- Cursor still visible after switch.
-
 
 ==============
 RUI_GridContainer
@@ -85,6 +69,21 @@ Uniform grid size
 
 RUI_GridContainer
 - Use RUI_ItemWidget_Icon
+
+
+=================================================
+   World Interact interface
+=================================================
+
+Gameplay UserWidget
+
+[Press X] to [Action Text]
+ [Detailed Description]
+
+
+Pickup
+- Action to open chest -> Pickup window
+
 
 
 =================================================
@@ -770,20 +769,6 @@ Network
 Inventory
 - Replication only for owner?
 - JsonData is a large FString member variable. Very expensive to replicate.
-
-
-==============
-Cleanup pointers
-==============
-T* A -> TWeakObjectPtr<A>
-IsValid (A) -> A.IsValid ()
-
-==============
-Cleanup References (Blueprint too)
-==============
-TSubclassOf<T> -> TSoftClassPtr<T>
-No linking.
-https://jdelezenne.github.io/Codex/UE4/Assets%20Streaming.html
 
 
 =================================================
