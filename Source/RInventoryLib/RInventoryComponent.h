@@ -124,11 +124,11 @@ public:
 
    // Remove item data
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool RemoveItem_Data  (FRItemData ItemData);
+      virtual bool RemoveItem_Data (FRItemData ItemData);
 
       // Remove item arch
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool RemoveItem_Handle  (const FRItemDataHandle &ItemHandle);
+      virtual bool RemoveItem_Handle (const FRItemDataHandle &ItemHandle);
 
    //==========================================================================
    //                 Transfer between Inventories
@@ -136,7 +136,7 @@ public:
 
    // Transfer everything
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool TransferAll  (URInventoryComponent *DstInventory);
+      virtual bool TransferAll (URInventoryComponent *DstInventory);
 
    // Transfer a single item
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")

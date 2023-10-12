@@ -22,8 +22,8 @@ void URTargetComponent::RegisterTarget ()
    if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
       Mgr->RegisterTarget (this);
    } else {
-      FTimerHandle RepeatTimer;
-      GetWorld ()->GetTimerManager ().SetTimer (RepeatTimer,
+      FTimerHandle RetryTimer;
+      GetWorld ()->GetTimerManager ().SetTimer (RetryTimer,
                                                 this, &URTargetComponent::RegisterTarget,
                                                 1);
    }
