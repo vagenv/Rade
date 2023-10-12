@@ -28,7 +28,7 @@ Poison aura ability not working
 Ability
 - Equipable / Not equipable
 - Learn requirnment (Cost N point + other ability as dependency)
-
+- Cost in C++
 
 Ability damage / effect scale from stat
 Fireball:
@@ -36,12 +36,6 @@ Fireball:
 Heal:
 - 10 + 2 * Int
 
-==============
-RUI_Icon
-==============
-Round
-Square
-Diamond
 
 ==============
 EventList Sidebar
