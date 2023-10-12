@@ -81,7 +81,7 @@ void ARItemPickup::BeginPlay ()
 void ARItemPickup::ActivatePickupOverlap ()
 {
    // Check if Any Player is within the range to pickup this item
-   for (TActorIterator<AActor> ActorItr(GetWorld ()); ActorItr; ++ActorItr) {
+   for (TActorIterator<AActor> ActorItr(URUtil::GetWorld (this)); ActorItr; ++ActorItr) {
 
       if (!IsValid (*ActorItr)) continue;
 

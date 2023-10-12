@@ -4,6 +4,7 @@
 #include "RItemPickup.h"
 
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RWorldAssetMgr.h"
 #include "RSaveLib/RWorldSaveMgr.h"
@@ -32,8 +33,6 @@ void URInventoryComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty>
 void URInventoryComponent::BeginPlay()
 {
    Super::BeginPlay();
-   const UWorld *world = GetWorld ();
-   if (!ensure (world)) return;
 
    if (R_IS_NET_ADMIN) {
 
@@ -671,6 +670,9 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 
 ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData)
 {
+   UWorld* World = URUtil::GetWorld (this);
+   if (!World) return nullptr;
+
    AActor *Player = GetOwner ();
 
    // Get Player Rotation
@@ -680,7 +682,7 @@ ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> Picku
    FVector spawnLoc = Player->GetActorLocation () + forwardVector + FVector(0, 0, 50);
 
    // Create pickup
-   ARItemPickup *Pickup = GetWorld ()->SpawnActor<ARItemPickup> (PickupClass, spawnLoc, rot);
+   ARItemPickup *Pickup = World->SpawnActor<ARItemPickup> (PickupClass, spawnLoc, rot);
    if (!Pickup) return nullptr;
 
    // Set pickup info

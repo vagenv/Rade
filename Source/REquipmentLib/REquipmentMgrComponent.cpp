@@ -123,11 +123,11 @@ void UREquipmentMgrComponent::CalcWeight ()
    float EquipLoad = WeightCurrent * 100. / WeightMax;
    FRPassiveStatusEffect EvasionEffect;
    EvasionEffect.EffectTarget = ERStatusEffectTarget::Evasion;
-   EvasionEffect.Percent      = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
+   EvasionEffect.Percent      = URUtil::GetRuntimeFloatCurveValue (WeightToEvasion, EquipLoad);
 
    FRPassiveStatusEffect MoveSpeedEffect;
    MoveSpeedEffect.EffectTarget = ERStatusEffectTarget::MoveSpeed;
-   MoveSpeedEffect.Percent      = URUtilLibrary::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
+   MoveSpeedEffect.Percent      = URUtil::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
 
    TArray<FRPassiveStatusEffect> Effects;
    Effects.Add (EvasionEffect);
@@ -141,7 +141,7 @@ void UREquipmentMgrComponent::OnStatsUpdated ()
    URPlayerStatusMgrComponent *StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
       FRCoreStats StatsTotal = StatusMgr->GetCoreStats_Total ();
-      WeightMax = URUtilLibrary::GetRuntimeFloatCurveValue (StrToWeightMax, StatsTotal.STR);
+      WeightMax = URUtil::GetRuntimeFloatCurveValue (StrToWeightMax, StatsTotal.STR);
       if (LastWeightMax != WeightMax) {
          LastWeightMax = WeightMax;
          CalcWeight ();

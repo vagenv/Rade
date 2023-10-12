@@ -46,8 +46,9 @@ protected:
 private:
 
 	// Values for internal tracking
-	FString  	          SaveId;
-	const UWorld*         World   = nullptr;
-			URWorldSaveMgr* SaveMgr = nullptr;
+	FString SaveId;
+
+	//UPROPERTY()
+		TWeakObjectPtr<URWorldSaveMgr> WorldSaveMgr = nullptr;
 };
 

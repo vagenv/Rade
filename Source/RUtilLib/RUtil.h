@@ -9,9 +9,26 @@ class UActorComponent;
 class ACharacter;
 class UWorld;
 
+
 class RUTILLIB_API URUtil
 {
 public:
+
+   static UWorld* GetWorld (const UObject* WorldContextObject);
+   #define R_IS_VALID_WORLD (URUtil::GetWorld (this) != nullptr)
+
+
+   static ACharacter* GetLocalRadePlayer (UObject* WorldContextObject);
+   
+   static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime);
+
+   static float GetAngle (FVector v1, FVector v2);
+
+   static FString GetTablePath (const UDataTable* Table);
+
+
+
+   // Template functions
 
    template<typename T>
    static FORCEINLINE T* GetComponent (const AActor* Target);
@@ -54,8 +71,8 @@ T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
 {
    if (!ensure (WorldContextObject)) return nullptr;
 
-   const UWorld *World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return nullptr;
+   UWorld *World = URUtil::GetWorld (WorldContextObject);
+   if (!World) return nullptr;
 
    // All world instances should be kept in game state.
    return URUtil::GetComponent<T> (World->GetGameState ());
@@ -77,20 +94,29 @@ class RUTILLIB_API URUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   // Get local player for HUD
+   // Get local player
    UFUNCTION(BlueprintPure, Category = "Rade|Util", meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Get Local Rade Player", CompactNodeTitle = "Get Rade Player", Keywords = "get rade player"))
-      static ACharacter* GetLocalRadePlayer (UObject* WorldContextObject);
+      static ACharacter* GetLocalRadePlayer (UObject* WorldContextObject) {
+         return URUtil::GetLocalRadePlayer (WorldContextObject);
+      }
 
    // Uses Eval call of FRuntimeFloatCurve
    UFUNCTION(BlueprintPure, Category = "Rade|Util")
-	   static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime);
+	   static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime) {
+         return URUtil::GetRuntimeFloatCurveValue (InCurve, InTime);
+      }
+
 
    // Gets angle in degrees between two vectors
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Util")
-      static float GetAngle (FVector v1, FVector v2);
+      static float GetAngle (FVector v1, FVector v2) {
+         return URUtil::GetAngle (v1, v2);
+      }
 
    // Gets path to table
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Util")
-      static FString GetTablePath (const UDataTable* Table);
+      static FString GetTablePath (const UDataTable* Table) {
+         return URUtil::GetTablePath (Table);
+      }
 };
 

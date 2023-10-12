@@ -37,6 +37,10 @@ protected:
    // Manager containing all available targets
    UPROPERTY()
       TObjectPtr<URWorldTargetMgr> WorldTargetMgr = nullptr;
+
+   UPROPERTY()
+      TObjectPtr<UWorld> World = nullptr;
+
    //==========================================================================
    //                         Params
    //==========================================================================

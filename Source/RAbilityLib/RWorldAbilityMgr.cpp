@@ -30,7 +30,7 @@ void URWorldAbilityMgr::InitializeComponent ()
    if (AbilityTable) {
 
       MapAbility.Empty ();
-      FString TablePath = URUtilLibrary::GetTablePath (AbilityTable);
+      FString TablePath = URUtil::GetTablePath (AbilityTable);
       FString ContextString;
       TArray<FName> RowNames = AbilityTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
@@ -66,7 +66,7 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Object (const URAbility* Ability
       } else {
          R_LOG_PRINTF ("Error. [%s] Ability not found in [%s]",
                        *AbilityClassPath,
-                       *URUtilLibrary::GetTablePath (AbilityTable));
+                       *URUtil::GetTablePath (AbilityTable));
       }
    }
 
@@ -83,7 +83,7 @@ FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Class (const TSoftClassPtr<URAbi
       } else {
          R_LOG_PRINTF ("Error. [%s] Ability not found in [%s]",
                        *AbilityClassPath,
-                       *URUtilLibrary::GetTablePath (AbilityTable));
+                       *URUtil::GetTablePath (AbilityTable));
       }
    }
 

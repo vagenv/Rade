@@ -2,7 +2,19 @@
 
 #include "RUtil.h"
 
-ACharacter* URUtilLibrary::GetLocalRadePlayer (UObject* WorldContextObject)
+
+UWorld* URUtil::GetWorld (const UObject* WorldContextObject)
+{
+   if (!ensure (WorldContextObject)) return nullptr;
+   if (!GEngine) return nullptr;
+   UWorld* World = GEngine->GetWorldFromContextObject (WorldContextObject, EGetWorldErrorMode::ReturnNull);
+   if (!World) return nullptr;
+   if (World->bIsTearingDown) return nullptr;
+
+   return World;
+}
+
+ACharacter* URUtil::GetLocalRadePlayer (UObject* WorldContextObject)
 {
    if (!ensure (WorldContextObject)) return nullptr;
    UWorld* World = GEngine->GetWorldFromContextObject (WorldContextObject, EGetWorldErrorMode::ReturnNull);
@@ -15,7 +27,7 @@ ACharacter* URUtilLibrary::GetLocalRadePlayer (UObject* WorldContextObject)
    return Result;
 }
 
-float URUtilLibrary::GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime)
+float URUtil::GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime)
 {
 	// If an external curve is provided, we'll use that to evaluate
 	if (InCurve.ExternalCurve != nullptr) {
@@ -26,14 +38,14 @@ float URUtilLibrary::GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurv
 	return InCurve.GetRichCurveConst ()->Eval (InTime);
 }
 
-float URUtilLibrary::GetAngle (FVector v1, FVector v2)
+float URUtil::GetAngle (FVector v1, FVector v2)
 {
    v1.Normalize ();
    v2.Normalize ();
    return (acosf (FVector::DotProduct (v1, v2))) * (180 / 3.1415926);
 }
 
-FString URUtilLibrary::GetTablePath (const UDataTable* Table)
+FString URUtil::GetTablePath (const UDataTable* Table)
 {
    return Table ? Table->GetPathName () : "NULL";
 }

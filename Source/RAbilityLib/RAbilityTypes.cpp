@@ -31,7 +31,7 @@ void URAbility::BeginPlay ()
 {
    Super::BeginPlay ();
 
-   if (GetWorld () && !GetOwner ()->GetInstanceComponents ().Contains (this))
+   if (URUtil::GetWorld (this) && !GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->AddInstanceComponent (this);
 
    OwnerAbilityMgr = URUtil::GetComponent<URAbilityMgrComponent>(GetOwner ());
@@ -43,7 +43,7 @@ void URAbility::EndPlay (const EEndPlayReason::Type EndPlayReason)
    if (OwnerAbilityMgr) OwnerAbilityMgr->ReportAbilityListUpdated ();
    if (WorldAbilityMgr) WorldAbilityMgr->ReportRmAbility (this);
 
-   if (GetWorld () && GetOwner ()->GetInstanceComponents ().Contains (this))
+   if (URUtil::GetWorld (this) && GetOwner ()->GetInstanceComponents ().Contains (this))
       GetOwner ()->RemoveInstanceComponent (this);
  
    Super::EndPlay (EndPlayReason);
@@ -208,20 +208,27 @@ URAbility_Active::URAbility_Active ()
    PrimaryComponentTick.TickInterval = 0.5f;
 }
 
+void URAbility_Active::BeginPlay ()
+{
+   Super::BeginPlay ();
+   World = URUtil::GetWorld (this);
+}
+
 void URAbility_Active::TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
    Super::TickComponent (DeltaTime, TickType, ThisTickFunction);
 
    if (!IsUseable) {
-      // Update cooldown left
-      UWorld* World = GetWorld ();
-      if (!ensure (World)) return;
-      UseCooldownLeft = FMath::Clamp (UseLastTime + Cooldown - World->GetTimeSeconds (), 0, Cooldown);
 
-      // Can be used
-      if (UseCooldownLeft == 0 && GetIsEnabled ()) {
-         IsUseable = true;
-         if (R_IS_VALID_WORLD && OnAbilityStatusUpdated.IsBound ()) OnAbilityStatusUpdated.Broadcast ();
+      if (World && !World->bIsTearingDown) {
+         // Update cooldown left
+         UseCooldownLeft = FMath::Clamp (UseLastTime + Cooldown - World->GetTimeSeconds (), 0, Cooldown);
+
+         // Can be used
+         if (UseCooldownLeft == 0 && GetIsEnabled ()) {
+            IsUseable = true;
+            if (R_IS_VALID_WORLD && OnAbilityStatusUpdated.IsBound ()) OnAbilityStatusUpdated.Broadcast ();
+         }
       }
    }
 }
@@ -256,8 +263,7 @@ void URAbility_Active::Use_Server_Implementation ()
 // Called on all instances
 void URAbility_Active::Use_Global_Implementation ()
 {
-   UWorld* World = GetWorld ();
-   if (!ensure (World)) return;
+   if (!World) return;
 
    // Update local state
    UseLastTime     = World->GetTimeSeconds ();

@@ -6,6 +6,7 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "RUtilLib/Rutil.h"
 #include "RUtilLib/RLog.h"
 
 // Sets default values
@@ -80,8 +81,8 @@ bool ARViewCapture::GetScreenShot (UObject* WorldContextObject, TArray<uint8> &T
 {
    if (!ensure (WorldContextObject)) return false;
 
-   UWorld* World = WorldContextObject->GetWorld ();
-   if (!ensure (World)) return false;
+   UWorld* World = URUtil::GetWorld (WorldContextObject);
+   if (!World) return false;
 
    // 1. Create a temporary actor to capture the player's view.
    ARViewCapture* ViewCaptureActor = World->SpawnActor<ARViewCapture>();

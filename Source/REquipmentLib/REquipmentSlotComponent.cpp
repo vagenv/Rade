@@ -2,7 +2,7 @@
 
 #include "REquipmentSlotComponent.h"
 #include "RUtilLib/RLog.h"
-#include "RUtilLib/RCheck.h"
+#include "RUtilLib/RUtil.h"
 #include "Net/UnrealNetwork.h"
 
 //=============================================================================

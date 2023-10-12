@@ -7,6 +7,8 @@
 #include "GameFramework/InputSettings.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Math/UnrealMathUtility.h"
+
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 
 
@@ -222,10 +224,10 @@ bool UROptionManager::SetVideoQualitySettings (FRVideoQualitySetting QualitySett
 bool UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &Volume)
 {
    if (!ensure (WorldContextObject)) return false;
-   const UWorld *world = WorldContextObject->GetWorld ();
-   if (!ensure (world)) return false;
+   UWorld *World = URUtil::GetWorld (WorldContextObject);
+   if (World) return false;
 
-   FAudioDeviceHandle audioDeviceHandler = world->GetAudioDevice ();
+   FAudioDeviceHandle audioDeviceHandler = World->GetAudioDevice ();
    //if (!ensure (audioDeviceHandler)) return false;
    //Volume = audioDeviceHandler->GetTransientPrimaryVolume ();
    return true;
@@ -234,10 +236,10 @@ bool UROptionManager::GetGlobalSoundVolume (UObject* WorldContextObject, float &
 bool UROptionManager::SetGlobalSoundVolume (UObject* WorldContextObject, const float NewVolume)
 {
    if (!ensure (WorldContextObject)) return false;
-   const UWorld *world = WorldContextObject->GetWorld ();
-   if (!ensure (world)) return false;
+   UWorld *World = URUtil::GetWorld (WorldContextObject);
+   if (World) return false;
 
-   FAudioDeviceHandle audioDeviceHandler = world->GetAudioDevice ();
+   FAudioDeviceHandle audioDeviceHandler = World->GetAudioDevice ();
    audioDeviceHandler->SetTransientPrimaryVolume (NewVolume);
    return true;
 }

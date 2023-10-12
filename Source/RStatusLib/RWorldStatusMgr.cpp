@@ -159,7 +159,7 @@ void URWorldStatusMgr::InitializeComponent ()
    if (StatusEffectTable) {
 
       MapStatusEffect.Empty ();
-      FString TablePath = URUtilLibrary::GetTablePath (StatusEffectTable);
+      FString TablePath = URUtil::GetTablePath (StatusEffectTable);
       FString ContextString;
       TArray<FName> RowNames = StatusEffectTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
@@ -195,7 +195,7 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
       } else {
          R_LOG_PRINTF ("Error. [%s] Effect not found in [%s]",
                        *StatusClassPath,
-                       *URUtilLibrary::GetTablePath (StatusEffectTable));
+                       *URUtil::GetTablePath (StatusEffectTable));
       }
    }
 
@@ -236,15 +236,15 @@ void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 
 float URWorldStatusMgr::GetLevelUpExtraGain (int CurrentLevel) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpExtraGainCurve, CurrentLevel);
+   return URUtil::GetRuntimeFloatCurveValue (LevelUpExtraGainCurve, CurrentLevel);
 }
 
 FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
 {
    FRCoreStats DeltaStat;
-   DeltaStat.STR = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel);
-   DeltaStat.AGI = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel);
-   DeltaStat.INT = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel);
+   DeltaStat.STR = URUtil::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel);
+   DeltaStat.AGI = URUtil::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel);
+   DeltaStat.INT = URUtil::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel);
    return DeltaStat;
 }
 
@@ -256,50 +256,50 @@ FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
 
 float URWorldStatusMgr::GetStrToHealthMax    (float STR) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthMaxCurve, STR);
+   return URUtil::GetRuntimeFloatCurveValue (StrToHealthMaxCurve, STR);
 }
 
 float URWorldStatusMgr::GetStrToHealthRegen  (float STR) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthRegenCurve, STR);
+   return URUtil::GetRuntimeFloatCurveValue (StrToHealthRegenCurve, STR);
 }
 
 // --- AGI
 
 float URWorldStatusMgr::GetAgiToStaminaMax   (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaMaxCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToStaminaMaxCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToStaminaRegen (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaRegenCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToStaminaRegenCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToEvasion      (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasionCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToEvasionCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToCritical     (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCriticalCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToCriticalCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToAttackSpeed  (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeedCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToAttackSpeedCurve, AGI);
 }
 
 // --- INT
 
 float URWorldStatusMgr::GetIntToManaMax      (float INT) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaMaxCurve, INT);
+   return URUtil::GetRuntimeFloatCurveValue (IntToManaMaxCurve, INT);
 }
 
 float URWorldStatusMgr::GetIntToManaRegen    (float INT) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaRegenCurve, INT);
+   return URUtil::GetRuntimeFloatCurveValue (IntToManaRegenCurve, INT);
 }
 

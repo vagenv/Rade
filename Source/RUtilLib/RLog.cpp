@@ -1,14 +1,14 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RLog.h"
+#include "RUtil.h"
 
 DEFINE_LOG_CATEGORY(RadeLog);
 
 FString RLog_GetAuthStr (const UObject* WorldContext)
 {
-   if (!IsValid (WorldContext)) return "STATIC";
-   UWorld* World = WorldContext->GetWorld ();
-   if (!ensure (World)) return "NO_WORLD";
+   UWorld* World = URUtil::GetWorld (WorldContext);
+   if (!World) return "NO_WORLD";
    return ToString (World->GetNetMode ());
 }
 

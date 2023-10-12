@@ -129,7 +129,7 @@ void URWorldExperienceMgr::InitializeComponent ()
    if (EnemyExpTable) {
 
       MapEnemyExp.Empty ();
-      FString TablePath = URUtilLibrary::GetTablePath (EnemyExpTable);
+      FString TablePath = URUtil::GetTablePath (EnemyExpTable);
       FString ContextString;
       TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {

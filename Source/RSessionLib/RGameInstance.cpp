@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RGameInstance.h"
-#include "RUtilLib/RCheck.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -40,7 +40,7 @@ URGameInstance::URGameInstance ()
 
 bool URGameInstance::HasSession () const
 {
-   UWorld* World = GetWorld ();
+   UWorld* World = URUtil::GetWorld (this);
    if (!World) return false;
 
    if (World->GetNetMode () == ENetMode::NM_Client)       return true;
@@ -52,7 +52,7 @@ bool URGameInstance::HasSession () const
 }
 void URGameInstance::ResetSession ()
 {
-   UWorld* World = GetWorld ();
+    UWorld* World = URUtil::GetWorld (this);
    if (!World) return;
 
    // Client
@@ -280,7 +280,7 @@ void URGameInstance::OnStartSessionComplete (FName SessionName, bool bWasSuccess
    }
 
    // --- Change to listen server
-   UWorld* World = GetWorld ();
+    UWorld* World = URUtil::GetWorld (this);
    if (!World) return;
 
    FURL Url (nullptr, *World->GetLocalURL (), TRAVEL_Absolute);
@@ -318,6 +318,9 @@ bool URGameInstance::JoinSession (
    FName                             SessionName,
    const FOnlineSessionSearchResult& SearchResult)
 {
+   UWorld* World = URUtil::GetWorld (this);
+   if (!World) return false;
+
    if (!UserId.IsValid ()) {
       R_LOG ("Invalid UserId");
       return false;
@@ -333,7 +336,7 @@ bool URGameInstance::JoinSession (
    }
 
    // Save backup of current level
-   LastLevelMap = GetWorld ()->GetPackage ()->GetPathName ();
+   LastLevelMap = World->GetPackage ()->GetPathName ();
    if (!LastLevelMap.IsEmpty ()) {
       //R_LOG ("Set default map to: " + UGameMapsSettings::GetGameDefaultMap () + " => " + LastLevelMap);
       UGameMapsSettings::SetGameDefaultMap (LastLevelMap);
@@ -404,7 +407,7 @@ bool URGameInstance::KickPlayer (APlayerController* KickedPlayer)
       return false;
    }
 
-   UWorld* World = GetWorld ();
+   UWorld* World = URUtil::GetWorld (this);
    if (!World) return false;
 
    if (World->GetNetMode () == ENetMode::NM_Client) {

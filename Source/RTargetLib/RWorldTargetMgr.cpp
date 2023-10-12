@@ -89,12 +89,11 @@ bool URWorldTargetMgr::IsValidTarget (
    // --- Check max angle
    FVector Direction = Target->GetComponentLocation () - SearchOrigin;
    Direction.Normalize ();
-   float Angle = URUtilLibrary::GetAngle (SearchDirection, Direction);
+   float Angle = URUtil::GetAngle (SearchDirection, Direction);
    if (Angle > SearchAngleMax) return false;
 
    return true;
 }
-
 
 float URWorldTargetMgr::GetTargetPoint (
    const URTargetComponent*          Target,
@@ -108,12 +107,12 @@ float URWorldTargetMgr::GetTargetPoint (
    // --- Get values
    FVector Direction = Target->GetComponentLocation () - SearchOrigin;
    Direction.Normalize ();
-   float Angle    = URUtilLibrary::GetAngle (SearchDirection, Direction);
+   float Angle    = URUtil::GetAngle (SearchDirection, Direction);
    float Distance = FVector::Dist (Target->GetComponentLocation (), SearchOrigin);
 
    // Calculate target priority
-   float Points = URUtilLibrary::GetRuntimeFloatCurveValue (SearchAnglePoint,    Angle)
-                + URUtilLibrary::GetRuntimeFloatCurveValue (SearchDistancePoint, Distance);
+   float Points = URUtil::GetRuntimeFloatCurveValue (SearchAnglePoint,    Angle)
+                + URUtil::GetRuntimeFloatCurveValue (SearchDistancePoint, Distance);
 
    //R_LOG_PRINTF ("Target:[%s] Distance:[%.1f] Angle:[%.1f] Point:[%.1f]",
    //              *Target->GetOwner ()->GetName (), Distance, Angle, Points);
@@ -199,6 +198,8 @@ URTargetComponent* URWorldTargetMgr::Find_Screen (
    const TArray<URTargetComponent*> &ExcludeTargets)
 {
    if (!ensure (Targeter)) return nullptr;
+   UWorld* World = URUtil::GetWorld (Targeter);
+   if (!World) return nullptr;
 
    FVector  SearchOrigin = Targeter->GetComponentLocation ();
    FRotator Rotation     = Targeter->GetComponentRotation ();
@@ -215,7 +216,7 @@ URTargetComponent* URWorldTargetMgr::Find_Screen (
    float              NewPoint  = 0;
 
    // Local player controller
-   APlayerController* PlayerController = GetWorld ()->GetFirstPlayerController ();
+   APlayerController* PlayerController = World->GetFirstPlayerController ();
 
    if (!PlayerController) return nullptr;
 
@@ -262,8 +263,8 @@ URTargetComponent* URWorldTargetMgr::Find_Screen (
       float ItDistance = FVector2D::Distance (ItScreenLocation, ScreenCenter) / ScreenMaxDistance;
 
       // Calculate points
-      float ItPoint = URUtilLibrary::GetRuntimeFloatCurveValue (SearchScreenDotPoint,      ItDot)
-                    + URUtilLibrary::GetRuntimeFloatCurveValue (SearchScreenDistancePoint, ItDistance);
+      float ItPoint = URUtil::GetRuntimeFloatCurveValue (SearchScreenDotPoint,      ItDot)
+                    + URUtil::GetRuntimeFloatCurveValue (SearchScreenDistancePoint, ItDistance);
 
       //R_LOG_PRINTF ("Target:[%s] Dot:[%.2f] Distance:[%.2f] Point:[%.2f]",
       //              *(ItTarget->GetOwner ()->GetName ()), ItDot, ItDistance, ItPoint);

@@ -37,6 +37,7 @@ void URTargetingComponent::BeginPlay ()
 {
 	Super::BeginPlay ();
    FindWorldTargetMgr ();
+   World = URUtil::GetWorld (this);
 }
 
 void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -116,7 +117,7 @@ FRotator URTargetingComponent::GetControlRotation ()
    FVector TargetDir  = GetTargetDir ();
 
    // --- Is there a target
-   if (!TargetDir.IsNearlyZero ()) {
+   if (!TargetDir.IsNearlyZero () && World && World->bIsTearingDown) {
 
       // Normalize Direction and add offset;
       TargetDir.Normalize ();
@@ -125,16 +126,16 @@ FRotator URTargetingComponent::GetControlRotation ()
       // Camera lerp speed
       float LerpPower = 4;
 
-      float Angle = URUtilLibrary::GetAngle (CurrentDir, TargetDir);
+      float Angle = URUtil::GetAngle (CurrentDir, TargetDir);
 
       // Transform Angle to Lerp power
-      LerpPower = URUtilLibrary::GetRuntimeFloatCurveValue (TargetAngleToLerpPower, Angle);
+      LerpPower = URUtil::GetRuntimeFloatCurveValue (TargetAngleToLerpPower, Angle);
 
       // Remove targeting
       if (!CustomTargetDir.IsNearlyZero () && Angle < TargetStopAngle) CustomTargetDir = FVector::Zero ();
 
       // Tick DeltaTime
-      float DeltaTime = GetWorld ()->GetDeltaSeconds ();
+      float DeltaTime = World->GetDeltaSeconds ();
 
       // Lerp to Target Rotation
       float LerpValue = FMath::Clamp (DeltaTime * LerpPower, 0, 1);
@@ -199,10 +200,10 @@ void URTargetingComponent::TargetCheck ()
 // Perform search for new target
 void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 {
-   if (!WorldTargetMgr) return;
+   if (!WorldTargetMgr || World) return;
 
    // --- Limit the amount of camera adjustments
-   double CurrentTime = GetWorld ()->GetTimeSeconds ();
+   double CurrentTime = World->GetTimeSeconds ();
    if (CurrentTime < LastTargetSearch + TargetSearchDelay) return;
    LastTargetSearch = CurrentTime;
 

@@ -206,6 +206,7 @@ class RABILITYLIB_API URAbility_Active : public URAbility
 public:
 
    URAbility_Active ();
+   virtual void BeginPlay () override;
    virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
    //==========================================================================
@@ -263,5 +264,8 @@ protected:
 
    UPROPERTY()
       bool IsUseable = false;
+
+      UPROPERTY ()
+      UWorld* World;
 };
 

@@ -95,12 +95,12 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
          // --- It Pickup angle
          FVector ItDir = ItPickup->GetActorLocation () - MgrLoc;
          ItDir.Normalize ();
-         float ItAngle = URUtilLibrary::GetAngle (MgrDir, ItDir);
+         float ItAngle = URUtil::GetAngle (MgrDir, ItDir);
 
          // --- Selected Pickup Angle
          FVector CurrentDir = newClosestPickup->GetActorLocation () - MgrLoc;
          CurrentDir.Normalize ();
-         float CurrentAngle = URUtilLibrary::GetAngle (MgrDir, CurrentDir);
+         float CurrentAngle = URUtil::GetAngle (MgrDir, CurrentDir);
 
          // Update selection
          if (ItAngle < CurrentAngle) newClosestPickup = ItPickup;

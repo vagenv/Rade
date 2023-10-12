@@ -108,8 +108,8 @@ void URActiveStatusEffect::Refresh_Implementation ()
       StackCurrent = FMath::Clamp (StackCurrent + 1, 1, StackMax);
 
       // // --- For debug
-      // float StackLastScale    = URUtilLibrary::GetRuntimeFloatCurveValue (StackToScale, StackLast);
-      // float StackCurrentScale = URUtilLibrary::GetRuntimeFloatCurveValue (StackToScale, StackCurrent);
+      // float StackLastScale    = URUtil::GetRuntimeFloatCurveValue (StackToScale, StackLast);
+      // float StackCurrentScale = URUtil::GetRuntimeFloatCurveValue (StackToScale, StackCurrent);
 
       // R_LOG_PRINTF ("[%s] Effect stack increased [%d %.1f%] => [%d %.1f]",
       //    *GetName (),
@@ -150,7 +150,7 @@ void URActiveStatusEffect::Ended ()
 
 void URActiveStatusEffect::Apply ()
 {
-   UWorld* World = GetWorld ();
+   UWorld* World = URUtil::GetWorld (this);
    if (!World) return;
    StartTime = World->GetTimeSeconds ();
 
@@ -184,7 +184,7 @@ void URActiveStatusEffect::Timeout ()
 
 double URActiveStatusEffect::GetDurationLeft () const
 {
-   UWorld* World = GetWorld ();
+   UWorld* World = URUtil::GetWorld (this);
    if (!World) return 0;
    return FMath::Clamp (StartTime + EffectInfo.Duration - World->GetTimeSeconds (), 0, EffectInfo.Duration);
 }
