@@ -132,7 +132,7 @@ void URPlayerStatusMgrComponent::RecalcCoreStats ()
 void URPlayerStatusMgrComponent::RecalcSubStats ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (WorldStatusMgr))) return;
+   if (!WorldStatusMgr) return;
 
    FRCoreStats StatsTotal = GetCoreStats_Total ();
    float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
@@ -172,7 +172,7 @@ void URPlayerStatusMgrComponent::RecalcSubStats ()
 void URPlayerStatusMgrComponent::RecalcStatusValues ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (WorldStatusMgr))) return;
+   if (!WorldStatusMgr) return;
 
    // --- Status
    FRCoreStats StatsTotal = GetCoreStats_Total ();

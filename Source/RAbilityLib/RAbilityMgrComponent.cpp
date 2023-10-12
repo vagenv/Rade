@@ -112,7 +112,7 @@ bool URAbilityMgrComponent::AddAbility (const TSoftClassPtr<URAbility> Ability_)
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (AbilityPoints > 0)) return false;
    if (!ensure (!Ability_.IsNull ())) return false;
-   if (!ensure (!IsValid (URAbilityMgrComponent::GetAbility (Ability_)))) return false;
+   if (!ensure (!URAbilityMgrComponent::GetAbility (Ability_))) return false;
 
    URWorldAssetMgr* AssetMgr = URWorldAssetMgr::GetInstance (this);
    if (!AssetMgr) return false;
@@ -149,7 +149,7 @@ bool URAbilityMgrComponent::RmAbility (const TSoftClassPtr<URAbility> Ability_)
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Ability_.IsNull ())) return false;
    URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
-   if (!ensure (IsValid (Ability))) return false;
+   if (!Ability) return false;
 
    AbilityPoints++;
    ReportAbilityPointUpdated ();

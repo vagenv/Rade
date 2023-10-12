@@ -7,8 +7,8 @@
 
 void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId_)
 {
-   if (!ensure (IsValid (WorldContextObject))) return;
-   if (!ensure (!SaveId_.IsEmpty ()))          return;
+   if (!ensure (WorldContextObject))  return;
+   if (!ensure (!SaveId_.IsEmpty ())) return;
 
    const UWorld *World_ = WorldContextObject->GetWorld ();
    if (!ensure (IsValid (World_))) return;

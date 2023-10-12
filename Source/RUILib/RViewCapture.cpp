@@ -78,7 +78,7 @@ void ARViewCapture::CapturePlayersView (ERActionResult &Outcome, const int32 Res
 
 bool ARViewCapture::GetScreenShot (UObject* WorldContextObject, TArray<uint8> &TextureData)
 {
-   if (!ensure (IsValid (WorldContextObject))) return false;
+   if (!ensure (WorldContextObject)) return false;
 
    UWorld* World = WorldContextObject->GetWorld ();
    if (!ensure (World)) return false;

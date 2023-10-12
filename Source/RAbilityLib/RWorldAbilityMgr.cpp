@@ -59,7 +59,7 @@ void URWorldAbilityMgr::BeginPlay ()
 FRAbilityInfo URWorldAbilityMgr::GetAbilityInfo_Object (const URAbility* Ability) const
 {
    FRAbilityInfo Result;
-   if (ensure (IsValid (Ability))) {
+   if (ensure (Ability)) {
       FString AbilityClassPath = Ability->GetClass ()->GetPathName ();
       if (MapAbility.Contains (AbilityClassPath)) {
          Result = MapAbility[AbilityClassPath];
@@ -101,19 +101,19 @@ TArray<FRAbilityInfo> URWorldAbilityMgr::GetAllAbilities () const
 
 void URWorldAbilityMgr::ReportAddAbility (URAbility* Ability)
 {
-   if (!ensure (IsValid (Ability))) return;
+   if (!ensure (Ability)) return;
    if (R_IS_VALID_WORLD) OnAddAbility.Broadcast (Ability);
 }
 
 void URWorldAbilityMgr::ReportRmAbility (URAbility* Ability)
 {
-   if (!ensure (IsValid (Ability))) return;
+   if (!ensure (Ability)) return;
    if (R_IS_VALID_WORLD) OnRmAbility.Broadcast (Ability);
 }
 
 void URWorldAbilityMgr::ReportUseAbility (URAbility* Ability)
 {
-   if (!ensure (IsValid (Ability))) return;
+   if (!ensure (Ability)) return;
    if (R_IS_VALID_WORLD) OnUseAbility.Broadcast (Ability);
 }
 

@@ -188,7 +188,7 @@ void URWorldStatusMgr::BeginPlay ()
 FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect* StatusEffect) const
 {
    FRActiveStatusEffectInfo Result;
-   if (ensure (IsValid (StatusEffect))) {
+   if (ensure (StatusEffect)) {
       FString StatusClassPath = StatusEffect->GetClass ()->GetPathName ();
       if (MapStatusEffect.Contains (StatusClassPath)) {
          Result = MapStatusEffect[StatusClassPath];
@@ -208,25 +208,25 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectStop (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectStop.IsBound ()) OnStatusEffectStop.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectRefresh.IsBound ()) OnStatusEffectRefresh.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
 }
 

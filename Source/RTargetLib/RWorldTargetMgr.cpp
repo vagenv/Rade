@@ -126,14 +126,14 @@ float URWorldTargetMgr::GetTargetPoint (
 
 void URWorldTargetMgr::RegisterTarget (URTargetComponent* Target)
 {
-   if (!ensure (IsValid (Target))) return;
+   if (!ensure (Target)) return;
    TargetList.Add (Target);
    if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
 void URWorldTargetMgr::UnregisterTarget (URTargetComponent* Target)
 {
-   if (!ensure (IsValid (Target))) return;
+   if (!ensure (Target)) return;
    TargetList.Remove (Target);
    if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
@@ -177,7 +177,7 @@ URTargetComponent* URWorldTargetMgr::Find_Target (
    const TArray<AActor*>            &ExcludeActors,
    const TArray<URTargetComponent*> &ExcludeTargets)
 {
-   if (!ensure (IsValid (Targeter))) return nullptr;
+   if (!ensure (Targeter)) return nullptr;
 
    // Camera location and look direction
    FVector  Location = Targeter->GetComponentLocation ();
@@ -198,7 +198,7 @@ URTargetComponent* URWorldTargetMgr::Find_Screen (
    const TArray<AActor*>            &ExcludeActors,
    const TArray<URTargetComponent*> &ExcludeTargets)
 {
-   if (!ensure (IsValid (Targeter))) return nullptr;
+   if (!ensure (Targeter)) return nullptr;
 
    FVector  SearchOrigin = Targeter->GetComponentLocation ();
    FRotator Rotation     = Targeter->GetComponentRotation ();

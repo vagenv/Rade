@@ -41,7 +41,7 @@ URGameInstance::URGameInstance ()
 bool URGameInstance::HasSession () const
 {
    UWorld* World = GetWorld ();
-   if (!ensure (World)) return false;
+   if (!World) return false;
 
    if (World->GetNetMode () == ENetMode::NM_Client)       return true;
    if (World->GetNetMode () == ENetMode::NM_ListenServer) return true;
@@ -53,7 +53,7 @@ bool URGameInstance::HasSession () const
 void URGameInstance::ResetSession ()
 {
    UWorld* World = GetWorld ();
-   if (!ensure (World)) return;
+   if (!World) return;
 
    // Client
    if (World->GetNetMode () == ENetMode::NM_Client) {
@@ -281,7 +281,7 @@ void URGameInstance::OnStartSessionComplete (FName SessionName, bool bWasSuccess
 
    // --- Change to listen server
    UWorld* World = GetWorld ();
-   if (!ensure (World)) return;
+   if (!World) return;
 
    FURL Url (nullptr, *World->GetLocalURL (), TRAVEL_Absolute);
 	World->Listen (Url);
@@ -405,7 +405,7 @@ bool URGameInstance::KickPlayer (APlayerController* KickedPlayer)
    }
 
    UWorld* World = GetWorld ();
-   if (!ensure (World)) return false;
+   if (!World) return false;
 
    if (World->GetNetMode () == ENetMode::NM_Client) {
       R_LOG ("Client can't kick players.");

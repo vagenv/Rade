@@ -65,12 +65,10 @@ void UREquipmentMgrComponent::BeginPlay ()
          StatusMgr->OnStatsUpdated.AddDynamic (this, &UREquipmentMgrComponent::OnStatsUpdated);
       }
 
-      FTimerHandle MyHandle;
-      GetOwner ()->GetWorldTimerManager ().SetTimer (MyHandle,
-                                                     this,
-                                                     &UREquipmentMgrComponent::OnStatsUpdated,
-                                                     1,
-                                                     false);
+      FTimerHandle TempHandle;
+      GetOwner ()->GetWorldTimerManager ().SetTimer (TempHandle,
+                                                     this, &UREquipmentMgrComponent::OnStatsUpdated,
+                                                     1);
    }
 }
 
@@ -283,7 +281,7 @@ bool UREquipmentMgrComponent::IsEquiped_Equipment (const FREquipmentData &Equipm
 void UREquipmentMgrComponent::Equip_Index_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, int32 ItemIdx)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->Equip_Index (ItemIdx);
 }
 
@@ -304,7 +302,7 @@ bool UREquipmentMgrComponent::Equip_Index (int32 ItemIdx)
 void UREquipmentMgrComponent::Equip_Item_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->Equip_Item (ItemData);
 }
 
@@ -323,7 +321,7 @@ bool UREquipmentMgrComponent::Equip_Item (const FRItemData &ItemData)
 void UREquipmentMgrComponent::Equip_Equipment_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->Equip_Equipment (EquipmentData);
 }
 
@@ -351,16 +349,16 @@ void UREquipmentMgrComponent::Equip_Slot_Server_Implementation (
    UREquipmentSlotComponent *EquipmentSlot,
    const FREquipmentData    &EquipmentData)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->Equip_Slot (EquipmentSlot, EquipmentData);
 }
 
 bool UREquipmentMgrComponent::Equip_Slot (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (EquipmentSlot)))  return false;
+   if (!ensure (EquipmentSlot))  return false;
    if (!EquipmentData.IsValid ()) return false;
-   if (!ensure (EquipmentData.EquipmentSlot.Get ())) {
+   if (!ensure (!EquipmentData.EquipmentSlot.IsNull ())) {
       R_LOG_PRINTF ("Equipment item [%s] doesn't have a valid equip slot set.", *EquipmentData.ID);
       return false;
    }
@@ -414,7 +412,7 @@ bool UREquipmentMgrComponent::Equip_Slot (UREquipmentSlotComponent *EquipmentSlo
 void UREquipmentMgrComponent::UnEquip_Index_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, int32 ItemIdx)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->UnEquip_Index (ItemIdx);
 }
 
@@ -435,7 +433,7 @@ bool UREquipmentMgrComponent::UnEquip_Index (int32 ItemIdx)
 void UREquipmentMgrComponent::UnEquip_Item_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->UnEquip_Item (ItemData);
 }
 
@@ -457,7 +455,7 @@ bool UREquipmentMgrComponent::UnEquip_Item (const FRItemData &ItemData)
 void UREquipmentMgrComponent::UnEquip_Equipment_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->UnEquip_Equipment (EquipmentData);
 }
 
@@ -481,15 +479,15 @@ void UREquipmentMgrComponent::UnEquip_Slot_Server_Implementation (
    UREquipmentMgrComponent  *DstEquipment,
    UREquipmentSlotComponent *EquipmentSlot)
 {
-   if (!ensure (IsValid (DstEquipment))) return;
+   if (!ensure (DstEquipment)) return;
    DstEquipment->UnEquip_Slot (EquipmentSlot);
 }
 
 bool UREquipmentMgrComponent::UnEquip_Slot (UREquipmentSlotComponent *EquipmentSlot)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (EquipmentSlot))) return false;
-   if (!EquipmentSlot->Busy)              return false;
+   if (!ensure (EquipmentSlot)) return false;
+   if (!EquipmentSlot->Busy)    return false;
 
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {

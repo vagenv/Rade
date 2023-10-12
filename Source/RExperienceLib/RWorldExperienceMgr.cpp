@@ -169,9 +169,9 @@ void URWorldExperienceMgr::OnDamage (AActor*             Victim,
                                      AActor*             Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Victim))) return;
-   if (!ensure (Type))             return;
-   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Victim)) return;
+   if (!ensure (Type))   return;
+   if (!ensure (Causer)) return;
 
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
@@ -186,9 +186,9 @@ void URWorldExperienceMgr::OnDeath (AActor* Victim,
                                     const URDamageType* Type)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Victim))) return;
-   if (!ensure (IsValid (Causer))) return;
-   if (!ensure (Type))             return;
+   if (!ensure (Victim)) return;
+   if (!ensure (Causer)) return;
+   if (!ensure (Type))   return;
 
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;

@@ -37,7 +37,7 @@ void URItemPickupMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason
 
 bool URItemPickupMgrComponent::Pickup_Register (const ARItemPickup* Pickup)
 {
-   if (!ensure (IsValid (Pickup))) return false;
+   if (!ensure (Pickup)) return false;
    CurrentPickups.Add (Pickup);
    ReportPickupListUpdated ();
    return true;
@@ -45,7 +45,7 @@ bool URItemPickupMgrComponent::Pickup_Register (const ARItemPickup* Pickup)
 
 bool URItemPickupMgrComponent::Pickup_Unregister (const ARItemPickup* Pickup)
 {
-   if (!ensure (IsValid (Pickup))) return false;
+   if (!ensure (Pickup)) return false;
    CurrentPickups.RemoveSingle (Pickup);
    ReportPickupListUpdated ();
    return true;

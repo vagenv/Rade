@@ -7,20 +7,20 @@
 
 class UActorComponent;
 class ACharacter;
+class UWorld;
 
 class RUTILLIB_API URUtil
 {
 public:
+
    template<typename T>
    static FORCEINLINE T* GetComponent (const AActor* Target);
 
    template<typename T>
    static FORCEINLINE T* AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass);
 
-
    template<typename T>
    static FORCEINLINE T* GetWorldInstance (const UObject* WorldContextObject);
-
 
    template <typename T>
    static FORCEINLINE T* LoadObjFromPath (const FString& Path);
@@ -29,7 +29,7 @@ public:
 template<typename T>
 T* URUtil::GetComponent (const AActor* Target)
 {
-   if (!ensure (IsValid (Target))) return nullptr;
+   if (!ensure (Target)) return nullptr;
    T* ResultObj = Target->FindComponentByClass<T>();
    if (!IsValid (ResultObj))       return nullptr;
    return ResultObj;
@@ -38,8 +38,8 @@ T* URUtil::GetComponent (const AActor* Target)
 template<typename T>
 T* URUtil::AddComponent (AActor* Target, const TSubclassOf<UActorComponent> CompClass)
 {
-   if (!ensure (IsValid (Target)))    return nullptr;
-   if (!ensure (IsValid (CompClass))) return nullptr;
+   if (!ensure (Target))    return nullptr;
+   if (!ensure (CompClass)) return nullptr;
 
    UActorComponent *NewComp = Target->AddComponentByClass (CompClass, false, FTransform(), false);
    if (!ensure (NewComp)) return nullptr;
@@ -52,7 +52,7 @@ T* URUtil::AddComponent (AActor* Target, const TSubclassOf<UActorComponent> Comp
 template<typename T>
 T* URUtil::GetWorldInstance (const UObject* WorldContextObject)
 {
-   if (!ensure (IsValid (WorldContextObject))) return nullptr;
+   if (!ensure (WorldContextObject)) return nullptr;
 
    const UWorld *World = WorldContextObject->GetWorld ();
    if (!ensure (World)) return nullptr;

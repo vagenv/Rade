@@ -159,7 +159,7 @@ void URInventoryComponent::AddItem_Data_Server_Implementation (
    URInventoryComponent *SrcInventory,
    FRItemData            ItemData) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->AddItem_Data (ItemData);
 }
 bool URInventoryComponent::AddItem_Data (FRItemData NewItem)
@@ -235,7 +235,7 @@ bool URInventoryComponent::AddItem_Data (FRItemData NewItem)
 void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryComponent *SrcInventory,
                                                                    int32 ItemIdx, int32 Count) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->RemoveItem_Index (ItemIdx, Count);
 }
 
@@ -265,7 +265,7 @@ void URInventoryComponent::RemoveItem_Handle_Server_Implementation (
    URInventoryComponent   *SrcInventory,
    const FRItemDataHandle &ItemHandle) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->RemoveItem_Handle (ItemHandle);
 }
 bool URInventoryComponent::RemoveItem_Handle (const FRItemDataHandle &ItemHandle)
@@ -280,7 +280,7 @@ void URInventoryComponent::RemoveItem_Data_Server_Implementation (
    URInventoryComponent *SrcInventory,
    FRItemData            ItemData) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->RemoveItem_Data (ItemData);
 }
 
@@ -315,14 +315,14 @@ bool URInventoryComponent::RemoveItem_Data (FRItemData ItemData)
 void URInventoryComponent::TransferAll_Server_Implementation (URInventoryComponent *SrcInventory,
                                                               URInventoryComponent *DstInventory) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
-   if (!ensure (IsValid (DstInventory))) return;
+   if (!ensure (SrcInventory)) return;
+   if (!ensure (DstInventory)) return;
    SrcInventory->TransferAll (DstInventory);
 }
 bool URInventoryComponent::TransferAll (URInventoryComponent *DstInventory)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (DstInventory))) return false;
+   if (!ensure (DstInventory)) return false;
    int nItems = Items.Num ();
 
    bool success = true;
@@ -342,8 +342,8 @@ void URInventoryComponent::TransferItem_Server_Implementation (
    int32                 SrcItemIdx,
    int32                 SrcItemCount) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
-   if (!ensure (IsValid (DstInventory))) return;
+   if (!ensure (SrcInventory)) return;
+   if (!ensure (DstInventory)) return;
    SrcInventory->TransferItem (DstInventory, SrcItemIdx, SrcItemCount);
 }
 bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
@@ -351,7 +351,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
                                          int32 SrcItemCount)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (DstInventory))) return false;
+   if (!ensure (DstInventory)) return false;
 
    if (!Items.IsValidIndex (SrcItemIdx)) {
       R_LOG_PRINTF ("Invalid Source Inventory Item Index [%d]. Must be [0-%d]",
@@ -407,7 +407,7 @@ void URInventoryComponent::BreakItem_Index_Server_Implementation (
    int32                 ItemIdx,
    const UDataTable     *BreakItemTable) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->BreakItem_Index (ItemIdx, BreakItemTable);
 }
 
@@ -474,7 +474,7 @@ void URInventoryComponent::CraftItem_Server_Implementation (
          URInventoryComponent      *SrcInventory,
          const FDataTableRowHandle &CraftItem) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->CraftItem (CraftItem);
 }
 
@@ -506,7 +506,7 @@ void URInventoryComponent::UseItem_Index_Server_Implementation (
    URInventoryComponent *DstInventory,
    int32                 ItemIdx) const
 {
-   if (!ensure (IsValid (DstInventory))) return;
+   if (!ensure (DstInventory)) return;
    DstInventory->UseItem_Index (ItemIdx);
 }
 bool URInventoryComponent::UseItem_Index (int32 ItemIdx)
@@ -554,7 +554,7 @@ void URInventoryComponent::DropItem_Index_Server_Implementation (
    int32                 ItemIdx,
    int32                 Count) const
 {
-   if (!ensure (IsValid (SrcInventory))) return;
+   if (!ensure (SrcInventory)) return;
    SrcInventory->DropItem_Index (ItemIdx, Count);
 }
 
