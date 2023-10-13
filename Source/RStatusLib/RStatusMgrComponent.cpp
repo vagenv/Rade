@@ -410,28 +410,12 @@ bool URStatusMgrComponent::AddActiveStatusEffect (
       }
    }
 
-   URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this);
-   if (!WorldAssetMgr) return false;
-
-   // Check that async load is not already in process
-   if (EffectLoadHandle.IsValid ()) return false;
-
-   EffectLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (Effect_.GetUniqueID (),
-      [this, Causer_] () {
-         if (!EffectLoadHandle.IsValid ()) return;
-         if (EffectLoadHandle->HasLoadCompleted ()) {
-            if (UObject* Obj = EffectLoadHandle->GetLoadedAsset ()) {
-               if (UClass* EffectClass = Cast<UClass> (Obj)) {
-                  URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), EffectClass);
-                  if (Effect) Effect->Causer = Causer_;
-               }
-            }
-         }
-
-         // Release data from memory
-         EffectLoadHandle->ReleaseHandle ();
-         EffectLoadHandle.Reset ();
-      });
+   URWorldAssetMgr::LoadAsync (Effect_.GetUniqueID (), this, [this, Causer_] (UObject* LoadedContent) {
+      if (UClass* EffectClass = Cast<UClass> (LoadedContent)) {
+         URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), EffectClass);
+         if (Effect) Effect->Causer = Causer_;
+      }
+   });
 
    return true;
 }

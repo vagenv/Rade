@@ -57,9 +57,6 @@ private:
    UFUNCTION()
       void FindWorldMgrs ();
 
-   // Handle to async load task
-   TSharedPtr<FStreamableHandle> EffectLoadHandle;
-
    //==========================================================================
    //                 Dead
    //==========================================================================

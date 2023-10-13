@@ -163,15 +163,8 @@ public:
       TSoftClassPtr<AActor> TargetClass;
 
 private:
-
-   UFUNCTION()
-      void LoadTargetClass ();
-
    UPROPERTY()
       TObjectPtr<UClass> TargetClassLoaded;
-
-   // Handle to async load task
-   TSharedPtr<FStreamableHandle> TargetClassLoadHandle;
 
    //==========================================================================
    //                 Get info

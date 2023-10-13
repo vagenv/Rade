@@ -115,43 +115,21 @@ URAbility_Aura::URAbility_Aura ()
 void URAbility_Aura::BeginPlay ()
 {
    Super::BeginPlay ();
-   LoadTargetClass ();
+
+   if (ensure (!TargetClass.IsNull ())) {
+      URWorldAssetMgr::LoadAsync (TargetClass.GetUniqueID (), this, [this] (UObject* LoadedContent) {
+         if (UClass* LoadedClass = Cast<UClass> (LoadedContent)) {
+            TargetClassLoaded = LoadedClass;
+         }
+         SetCheckRangeActive (true);
+      });
+   }
 }
 
 void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    SetCheckRangeActive (false);
    Super::EndPlay (EndPlayReason);
-}
-
-void URAbility_Aura::LoadTargetClass ()
-{
-   if (ensure (!TargetClass.IsNull ())) {
-      if (URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this)) {
-         TargetClassLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (TargetClass.GetUniqueID (),
-            [this] () {
-               if (!TargetClassLoadHandle.IsValid ()) return;
-               if (TargetClassLoadHandle->HasLoadCompleted ()) {
-                  if (UObject* Obj = TargetClassLoadHandle->GetLoadedAsset ()) {
-                     if (UClass* LoadedClass = Cast<UClass> (Obj)) {
-                        TargetClassLoaded = LoadedClass;
-                     }
-                  }
-               }
-
-               // Release data from memory
-               TargetClassLoadHandle->ReleaseHandle ();
-               TargetClassLoadHandle.Reset ();
-
-               SetCheckRangeActive (true);
-            });
-      } else {
-         FTimerHandle RetryHandle;
-         RTIMER_START (RetryHandle,
-                       this, &URAbility_Aura::LoadTargetClass,
-                       1, false);																					
-      }
-   }
 }
 
 void URAbility_Aura::SetCheckRangeActive (bool Enable)

@@ -590,73 +590,36 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 
    ItemData.Count = Count;
 
-   // Get async load object
-   URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this);
-   if (!WorldAssetMgr) return false;
-
-   // Check that async load is not already in process
-   if (PickupLoadHandle.IsValid ()) return false;
-
    // Error will be logged.
    if (!RemoveItem_Index (ItemIdx, Count)) return false;
 
    // Load pickup class async
    if (!ItemData.Pickup.IsNull ()) {
-
-      PickupLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (ItemData.Pickup.GetUniqueID (),
-         [this, ItemData] () {
-            if (!PickupLoadHandle.IsValid ()) return;
-            if (PickupLoadHandle->HasLoadCompleted ()) {
-               if (UObject* Obj = PickupLoadHandle->GetLoadedAsset ()) {
-                  if (UClass* PickupClass = Cast<UClass> (Obj)) {
-                     SpawnPickup (PickupClass, ItemData);
-                  }
-               }
-            }
-
-            // Release data from memory
-            PickupLoadHandle->ReleaseHandle ();
-            PickupLoadHandle.Reset ();
-         });
+      URWorldAssetMgr::LoadAsync (ItemData.Pickup.GetUniqueID (),
+                              this, [this, ItemData] (UObject* LoadedContent) {
+         if (UClass* PickupClass = Cast<UClass> (LoadedContent)) {
+            SpawnPickup (PickupClass, ItemData);
+         }
+      });
 
    // Load pickup model async
    } else if (!ItemData.PickupMesh.IsNull ()) {
-
-      PickupLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (ItemData.PickupMesh.GetUniqueID (),
-         [this, ItemData] () {
-            if (!PickupLoadHandle.IsValid ()) return;
-            if (PickupLoadHandle->HasLoadCompleted ()) {
-               if (UObject* Obj = PickupLoadHandle->GetLoadedAsset ()) {
-                  if (UStaticMesh* PickupMesh = Cast<UStaticMesh> (Obj)) {
-                     ARItemPickup* Pickup = SpawnPickup (ARItemPickup::StaticClass (), ItemData);
-                     if (Pickup) Pickup->MeshComponent->SetStaticMesh (PickupMesh);
-                  }
-               }
-            }
-
-            // Release data from memory
-            PickupLoadHandle->ReleaseHandle ();
-            PickupLoadHandle.Reset ();
-         });
+      URWorldAssetMgr::LoadAsync (ItemData.Pickup.GetUniqueID (),
+                              this, [this, ItemData] (UObject* LoadedContent) {
+         if (UStaticMesh* PickupMesh = Cast<UStaticMesh> (LoadedContent)) {
+            ARItemPickup* Pickup = SpawnPickup (ARItemPickup::StaticClass (), ItemData);
+            if (Pickup) Pickup->MeshComponent->SetStaticMesh (PickupMesh);
+         }
+      });
 
    // Load custom inventory drop pickup class async
    } else if (!FallbackDropItemClass.IsNull ()) {
-
-      PickupLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (FallbackDropItemClass.GetUniqueID (),
-         [this, ItemData] () {
-            if (!PickupLoadHandle.IsValid ()) return;
-            if (PickupLoadHandle->HasLoadCompleted ()) {
-               if (UObject* Obj = PickupLoadHandle->GetLoadedAsset ()) {
-                  if (UClass* PickupClass = Cast<UClass> (Obj)) {
-                     SpawnPickup (PickupClass, ItemData);
-                  }
-               }
-            }
-
-            // Release data from memory
-            PickupLoadHandle->ReleaseHandle ();
-            PickupLoadHandle.Reset ();
-         });
+      URWorldAssetMgr::LoadAsync (FallbackDropItemClass.GetUniqueID (),
+                              this, [this, ItemData] (UObject* LoadedContent) {
+         if (UClass* PickupClass = Cast<UClass> (LoadedContent)) {
+            SpawnPickup (PickupClass, ItemData);
+         }
+      });
    }
 
    return true;

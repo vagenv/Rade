@@ -27,14 +27,6 @@ public:
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    //==========================================================================
-   //                 Stored pointers
-   //==========================================================================
-private:
-
-   // Handle to async load task
-   TSharedPtr<FStreamableHandle> AbilityLoadHandle;
-
-   //==========================================================================
    //                 Level Up
    //==========================================================================
 protected:

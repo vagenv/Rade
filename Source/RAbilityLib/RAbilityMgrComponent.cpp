@@ -106,32 +106,16 @@ bool URAbilityMgrComponent::AddAbility (const TSoftClassPtr<URAbility> Ability_)
    if (!ensure (!Ability_.IsNull ())) return false;
    if (!ensure (!URAbilityMgrComponent::GetAbility (Ability_))) return false;
 
-   URWorldAssetMgr* WorldAssetMgr = URWorldAssetMgr::GetInstance (this);
-   if (!WorldAssetMgr) return false;
 
-   // Check that async load is not already in process
-   if (AbilityLoadHandle.IsValid ()) return false;
-
-   AbilityLoadHandle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (Ability_.GetUniqueID (),
-      [this] () {
-         if (!AbilityLoadHandle.IsValid ()) return;
-         if (AbilityLoadHandle->HasLoadCompleted ()) {
-            if (UObject* Obj = AbilityLoadHandle->GetLoadedAsset ()) {
-               if (UClass* AbilityClass = Cast<UClass> (Obj)) {
-
-                  URAbility* Ability = URUtil::AddComponent<URAbility> (GetOwner (), AbilityClass);
-                  if (IsValid (Ability)) {
-                     AbilityPoints--;
-                     ReportAbilityPointUpdated ();
-                  }
-               }
-            }
+   URWorldAssetMgr::LoadAsync (Ability_.GetUniqueID (), this, [this] (UObject* LoadedContent) {
+      if (UClass* AbilityClass = Cast<UClass> (LoadedContent)) {
+         URAbility* Ability = URUtil::AddComponent<URAbility> (GetOwner (), AbilityClass);
+         if (IsValid (Ability)) {
+            AbilityPoints--;
+            ReportAbilityPointUpdated ();
          }
-
-         // Release data from memory
-         AbilityLoadHandle->ReleaseHandle ();
-         AbilityLoadHandle.Reset ();
-      });
+      }
+   });
 
    return true;
 }
@@ -210,23 +194,29 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
    }
    AbilityList.Empty ();
 
+   int SaveAbilityPoints;
+
    // Serialize Data
    TArray<FString> LoadAbiltities;
    LoadData << LoadAbiltities;
-   LoadData << AbilityPoints;
+   LoadData << SaveAbilityPoints;
 
    // --- Create Abilities of Class.
-   for (const FString &ItAbility : LoadAbiltities) {
-      // --- Copied from FEditorClassUtils::GetClassFromString
-      UClass* Class = FindObject<UClass> (nullptr, *ItAbility);
-      if (!Class) {
-         Class = LoadObject<UClass> (nullptr, *ItAbility);
+   for (const FString &ItAbilityPath : LoadAbiltities) {
+
+      TSoftClassPtr<URAbility> AbilityClass (ItAbilityPath);
+
+      if (!AbilityClass.IsValid ()) {
+         R_LOG_PRINTF ("Failed to create AbilityClass from path [%s]", *ItAbilityPath);
       }
-      if (Class) {
-         AbilityPoints++;
-         AddAbility (Class);
+
+      AbilityPoints++;
+      if (!AddAbility (AbilityClass)) {
+         R_LOG_PRINTF ("Failed to Add Ability from SoftClass [%s]", *AbilityClass.ToString ());
       }
    }
+
+   AbilityPoints = SaveAbilityPoints;
 
    ReportAbilityPointUpdated ();
 }

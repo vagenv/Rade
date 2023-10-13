@@ -194,10 +194,7 @@ public:
    //==========================================================================
    //                 Util
    //==========================================================================
-
 private:
-   // Handle to async load task
-   TSharedPtr<FStreamableHandle> PickupLoadHandle;
 
    // Wrapper function
    ARItemPickup* SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData);

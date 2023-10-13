@@ -6,13 +6,29 @@
 #include "Engine/StreamableManager.h"
 #include "RWorldAssetMgr.generated.h"
 
+// Async load request container
+struct RLoadAsyncRequest {
+   FSoftObjectPath               Path;
+   const UObject*                Requester;
+   TSharedPtr<FStreamableHandle> Handle;
+};
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RUTILLIB_API URWorldAssetMgr : public UActorComponent
 {
    GENERATED_BODY()
 public:
 
+   // Container of all current async load requests
+   TMap<FString, RLoadAsyncRequest> Requests;
+
+   // Manager for requests
    FStreamableManager StreamableManager;
+
+   // A conviniet interface to simply request chanining and management
+   static void LoadAsync (const FSoftObjectPath &Path,
+                          const UObject         *Requester,
+                          TFunction<void(UObject *LoadedContent)>&& Callback);
 
    //==========================================================================
    //                  Get instance -> GameState component
