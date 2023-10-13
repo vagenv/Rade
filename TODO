@@ -19,12 +19,6 @@ Re-implement kick team mate widget
 Ability
 ==============
 
-Health regen double entry in active list
-
-Fireball Ability is not saved/loaded
-
-Poison aura ability not working
-
 Ability
 - Equipable / Not equipable
 - Learn requirnment (Cost N point + other ability as dependency)
