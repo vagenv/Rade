@@ -7,14 +7,14 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
 
-void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId_)
+bool IRSaveInterface::InitSaveInterface (const UObject* WorldContextObject, const FString &SaveId_)
 {
-   if (!ensure (WorldContextObject))  return;
-   if (!ensure (!SaveId_.IsEmpty ())) return;
-   if (URUtil::GetWorld (WorldContextObject) == nullptr) return;
+   if (!ensure (WorldContextObject))  return false;
+   if (!ensure (!SaveId_.IsEmpty ())) return false;
+   if (URUtil::GetWorld (WorldContextObject) == nullptr) return false;
 
    URWorldSaveMgr *WorldSaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
-   if (!ensure (WorldSaveMgr_)) return;
+   if (!WorldSaveMgr_) return false;
 
    SaveId = SaveId_;
    WorldSaveMgr = WorldSaveMgr_;
@@ -26,13 +26,13 @@ void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FStrin
    if (WorldSaveMgr->SaveGameObject.IsValid () && WorldSaveMgr->SaveGameObject->IsAlreadyLoaded) {
       OnLoad_Internal (WorldSaveMgr->SaveGameObject.Get ());
    }
+   return true;
 }
 
 void IRSaveInterface::OnSave_Internal (URSaveGame* SaveGame)
 {
    if (!ensure (SaveGame)) return;
    if (!WorldSaveMgr.IsValid ()) return;
-
 
    FBufferArchive ToBinary;
    OnSave (ToBinary);

@@ -127,15 +127,19 @@ public:
       FRPlayerStatusMgrEvent OnStatsUpdated;
 
    //==========================================================================
-   //                 Save/Load
+   //                 Save / Load
    //==========================================================================
 public:
    // Status Saved / Loaded between sessions.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Save")
       bool bSaveLoad = false;
+
+	// Should be called during BeginPlay
+	UFUNCTION()
+      void ConnectToSaveMgr ();
 
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
-   virtual void OnLoad (FMemoryReader &LoadData) override;
+   virtual void OnLoad (FMemoryReader  &LoadData) override;
 };
 

@@ -6,6 +6,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RUtilLib/RWorldAssetMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
 
@@ -37,22 +38,13 @@ void URAbilityMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
 
-   // Exp Mgr
-   URExperienceMgrComponent* ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ());
-
    if (R_IS_NET_ADMIN) {
-
-      if (ExperienceMgr) {
+      if (URExperienceMgrComponent* ExperienceMgr = URUtil::GetComponent<URExperienceMgrComponent> (GetOwner ())) {
          ExperienceMgr->OnLevelUp.AddDynamic (this, &URAbilityMgrComponent::LeveledUp);
       }
-
-      // Save/Load Status
-      if (bSaveLoad) {
-         // Careful with collision of 'UniqueSaveId'
-         FString UniqueSaveId = GetOwner ()->GetName () + "_AbilityMgr";
-         Init_Save (this, UniqueSaveId);
-      }
    }
+
+   ConnectToSaveMgr ();
 }
 
 void URAbilityMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -175,10 +167,22 @@ void URAbilityMgrComponent::RmAbility_Server_Implementation (const TSoftClassPtr
    RmAbility (Ability);
 }
 
-
 //=============================================================================
 //                 Save / Load
 //=============================================================================
+
+void URAbilityMgrComponent::ConnectToSaveMgr ()
+{
+	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+
+   // Careful with collision of 'UniqueSaveId'
+   FString UniqueSaveId = GetOwner ()->GetName () + "_AbilityMgr";
+
+	if (!InitSaveInterface (this, UniqueSaveId)) {
+		FTimerHandle RetryHandle;
+		RTIMER_START (RetryHandle, this, &URAbilityMgrComponent::ConnectToSaveMgr, 1, false);
+	}
+}
 
 void URAbilityMgrComponent::OnSave (FBufferArchive &SaveData)
 {

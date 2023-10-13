@@ -6,6 +6,7 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -31,15 +32,7 @@ void URExperienceMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
 
-   if (R_IS_NET_ADMIN) {
-
-      // Save/Load Status
-      if (bSaveLoad) {
-         // Careful with collision of 'UniqueSaveId'
-         FString UniqueSaveId = GetOwner ()->GetName () + "_ExperienceMgr";
-         Init_Save (this, UniqueSaveId);
-      }
-   }
+   ConnectToSaveMgr ();
 }
 
 void URExperienceMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -109,6 +102,20 @@ void URExperienceMgrComponent::LeveledUp ()
    // R_LOG_PRINTF ("Leveled up!!! [%d => %d]", CurrentLevel, CurrentLevel + 1);
    CurrentLevel++;
    ReportLevelUp ();
+}
+
+
+void URExperienceMgrComponent::ConnectToSaveMgr ()
+{
+	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+
+   // Careful with collision of 'UniqueSaveId'
+   FString UniqueSaveId = GetOwner ()->GetName () + "_ExperienceMgr";
+
+	if (!InitSaveInterface (this, UniqueSaveId)) {
+		FTimerHandle RetryHandle;
+		RTIMER_START (RetryHandle, this, &URExperienceMgrComponent::ConnectToSaveMgr, 1, false);
+	}
 }
 
 void URExperienceMgrComponent::OnSave (FBufferArchive &SaveData)

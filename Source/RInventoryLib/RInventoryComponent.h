@@ -272,16 +272,21 @@ public:
       void CraftItem_Server_Implementation (
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
 
+
    //==========================================================================
    //                 Save / Load
    //==========================================================================
-
 public:
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
+   // Status Saved / Loaded between sessions.
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Save")
       bool bSaveLoad = false;
+
+	// Should be called during BeginPlay
+	UFUNCTION()
+      void ConnectToSaveMgr ();
 
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
-   virtual void OnLoad (FMemoryReader &LoadData) override;
+   virtual void OnLoad (FMemoryReader  &LoadData) override;
 };
 

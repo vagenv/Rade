@@ -6,6 +6,7 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RUtilLib/RWorldAssetMgr.h"
 #include "RSaveLib/RWorldSaveMgr.h"
 
@@ -35,20 +36,13 @@ void URInventoryComponent::BeginPlay()
    Super::BeginPlay();
 
    if (R_IS_NET_ADMIN) {
-
-      // Save/Load inventory
-      if (bSaveLoad) {
-         // Careful with collision of 'UniqueSaveId'
-         FString UniqueSaveId = GetOwner ()->GetName () + "_Inventory";
-         Init_Save (this, UniqueSaveId);
-      }
-
       for (const FRItemDataHandle &ItItem : DefaultItems) {
          if (!AddItem_Handle (ItItem))
             R_LOG_PRINTF ("Failed to add default item [%s] to [%s]",
                *ItItem.Arch.RowName.ToString (), *GetOwner()->GetName ());
       }
    }
+   ConnectToSaveMgr ();
 }
 
 //=============================================================================
@@ -700,6 +694,19 @@ ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> Picku
 //=============================================================================
 //                 Save / Load
 //=============================================================================
+
+void URInventoryComponent::ConnectToSaveMgr ()
+{
+	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+
+   // Careful with collision of 'UniqueSaveId'
+   FString UniqueSaveId = GetOwner ()->GetName () + "_InventoryMgr";
+
+	if (!InitSaveInterface (this, UniqueSaveId)) {
+		FTimerHandle RetryHandle;
+		RTIMER_START (RetryHandle, this, &URInventoryComponent::ConnectToSaveMgr, 1, false);
+	}
+}
 
 void URInventoryComponent::OnSave (FBufferArchive &SaveData)
 {

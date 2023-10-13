@@ -45,7 +45,6 @@ void URPlayerStatusMgrComponent::BeginPlay ()
    Super::BeginPlay ();
 
    if (R_IS_NET_ADMIN) {
-
       FTimerHandle TempHandle;
       RTIMER_START (TempHandle,
                     this,
@@ -54,16 +53,10 @@ void URPlayerStatusMgrComponent::BeginPlay ()
 
       // Recalc on revive
       OnRevive.AddDynamic (this, &URPlayerStatusMgrComponent::RecalcStatus);
-
-      // Save/Load Status
-      if (bSaveLoad) {
-         // Careful with collision of 'UniqueSaveId'
-         FString UniqueSaveId = GetOwner ()->GetName () + "_PlayerStatusMgr";
-         Init_Save (this, UniqueSaveId);
-      }
    }
 
    ConnectToExperienceMgr ();
+   ConnectToSaveMgr ();
 }
 
 void URPlayerStatusMgrComponent::ConnectToExperienceMgr ()
@@ -284,6 +277,18 @@ bool URPlayerStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) con
 //                 Save / Load
 //=============================================================================
 
+void URPlayerStatusMgrComponent::ConnectToSaveMgr ()
+{
+	if (!bSaveLoad) return;
+
+   // Careful with collision of 'UniqueSaveId'
+   FString UniqueSaveId = GetOwner ()->GetName () + "_PlayerStatusMgr";
+
+	if (!InitSaveInterface (this, UniqueSaveId)) {
+		FTimerHandle RetryHandle;
+		RTIMER_START (RetryHandle, this, &URPlayerStatusMgrComponent::ConnectToSaveMgr, 1, false);
+	}
+}
 void URPlayerStatusMgrComponent::OnSave (FBufferArchive &SaveData)
 {
    SaveData << Health << Mana << Stamina;
