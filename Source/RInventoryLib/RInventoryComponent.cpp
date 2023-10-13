@@ -604,7 +604,7 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 
    // Load pickup model async
    } else if (!ItemData.PickupMesh.IsNull ()) {
-      URWorldAssetMgr::LoadAsync (ItemData.Pickup.GetUniqueID (),
+      URWorldAssetMgr::LoadAsync (ItemData.PickupMesh.GetUniqueID (),
                               this, [this, ItemData] (UObject* LoadedContent) {
          if (UStaticMesh* PickupMesh = Cast<UStaticMesh> (LoadedContent)) {
             ARItemPickup* Pickup = SpawnPickup (ARItemPickup::StaticClass (), ItemData);
