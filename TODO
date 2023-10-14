@@ -19,16 +19,29 @@ Re-implement kick team mate widget
 Ability
 ==============
 
-Ability
-- Equipable / Not equipable
-- Learn requirnment (Cost N point + other ability as dependency)
-- Cost in C++
+Equipable / Not equipable
 
-Ability damage / effect scale from stat
+Learn requirnment
+- Cost N points
+- Stats
+- Other ability as dependency
+
+Cost in C++
+
+Level
+- Damage Scaling
+- Cost scaling
+
+
+Ability damage scale from stat
 Fireball:
 - 10 + 5 * Int
 Heal:
 - 10 + 2 * Int
+
+Chain abilities
+- Jump => Double Jump
+- Fireball => Fireball => FireNova
 
 
 ==============
