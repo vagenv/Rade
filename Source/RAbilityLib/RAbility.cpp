@@ -56,7 +56,7 @@ void URAbility::PullAbilityInfo ()
    AbilityInfo = WorldAbilityMgr->GetAbilityInfo_Object (this);
 
    if (AbilityInfo.IsEmpty ()) {
-      R_LOG_PRINTF ("[%s] Recieved not set Ability Info.", *GetName ());
+      R_LOG_PRINTF ("[%s] Recieved invalid Ability Info from WorldAbilityMgr.", *GetName ());
    }
 
    if (OwnerAbilityMgr.IsValid ()) OwnerAbilityMgr->ReportAbilityListUpdated ();
