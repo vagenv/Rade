@@ -17,41 +17,54 @@ public:
 
    URAbility_Active ();
    virtual void BeginPlay () override;
-   virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
    //==========================================================================
-   //                 Params
+   //                 Override
+   //==========================================================================
+public:
+   virtual void AbilityInfoLoaded () override;
+   virtual void SetIsEnabled (bool Enabled) override;
+
+   //==========================================================================
+   //                 Cooldown
    //==========================================================================
 
+   // In seconds
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
       float Cooldown = 3;
 
+   // In seconds
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      double GetCooldownLeft () const;
+private:
+   UPROPERTY()
+      double UseLastTime = 0;
+
+   UPROPERTY()
+      FTimerHandle CooldownResetHandle;
+protected:
+   UFUNCTION()
+      virtual void CooldownReset ();
+
    //==========================================================================
-   //                 Functions
+   //                 Can Use
+   //==========================================================================
+
+   // Can the ability be used
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      virtual bool CanUse () const;
+
+   //==========================================================================
+   //                 Use
    //==========================================================================
 
    // Called by user
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
       virtual void Use ();
 
-   // Can the ability be used
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-      virtual bool CanUse () const;
-
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-      double GetCooldownLeft () const;
-
-   //==========================================================================
-   //                 Events
-   //==========================================================================
-
    // When Ability was used
    UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
       FRAbilityEvent OnAbilityUsed;
-
-   // When Ability status updated
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Ability")
-      FRAbilityEvent OnAbilityStatusUpdated;
 
 protected:
 
@@ -66,15 +79,10 @@ protected:
       virtual void Use_Global_Implementation ();
 
 
-   UPROPERTY()
-      double UseLastTime = 0;
-
-   UPROPERTY()
-      double UseCooldownLeft = 0;
-
-   UPROPERTY()
-      bool IsUseable = false;
-
+   //==========================================================================
+   //                 World objects
+   //==========================================================================
+protected:
    UPROPERTY ()
       TWeakObjectPtr<UWorld> World;
 };
