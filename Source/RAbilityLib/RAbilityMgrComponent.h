@@ -48,26 +48,30 @@ public:
    //                 Ability Functions
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
-      URAbility* GetAbility (const TSoftClassPtr<URAbility> Ability);
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+	   bool CanAddAbility (const FRAbilityInfo& AbilityInfo) const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      URAbility* GetAbility (const FRAbilityInfo& AbilityInfo) const;
+
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
-      bool AddAbility (const TSoftClassPtr<URAbility> Ability);
+      bool AddAbility (const FRAbilityInfo& AbilityInfo);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Ability")
-      bool RmAbility  (const TSoftClassPtr<URAbility> Ability);
+      bool RmAbility  (const FRAbilityInfo& AbilityInfo);
 
    //==========================================================================
    //                 Server versions of the functions
    //==========================================================================
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
-      void AddAbility_Server                (const TSoftClassPtr<URAbility> &Ability);
-      void AddAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability);
+      void AddAbility_Server                (const FRAbilityInfo& AbilityInfo);
+      void AddAbility_Server_Implementation (const FRAbilityInfo& AbilityInfo);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Ability")
-      void RmAbility_Server                (const TSoftClassPtr<URAbility> &Ability);
-      void RmAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability);
+      void RmAbility_Server                (const FRAbilityInfo& AbilityInfo);
+      void RmAbility_Server_Implementation (const FRAbilityInfo& AbilityInfo);
 
    //==========================================================================
    //                 Events

@@ -15,6 +15,7 @@ public class RAbilityLib : ModuleRules
          "RUILib",
          "RSaveLib",
          "RDamageLib",
+         "RStatusLib",
          "RExperienceLib",
       });
    }

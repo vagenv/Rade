@@ -9,6 +9,7 @@
 #include "RUtilLib/RTimer.h"
 #include "RUtilLib/RWorldAssetMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
+#include "RStatusLib/RPlayerStatusMgrComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -83,14 +84,52 @@ void URAbilityMgrComponent::ReportAbilityPointUpdated ()
 //                 Add / RM
 //=============================================================================
 
-URAbility* URAbilityMgrComponent::GetAbility (const TSoftClassPtr<URAbility> Ability_)
+bool URAbilityMgrComponent::CanAddAbility (const FRAbilityInfo& AbilityInfo) const
 {
-   if (!ensure (!Ability_.IsNull ())) return nullptr;
+   if (GetAbility (AbilityInfo) != nullptr) {
+      R_LOG_PRINTF ("[%s] Already learned", *AbilityInfo.AbilityClass.ToString ());
+      return false;
+   }
+   if (AbilityPoints < AbilityInfo.LearnPointPrice) false;
+
+   if (AbilityInfo.RequiredAbilities.Num ()) {
+      // --- Get all user abilities
+      TArray<URAbility*> AbilityList;
+      GetOwner ()->GetComponents (AbilityList);
+      TMap<FString, bool> AbilityMap;
+      for (const auto &ItAbility : AbilityList) {
+         AbilityMap.Add (ItAbility->GetClass ()->GetPathName (), true);
+      }
+
+      // --- Iterate through required abilities
+      for (const auto &ItAbility : AbilityInfo.RequiredAbilities) {
+
+         // No ability found on user
+         if (!AbilityMap.Contains (ItAbility.ToString ())) return false;
+      }
+   }
+ 
+   // Check stats
+   if (!AbilityInfo.RequiredStats.IsEmpty ()) {
+      if (URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ())) {
+         if (!StatusMgr->GetCoreStats_Total ().MoreThan (AbilityInfo.RequiredStats)) return false;
+      } else {
+         return false;
+      }
+   }
+
+   return true;  
+}
+
+URAbility* URAbilityMgrComponent::GetAbility (const FRAbilityInfo& AbilityInfo) const
+{
+   if (!ensure (!AbilityInfo.IsEmpty ())) return nullptr;
+
    URAbility* Result = nullptr;
    TArray<URAbility*> AbilityList;
    GetOwner ()->GetComponents (AbilityList);
    for (URAbility* ItAbility : AbilityList) {
-      if (ItAbility->GetClass () == Ability_) {
+      if (ItAbility->GetClass () == AbilityInfo.AbilityClass) {
          Result = ItAbility;
          break;
       }
@@ -99,19 +138,20 @@ URAbility* URAbilityMgrComponent::GetAbility (const TSoftClassPtr<URAbility> Abi
    return Result;
 }
 
-bool URAbilityMgrComponent::AddAbility (const TSoftClassPtr<URAbility> Ability_)
+bool URAbilityMgrComponent::AddAbility (const FRAbilityInfo& AbilityInfo)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (AbilityPoints > 0)) return false;
-   if (!ensure (!Ability_.IsNull ())) return false;
-   if (!ensure (!URAbilityMgrComponent::GetAbility (Ability_))) return false;
-
-
-   URWorldAssetMgr::LoadAsync (Ability_.GetUniqueID (), this, [this] (UObject* LoadedContent) {
+   if (!ensure (!AbilityInfo.IsEmpty ())) return false;
+   if (!ensure (AbilityPoints > AbilityInfo.LearnPointPrice)) return false;
+   if (!ensure (!URAbilityMgrComponent::GetAbility (AbilityInfo))) return false;
+      
+   int LearnCost = AbilityInfo.LearnPointPrice;
+   
+   URWorldAssetMgr::LoadAsync (AbilityInfo.AbilityClass.GetUniqueID (),
+      this, [this, LearnCost] (UObject* LoadedContent) {
       if (UClass* AbilityClass = Cast<UClass> (LoadedContent)) {
-         URAbility* Ability = URUtil::AddComponent<URAbility> (GetOwner (), AbilityClass);
-         if (IsValid (Ability)) {
-            AbilityPoints--;
+         if (URUtil::AddComponent<URAbility> (GetOwner (), AbilityClass)) {
+            AbilityPoints -= LearnCost;
             ReportAbilityPointUpdated ();
          }
       }
@@ -120,17 +160,17 @@ bool URAbilityMgrComponent::AddAbility (const TSoftClassPtr<URAbility> Ability_)
    return true;
 }
 
-bool URAbilityMgrComponent::RmAbility (const TSoftClassPtr<URAbility> Ability_)
+bool URAbilityMgrComponent::RmAbility (const FRAbilityInfo& AbilityInfo)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (!Ability_.IsNull ())) return false;
-   URAbility* Ability = URAbilityMgrComponent::GetAbility (Ability_);
+   if (!ensure (!AbilityInfo.IsEmpty ())) return false;
+   URAbility* Ability = URAbilityMgrComponent::GetAbility (AbilityInfo);
    if (!Ability) return false;
 
-   AbilityPoints++;
+   Ability->DestroyComponent ();
+   AbilityPoints += AbilityInfo.LearnPointPrice;
    ReportAbilityPointUpdated ();
 
-   Ability->DestroyComponent ();
    return true;
 }
 
@@ -142,13 +182,13 @@ void URAbilityMgrComponent::ReportAbilityListUpdated ()
 //=============================================================================
 //                 Server versions of the functions
 //=============================================================================
-void URAbilityMgrComponent::AddAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability)
+void URAbilityMgrComponent::AddAbility_Server_Implementation (const FRAbilityInfo& AbilityInfo)
 {
-   AddAbility (Ability);
+   AddAbility (AbilityInfo);
 }
-void URAbilityMgrComponent::RmAbility_Server_Implementation (const TSoftClassPtr<URAbility> &Ability)
+void URAbilityMgrComponent::RmAbility_Server_Implementation (const FRAbilityInfo& AbilityInfo)
 {
-   RmAbility (Ability);
+   RmAbility (AbilityInfo);
 }
 
 //=============================================================================
@@ -194,29 +234,28 @@ void URAbilityMgrComponent::OnLoad (FMemoryReader &LoadData)
    }
    AbilityList.Empty ();
 
-   int SaveAbilityPoints;
-
    // Serialize Data
    TArray<FString> LoadAbiltities;
    LoadData << LoadAbiltities;
-   LoadData << SaveAbilityPoints;
+   LoadData << AbilityPoints;
 
    // --- Create Abilities of Class.
    for (const FString &ItAbilityPath : LoadAbiltities) {
 
       TSoftClassPtr<URAbility> AbilityClass (ItAbilityPath);
-
       if (!AbilityClass.IsValid ()) {
          R_LOG_PRINTF ("Failed to create AbilityClass from path [%s]", *ItAbilityPath);
       }
 
-      AbilityPoints++;
-      if (!AddAbility (AbilityClass)) {
-         R_LOG_PRINTF ("Failed to Add Ability from SoftClass [%s]", *AbilityClass.ToString ());
-      }
+      // --- Force add abilities
+      URWorldAssetMgr::LoadAsync (AbilityClass.GetUniqueID (),
+         this, [this] (UObject* LoadedContent) {
+         if (UClass* AbilityClass = Cast<UClass> (LoadedContent)) {
+            if (URUtil::AddComponent<URAbility> (GetOwner (), AbilityClass)) {
+            }
+         }
+      });
    }
-
-   AbilityPoints = SaveAbilityPoints;
 
    ReportAbilityPointUpdated ();
 }
