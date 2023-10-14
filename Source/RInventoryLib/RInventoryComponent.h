@@ -10,7 +10,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 
 class ARItemPickup;
-struct FStreamableHandle;
 
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))

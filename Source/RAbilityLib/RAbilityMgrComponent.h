@@ -8,10 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRAbilityMgrEvent);
 
-struct FStreamableHandle;
 class URAbility;
-class URWorldAbilityMgr;
-class URExperienceMgrComponent;
 
 // Ability Manager Component.
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))

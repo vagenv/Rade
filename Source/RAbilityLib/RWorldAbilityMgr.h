@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Engine/DataTable.h"
 #include "RAbilityTypes.h"
 #include "RWorldAbilityMgr.generated.h"
 

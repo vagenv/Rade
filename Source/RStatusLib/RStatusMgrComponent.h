@@ -6,7 +6,6 @@
 #include "RPassiveStatusEffect.h"
 #include "RStatusMgrComponent.generated.h"
 
-struct FStreamableHandle;
 class URDamageType;
 class URWorldDamageMgr;
 class URActiveStatusEffect;
