@@ -6,13 +6,20 @@
 Issues
 ==============
 
-LINUX
-- setfocused not showing up
-- item list empty
+Opening StatusMenu and other menus causes frame rate dip
 
 Cursor still visible for a few seconds after switch to gamepad.
 
-Re-implement kick team mate widget
+
+==============
+Network window rework
+==============
+
+Player List
+
+Status and latency
+
+Kick teammate confirmation window
 
 
 ==============
@@ -31,7 +38,6 @@ Cost in C++
 Level
 - Damage Scaling
 - Cost scaling
-
 
 Ability damage scale from stat
 Fireball:
@@ -380,6 +386,10 @@ Animations:
 =================================================
          VFX
 =================================================
+
+Enemy Attack pulse notifier
+- Red Aura for radial attack.
+- Red Cone for directtional attack.
 
 Enemy Death -> Bunny Explosion
 - Puff
