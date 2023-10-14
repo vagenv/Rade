@@ -29,8 +29,11 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
 
    // Level -> scaling info?
 
-   bool IsValid () const {
-      return !AbilityClass.IsNull () && !Description.Label.IsEmpty ();
+   bool operator == (const FRAbilityInfo &AbilityInfo) const noexcept;
+   bool operator != (const FRAbilityInfo &AbilityInfo) const noexcept;
+
+   bool IsEmpty () const noexcept {
+      return AbilityClass.IsNull () && Description.IsEmpty ();
    };
 };
 
@@ -41,7 +44,13 @@ class RABILITYLIB_API URAbilityInfolLibrary : public UBlueprintFunctionLibrary
 public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Ability")
-	   static bool AbilityInfo_IsValid (const FRAbilityInfo& AbilityInfo);
+	   static bool AbilityInfo_IsEmpty (const FRAbilityInfo& AbilityInfo);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Ability", meta=(DisplayName="==", CompactNodeTitle="=="))
+	   static bool AbilityInfo_EqualEqual (const FRAbilityInfo& A, const FRAbilityInfo& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Ability", meta=(DisplayName="!=", CompactNodeTitle="!="))
+	   static bool AbilityInfo_NotEqual (const FRAbilityInfo& A, const FRAbilityInfo& B);
 };
 
 // ============================================================================

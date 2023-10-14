@@ -14,9 +14,30 @@
 //                   AbilityInfo
 // ============================================================================
 
-bool URAbilityInfolLibrary::AbilityInfo_IsValid (const FRAbilityInfo& AbilityInfo)
+bool FRAbilityInfo::operator == (const FRAbilityInfo &AbilityInfo) const noexcept
 {
-   return AbilityInfo.IsValid ();
+   return (  AbilityClass == AbilityInfo.AbilityClass
+          && Description  == AbilityInfo.Description);
+}
+
+bool FRAbilityInfo::operator != (const FRAbilityInfo &res) const noexcept
+{
+   return !(*this == res);
+}
+
+bool URAbilityInfolLibrary::AbilityInfo_EqualEqual (const FRAbilityInfo& A, const FRAbilityInfo& B)
+{
+   return A == B;
+}
+
+bool URAbilityInfolLibrary::AbilityInfo_NotEqual (const FRAbilityInfo& A, const FRAbilityInfo& B)
+{
+   return A != B;
+}
+
+bool URAbilityInfolLibrary::AbilityInfo_IsEmpty (const FRAbilityInfo& AbilityInfo)
+{
+   return AbilityInfo.IsEmpty ();
 }
 
 //=============================================================================
@@ -65,8 +86,8 @@ void URAbility::PullAbilityInfo ()
    WorldAbilityMgr->ReportAddAbility (this);
    AbilityInfo = WorldAbilityMgr->GetAbilityInfo_Object (this);
 
-   if (!AbilityInfo.IsValid ()) {
-      R_LOG_PRINTF ("[%s] Recieved Invalid Ability Info.", *GetName ());
+   if (AbilityInfo.IsEmpty ()) {
+      R_LOG_PRINTF ("[%s] Recieved not set Ability Info.", *GetName ());
    }
 
    if (OwnerAbilityMgr.IsValid ()) OwnerAbilityMgr->ReportAbilityListUpdated ();

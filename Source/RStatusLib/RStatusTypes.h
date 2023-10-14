@@ -26,21 +26,21 @@ struct RSTATUSLIB_API FRCoreStats
       float INT = 0;
 
    // Are any values set
-   bool IsEmpty () const;
+   bool IsEmpty () const noexcept;
 
    // All values are higher than
-   bool MoreThan (const FRCoreStats &stat) const;
+   bool MoreThan (const FRCoreStats &stat) const noexcept;
 
-   bool         operator == (const FRCoreStats &stat) const;
-   bool         operator != (const FRCoreStats &stat) const;
-   FRCoreStats  operator +  (const FRCoreStats &stat) const;
-   FRCoreStats  operator -  (const FRCoreStats &stat) const;
-   FRCoreStats& operator += (const FRCoreStats &stat);
+   bool         operator == (const FRCoreStats &CoreStat) const noexcept;
+   bool         operator != (const FRCoreStats &CoreStat) const noexcept;
+   FRCoreStats  operator +  (const FRCoreStats &CoreStat) const noexcept;
+   FRCoreStats  operator -  (const FRCoreStats &CoreStat) const noexcept;
+   FRCoreStats& operator += (const FRCoreStats &CoreStat)       noexcept;
 
-   friend FArchive& operator << (FArchive& Ar, FRCoreStats &Data) {
-      Ar << Data.STR;
-      Ar << Data.AGI;
-      Ar << Data.INT;
+   friend FArchive& operator << (FArchive& Ar, FRCoreStats &CoreStat) {
+      Ar << CoreStat.STR;
+      Ar << CoreStat.AGI;
+      Ar << CoreStat.INT;
       return Ar;
    }
 };
@@ -70,20 +70,20 @@ struct RSTATUSLIB_API FRSubStats
       float AttackPower = 0;
 
    // Are any values set
-   bool IsEmpty () const;
+   bool IsEmpty () const noexcept;
 
-   bool        operator == (const FRSubStats &stat) const;
-   bool        operator != (const FRSubStats &stat) const;
-   FRSubStats  operator +  (const FRSubStats &stat) const;
-   FRSubStats  operator -  (const FRSubStats &stat) const;
-   FRSubStats& operator += (const FRSubStats &stat);
+   bool        operator == (const FRSubStats &SubStat) const noexcept;
+   bool        operator != (const FRSubStats &SubStat) const noexcept;
+   FRSubStats  operator +  (const FRSubStats &SubStat) const noexcept;
+   FRSubStats  operator -  (const FRSubStats &SubStat) const noexcept;
+   FRSubStats& operator += (const FRSubStats &SubStat)       noexcept;
 
-   friend FArchive& operator << (FArchive& Ar, FRSubStats &Value) {
-      Ar << Value.Evasion;
-      Ar << Value.Critical;
-      Ar << Value.MoveSpeed;
-      Ar << Value.AttackSpeed;
-      Ar << Value.AttackPower;
+   friend FArchive& operator << (FArchive& Ar, FRSubStats &SubStat) {
+      Ar << SubStat.Evasion;
+      Ar << SubStat.Critical;
+      Ar << SubStat.MoveSpeed;
+      Ar << SubStat.AttackSpeed;
+      Ar << SubStat.AttackPower;
       return Ar;
    }
 };
@@ -129,7 +129,7 @@ public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="IsEmpty (FRCoreStats)", CompactNodeTitle="IsEmpty"))
-      static bool FRCoreStats_IsEmpty (const FRCoreStats &Value);
+      static bool FRCoreStats_IsEmpty (const FRCoreStats &CoreStat);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="Equal (FRCoreStats)", CompactNodeTitle="=="))
@@ -144,7 +144,7 @@ public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="IsEmpty (FRSubStats)", CompactNodeTitle="IsEmpty"))
-      static bool FRSubStats_IsEmpty (const FRSubStats &Value);
+      static bool FRSubStats_IsEmpty (const FRSubStats &SubStat);
 
       UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="Equal (FRSubStats)", CompactNodeTitle="=="))
@@ -159,6 +159,6 @@ public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="ToString (FRStatusValue)", CompactNodeTitle="ToString"))
-      static FString FRStatusValue_ToString (const FRStatusValue &Value);
+      static FString FRStatusValue_ToString (const FRStatusValue &StatusValue);
 };
 

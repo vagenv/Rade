@@ -19,7 +19,7 @@ struct ROPTIONSLIB_API FRScreenResolution
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	   int32 Height = 0;
 
-   bool operator == (const FRScreenResolution &res) const noexcept;
+   bool operator == (const FRScreenResolution &ScreenResolution) const noexcept;
 };
 
 // ============================================================================
@@ -78,7 +78,7 @@ struct ROPTIONSLIB_API FRVideoQualitySetting
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0, ClampMax = 4))
       int32 PostProcessQuality = 0;
 
-   bool operator == (const FRVideoQualitySetting &res) const noexcept;
+   bool operator == (const FRVideoQualitySetting &QualitySettings) const noexcept;
 };
 
 // ============================================================================

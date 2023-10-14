@@ -10,60 +10,63 @@
 FRCoreStats::FRCoreStats ()
 {
 }
-FRCoreStats::FRCoreStats (float Value)
+
+FRCoreStats::FRCoreStats (float CoreStat)
 {
-   STR = Value;
-   AGI = Value;
-   INT = Value;
+   STR = CoreStat;
+   AGI = CoreStat;
+   INT = CoreStat;
 }
 
-bool FRCoreStats::IsEmpty () const
+bool FRCoreStats::IsEmpty () const noexcept
 {
-   return (!STR && !AGI && !INT);
+   return (  !FMath::TruncToInt64 (STR)
+          && !FMath::TruncToInt64 (AGI)
+          && !FMath::TruncToInt64 (INT));
 }
 
-bool FRCoreStats::MoreThan (const FRCoreStats &stat) const {
+bool FRCoreStats::MoreThan (const FRCoreStats &CoreStat) const noexcept{
    return (
-         STR >= stat.STR
-      && AGI >= stat.AGI
-      && INT >= stat.INT
+         STR >= CoreStat.STR
+      && AGI >= CoreStat.AGI
+      && INT >= CoreStat.INT
    );
 }
 
-bool FRCoreStats::operator == (const FRCoreStats &stat) const
+bool FRCoreStats::operator == (const FRCoreStats &CoreStat) const noexcept
 {
-   return FMath::TruncToInt64 (10. * this->STR) == FMath::TruncToInt64 (10. * stat.STR)
-       && FMath::TruncToInt64 (10. * this->AGI) == FMath::TruncToInt64 (10. * stat.AGI)
-       && FMath::TruncToInt64 (10. * this->INT) == FMath::TruncToInt64 (10. * stat.INT);
+   return FMath::TruncToInt64 (10. * this->STR) == FMath::TruncToInt64 (10. * CoreStat.STR)
+       && FMath::TruncToInt64 (10. * this->AGI) == FMath::TruncToInt64 (10. * CoreStat.AGI)
+       && FMath::TruncToInt64 (10. * this->INT) == FMath::TruncToInt64 (10. * CoreStat.INT);
 }
 
-bool FRCoreStats::operator != (const FRCoreStats &stat) const
+bool FRCoreStats::operator != (const FRCoreStats &CoreStat) const noexcept
 {
-   return !(*this == stat);
+   return !(*this == CoreStat);
 }
 
-FRCoreStats FRCoreStats::operator + (const FRCoreStats &stat) const
+FRCoreStats FRCoreStats::operator + (const FRCoreStats &CoreStat) const noexcept
 {
    FRCoreStats res;
-   res.STR = STR + stat.STR;
-   res.AGI = AGI + stat.AGI;
-   res.INT = INT + stat.INT;
+   res.STR = STR + CoreStat.STR;
+   res.AGI = AGI + CoreStat.AGI;
+   res.INT = INT + CoreStat.INT;
    return res;
 }
 
-FRCoreStats FRCoreStats::operator - (const FRCoreStats &stat) const
+FRCoreStats FRCoreStats::operator - (const FRCoreStats &CoreStat) const noexcept
 {
    FRCoreStats res;
-   res.STR = STR - stat.STR;
-   res.AGI = AGI - stat.AGI;
-   res.INT = INT - stat.INT;
+   res.STR = STR - CoreStat.STR;
+   res.AGI = AGI - CoreStat.AGI;
+   res.INT = INT - CoreStat.INT;
    return res;
 }
 
-FRCoreStats& FRCoreStats::operator += (const FRCoreStats &stat)
+FRCoreStats& FRCoreStats::operator += (const FRCoreStats &CoreStat) noexcept
 {
    FRCoreStats &Current = *this;
-   Current = Current + stat;
+   Current = Current + CoreStat;
    return Current;
 }
 
@@ -72,57 +75,57 @@ FRCoreStats& FRCoreStats::operator += (const FRCoreStats &stat)
 //=============================================================================
 
 
-bool FRSubStats::IsEmpty () const
+bool FRSubStats::IsEmpty () const noexcept
 {
    return (
-      !Evasion     &&
-      !Critical    &&
-      !MoveSpeed   &&
-      !AttackSpeed &&
-      !AttackPower
+         !FMath::TruncToInt64 (Evasion    )
+      && !FMath::TruncToInt64 (Critical   )
+      && !FMath::TruncToInt64 (MoveSpeed  )
+      && !FMath::TruncToInt64 (AttackSpeed)
+      && !FMath::TruncToInt64 (AttackPower)
    );
 }
 
-bool FRSubStats::operator == (const FRSubStats &stat) const
+bool FRSubStats::operator == (const FRSubStats &SubStat) const noexcept
 {
-   return FMath::TruncToInt64 (10. * this->Evasion)     == FMath::TruncToInt64 (10. * stat.Evasion)
-       && FMath::TruncToInt64 (10. * this->Critical)    == FMath::TruncToInt64 (10. * stat.Critical)
-       && FMath::TruncToInt64 (10. * this->MoveSpeed)   == FMath::TruncToInt64 (10. * stat.MoveSpeed)
-       && FMath::TruncToInt64 (10. * this->AttackSpeed) == FMath::TruncToInt64 (10. * stat.AttackSpeed)
-       && FMath::TruncToInt64 (10. * this->AttackPower) == FMath::TruncToInt64 (10. * stat.AttackPower);
+   return FMath::TruncToInt64 (10. * this->Evasion)     == FMath::TruncToInt64 (10. * SubStat.Evasion)
+       && FMath::TruncToInt64 (10. * this->Critical)    == FMath::TruncToInt64 (10. * SubStat.Critical)
+       && FMath::TruncToInt64 (10. * this->MoveSpeed)   == FMath::TruncToInt64 (10. * SubStat.MoveSpeed)
+       && FMath::TruncToInt64 (10. * this->AttackSpeed) == FMath::TruncToInt64 (10. * SubStat.AttackSpeed)
+       && FMath::TruncToInt64 (10. * this->AttackPower) == FMath::TruncToInt64 (10. * SubStat.AttackPower);
 }
 
-bool FRSubStats::operator != (const FRSubStats &stat) const
+bool FRSubStats::operator != (const FRSubStats &SubStat) const noexcept
 {
-   return !(*this == stat);
+   return !(*this == SubStat);
 }
 
-FRSubStats FRSubStats::operator + (const FRSubStats &stat) const
+FRSubStats FRSubStats::operator + (const FRSubStats &SubStat) const noexcept
 {
    FRSubStats res;
-   res.Evasion     = Evasion     + stat.Evasion    ;
-   res.Critical    = Critical    + stat.Critical   ;
-   res.MoveSpeed   = MoveSpeed   + stat.MoveSpeed  ;
-   res.AttackSpeed = AttackSpeed + stat.AttackSpeed;
-   res.AttackPower = AttackPower + stat.AttackPower;
+   res.Evasion     = Evasion     + SubStat.Evasion    ;
+   res.Critical    = Critical    + SubStat.Critical   ;
+   res.MoveSpeed   = MoveSpeed   + SubStat.MoveSpeed  ;
+   res.AttackSpeed = AttackSpeed + SubStat.AttackSpeed;
+   res.AttackPower = AttackPower + SubStat.AttackPower;
    return res;
 }
 
-FRSubStats FRSubStats::operator - (const FRSubStats &stat) const
+FRSubStats FRSubStats::operator - (const FRSubStats &SubStat) const noexcept
 {
    FRSubStats res;
-   res.Evasion     = Evasion     - stat.Evasion    ;
-   res.Critical    = Critical    - stat.Critical   ;
-   res.MoveSpeed   = MoveSpeed   - stat.MoveSpeed  ;
-   res.AttackSpeed = AttackSpeed - stat.AttackSpeed;
-   res.AttackPower = AttackPower - stat.AttackPower;
+   res.Evasion     = Evasion     - SubStat.Evasion    ;
+   res.Critical    = Critical    - SubStat.Critical   ;
+   res.MoveSpeed   = MoveSpeed   - SubStat.MoveSpeed  ;
+   res.AttackSpeed = AttackSpeed - SubStat.AttackSpeed;
+   res.AttackPower = AttackPower - SubStat.AttackPower;
    return res;
 }
 
-FRSubStats& FRSubStats::operator += (const FRSubStats &stat)
+FRSubStats& FRSubStats::operator += (const FRSubStats &SubStat) noexcept
 {
    FRSubStats &Current = *this;
-   Current = Current + stat;
+   Current = Current + SubStat;
    return Current;
 }
 

@@ -18,30 +18,30 @@ UGameUserSettings* UROptionManager::GetGameUserSettings ()
    return (IsValid (GEngine) ? GEngine->GameUserSettings : nullptr);
 }
 
-bool FRScreenResolution::operator == (const FRScreenResolution &res) const noexcept
+bool FRScreenResolution::operator == (const FRScreenResolution &Resolution) const noexcept
 {
-   return (Width == res.Width && Height == res.Height);
+   return (Width == Resolution.Width && Height == Resolution.Height);
 }
 
-bool FRVideoQualitySetting::operator == (const FRVideoQualitySetting &res) const noexcept
+bool FRVideoQualitySetting::operator == (const FRVideoQualitySetting &Quality) const noexcept
 {
    return (
-      VSyncEnabled       == res.VSyncEnabled       &&
-      FrameRate          == res.FrameRate          &&
-      ResolutionQuality  == res.ResolutionQuality  &&
-      DynamicResolution  == res.DynamicResolution  &&
+      VSyncEnabled       == Quality.VSyncEnabled       &&
+      FrameRate          == Quality.FrameRate          &&
+      ResolutionQuality  == Quality.ResolutionQuality  &&
+      DynamicResolution  == Quality.DynamicResolution  &&
 
-      QualityPreset      == res.QualityPreset      &&
-      AntiAliasing       == res.AntiAliasing       &&
-      ViewDistance       == res.ViewDistance       &&
-      TextureQuality     == res.TextureQuality     &&
-      ShadowQuality      == res.ShadowQuality      &&
-      ShadingQuality     == res.ShadingQuality     &&
-      GlobalIllumination == res.GlobalIllumination &&
-      ReflectionQuality  == res.ReflectionQuality  &&
-      FoliageQuality     == res.FoliageQuality     &&
-      EffectQuality      == res.EffectQuality      &&
-      PostProcessQuality == res.PostProcessQuality
+      QualityPreset      == Quality.QualityPreset      &&
+      AntiAliasing       == Quality.AntiAliasing       &&
+      ViewDistance       == Quality.ViewDistance       &&
+      TextureQuality     == Quality.TextureQuality     &&
+      ShadowQuality      == Quality.ShadowQuality      &&
+      ShadingQuality     == Quality.ShadingQuality     &&
+      GlobalIllumination == Quality.GlobalIllumination &&
+      ReflectionQuality  == Quality.ReflectionQuality  &&
+      FoliageQuality     == Quality.FoliageQuality     &&
+      EffectQuality      == Quality.EffectQuality      &&
+      PostProcessQuality == Quality.PostProcessQuality
    );
 }
 
