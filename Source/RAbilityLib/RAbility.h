@@ -40,10 +40,11 @@ public:
    //                 Core Functions
    //==========================================================================
 
-   // Should the effect of ability be applied
+   // Disable / Enable the effect of ability
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
       virtual void SetIsEnabled (bool IsEnabled_);
 
+   // Should the effect of ability be applied
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       virtual bool GetIsEnabled () const;
 
@@ -52,9 +53,10 @@ private:
    UPROPERTY()
       bool IsEnabled = true;
 
-   // Value must be defined in table
+   // Value will be updated when WorldAbilityMgr becomes valid
    UPROPERTY()
       FRAbilityInfo AbilityInfo;
+
 protected:
 
    UFUNCTION()
