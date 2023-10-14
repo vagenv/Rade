@@ -36,6 +36,8 @@ void URAbility_Aura::BeginPlay ()
          if (UClass* LoadedClass = Cast<UClass> (LoadedContent)) {
             TargetClassLoaded = LoadedClass;
          }
+
+         // Start checking range after target class is loaded
          SetCheckRangeActive (true);
       });
    }
@@ -47,39 +49,46 @@ void URAbility_Aura::EndPlay (const EEndPlayReason::Type EndPlayReason)
    Super::EndPlay (EndPlayReason);
 }
 
+void URAbility_Aura::SetIsEnabled (bool Enabled)
+{
+   Super::SetIsEnabled (Enabled);
+   SetCheckRangeActive (Enabled);
+}
+
 void URAbility_Aura::SetCheckRangeActive (bool Enable)
 {
    if (Enable) {
-      if (TargetClassLoaded)
-        RTIMER_START (CheckRangeHandle,
-                      this, &URAbility_Aura::CheckRange,
-                      CheckRangeInterval,
-                      true);
-      // Instantly call
+      RTIMER_START (CheckRangeHandle,
+                   this, &URAbility_Aura::CheckRange,
+                   CheckRangeInterval,
+                   true);
+
+      // Instantly call the first time
       CheckRange ();
 
    } else {
       RTIMER_STOP (CheckRangeHandle, this);
+      AffectedActors.Empty ();
    }
 }
 
 void URAbility_Aura::CheckRange ()
 {
+   if (!GetIsEnabled ()) return;
    if (!TargetClassLoaded) return;
 
    FVector OwnerLocation = GetOwner ()->GetActorLocation ();
    TArray<AActor*> SearchResult;
    UGameplayStatics::GetAllActorsOfClass (this, TargetClassLoaded, SearchResult);
 
-   TArray<TWeakObjectPtr<AActor> > Result;
+   AffectedActors.Empty ();
    for (AActor* ItActor : SearchResult) {
       if (!IsValid (ItActor)) continue;
       if (FVector::Distance (OwnerLocation, ItActor->GetActorLocation ()) > Range) continue;
 
-      Result.Add (ItActor);
+      AffectedActors.Add (ItActor);
    }
 
-   AffectedActors = Result;
    if (R_IS_VALID_WORLD && OnCheckRange.IsBound ()) OnCheckRange.Broadcast ();
 }
 
