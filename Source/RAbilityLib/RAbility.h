@@ -30,6 +30,11 @@ public:
    //                 Core Params
    //==========================================================================
 
+   // Called after WorldAbilityMgr becomes valid and AbilityInfo updated.
+   UFUNCTION()
+      virtual void AbilityInfoLoaded ();
+
+   // Get class cached version. May be invalid
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       FRAbilityInfo GetAbilityInfo () const;
 

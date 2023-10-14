@@ -60,6 +60,8 @@ void URAbility::PullAbilityInfo ()
    // Report that ability has been added only after pulling ability information
    WorldAbilityMgr->ReportAddAbility (this);
    if (OwnerAbilityMgr.IsValid ()) OwnerAbilityMgr->ReportAbilityListUpdated ();
+
+   AbilityInfoLoaded ();
 }
 
 void URAbility::SetIsEnabled (bool IsEnabled_)
@@ -70,6 +72,10 @@ void URAbility::SetIsEnabled (bool IsEnabled_)
 bool URAbility::GetIsEnabled () const
 {
    return IsEnabled;
+}
+
+void URAbility::AbilityInfoLoaded ()
+{
 }
 
 FRAbilityInfo URAbility::GetAbilityInfo () const
