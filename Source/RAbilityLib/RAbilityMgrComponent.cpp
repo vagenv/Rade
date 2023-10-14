@@ -1,7 +1,7 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RAbilityMgrComponent.h"
-#include "RAbilityTypes.h"
+#include "RAbility.h"
 
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
