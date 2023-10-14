@@ -21,6 +21,7 @@
          UWorld *TimerWorld = URUtil::GetWorld (Object);								 \
          if (TimerWorld && TimerHandle.IsValid ()) {		         				 \
             TimerWorld->GetTimerManager ().ClearTimer (TimerHandle);     		 \
+            TimerHandle.Invalidate ();                                         \
          }																					 		 \
       };		                                                                   \
 
