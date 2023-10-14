@@ -77,7 +77,7 @@ FRAbilityInfo URAbility::GetAbilityInfo () const
    return AbilityInfo;
 }
 
-FRUIDescription URAbility::GetDescription_Implementation ()
+FRUIDescription URAbility::GetDescription_Implementation () const
 {
    return AbilityInfo.Description;
 }

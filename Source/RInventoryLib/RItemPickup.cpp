@@ -59,7 +59,7 @@ void ARItemPickup::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLif
    DOREPLIFETIME (ARItemPickup, Description);
 }
 
-FRUIDescription ARItemPickup::GetDescription_Implementation ()
+FRUIDescription ARItemPickup::GetDescription_Implementation () const
 {
    return Description;
 }

@@ -22,7 +22,7 @@ void UREquipmentSlotComponent::GetLifetimeReplicatedProps (TArray<FLifetimePrope
    DOREPLIFETIME (UREquipmentSlotComponent, EquipmentData);
 }
 
-FRUIDescription UREquipmentSlotComponent::GetDescription_Implementation ()
+FRUIDescription UREquipmentSlotComponent::GetDescription_Implementation () const
 {
    return Description;
 }

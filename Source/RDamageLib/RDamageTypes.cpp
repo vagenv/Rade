@@ -16,7 +16,7 @@ URDamageType::URDamageType ()
    Description.Label = "Rade Damage Type";
 }
 
-FRUIDescription URDamageType::GetDescription_Implementation ()
+FRUIDescription URDamageType::GetDescription_Implementation () const
 {
    return Description;
 }

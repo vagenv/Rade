@@ -63,7 +63,7 @@ protected:
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       FRUIDescription Description;
 public:
-   virtual FRUIDescription GetDescription_Implementation () override;
+   virtual FRUIDescription GetDescription_Implementation () const override;
 
    //==========================================================================
    //          Events

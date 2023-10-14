@@ -60,7 +60,7 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRUIDescription Description;
 
-   virtual FRUIDescription GetDescription_Implementation () override;
+   virtual FRUIDescription GetDescription_Implementation () const override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;

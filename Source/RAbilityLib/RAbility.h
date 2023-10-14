@@ -34,7 +34,7 @@ public:
       FRAbilityInfo GetAbilityInfo () const;
 
    // Wrapper around GetAbilityInfo ().Description
-   virtual FRUIDescription GetDescription_Implementation () override;
+   virtual FRUIDescription GetDescription_Implementation () const override;
 
    //==========================================================================
    //                 Core Functions

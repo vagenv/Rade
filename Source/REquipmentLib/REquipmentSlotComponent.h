@@ -30,7 +30,7 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Equipment")
       FRUIDescription Description;
 
-   virtual FRUIDescription GetDescription_Implementation () override;
+   virtual FRUIDescription GetDescription_Implementation () const override;
 
    UPROPERTY(ReplicatedUsing = "OnRep_Slot", Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Equipment")
       bool Busy = false;

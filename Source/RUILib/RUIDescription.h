@@ -41,7 +41,7 @@ class RUILIB_API IRGetDescriptionInterface
 public:
 
    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Rade|UI")
-      FRUIDescription GetDescription ();
+      FRUIDescription GetDescription () const;
 };
 
 // ============================================================================
