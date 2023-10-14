@@ -12,14 +12,9 @@
 UENUM(Blueprintable, BlueprintType)
 enum class ERStatusEffectTarget : uint8
 {
-   None UMETA (DisplayName = "Please select"),
+   None         UMETA (DisplayName = "NOT SELECTED"),
 
-   // --- Attribute
-   STR UMETA (DisplayName = "STR Attribute"),
-   AGI UMETA (DisplayName = "AGI Attribute"),
-   INT UMETA (DisplayName = "INT Attribute"),
-
-   // --- Status
+   // --- Status Value
    HealthMax    UMETA (DisplayName = "Maximum Health"),
    HealthRegen  UMETA (DisplayName = "Health Regeneration"),
    StaminaMax   UMETA (DisplayName = "Maximum Stamina"),
@@ -27,12 +22,17 @@ enum class ERStatusEffectTarget : uint8
    ManaMax      UMETA (DisplayName = "Maximum Mana"),
    ManaRegen    UMETA (DisplayName = "Mana Regeneration"),
 
-   // --- World
-   Evasion     UMETA (DisplayName = "Evasion Chance"),
-   Critical    UMETA (DisplayName = "Critical Chance"),
-   MoveSpeed   UMETA (DisplayName = "Move Speed"),
-   AttackSpeed UMETA (DisplayName = "Attack Speed"),
-   AttackPower UMETA (DisplayName = "Attack Power")
+   // --- Core Stats
+   STR          UMETA (DisplayName = "Strength"),
+   AGI          UMETA (DisplayName = "Agility"),
+   INT          UMETA (DisplayName = "Intelligence"),
+
+   // --- Sub Stats
+   Evasion      UMETA (DisplayName = "Evasion Chance"),
+   Critical     UMETA (DisplayName = "Critical Chance"),
+   MoveSpeed    UMETA (DisplayName = "Move Speed"),
+   AttackSpeed  UMETA (DisplayName = "Attack Speed"),
+   AttackPower  UMETA (DisplayName = "Attack Power")
 };
 
 // ============================================================================
