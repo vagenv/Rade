@@ -195,6 +195,16 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       bool HasPassiveEffectWithTag (const FString &Tag) const;
 
+private:
+
+   // Can be called multiple times per tick
+   UFUNCTION()
+      void DelayedPassiveUpdate ();
+
+   UPROPERTY()
+      bool DelayedPassiveUpdateTriggered = false;
+
+
    //==========================================================================
    //                 Active Effect
    //==========================================================================
@@ -257,7 +267,6 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnResistanceUpdated;
-
 
    //==========================================================================
    //                 Damage / Evade (Hooking to AnyDamage)

@@ -127,7 +127,6 @@ void URStatusMgrComponent::SetDead (bool Dead)
    }
 
    if (Dead) {
-
       // Stop active effects
       TArray<URActiveStatusEffect*> StillActiveEffects;
       GetOwner ()->GetComponents (StillActiveEffects);
@@ -322,7 +321,6 @@ bool URStatusMgrComponent::HasPassiveEffectWithTag (const FString& Tag) const
    return false;
 }
 
-
 bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
@@ -339,8 +337,7 @@ bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<F
       PassiveEffects.Add (newRes);
    }
 
-   RecalcStatus ();
-   ReporPassiveEffectsUpdated ();
+   DelayedPassiveUpdate ();
    return true;
 }
 
@@ -361,8 +358,7 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
       PassiveEffects.RemoveAt (ToRemove[iToRemove]);
    }
 
-   RecalcStatus ();
-   ReporPassiveEffectsUpdated ();
+   DelayedPassiveUpdate ();
    return true;
 }
 
@@ -374,6 +370,24 @@ void URStatusMgrComponent::OnRep_PassiveEffects ()
 void URStatusMgrComponent::ReporPassiveEffectsUpdated ()
 {
    if (R_IS_VALID_WORLD && OnPassiveEffectsUpdated.IsBound ()) OnPassiveEffectsUpdated.Broadcast ();
+}
+
+void URStatusMgrComponent::DelayedPassiveUpdate ()
+{
+   // Already started
+   if (DelayedPassiveUpdateTriggered) return;
+   if (UWorld* World = URUtil::GetWorld (this)) {
+      DelayedPassiveUpdateTriggered = true;
+      World->GetTimerManager ().SetTimerForNextTick ([this](){
+
+         // Report update
+         RecalcStatus ();
+         ReporPassiveEffectsUpdated ();
+
+         // Reset
+         DelayedPassiveUpdateTriggered = false;
+      });
+   }
 }
 
 //==========================================================================
@@ -573,4 +587,3 @@ void URStatusMgrComponent::ReportREvade_Implementation (float               Amou
    if (!ensure (Causer)) return;
    if (R_IS_VALID_WORLD && OnEvadeRDamage.IsBound ()) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
 }
-
