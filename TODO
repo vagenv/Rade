@@ -26,14 +26,9 @@ Kick teammate confirmation window
 Ability
 ==============
 
-Equipable / Not equipable
+Passive Effect list shimmering
+Use Tag.
 
-Learn requirnment
-- Cost N points
-- Stats
-- Other ability as dependency
-
-Cost in C++
 
 Level
 - Damage Scaling
@@ -44,10 +39,6 @@ Fireball:
 - 10 + 5 * Int
 Heal:
 - 10 + 2 * Int
-
-Chain abilities
-- Jump => Double Jump
-- Fireball => Fireball => FireNova
 
 
 ==============
@@ -488,6 +479,7 @@ Blueprint function which generate Weapon/Equipment randomly. With schema.
 - Effect
 - Color
 
+
 =================================================
          Status
 =================================================
@@ -495,6 +487,17 @@ MoveSpeed and Critical Substat used
 
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
+
+
+=================================================
+         Combo manager
+=================================================
+
+Chain use abilities or attacks
+- Jump => Double Jump
+- Fireball => Fireball => FireNova
+- Attack => Attack => Power Attack => Get Status Effect
+
 
 =================================================
          Resistance from stats
