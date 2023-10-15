@@ -7,6 +7,7 @@
 #include "RAbility_Aura_StatusEffect.generated.h"
 
 class URActiveStatusEffect;
+class URStatusMgrComponent;
 
 //=============================================================================
 //                 Passive Ability
@@ -38,5 +39,9 @@ protected:
 
    UPROPERTY()
       FString UniqueEffectTag;
+
+private:
+   UPROPERTY()
+      TArray<TWeakObjectPtr<URStatusMgrComponent> > LastAffectedMgr;
 };
 

@@ -314,10 +314,20 @@ TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffectsWith
    return PassiveEffects;
 }
 
+bool URStatusMgrComponent::HasPassiveEffectWithTag (const FString& Tag) const
+{
+   for (const auto& ItEffect : GetPassiveEffectsWithTag ()) {
+      if (ItEffect.Tag == Tag) return true;
+   }
+   return false;
+}
+
+
 bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Tag.IsEmpty ())) return false;
+
    // Clean
    RmPassiveEffects (Tag);
 

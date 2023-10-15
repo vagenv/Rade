@@ -179,6 +179,7 @@ protected:
    UFUNCTION()
       void OnRep_PassiveEffects ();
 public:
+
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool SetPassiveEffects (const FString& Tag, const TArray<FRPassiveStatusEffect>& AddValues);
 
@@ -190,6 +191,9 @@ public:
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       TArray<FRPassiveStatusEffectWithTag> GetPassiveEffectsWithTag () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      bool HasPassiveEffectWithTag (const FString &Tag) const;
 
    //==========================================================================
    //                 Active Effect

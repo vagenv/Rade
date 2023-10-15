@@ -48,7 +48,6 @@ double URAbility_Active::GetCooldownLeft () const
    // No need to check
    if (UseLastTime == 0) return 0;
 
-
    if (!World.IsValid () || World->bIsTearingDown) return 1;
    return FMath::Clamp (UseLastTime + Cooldown - World->GetTimeSeconds (), 0, Cooldown);
 }
