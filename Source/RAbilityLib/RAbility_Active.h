@@ -5,6 +5,8 @@
 #include "RAbility.h"
 #include "RAbility_Active.generated.h"
 
+class URStatusMgrComponent;
+
 //=============================================================================
 //                 Active Ability
 //=============================================================================
@@ -24,6 +26,19 @@ public:
 public:
    virtual void AbilityInfoLoaded () override;
    virtual void SetIsEnabled (bool Enabled) override;
+
+   //==========================================================================
+   //                 Cost
+   //==========================================================================
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      float HealthCost = 0;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      float StaminaCost = 0;
+
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability")
+      float ManaCost = 0;
 
    //==========================================================================
    //                 Cooldown
@@ -53,6 +68,10 @@ protected:
    // Can the ability be used
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       virtual bool CanUse () const;
+
+   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Ability")
+      bool BP_CanUse () const;
+      virtual bool BP_CanUse_Implementation () const  { return true; };
 
    //==========================================================================
    //                 Use
@@ -85,5 +104,8 @@ protected:
 protected:
    UPROPERTY ()
       TWeakObjectPtr<UWorld> World = nullptr;
+
+   UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Ability")
+      TWeakObjectPtr<URStatusMgrComponent> StatusMgr = nullptr;
 };
 

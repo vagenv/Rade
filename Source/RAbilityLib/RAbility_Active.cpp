@@ -8,6 +8,8 @@
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RTimer.h"
 
+#include "RStatusLib/RStatusMgrComponent.h"
+
 //=============================================================================
 //                 Active Ability
 //=============================================================================
@@ -22,6 +24,7 @@ void URAbility_Active::BeginPlay ()
 {
    Super::BeginPlay ();
    World = URUtil::GetWorld (this);
+   StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
 }
 
 void URAbility_Active::AbilityInfoLoaded ()
@@ -62,7 +65,20 @@ void URAbility_Active::CooldownReset ()
 
 bool URAbility_Active::CanUse () const
 {
-   return GetIsEnabled () && GetCooldownLeft () == 0;
+   if (!GetIsEnabled ()) return false;
+   if (GetCooldownLeft () != 0) return false;
+
+   if (HealthCost || StaminaCost || ManaCost) {
+      if (!StatusMgr.IsValid ()) return false;
+
+      if (HealthCost  && StatusMgr->GetHealth ().Current  < HealthCost)  return false;
+      if (StaminaCost && StatusMgr->GetStamina ().Current < StaminaCost) return false;
+      if (ManaCost    && StatusMgr->GetMana ().Current    < ManaCost)    return false;
+   }
+
+   if (!BP_CanUse ()) return false;
+
+   return true;
 }
 
 // Called by a person with keyboard
@@ -88,6 +104,13 @@ void URAbility_Active::Use_Global_Implementation ()
    if (!World.IsValid () || World->bIsTearingDown) return;
 
    UseLastTime = World->GetTimeSeconds ();
+
+   // Use resources
+   if (R_IS_NET_ADMIN && StatusMgr.IsValid ()) {
+      if (HealthCost ) StatusMgr->UseHealth  (HealthCost);
+      if (StaminaCost) StatusMgr->UseStamina (StaminaCost);
+      if (ManaCost   ) StatusMgr->UseMana    (ManaCost);
+   }
 
    // Report can use
    RTIMER_START (CooldownResetHandle, this, &URAbility_Active::CooldownReset, Cooldown, false);
