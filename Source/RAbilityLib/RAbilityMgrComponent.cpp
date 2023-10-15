@@ -87,7 +87,6 @@ void URAbilityMgrComponent::ReportAbilityPointUpdated ()
 bool URAbilityMgrComponent::CanAddAbility (const FRAbilityInfo& AbilityInfo) const
 {
    if (GetAbility (AbilityInfo) != nullptr) {
-      R_LOG_PRINTF ("[%s] Already learned", *AbilityInfo.AbilityClass.ToString ());
       return false;
    }
    if (AbilityPoints < AbilityInfo.LearnPointPrice) false;

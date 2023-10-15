@@ -84,6 +84,6 @@ protected:
    //==========================================================================
 protected:
    UPROPERTY ()
-      TWeakObjectPtr<UWorld> World;
+      TWeakObjectPtr<UWorld> World = nullptr;
 };
 

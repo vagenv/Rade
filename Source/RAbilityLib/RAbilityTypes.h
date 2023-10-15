@@ -46,10 +46,6 @@ struct RABILITYLIB_API FRAbilityInfo : public FTableRowBase
       FRCoreStats RequiredStats;
 
 
-   // Stats?
-
-   // Level -> scaling info?
-
    bool operator == (const FRAbilityInfo &AbilityInfo) const noexcept;
    bool operator != (const FRAbilityInfo &AbilityInfo) const noexcept;
 

@@ -76,7 +76,7 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
    FVector  MgrDir = MgrRot.Vector ();
    MgrDir.Normalize ();
 
-   TWeakObjectPtr<const ARItemPickup> newClosestPickup;
+   TWeakObjectPtr<const ARItemPickup> NewClosestPickup;
 
    TArray<TWeakObjectPtr<const ARItemPickup> > NewList;
 
@@ -87,17 +87,17 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
       NewList.Add (ItPickup);
 
       // First one
-      if (!newClosestPickup.IsValid ()) {
-         newClosestPickup = ItPickup;
+      if (!NewClosestPickup.IsValid ()) {
+         NewClosestPickup = ItPickup;
          continue;
       }
 
       if (SelectionMethod == ERClosestPickupSelectionMethod::Distance) {
 
          if ( FVector::Distance (MgrLoc,         ItPickup->GetActorLocation ())
-            < FVector::Distance (MgrLoc, newClosestPickup->GetActorLocation ()))
+            < FVector::Distance (MgrLoc, NewClosestPickup->GetActorLocation ()))
          {
-            newClosestPickup = ItPickup;
+            NewClosestPickup = ItPickup;
          }
 
       } else {
@@ -108,12 +108,12 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
          float ItAngle = URUtil::GetAngle (MgrDir, ItDir);
 
          // --- Selected Pickup Angle
-         FVector CurrentDir = newClosestPickup->GetActorLocation () - MgrLoc;
+         FVector CurrentDir = NewClosestPickup->GetActorLocation () - MgrLoc;
          CurrentDir.Normalize ();
          float CurrentAngle = URUtil::GetAngle (MgrDir, CurrentDir);
 
          // Update selection
-         if (ItAngle < CurrentAngle) newClosestPickup = ItPickup;
+         if (ItAngle < CurrentAngle) NewClosestPickup = ItPickup;
       }
    }
 
@@ -123,8 +123,8 @@ void URItemPickupMgrComponent::CheckClosestPickup ()
       ReportPickupListUpdated ();
    }
 
-   if (newClosestPickup != ClosestPickup) {
-      ClosestPickup = newClosestPickup;
+   if (NewClosestPickup != ClosestPickup) {
+      ClosestPickup = NewClosestPickup;
       ReportClosestPickupUpdated ();
    }
 }

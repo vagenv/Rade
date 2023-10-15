@@ -200,7 +200,7 @@ protected:
       TArray<uint8> SaveBinary;
 
    UPROPERTY()
-      TWeakObjectPtr<URSaveGame> SaveGameObject;
+      TWeakObjectPtr<URSaveGame> SaveGameObject = nullptr;
 
    UFUNCTION()
       void ReportEnd (bool succes);

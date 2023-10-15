@@ -65,10 +65,10 @@ public:
    //                 Status Mgr
    //==========================================================================
    UPROPERTY()
-      TWeakObjectPtr<URWorldStatusMgr> WorldStatusMgr;
+      TWeakObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
 
    UPROPERTY()
-      TWeakObjectPtr<URStatusMgrComponent> OwnerStatusMgr;
+      TWeakObjectPtr<URStatusMgrComponent> OwnerStatusMgr = nullptr;
     
    UFUNCTION()
       void FindWorldStatusMgr ();

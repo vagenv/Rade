@@ -13,8 +13,6 @@ class RSAVELIB_API URWorldSaveMgr : public UActorComponent
    GENERATED_BODY()
 public:
 
-   URWorldSaveMgr ();
-
    //==========================================================================
    //                  Save Data
    //==========================================================================
@@ -24,7 +22,7 @@ public:
 
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Rade|Save")
-      TWeakObjectPtr<URSaveGame> SaveGameObject;
+      TWeakObjectPtr<URSaveGame> SaveGameObject = nullptr;
 
 public:
 

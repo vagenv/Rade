@@ -19,10 +19,6 @@ URWorldSaveMgr* URWorldSaveMgr::GetInstance (const UObject* WorldContextObject)
 //                   Member calls
 //=============================================================================
 
-URWorldSaveMgr::URWorldSaveMgr ()
-{
-}
-
 void URWorldSaveMgr::ReportSave (URSaveGame* SaveGame)
 {
    if (!IsValid (SaveGame)) return;
