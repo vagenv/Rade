@@ -105,7 +105,7 @@ void URStatusMgrComponent::FindWorldMgrs ()
       return;
    }
 
-   RecalcStatus ();
+   if (R_IS_NET_ADMIN) RecalcStatus ();
 }
 
 //=============================================================================
