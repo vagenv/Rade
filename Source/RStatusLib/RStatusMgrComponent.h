@@ -87,12 +87,9 @@ public:
    //==========================================================================
    //                 Recalc status
    //==========================================================================
-private:
+protected:
    UFUNCTION()
       virtual void RecalcStatus ();
-
-   UFUNCTION()
-      virtual void RecalcStatusValues ();
 
    //==========================================================================
    //                 Status
@@ -181,16 +178,16 @@ protected:
 public:
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool SetPassiveEffects (const FString& Tag, const TArray<FRPassiveStatusEffect>& AddValues);
+      bool SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect>& Effects);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool RmPassiveEffects (const FString& Tag);
+      bool RmPassiveEffects (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffect> GetPassiveEffects () const;
+      TArray<FRPassiveStatusEffect> GetPassiveEffects_Flat () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffectWithTag> GetPassiveEffectsWithTag () const;
+      TArray<FRPassiveStatusEffectWithTag> GetPassiveEffects () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       bool HasPassiveEffectWithTag (const FString &Tag) const;
@@ -251,7 +248,7 @@ public:
 public:
 
    UFUNCTION()
-      void ReporPassiveEffectsUpdated ();
+      void ReportPassiveEffectsUpdated ();
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnPassiveEffectsUpdated;

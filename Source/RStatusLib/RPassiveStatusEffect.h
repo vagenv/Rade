@@ -48,10 +48,14 @@ struct RSTATUSLIB_API FRPassiveStatusEffect
       ERStatusEffectTarget EffectTarget = ERStatusEffectTarget::None;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      float Flat = 0;
+      float Flat = 0.;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      float Percent = 0;
+      float Percent = 0.;
+
+   bool IsEmpty () const {
+      return (Flat == 0. && Percent == 0.);
+   };
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -65,7 +69,11 @@ struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
 
    // What value is added
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      FRPassiveStatusEffect Value;
+      TArray<FRPassiveStatusEffect> Effects;
+
+   bool IsEmpty () const {
+      return Effects.IsEmpty ();
+   };
 };
 
 

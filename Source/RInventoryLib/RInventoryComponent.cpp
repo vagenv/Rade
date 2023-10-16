@@ -45,6 +45,25 @@ void URInventoryComponent::BeginPlay()
    ConnectToSaveMgr ();
 }
 
+void URInventoryComponent::ReportInventoryUpdateDelayed ()
+{
+   // Already started
+   if (ReportInventoryUpdateDelayedTriggered) return;
+   if (UWorld* World = URUtil::GetWorld (this)) {
+      ReportInventoryUpdateDelayedTriggered = true;
+      World->GetTimerManager ().SetTimerForNextTick ([this](){
+         // Recalculate the accumulated changes over the last tick
+         CalcWeight ();
+
+         // Report Update
+         ReportInventoryUpdate ();
+
+         // Reset
+         ReportInventoryUpdateDelayedTriggered = false;
+      });
+   }
+}
+
 //=============================================================================
 //                 Add Item
 //=============================================================================
@@ -182,8 +201,7 @@ bool URInventoryComponent::AddItem_Data (FRItemData NewItem)
          // --- Full fit
          if (NewItem.Count <= ItItemCountLeft) {
             ItItem.Count += NewItem.Count;
-            CalcWeight ();
-            ReportInventoryUpdate ();
+            ReportInventoryUpdateDelayed ();
             return true;
          }
 
@@ -210,14 +228,12 @@ bool URInventoryComponent::AddItem_Data (FRItemData NewItem)
 
    // Limit number of slots used
    if (Items.Num () >= SlotsMax) {
-      CalcWeight ();
-      ReportInventoryUpdate ();
+      ReportInventoryUpdateDelayed ();
       return false;
    }
 
    Items.Add (NewItem);
-   CalcWeight ();
-   ReportInventoryUpdate ();
+   ReportInventoryUpdateDelayed ();
    return true;
 }
 
@@ -248,8 +264,7 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
       Items.RemoveAt (ItemIdx);
    }
 
-   CalcWeight ();
-   ReportInventoryUpdate ();
+   ReportInventoryUpdateDelayed ();
    return true;
 }
 

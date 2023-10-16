@@ -102,114 +102,109 @@ void URPlayerStatusMgrComponent::LeveledUp ()
 void URPlayerStatusMgrComponent::RecalcStatus ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   RecalcCoreStats ();
-   RecalcSubStats ();
-   RecalcStatusValues ();
-
-   SetHealth (Health);
-   SetStamina (Stamina);
-   SetMana (Mana);
-
-   ReportStatsUpdated ();
-}
-
-void URPlayerStatusMgrComponent::RecalcCoreStats ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
-
-   // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += ItEffect.Value.Flat;
-   }
-   // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + ItEffect.Value.Percent) / 100.);
-   }
-   CoreStats_Added = CoreStats_Total_New - GetCoreStats_Base ();
-}
-
-void URPlayerStatusMgrComponent::RecalcSubStats ()
-{
-   R_RETURN_IF_NOT_ADMIN;
    if (!WorldStatusMgr.IsValid ()) return;
 
-   FRCoreStats StatsTotal = GetCoreStats_Total ();
-   float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
-   float CriticalTotal    = WorldStatusMgr->GetAgiToCritical    (StatsTotal.AGI);
-   float AttackSpeedTotal = WorldStatusMgr->GetAgiToAttackSpeed (StatsTotal.AGI);
-   float MoveSpeedTotal   = 0;
+   const TArray<FRPassiveStatusEffect> &Effects = GetPassiveEffects_Flat ();
 
-   // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   += ItEffect.Value.Flat;
+   // --- Core stats
+   {
+      FRCoreStats CoreStats_Total_New = GetCoreStats_Base ();
+
+      // Flat
+      for (const FRPassiveStatusEffect &ItEffect : Effects) {
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::STR) CoreStats_Total_New.STR += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::INT) CoreStats_Total_New.INT += ItEffect.Flat;
+      }
+      // Percentage
+      for (const FRPassiveStatusEffect &ItEffect : Effects) {
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::STR) CoreStats_Total_New.STR *= ((100. + ItEffect.Percent) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::AGI) CoreStats_Total_New.AGI *= ((100. + ItEffect.Percent) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::INT) CoreStats_Total_New.INT *= ((100. + ItEffect.Percent) / 100.);
+      }
+      CoreStats_Added = CoreStats_Total_New - GetCoreStats_Base ();
    }
-   // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   *= ((100. + ItEffect.Value.Percent) / 100.);
+
+   // --- Sub stats
+   {
+      FRCoreStats StatsTotal = GetCoreStats_Total ();
+      float EvasionTotal     = WorldStatusMgr->GetAgiToEvasion     (StatsTotal.AGI);
+      float CriticalTotal    = WorldStatusMgr->GetAgiToCritical    (StatsTotal.AGI);
+      float AttackSpeedTotal = WorldStatusMgr->GetAgiToAttackSpeed (StatsTotal.AGI);
+      float AttackPowerTotal = 1;
+      float MoveSpeedTotal   = 1;
+
+      // Flat
+      for (const FRPassiveStatusEffect &ItEffect : Effects) {
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::Evasion)     EvasionTotal     += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::Critical)    CriticalTotal    += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   += ItEffect.Flat;
+      }
+      // Percentage
+      for (const FRPassiveStatusEffect &ItEffect : Effects) {
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::Evasion)     EvasionTotal     *= ((100. + ItEffect.Percent) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::Critical)    CriticalTotal    *= ((100. + ItEffect.Percent) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::AttackSpeed) AttackSpeedTotal *= ((100. + ItEffect.Percent) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::MoveSpeed)   MoveSpeedTotal   *= ((100. + ItEffect.Percent) / 100.);
+      }
+
+      FRCoreStats StatsCurrent = GetCoreStats_Base ();
+      SubStats_Base.Evasion      = WorldStatusMgr->GetAgiToEvasion     (StatsCurrent.AGI);
+      SubStats_Added.Evasion     = EvasionTotal - SubStats_Base.Evasion;
+      SubStats_Base.Critical     = WorldStatusMgr->GetAgiToCritical    (StatsCurrent.AGI);
+      SubStats_Added.Critical    = CriticalTotal - SubStats_Base.Critical;
+      SubStats_Base.AttackSpeed  = WorldStatusMgr->GetAgiToAttackSpeed (StatsCurrent.AGI);
+      SubStats_Added.AttackSpeed = CriticalTotal - SubStats_Base.Critical;
+      SubStats_Base.MoveSpeed    = MoveSpeedTotal;
+      SubStats_Added.MoveSpeed   = 0;
+      SubStats_Base.AttackPower  = 0;
+      SubStats_Added.AttackPower = 0;
+
+      CriticalChance = CriticalTotal;
+      EvasionChance  = EvasionTotal;
    }
-
-   FRCoreStats StatsCurrent = GetCoreStats_Base ();
-   SubStats_Base.Evasion      = WorldStatusMgr->GetAgiToEvasion     (StatsCurrent.AGI);
-   SubStats_Added.Evasion     = EvasionTotal - SubStats_Base.Evasion;
-   SubStats_Base.Critical     = WorldStatusMgr->GetAgiToCritical    (StatsCurrent.AGI);
-   SubStats_Added.Critical    = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.AttackSpeed  = WorldStatusMgr->GetAgiToAttackSpeed (StatsCurrent.AGI);
-   SubStats_Added.AttackSpeed = CriticalTotal - SubStats_Base.Critical;
-   SubStats_Base.MoveSpeed    = MoveSpeedTotal;
-   SubStats_Added.MoveSpeed   = 0;
-
-   CriticalChance = CriticalTotal;
-   EvasionChance  = EvasionTotal;
-}
-
-void URPlayerStatusMgrComponent::RecalcStatusValues ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!WorldStatusMgr.IsValid ()) return;
 
    // --- Status
-   FRCoreStats StatsTotal = GetCoreStats_Total ();
-   Health.Max     = WorldStatusMgr->GetStrToHealthMax    (StatsTotal.STR);
-   Health.Regen   = WorldStatusMgr->GetStrToHealthRegen  (StatsTotal.STR);
-   Stamina.Max    = WorldStatusMgr->GetAgiToStaminaMax   (StatsTotal.AGI);
-   Stamina.Regen  = WorldStatusMgr->GetAgiToStaminaRegen (StatsTotal.AGI);
-   Mana.Max       = WorldStatusMgr->GetIntToManaMax      (StatsTotal.INT);
-   Mana.Regen     = WorldStatusMgr->GetIntToManaRegen    (StatsTotal.INT);
+   {
+      FRCoreStats StatsTotal = GetCoreStats_Total ();
+      Health.Max     = WorldStatusMgr->GetStrToHealthMax    (StatsTotal.STR);
+      Health.Regen   = WorldStatusMgr->GetStrToHealthRegen  (StatsTotal.STR);
+      Stamina.Max    = WorldStatusMgr->GetAgiToStaminaMax   (StatsTotal.AGI);
+      Stamina.Regen  = WorldStatusMgr->GetAgiToStaminaRegen (StatsTotal.AGI);
+      Mana.Max       = WorldStatusMgr->GetIntToManaMax      (StatsTotal.INT);
+      Mana.Regen     = WorldStatusMgr->GetIntToManaRegen    (StatsTotal.INT);
 
-   // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Flat;
-   }
-   // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Flat) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Flat) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Flat) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Flat) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Flat) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Flat) / 100.);
+      // Flat
+      for (const FRPassiveStatusEffect &ItEffect : Effects) {
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Flat;
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Flat;
+      }
+      // Percentage
+      for (const FRPassiveStatusEffect &ItEffect : Effects) {
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Flat) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Flat) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Flat) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Flat) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Flat) / 100.);
+         if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Flat) / 100.);
+      }
+
+      // Clamp current values;
+      Health.Current  = FMath::Clamp (Health.Current,  0, Health.Max);
+      Mana.Current    = FMath::Clamp (Mana.Current,    0, Mana.Max);
+      Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
+
+      SetHealth (Health);
+      SetStamina (Stamina);
+      SetMana (Mana);
    }
 
-   // Clamp current values;
-   Health.Current  = FMath::Clamp (Health.Current,  0, Health.Max);
-   Mana.Current    = FMath::Clamp (Mana.Current,    0, Mana.Max);
-   Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
+   ReportStatsUpdated ();
 }
 
 //=============================================================================

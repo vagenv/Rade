@@ -102,7 +102,10 @@ void URStatusMgrComponent::FindWorldMgrs ()
       RTIMER_START (RetryHandle,
                     this, &URStatusMgrComponent::FindWorldMgrs,
                     1, false);
+      return;
    }
+
+   RecalcStatus ();
 }
 
 //=============================================================================
@@ -176,16 +179,6 @@ void URStatusMgrComponent::ReportRevive ()
 void URStatusMgrComponent::RecalcStatus ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   RecalcStatusValues ();
-
-   SetHealth  (Health);
-   SetStamina (Stamina);
-   SetMana    (Mana);
-}
-
-void URStatusMgrComponent::RecalcStatusValues ()
-{
-   R_RETURN_IF_NOT_ADMIN;
    if (!WorldStatusMgr.IsValid ()) return;
 
    // --- Status
@@ -197,28 +190,34 @@ void URStatusMgrComponent::RecalcStatusValues ()
    Stamina.Regen = Start_Stamina.Regen;
 
    // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Flat;
+   for (const FRPassiveStatusEffect &ItEffect : GetPassiveEffects_Flat ()) {
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Flat;
    }
+
    // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Percent) / 100.);
+   for (const FRPassiveStatusEffect &ItEffect : GetPassiveEffects_Flat ()) {
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Percent) / 100.);
    }
 
    // Clamp current values;
    Health.Current  = FMath::Clamp (Health.Current,  0, Health.Max);
    Mana.Current    = FMath::Clamp (Mana.Current,    0, Mana.Max);
    Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
+
+   // Force update values to all clients
+   SetHealth  (Health);
+   SetStamina (Stamina);
+   SetMana    (Mana);
 }
 
 //=============================================================================
@@ -303,25 +302,25 @@ bool URStatusMgrComponent::RollEvasion () const
 //                 Passive Effect
 //==========================================================================
 
-TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects () const
+TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects_Flat () const
 {
    return URPassiveStatusEffectUtilLibrary::MergeEffects (PassiveEffects);
 }
 
-TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffectsWithTag () const
+TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffects () const
 {
    return PassiveEffects;
 }
 
 bool URStatusMgrComponent::HasPassiveEffectWithTag (const FString& Tag) const
 {
-   for (const auto& ItEffect : GetPassiveEffectsWithTag ()) {
+   for (const auto& ItEffect : GetPassiveEffects ()) {
       if (ItEffect.Tag == Tag) return true;
    }
    return false;
 }
 
-bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
+bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Tag.IsEmpty ())) return false;
@@ -329,13 +328,16 @@ bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<F
    // Clean
    RmPassiveEffects (Tag);
 
-   // Add again
-   for (const FRPassiveStatusEffect& ItAddValue : AddValues) {
-      FRPassiveStatusEffectWithTag newRes;
-      newRes.Tag   = Tag;
-      newRes.Value = ItAddValue;
-      PassiveEffects.Add (newRes);
+   // Nothing new to add
+   if (Effects.IsEmpty ()) {
+      return false;
    }
+
+   // -- Add new
+   FRPassiveStatusEffectWithTag NewEffect;
+   NewEffect.Tag     = Tag;
+   NewEffect.Effects = Effects;
+   PassiveEffects.Add (NewEffect);
 
    DelayedPassiveUpdate ();
    return true;
@@ -345,29 +347,26 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Tag.IsEmpty ())) return false;
-   TArray<int32> ToRemove;
+
+   // --- Can remove only single item because of tag collision
    for (int32 iEffect = 0; iEffect < PassiveEffects.Num (); iEffect++) {
       const FRPassiveStatusEffectWithTag& ItEffect = PassiveEffects[iEffect];
-      if (ItEffect.Tag == Tag) ToRemove.Add (iEffect);
-   }
-   // Nothing to remove
-   if (!ToRemove.Num ()) return false;
-
-   // Remove in reverse order;
-   for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
-      PassiveEffects.RemoveAt (ToRemove[iToRemove]);
+      if (ItEffect.Tag == Tag)  {
+         PassiveEffects.RemoveAt (iEffect);
+         DelayedPassiveUpdate ();
+         return true;
+      }
    }
 
-   DelayedPassiveUpdate ();
-   return true;
+   return false;
 }
 
 void URStatusMgrComponent::OnRep_PassiveEffects ()
 {
-   ReporPassiveEffectsUpdated ();
+   ReportPassiveEffectsUpdated ();
 }
 
-void URStatusMgrComponent::ReporPassiveEffectsUpdated ()
+void URStatusMgrComponent::ReportPassiveEffectsUpdated ()
 {
    if (R_IS_VALID_WORLD && OnPassiveEffectsUpdated.IsBound ()) OnPassiveEffectsUpdated.Broadcast ();
 }
@@ -379,10 +378,11 @@ void URStatusMgrComponent::DelayedPassiveUpdate ()
    if (UWorld* World = URUtil::GetWorld (this)) {
       DelayedPassiveUpdateTriggered = true;
       World->GetTimerManager ().SetTimerForNextTick ([this](){
-
-         // Report update
+         // Recalculate the accumulated changes over the last tick
          RecalcStatus ();
-         ReporPassiveEffectsUpdated ();
+
+         // Report Update
+         ReportPassiveEffectsUpdated ();
 
          // Reset
          DelayedPassiveUpdateTriggered = false;
@@ -393,7 +393,6 @@ void URStatusMgrComponent::DelayedPassiveUpdate ()
 //==========================================================================
 //                 Active Effect
 //==========================================================================
-
 
 bool URStatusMgrComponent::ApplyActiveStatusEffect (
    AActor* Causer_,
@@ -412,7 +411,6 @@ bool URStatusMgrComponent::ApplyActiveStatusEffect (
 
    return StatusMgr->AddActiveStatusEffect (Causer_, Effect_);
 }
-
 
 bool URStatusMgrComponent::AddActiveStatusEffect (
    AActor* Causer_,

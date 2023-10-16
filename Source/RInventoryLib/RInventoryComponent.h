@@ -71,6 +71,12 @@ protected:
    UFUNCTION()
       void ReportInventoryUpdate () const;
 
+   UFUNCTION()
+      void ReportInventoryUpdateDelayed ();
+
+   UPROPERTY()
+      bool ReportInventoryUpdateDelayedTriggered = false;
+
    //==========================================================================
    //                 Check if contains
    //==========================================================================

@@ -131,10 +131,10 @@ void UREquipmentMgrComponent::CalcWeight ()
    MoveSpeedEffect.Percent      = URUtil::GetRuntimeFloatCurveValue (WeightToMoveSpeed, EquipLoad);
 
    TArray<FRPassiveStatusEffect> Effects;
-   Effects.Add (EvasionEffect);
-   Effects.Add (MoveSpeedEffect);
-
-   StatusMgr->SetPassiveEffects ("Weight Penalty", Effects);
+   const FString EffectKey = "Weight Penalty";
+   if (!EvasionEffect.IsEmpty ())   Effects.Add (EvasionEffect);
+   if (!MoveSpeedEffect.IsEmpty ()) Effects.Add (MoveSpeedEffect);
+   StatusMgr->SetPassiveEffects (EffectKey, Effects);
 }
 
 void UREquipmentMgrComponent::OnStatsUpdated ()

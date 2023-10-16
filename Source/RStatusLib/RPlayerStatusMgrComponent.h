@@ -45,10 +45,7 @@ protected:
    //                 Recalc status
    //==========================================================================
 protected:
-   virtual void RecalcStatus       () override;
-   virtual void RecalcStatusValues () override;
-   virtual void RecalcCoreStats    ();
-   virtual void RecalcSubStats     ();
+   virtual void RecalcStatus () override;
 
    //==========================================================================
    //                 Extra stat Points
