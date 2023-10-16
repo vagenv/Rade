@@ -22,24 +22,6 @@ Status and latency
 Kick teammate confirmation window
 
 
-==============
-Ability
-==============
-
-Passive Effect list shimmering
-Use Tag.
-
-
-Level
-- Damage Scaling
-- Cost scaling
-
-Ability damage scale from stat
-Fireball:
-- 10 + 5 * Int
-Heal:
-- 10 + 2 * Int
-
 
 ==============
 EventList Sidebar
