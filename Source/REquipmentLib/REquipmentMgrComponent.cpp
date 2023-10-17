@@ -391,15 +391,19 @@ bool UREquipmentMgrComponent::Equip_Slot (UREquipmentSlotComponent *EquipmentSlo
       if (!UnEquip_Slot (EquipmentSlot)) return false;
    }
 
-   // --- Add Stats and Effects
-   if (StatusMgr) {
-      StatusMgr->SetPassiveEffects (EquipmentSlot->Description.Label, EquipmentData.PassiveEffects);
-      StatusMgr->AddResistance     (EquipmentSlot->Description.Label, EquipmentData.Resistence);
-   }
-
    // --- Update slot data
    EquipmentSlot->EquipmentData = EquipmentData;
    EquipmentSlot->Busy = true;
+
+   // --- Add Stats and Effects
+   if (StatusMgr) {
+      FString EquipId = "[" + EquipmentSlot->Description.Label + "] "
+                      + EquipmentSlot->EquipmentData.Description.Label;
+      StatusMgr->SetPassiveEffects (EquipId, EquipmentData.PassiveEffects);
+      StatusMgr->AddResistance     (EquipId, EquipmentData.Resistence);
+   }
+
+   // -- Report update
    EquipmentSlot->ReportOnSlotUpdated ();
    ReportEquipmentUpdated ();
 
@@ -451,8 +455,6 @@ bool UREquipmentMgrComponent::UnEquip_Item (const FRItemData &ItemData)
    return false;
 }
 
-
-
 void UREquipmentMgrComponent::UnEquip_Equipment_Server_Implementation (
    UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData)
 {
@@ -492,8 +494,10 @@ bool UREquipmentMgrComponent::UnEquip_Slot (UREquipmentSlotComponent *EquipmentS
 
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (GetOwner ());
    if (StatusMgr) {
-      StatusMgr->RmPassiveEffects (EquipmentSlot->Description.Label);
-      StatusMgr->RmResistance     (EquipmentSlot->Description.Label);
+      FString EquipId = "[" + EquipmentSlot->Description.Label + "] "
+                      + EquipmentSlot->EquipmentData.Description.Label;
+      StatusMgr->RmPassiveEffects (EquipId);
+      StatusMgr->RmResistance     (EquipId);
    }
    EquipmentSlot->Busy = false;
    EquipmentSlot->EquipmentData = FREquipmentData();

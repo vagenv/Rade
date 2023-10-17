@@ -37,9 +37,6 @@ protected:
    UFUNCTION ()
       virtual void RemoveEffects ();
 
-   UPROPERTY()
-      FString UniqueEffectTag;
-
 private:
    UPROPERTY()
       TArray<TWeakObjectPtr<URStatusMgrComponent> > LastAffectedMgr;

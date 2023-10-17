@@ -12,8 +12,6 @@
 void URAbility_Aura_StatusEffect::BeginPlay ()
 {
    Super::BeginPlay ();
-
-   UniqueEffectTag = GetName ();
 }
 
 
@@ -29,11 +27,13 @@ void URAbility_Aura_StatusEffect::CheckRange ()
    ApplyEffects ();
 }
 
-
 void URAbility_Aura_StatusEffect::ApplyEffects ()
 {
    if (!ensure (R_IS_NET_ADMIN)) return;
    if (!PassiveEffects.Num () && !ActiveEffects.Num ()) return;
+
+   const FRAbilityInfo &AbilitInfo = GetAbilityInfo ();
+   if (AbilitInfo.IsEmpty ()) return;
 
    TArray<TWeakObjectPtr<URStatusMgrComponent> > AffectedMgr;
 
@@ -50,8 +50,8 @@ void URAbility_Aura_StatusEffect::ApplyEffects ()
             LastAffectedMgr.Remove (StatusMgr);
 
             // Set flag only if not set already
-            if (!StatusMgr->HasPassiveEffectWithTag (UniqueEffectTag)) {
-               StatusMgr->SetPassiveEffects (UniqueEffectTag, PassiveEffects);
+            if (!StatusMgr->HasPassiveEffectWithTag (AbilitInfo.Description.Label)) {
+               StatusMgr->SetPassiveEffects (AbilitInfo.Description.Label, PassiveEffects);
             }
          }
 
@@ -72,9 +72,13 @@ void URAbility_Aura_StatusEffect::ApplyEffects ()
 void URAbility_Aura_StatusEffect::RemoveEffects ()
 {
    if (!ensure (R_IS_NET_ADMIN)) return;
+
+   const FRAbilityInfo &AbilitInfo = GetAbilityInfo ();
+   if (AbilitInfo.IsEmpty ()) return;
+
    for (const TWeakObjectPtr<URStatusMgrComponent> &ItStatusMgr : LastAffectedMgr) {
-      if (ItStatusMgr.IsValid () && ItStatusMgr->HasPassiveEffectWithTag (UniqueEffectTag))
-         ItStatusMgr->RmPassiveEffects (UniqueEffectTag);
+      if (ItStatusMgr.IsValid () && ItStatusMgr->HasPassiveEffectWithTag (AbilitInfo.Description.Label))
+         ItStatusMgr->RmPassiveEffects (AbilitInfo.Description.Label);
    }
 }
 

@@ -347,6 +347,7 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Tag.IsEmpty ())) return false;
+   if (!HasPassiveEffectWithTag (Tag)) return false;
 
    // --- Can remove only single item because of tag collision
    for (int32 iEffect = 0; iEffect < PassiveEffects.Num (); iEffect++) {
@@ -357,6 +358,9 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
          return true;
       }
    }
+
+   // This should not happen
+   ensure (false);
 
    return false;
 }
