@@ -8,17 +8,7 @@ Issues
 
 Cursor still visible for a few seconds after switch to gamepad.
 
-Framerate dips when opening StatusMenu and other menus.
-General performance check of UI
-
-
-==============
-RUI_TypeContainer : RUI_ListContainer
-==============
-SetSize () -> Smoothly resize list and call OnListUpdated? in the end.
-SoftClassPtr<UserWidget> WidgetClass. Async load of class, wait before resize
-
-GetChildren -> Set (Interface)
+Equipment slot list order manually?
 
 
 ==============
@@ -50,6 +40,25 @@ Callers
 - Item picked up
 - Damage taken
 - Damage applied?
+
+
+==============
+UserWidgets Create/Destroy performance
+==============
+AddToViewport is expensive
+
+Solution:
+- Simplify Widgets
+- Cache them
+
+Create Widgets then Hide/Unhide
+
+Create everthing in the beggining.
+This will not affect gameplay framerate.
+Sync load before game starts
+
+
+ResetWidget interface when visiblity changes
 
 
 =================================================
