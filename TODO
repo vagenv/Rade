@@ -10,24 +10,9 @@ Cursor still visible for a few seconds after switch to gamepad.
 
 Equipment slot list order manually?
 
+Ability use too often timer handle ensure
 
-==============
-EventList Sidebar
-==============
-Right Bottom/Top/Middle
-Max Size
-
-Event
-- Icon
-- Label
-- Count
-- Detail?
-- Lifetime?
-
-Callers
-- Item picked up
-- Damage taken
-- Damage applied?
+Item picked up Event?
 
 
 ==============
@@ -43,7 +28,7 @@ Create Widgets then Hide/Unhide
 
 Create everthing in the beggining.
 This will not affect gameplay framerate.
-Sync load before game starts
+Sync load before game starts and keep alive
 
 
 ResetWidget interface when visiblity changes
