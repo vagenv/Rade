@@ -32,6 +32,10 @@ public:
    // Gets path to UDataTable object
    static FString GetTablePath (const UDataTable* Table);
 
+   // Compare if array contain same objects
+   static bool ObjectArray_EqualEqual (const TArray<UObject*> &A,
+                                       const TArray<UObject*> &B);
+
    // --- Template functions
 
    // Get specific component of target actor
@@ -116,6 +120,12 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Util")
       static FString GetTablePath (const UDataTable* Table) {
          return URUtil::GetTablePath (Table);
+      }
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Util", meta=(DisplayName="==", CompactNodeTitle="=="))
+	   static bool ObjectArray_EqualEqual (const TArray<UObject*> &A,
+                                          const TArray<UObject*> &B) {
+         return URUtil::ObjectArray_EqualEqual (A, B);
       }
 };
 

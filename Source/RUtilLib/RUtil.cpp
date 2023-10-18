@@ -49,3 +49,35 @@ FString URUtil::GetTablePath (const UDataTable* Table)
 {
    return Table ? Table->GetPathName () : "NULL";
 }
+
+
+bool URUtil::ObjectArray_EqualEqual (const TArray<UObject*> &A,
+                                     const TArray<UObject*> &B)
+{
+   // All unique Items
+   TMap<int, bool> AMap;
+
+   // Collect all unique A items
+   for (const UObject* ItA : A) {
+      if (ItA == nullptr) continue;
+
+      AMap.Add (ItA->GetUniqueID (), true);
+   }
+   
+   // Check if all B items occured in A map
+   for (const UObject* ItB : B) {
+      if (ItB == nullptr) continue;
+
+      // Remove item from A map
+      if (AMap.Contains (ItB->GetUniqueID ())) {
+         AMap.Remove (ItB->GetUniqueID ());
+
+      // Item not found
+      } else {
+         return false;
+      }
+   }
+
+   // Check that no items left in A map
+   return AMap.IsEmpty ();
+}
