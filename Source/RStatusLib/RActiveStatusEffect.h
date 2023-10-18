@@ -49,7 +49,8 @@ public:
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RSTATUSLIB_API URActiveStatusEffect : public UActorComponent
+class RSTATUSLIB_API URActiveStatusEffect : public UActorComponent,
+                                            public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 public:
@@ -106,6 +107,10 @@ public:
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRActiveStatusEffectInfo GetEffectInfo () const;
+
+   virtual FRUIDescription GetDescription_Implementation () const override {
+      return GetEffectInfo ().Description;
+   }
 
    //==========================================================================
    //                 Values
