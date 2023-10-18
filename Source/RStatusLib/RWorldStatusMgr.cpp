@@ -227,7 +227,7 @@ void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
 void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 {
    if (!ensure (Effect)) return;
-   if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
+   if (R_IS_VALID_WORLD && OnStatusEffectEnd.IsBound ()) OnStatusEffectEnd.Broadcast (Effect);
 }
 
 //=============================================================================
