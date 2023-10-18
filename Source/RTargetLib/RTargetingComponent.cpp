@@ -31,7 +31,6 @@ URTargetingComponent::URTargetingComponent ()
 void URTargetingComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
-   DOREPLIFETIME (URTargetingComponent, TargetCurrent);
 }
 
 void URTargetingComponent::BeginPlay ()
@@ -247,10 +246,13 @@ void URTargetingComponent::SetTargetCurrent (URTargetComponent* NewTarget)
 
    // Report
    ReportTargetUpdate ();
+
+   if (R_IS_NET_CLIENT) SetTargetCurrent_Server (NewTarget);
 }
 
-void URTargetingComponent::OnRep_TargetCurrent ()
+void URTargetingComponent::SetTargetCurrent_Server_Implementation (URTargetComponent* NewTarget)
 {
+   TargetCurrent = NewTarget;
    ReportTargetUpdate ();
 }
 

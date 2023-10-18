@@ -97,7 +97,7 @@ public:
 protected:
 
 	// Current focus target
-   UPROPERTY(ReplicatedUsing = "OnRep_TargetCurrent", Replicated)
+   UPROPERTY()
       TWeakObjectPtr<URTargetComponent> TargetCurrent = nullptr;
 
    // Direction where to look. Owner root forward direction
@@ -126,9 +126,10 @@ protected:
    UFUNCTION()
       void SetTargetCurrent (URTargetComponent* NewTarget);
 
-   // Network replication event
-   UFUNCTION()
-      void OnRep_TargetCurrent ();
+   // Called by client to notify server
+   UFUNCTION(Server, Reliable)
+      void SetTargetCurrent_Server                (URTargetComponent* NewTarget);
+      void SetTargetCurrent_Server_Implementation (URTargetComponent* NewTarget);
 
    // Called when target is updated to broadcast event
    UFUNCTION()
