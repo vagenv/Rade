@@ -1,61 +1,46 @@
-=================================================
-         Switch to Common UI
-=================================================
-
 ==============
 Issues
 ==============
-
 Cursor still visible for a few seconds after switch to gamepad.
 
 Equipment slot list order manually?
 
 Ability use too often timer handle ensure
 
-Item picked up Event?
 
 
-==============
-UserWidgets Create/Destroy performance
-==============
-AddToViewport is expensive
-
-Solution:
-- Simplify Widgets
-- Cache them
-
-Create Widgets then Hide/Unhide
-
-Create everthing in the beggining.
-This will not affect gameplay framerate.
-Sync load before game starts and keep alive
 
 
-ResetWidget interface when visiblity changes
+
+===============================================================================
+===============================================================================
 
 
-=================================================
-   RUI_GridContainer
-=================================================
-Uniform grid size
+                                 UI
 
-RUI_GridContainer
-- Use RUI_ItemWidget_Icon
 
+===============================================================================
+===============================================================================
 
 =================================================
    World Interact interface
 =================================================
 
+RUI_WorldInteractInterface
+RItemPickupMgr => RWorldInteractMgr
+TArray<TWeakObjectPtr<const AActor> > CurrentInteractActors;
+
+
 WorldInteract_Interface
 - Action
 - AltAction ?
 
-RUI_WorldInteractWindowWidget
+RUI_WorldInteractWindowWidget ? 
 - WindowType = Game
 - Target = Object/Actor
 - Pass Action and AltAction events to Target
 
+World User Widget
 
  Press [X] to [Action Text]
    [Detailed Description]
@@ -125,6 +110,10 @@ bool FRWeaponItem::Get (ItemData)
 - RequiredStats
 
 
+Replication only for owner?
+JsonData is a large FString member variable. Very expensive to replicate.
+
+
 =================================================
    Editor UI
 =================================================
@@ -174,7 +163,7 @@ Custom Widget for:
          Weapons
 =================================================
 
-Track Equiped Item Ids
+Track Equiped Item through unique inventory Ids?
 
 Add UniqueId to ItemData?
 - Differentiate Dublicates
@@ -226,58 +215,16 @@ Melee
 
 
 =================================================
-         First Enemy Character
-=================================================
-- Animation
-- Material
-- Character blueprint
-- Attack
-- Basic AI
-
-
-=================================================
-         Session Player Info
-=================================================
-
-==============
-On Connect / New Game
-==============
-Select:
-- Spawn Location
-- Name
-- Icon
-- Color
-- Pawn Class
-
-
-==============
-UI Rework
-==============
-- Team List
-- Player Info in Session
-- Session List simplify
-
-
-=================================================
          Teams
 =================================================
+List of Teams and their ID
+Join / Switch between teams?
+Damage / Status effect on Allies / Enemies
 
-Join team
-Get Team List
-FriendlyFire enabled/disabled
-
-
-==============
-Group
-==============
-
-Radial effect by GroupId (Allies/Enemies)
-- Damage / Heal / StatusEffect
 
 =================================================
          Chat
 =================================================
-
 URChatMgr.
 - GameStateComponent
 - New UI build in
@@ -288,116 +235,55 @@ Emotions
 - On top of player
 - Character animation
 
-Audio Messages?
-
 
 =================================================
-   Level Transition.
+      UI Rework
 =================================================
+- Real Mono Font
+- Less is more
+- Hide Status / Abilities if not in fight/use
+
 
 ==============
-'Seamless' travel to next level
+Settings
 ==============
-- Mark Actors that will persist to the Transition Level
-- Travel to the Transition Level
-- Mark Actors that will persist to the Final Level
-- Travel to the Final Level
-
-- Posses / Unposses ?
-- Hide / show pawn?
-- Enable / Disable Input?
+- Audio channels with Persistent Audio Settings
+- Input mapping
 
 
-=================================================
-         Animation
-=================================================
+==============
+UserWidgets Create/Destroy performance
+==============
+AddToViewport is expensive
 
-Animation Blueprint (Network)
+Solution:
+- Simplify Widgets
+- Cache them
 
-Bunny/Object Hop Animation with body deformation
+Create Widgets then Hide/Unhide
 
-Partial body blend.
-- Overlaps
-- Lower body
-- Upper body
-- Head Movement with camera
-- IK for hands to weapons attach sockets
+Create everthing in the beggining.
+This will not affect gameplay framerate.
+Sync load before game starts and keep alive
 
-Smooth animations
-
-Animations:
-- Look around (Camera rotation)
-- Run/Sprint
-- Ragdoll death
-- Melee fight
-- Roll/Phase (With Invincible Frame and Cost)
+ResetWidget interface when visiblity changes
 
 
-=================================================
-         Shaders
-=================================================
-- Look into shaders
-- OutLined overlap.
-- Toon Shaders
+==============
+RUI_GridContainer
+==============
+Uniform grid size
+Will require RUI_ListContainer redesign
 
-=================================================
-         AI
-=================================================
-- pathfinding
-- patrol
-- Melee and ranged
-- React if attacked
-- Attack together
-- Hide
+Can also use focusable.
+Or implement global interface list with their center as move direction
 
 
-=================================================
-         Sound
-=================================================
-- Jump / Land
-- Running
-- Weapon Attack / Reloading
-- Getting hit
-- Explosion
-- Environment
-
-
-=================================================
-         Spline
-=================================================
-- Road
-- Moving Snake
-- Paricle effects
-
-
-=================================================
-         VFX
-=================================================
-
-Enemy Attack pulse notifier
-- Red Aura for radial attack.
-- Red Cone for directtional attack.
-
-Enemy Death -> Bunny Explosion
-- Puff
-- Bunny Left
-- Hops/Away
-
-- Roll/Phase
-
-- Blood
-- Explosion
-- Smoke
-- GPU particles
-- Niagara
-
-=================================================
-         Camera
-=================================================
-Texture Effects and Shake
-- Damage
-- Status Effect
-- Attack
+==============
+Grid Inventory
+==============
+RUI_GridContainer
+- Use RUI_ItemWidget_Icon
 
 
 =================================================
@@ -415,11 +301,9 @@ Custom icons for
 =================================================
          Dialogue system
 =================================================
-
 Find Plugins
 
 JSON / Graph workflow
-
 UI
 - Icon
 - Header
@@ -434,46 +318,11 @@ Health/Stamina/Mana
 - Smooth movement.
 - Colors when increase (green) / decrease (red)
 
-=================================================
-      UI Rework
-=================================================
-- Real Mono Font
-- Less is more
-
-==============
-Border
-==============
-- Transparent
-- Thin border around window only.
-
-==============
-Settings
-==============
-- Audio channels with Persistent Audio Settings
-- Input
-
-==============
-Other
-==============
-- Hide Status / Abilities if not in fight
-- UI Scale 100% - 300% / SizeBox
-
-==============
-Grid Inventory
-==============
-- Box with icon
-- Separate widget with detailed description
-- Sort by types / rarity / types / price
-
 
 =================================================
-         Random Equipment / Weapon Generation
+         Camera
 =================================================
-Blueprint function which generate Weapon/Equipment randomly. With schema.
-- Price
-- Rarity
-- Effect
-- Color
+Texture Effects and Shake based on damage type
 
 
 =================================================
@@ -483,43 +332,6 @@ MoveSpeed and Critical Substat used
 
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
-
-
-=================================================
-         Combo manager
-=================================================
-
-Chain use abilities or attacks
-- Jump => Double Jump
-- Fireball => Fireball => FireNova
-- Attack => Attack => Power Attack => Get Status Effect
-
-
-=================================================
-         Resistance from stats
-=================================================
-
-Physical / Magical / Environment / Elemental
-
-??? (Str)
--Blunt
--Pierce
--Slash
-
-??? (Agi)
--Bleed
--Poison
--Rot
-
-??? (Int)
--Magic
--Lightining
--Fire
-
-???
--Light
--Dark
--Heal
 
 
 =================================================
@@ -535,68 +347,237 @@ Physical / Magical / Environment / Elemental
 - Personal craft list. Recipes
 
 
+
+
+
+
+
+===============================================================================
+===============================================================================
+        
+
+                           Battle system
+
+
+===============================================================================
+===============================================================================
+
+==============
+Hit Component Damage Multiplier
+==============
+ApplyRDamage (based on what body part was hit) (bone name?):
+- Headshot
+- Protected by armor
+
+
 =================================================
-         Attack combo
+         Combo manager
 =================================================
+
+Roll Invincibility?
+
+Chain use abilities or attacks
+- Jump => Double Jump
+- Fireball => Fireball => FireNova
+- Attack => Attack => Power Attack => Get Status Effect
+
+
+==============
+Combo / Style Rating
+==============
 Each anim style must have:
 - Simple Attack
 - Strong Attack
 - Combo with damage multiplier
-
-
-=================================================
-   RInput
-=================================================
-
-Hold to:
-- Destroy
-- Drop
-- Scroll
-- Increase/Descrease
-
-
-=================================================
-         Balancing
-=================================================
-Folder with all curves;
-- Items link them
-- Can be updated from JSON / CSV
-
-
-=================================================
-         Validation
-=================================================
-- Item Table validation
-- Blueprint naming scheme validation
-
-
-=================================================
-         Attack Rating
-=================================================
-- Chain attack tracking
 - DMC style E / D / C / B / A / S / SS / SSS damage multiplier
 - Reset if recieved damage
 
 
+
+
+
+
+===============================================================================
+===============================================================================
+
+
+                                Characters
+
+
+===============================================================================
+===============================================================================
+
 =================================================
-         Save / Load Advanced
+         Enemy + AI
 =================================================
-SaveOrder Index
 
-Async Save/Load
-- SetPending (FString ObjectId)
+Character
+- Mesh
+- Animation
+- Material
+- Attacks
 
-Freeze world while saving.
-
-Ensure everything is saved before continue.
+AI
+- Pathfinding
+- Patrol
+- Melee and ranged
+- React if attacked
+- Attack together
+- Hide
 
 
 =================================================
-         Open World
+         Animation
 =================================================
+Animation Blueprint (Network)
+
+
+
+Partial body blend.
+- Overlaps
+- Lower body
+- Upper body
+- Head Movement with camera
+- IK for hands to weapons attach sockets
+
+Smooth animations
+
+Animations:
+- Head animation. Look around (Camera rotation)
+- Run/Sprint
+- Ragdoll death
+- Melee fight
+- Roll/Phase (With Invincible Frame and Cost)
+
+
+========
+Hopping Bunny
+========
+Mesh
+Path finding
+Hop Animation with body deformation while in movement
+
+
+=================================================
+         Face animation.
+=================================================
+With meshes
+- Rig meshes
+- Camera recording
+- Universal
+- Audio line to mouth movement.
+- Expression
+
+With texture
+- Map EmotionID to Emotion Set
+- Emotion set to list of images
+- State machine?
+
+
+
+
+
+
+===============================================================================
+===============================================================================
+
+
+                                 World
+
+
+===============================================================================
+===============================================================================
+
+=================================================
+   Level Transition.
+=================================================
+'Seamless' travel to next level
+- Mark Actors that will persist to the Transition Level
+- Travel to the Transition Level
+- Mark Actors that will persist to the Final Level
+- Travel to the Final Level
+
+- Posses / Unposses ?
+- Hide / show pawn?
+- Enable / Disable Input?
+
+
+=================================================
+         Shaders
+=================================================
+- Look into shaders
+- OutLined overlap.
+- Toon Shaders
+
+
+=================================================
+         Spline
+=================================================
+- Road
+- Moving Snake
+- Paricle effects
+
+
+=================================================
+         VFX
+=================================================
+Enemy Attack pulse notifier
+- Red Aura for radial attack.
+- Red Cone for directtional attack.
+
+Enemy Death -> Bunny Explosion
+- Puff
+- Bunny Left
+- Hops/Away
+
+- Roll/Phase
+
+- Blood
+- Explosion
+- Smoke
+- GPU particles
+- Niagara
+
+
+=================================================
+         Sound
+=================================================
+- Jump / Land
+- Running
+- Weapon Attack / Reloading
+- Getting hit
+- Explosion
+- Environment
+
+
+=================================================
+         Chaos System
+=================================================
+Destructable Level
+- Trees
+- Walls
+
+
+=================================================
+         Nanite and lumen
+=================================================
+- Load high detail models on demand
+- Analyse budget, resource usage and disk read pattern
+
+
+
+===============================================================================
+===============================================================================
+
+
+                           Map generation
+
+
+===============================================================================
+===============================================================================
+
 - Deterministic Perlin Noise Map
 - Level breaking and layering
-- Desert terrain generated using perlin noise
 - Forrest with random tree placement
 
 
@@ -621,26 +602,32 @@ InstanceMesh->Add/Rm based on range
 https://www.youtube.com/watch?v=XMKFTzfPqXs
 
 
-=================================================
-         Nanite and lumen
-=================================================
-- Load high detail models on demand
-- Analyse budget, resource usage and disk read pattern
 
 
-=================================================
-         Epic / Steam / Dedicated Server Online Subsystem
-=================================================
-- Deploy server on WPS
-- Default:SubsystemNULL -> Only LAN sessions
-- Steam/Epic subsystems
 
+
+
+===============================================================================
+===============================================================================
+
+
+                           Online
+
+
+===============================================================================
+===============================================================================
 
 =================================================
          Online
 =================================================
 
 Stress test low bandwidth and lagging.
+
+Dedicated server instance build
+- Linux / Windows
+- Optimization
+
+Deploy server to WPS
 
 Database / storing user session
 - Local Mysql for storing information?
@@ -649,17 +636,20 @@ External Network API
 - For optional data.
 - Authenticate
 - Get User info
-- Stream picture/content on demand
 
 
-Epic network services
+=================================================
+         Epic / Steam / P2P
+=================================================
+
+Default:SubsystemNULL => Only LAN sessions
+Find Pear to Pearn Unreal subsystem
+Dedicated URL for management?
+
+Look into Steam/Epic subsystems
 - Register to API
-- Connecting to user epic account
+- Connecting to user account
 
-
-Dedicated server instance
-- Linux / Windows
-- Optimization
 
 =================================================
          Online Subsystem Redesign
@@ -668,11 +658,11 @@ Dedicated server instance
 ==============
 Lobby System
 ==============
-
 Authenticate user before login
 Client:
 - Auth with Token Server and access token
 - Connect to Game Server with token
+
 
 ==============
 Game Server
@@ -697,55 +687,23 @@ GameMode
 - ChangeName?
 
 
-==============
-VPS
-==============
-- Static URL
-- Automatic lobby management
-
-==============
-P2P
-==============
-- Search for available instances
-- Connect manually
-- Static URL to manage session list?
 
 
-=================================================
-         Pause Game
-=================================================
-Doesn't work with enhanced input
-Only Server Pause running game
-Client can move camera?
+
+
+===============================================================================
+===============================================================================
+
+
+                           Other
+
+
+===============================================================================
+===============================================================================
 
 
 =================================================
-         Hit Component Damage Multiplier
-=================================================
-ApplyRDamage (based on what body part was hit) (bone name?):
-- Headshot
-- Protected by armor
-
-
-=================================================
-         Face animation.
-=================================================
-- Rig meshes
-- Camera recording
-- Universal
-- Audio line to mouth movement.
-- Expression
-
-=================================================
-         Chaos System
-=================================================
-Destructable Level
-- Trees
-- Walls
-
-
-=================================================
-         Remove all float and int?
+Remove all float and int
 =================================================
 For now ok.
 
@@ -753,50 +711,60 @@ Others cases are not as a big of an issue because:
 - Mostly whole decimal (0.1, 0.2) will encounter rounding error.
 - float is enough precision for stats, except maybe 1M+ StatusValues
 
-float -> double:
-- StatusValues
-- GetRuntimeFloatCurveValue used for balancing
-
-int -> int32
+float -> double
+int   -> int64
 
 
 =================================================
-         Optimization
-=================================================
-
-==============
 Graphics
-==============
+=================================================
 Set Graphics settings custom profiles.
 - *.ini files
 - Shadow range
 - LOD distances
 
 
-==============
-Network
-==============
-Inventory
-- Replication only for owner?
-- JsonData is a large FString member variable. Very expensive to replicate.
+=================================================
+         Random Equipment / Weapon Generation
+=================================================
+Blueprint function which generate Weapon/Equipment randomly. With schema.
+- Price
+- Rarity
+- Effect
+- Color
 
 
 =================================================
-         Other
+         Balancing
 =================================================
-
-Gameplay Ability System
-
-VCPP
-- Link against and build with CMAKE
-
-Custom plugin
-- Block constructor or something new
+Folder with all curves;
+- Items link them
+- Can be updated from JSON / CSV
 
 
 =================================================
-   Game Design
+         Validation
 =================================================
+Blueprint validation scripts
+- Item Table validation
+- Blueprint naming scheme validation
+
+
+
+
+
+
+===============================================================================
+===============================================================================
+
+
+
+                              Game Design
+
+
+
+===============================================================================
+===============================================================================
 
 ==============
 Character Status Effects
@@ -845,6 +813,7 @@ Attack types
 - Turrents / Towers
 - Ally NPCs
 
+
 ==============
 Battles
 ==============
@@ -852,7 +821,6 @@ Battles
 - Spawn in waves
 - Defend checkpoint
 - Buy upgrades
-- Change terrain?
 - Hire more NPCs and upgrade them.
 - Select team
 
@@ -860,9 +828,9 @@ Battles
 ==============
 Events
 ==============
-
 Random Events to protect Village from attacks.
 Another Player can be summoned for help
+
 
 ==============
 Random Content
@@ -872,13 +840,11 @@ Random Content
 - Weapon stats/effects
 - Level?
 
-Attack counter
-Roll Invincible
+
 
 ==============
 Character Classes
 ==============
-
 Class tree reqirnment?
 - Stats?
 - Levels?
