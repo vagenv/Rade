@@ -8,6 +8,8 @@
 #include "RInventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInventoryItemListEvent,
+                                             const TArray<FRItemData>&, ItemDataList);
 
 class ARItemPickup;
 
@@ -57,6 +59,10 @@ protected:
 
    virtual void CalcWeight ();
 
+   // Used to calculate what changed in inventory
+   UPROPERTY()
+      TArray<FRItemData> LastItems;
+
 public:
 
    // Item to be added upon game start
@@ -67,9 +73,13 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnInventoryUpdated;
 
+   // Delegate what Items have been added / removed
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInventoryItemListEvent OnItemsChanged;
+
 protected:
    UFUNCTION()
-      void ReportInventoryUpdate () const;
+      void ReportInventoryUpdate ();
 
    UFUNCTION()
       void ReportInventoryUpdateDelayed ();

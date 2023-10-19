@@ -78,9 +78,38 @@ void URInventoryComponent::OnRep_Items ()
    ReportInventoryUpdate ();
 }
 
-void URInventoryComponent::ReportInventoryUpdate () const
+void URInventoryComponent::ReportInventoryUpdate ()
 {
    if (R_IS_VALID_WORLD && OnInventoryUpdated.IsBound ()) OnInventoryUpdated.Broadcast ();
+
+   TMap<FString, FRItemData> DiffMap;
+   for (const FRItemData &ItItem : Items) {
+      if (DiffMap.Contains (ItItem.ID)) {
+         DiffMap[ItItem.ID].Count += ItItem.Count;
+      } else {
+         DiffMap.Add (ItItem.ID, ItItem);
+      }
+   }
+
+   for (FRItemData ItItem : LastItems) {
+      if (DiffMap.Contains (ItItem.ID)) {
+         DiffMap[ItItem.ID].Count -= ItItem.Count;
+      } else {
+         ItItem.Count *= -1;
+         DiffMap.Add (ItItem.ID, ItItem);
+      }
+   }
+
+   LastItems = Items;
+
+   TArray<FRItemData> ChangedItems;
+   for (const auto &ItItem : DiffMap) {
+      if (ItItem.Value.Count != 0) ChangedItems.Add (ItItem.Value);
+   }
+
+   if (ChangedItems.Num () && R_IS_VALID_WORLD && OnItemsChanged.IsBound ()) {
+      OnItemsChanged.Broadcast (ChangedItems);
+   }
 }
 
 //=============================================================================
@@ -257,6 +286,9 @@ bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
          ItemIdx, Items.Num ());
       return false;
    }
+
+   FRItemData RemoveItem = Items[ItemIdx];
+   RemoveItem.Count = Count;
 
    if (Items[ItemIdx].Count > Count) {
       Items[ItemIdx].Count -= Count;
