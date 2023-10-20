@@ -172,7 +172,7 @@ URTargetComponent* URWorldTargetMgr::Find_Direction (
 }
 
 URTargetComponent* URWorldTargetMgr::Find_Target (
-   const URTargetingComponent*       Targeter,
+   const URPlayerTargetMgr*          Targeter,
    const TArray<AActor*>            &ExcludeActors,
    const TArray<URTargetComponent*> &ExcludeTargets)
 {
@@ -192,7 +192,7 @@ URTargetComponent* URWorldTargetMgr::Find_Target (
 }
 
 URTargetComponent* URWorldTargetMgr::Find_Screen (
-   const URTargetingComponent*       Targeter,
+   const URPlayerTargetMgr*          Targeter,
    FVector2D                         InputVector,
    const TArray<AActor*>            &ExcludeActors,
    const TArray<URTargetComponent*> &ExcludeTargets)

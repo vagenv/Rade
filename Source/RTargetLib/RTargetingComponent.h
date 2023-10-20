@@ -12,7 +12,7 @@ class URTargetComponent;
 class URWorldTargetMgr;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
-class RTARGETLIB_API URTargetingComponent : public USceneComponent
+class RTARGETLIB_API URPlayerTargetMgr : public USceneComponent
 {
 	GENERATED_BODY()
 public:
@@ -21,7 +21,7 @@ public:
    //                         Core
    //==========================================================================
 
-	URTargetingComponent ();
+	URPlayerTargetMgr ();
 
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 	virtual void BeginPlay () override;

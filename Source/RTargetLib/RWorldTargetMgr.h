@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableMgrEvent);
 
 class URTargetComponent;
-class URTargetingComponent;
+class URPlayerTargetMgr;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RTARGETLIB_API URWorldTargetMgr : public UActorComponent
@@ -102,7 +102,7 @@ public:
    // Find using params from targeting component
    UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual URTargetComponent* Find_Target (
-         const URTargetingComponent*       Targeter,
+         const URPlayerTargetMgr*          Targeter,
          const TArray<AActor*>            &ExcludeActors,
          const TArray<URTargetComponent*> &ExcludeTargets);
 
@@ -121,7 +121,7 @@ public:
    // Find target in by input direction from center of screen
    UFUNCTION(BlueprintCallable, Category = "Rade|Target")
       virtual URTargetComponent* Find_Screen (
-         const URTargetingComponent*       Targeter,
+         const URPlayerTargetMgr*          Targeter,
          FVector2D                         InputVector,
          const TArray<AActor*>            &ExcludeActors,
          const TArray<URTargetComponent*> &ExcludeTargets);

@@ -14,7 +14,7 @@
 //                         Core
 //=============================================================================
 
-URTargetingComponent::URTargetingComponent ()
+URPlayerTargetMgr::URPlayerTargetMgr ()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -28,19 +28,19 @@ URTargetingComponent::URTargetingComponent ()
 }
 
 // Replication
-void URTargetingComponent::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
+void URPlayerTargetMgr::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
 }
 
-void URTargetingComponent::BeginPlay ()
+void URPlayerTargetMgr::BeginPlay ()
 {
 	Super::BeginPlay ();
    FindWorldTargetMgr ();
    World = URUtil::GetWorld (this);
 }
 
-void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
+void URPlayerTargetMgr::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
    SetTargetCheckEnabled (false);
    Super::EndPlay (EndPlayReason);
@@ -50,13 +50,13 @@ void URTargetingComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 //                         Init
 //=============================================================================
 
-void URTargetingComponent::FindWorldTargetMgr ()
+void URPlayerTargetMgr::FindWorldTargetMgr ()
 {
    WorldTargetMgr = URWorldTargetMgr::GetInstance (this);
    if (!WorldTargetMgr.IsValid ()) {
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
-                    this, &URTargetingComponent::FindWorldTargetMgr,
+                    this, &URPlayerTargetMgr::FindWorldTargetMgr,
                     1, false);
       return;
    }
@@ -64,11 +64,11 @@ void URTargetingComponent::FindWorldTargetMgr ()
    SetTargetCheckEnabled (true);
 }
 
-void URTargetingComponent::SetTargetCheckEnabled (bool Enabled)
+void URPlayerTargetMgr::SetTargetCheckEnabled (bool Enabled)
 {
    if (Enabled) {
       RTIMER_START (TargetCheckHandle,
-                    this, &URTargetingComponent::TargetCheck,
+                    this, &URPlayerTargetMgr::TargetCheck,
                     1,
                     true);
    } else {
@@ -80,17 +80,17 @@ void URTargetingComponent::SetTargetCheckEnabled (bool Enabled)
 //                         Get functions
 //=============================================================================
 
-bool URTargetingComponent::IsTargeting () const
+bool URPlayerTargetMgr::IsTargeting () const
 {
 	return (TargetCurrent.IsValid () || !CustomTargetDir.IsNearlyZero ());
 }
 
-URTargetComponent* URTargetingComponent::GetCurrentTarget () const
+URTargetComponent* URPlayerTargetMgr::GetCurrentTarget () const
 {
    return TargetCurrent.IsValid () ? TargetCurrent.Get () : nullptr;
 }
 
-FVector URTargetingComponent::GetTargetDir () const
+FVector URPlayerTargetMgr::GetTargetDir () const
 {
    FVector Result = FVector::Zero ();
 
@@ -107,7 +107,7 @@ FVector URTargetingComponent::GetTargetDir () const
    return Result;
 }
 
-FRotator URTargetingComponent::GetControlRotation ()
+FRotator URPlayerTargetMgr::GetControlRotation ()
 {
    // Current rotation
    FRotator Result = GetComponentRotation ();
@@ -148,7 +148,7 @@ FRotator URTargetingComponent::GetControlRotation ()
 //=============================================================================
 
 // Camera input to change target
-void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
+void URPlayerTargetMgr::TargetAdjust (float OffsetX, float OffsetY)
 {
    // If there was input stop turning
    if (!CustomTargetDir.IsNearlyZero ()) CustomTargetDir = FVector::Zero ();
@@ -162,7 +162,7 @@ void URTargetingComponent::TargetAdjust (float OffsetX, float OffsetY)
 }
 
 // Targeting enabled/disabled
-void URTargetingComponent::TargetToggle ()
+void URPlayerTargetMgr::TargetToggle ()
 {
    if (TargetCurrent.IsValid ()) {
       SetTargetCurrent (nullptr);
@@ -175,7 +175,7 @@ void URTargetingComponent::TargetToggle ()
 }
 
 // Check if target is valid
-void URTargetingComponent::TargetCheck ()
+void URPlayerTargetMgr::TargetCheck ()
 {
    if (TargetCurrent.IsValid () && WorldTargetMgr.IsValid ()) {
 
@@ -197,7 +197,7 @@ void URTargetingComponent::TargetCheck ()
 }
 
 // Perform search for new target
-void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
+void URPlayerTargetMgr::SearchNewTarget (FVector2D InputVector)
 {
    if (!WorldTargetMgr.IsValid () || !World.IsValid ()) return;
 
@@ -209,14 +209,12 @@ void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
    URTargetComponent* TargetNew = nullptr;
 
    if (TargetCurrent.IsValid ()) {
-      TArray<URTargetComponent*> ExcludeTargets;
-      ExcludeTargets.Add (TargetCurrent.Get ());
 
       // --- Adjust target
       TargetNew = WorldTargetMgr->Find_Screen (this,
                                                InputVector,
                                                TArray<AActor*>(),
-                                               ExcludeTargets);
+                                               { TargetCurrent.Get () });
    } else {
       // --- Search new target
       TargetNew = WorldTargetMgr->Find_Target (this,
@@ -228,7 +226,7 @@ void URTargetingComponent::SearchNewTarget (FVector2D InputVector)
 }
 
 // Change the current target and notify the old and new target
-void URTargetingComponent::SetTargetCurrent (URTargetComponent* NewTarget)
+void URPlayerTargetMgr::SetTargetCurrent (URTargetComponent* NewTarget)
 {
    // Notify the old target
    if (TargetCurrent.IsValid ()) {
@@ -250,13 +248,13 @@ void URTargetingComponent::SetTargetCurrent (URTargetComponent* NewTarget)
    if (R_IS_NET_CLIENT) SetTargetCurrent_Server (NewTarget);
 }
 
-void URTargetingComponent::SetTargetCurrent_Server_Implementation (URTargetComponent* NewTarget)
+void URPlayerTargetMgr::SetTargetCurrent_Server_Implementation (URTargetComponent* NewTarget)
 {
    TargetCurrent = NewTarget;
    ReportTargetUpdate ();
 }
 
-void URTargetingComponent::ReportTargetUpdate () const
+void URPlayerTargetMgr::ReportTargetUpdate () const
 {
    if (R_IS_VALID_WORLD && OnTargetUpdated.IsBound ()) OnTargetUpdated.Broadcast ();
 }
