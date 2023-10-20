@@ -8,10 +8,6 @@ Equipment slot list order manually?
 Ability use too often timer handle ensure
 
 
-
-
-
-
 ===============================================================================
 ===============================================================================
 
@@ -26,19 +22,10 @@ Ability use too often timer handle ensure
    World Interact interface
 =================================================
 
-RUI_WorldInteractInterface
-RItemPickupMgr => RWorldInteractMgr
-TArray<TWeakObjectPtr<const AActor> > CurrentInteractActors;
 
-
-WorldInteract_Interface
+WorldInteractWidget?
 - Action
 - AltAction ?
-
-RUI_WorldInteractWindowWidget ? 
-- WindowType = Game
-- Target = Object/Actor
-- Pass Action and AltAction events to Target
 
 World User Widget
 
