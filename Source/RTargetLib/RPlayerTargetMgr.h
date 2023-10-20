@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "RTargetingComponent.generated.h"
+#include "RPlayerTargetMgr.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetingEvent);
 

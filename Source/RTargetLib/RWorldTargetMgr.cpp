@@ -2,7 +2,7 @@
 
 #include "RWorldTargetMgr.h"
 #include "RTargetComponent.h"
-#include "RTargetingComponent.h"
+#include "RPlayerTargetMgr.h"
 #include "RUtilLib/RCheck.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"

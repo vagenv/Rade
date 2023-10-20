@@ -1,6 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
-#include "RTargetingComponent.h"
+#include "RPlayerTargetMgr.h"
 #include "RTargetComponent.h"
 #include "RWorldTargetMgr.h"
 #include "RUtilLib/RUtil.h"
