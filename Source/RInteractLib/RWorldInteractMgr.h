@@ -15,8 +15,6 @@ class RINTERACTLIB_API URWorldInteractMgr : public UActorComponent
    GENERATED_BODY()
 public:
 
-   URWorldInteractMgr ();
-
    //==========================================================================
    //                  Interact list
    //==========================================================================
@@ -26,7 +24,7 @@ private:
       TArray<TWeakObjectPtr<URInteractComponent> > InteractList;
 protected:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      const TArray<URInteractComponent*> GetInteractList () const;
+      TArray<URInteractComponent*> GetInteractList () const;
 public:
    // Called when Interact list has been modified
    UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
@@ -37,62 +35,18 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
-      virtual void RegisterInteract (URInteractComponent* Interact);
+      virtual void RegisterInteract   (URInteractComponent* Interact);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
-      virtual void UnregisterInteract  (URInteractComponent* Interact);
+      virtual void UnregisterInteract (URInteractComponent* Interact);
 
    //==========================================================================
-   //                  Minimum search requirnments
+   //         Find Interact
    //==========================================================================
 
-   // Distance from Player actor at which Interact can be searched
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
-      float SearchDistanceMax = 400;
-
-   // FOV angle of Camera to search Interacts
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
-      float SearchAngleMax = 70;
-
-   // Check if Interact can be Interacted
+   // Get list of interactables in distance
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      bool IsValidInteract (
-         const URInteractComponent *Interact,
-         const FVector             &PlayerLocation,
-         const FVector             &CameraLocation,
-         const FVector             &CameraDirection) const;
-
-   //==========================================================================
-   //          Interact to point
-   //==========================================================================
-
-   // Angle in degrees to point
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Interact")
-      FRuntimeFloatCurve SearchAnglePoint;
-
-   // Distance to point
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Interact")
-      FRuntimeFloatCurve SearchDistancePoint;
-
-   // Calculate Interact point value
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      float GetInteractPoint (
-         const URInteractComponent *Interact,
-         const FVector             &PlayerLocation,
-         const FVector             &CameraLocation,
-         const FVector             &CameraDirection) const;
-
-
-   //==========================================================================
-   //          Find Interact
-   //==========================================================================
-
-   // Find by world location and forward direction
-   UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
-      virtual URInteractComponent* Find (
-         const FVector &PlayerLocation,
-         const FVector &CameraLocation,
-         const FVector &CameraDirection);
+      TArray<URInteractComponent*> Find (const FVector &Location, float Distance) const;
 
    //==========================================================================
    //                  Get instance -> GameState component

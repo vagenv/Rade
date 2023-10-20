@@ -23,15 +23,12 @@ void URPlayerInteractMgr::BeginPlay ()
 {
 	Super::BeginPlay ();
    FindWorldInteractMgr ();
-   RTIMER_START (InteractCheckHandle,
-                 this, &URPlayerInteractMgr::InteractCheck,
-                 SearchFrequency,
-                 true);
 }
 
 void URPlayerInteractMgr::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   RTIMER_STOP (InteractCheckHandle, this);
+   RTIMER_STOP (UpdateInteractListHandle, this);
+   RTIMER_STOP (UpdateInteractCurrentHandle, this);
    Super::EndPlay (EndPlayReason);
 }
 
@@ -41,18 +38,36 @@ void URPlayerInteractMgr::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 void URPlayerInteractMgr::FindWorldInteractMgr ()
 {
+
+   AActor* LocalPlayer = URUtil::GetLocalRadePlayer (this);
+
    WorldInteractMgr = URWorldInteractMgr::GetInstance (this);
-   if (!WorldInteractMgr.IsValid ()) {
+   if (!WorldInteractMgr.IsValid () || !LocalPlayer) {
       FTimerHandle RetryHandle;
       RTIMER_START (RetryHandle,
                     this, &URPlayerInteractMgr::FindWorldInteractMgr,
                     1, false);
       return;
    }
+
+   if (LocalPlayer != GetOwner ()) {
+      return;
+   }
+
+
+   RTIMER_START (UpdateInteractListHandle,
+                 this, &URPlayerInteractMgr::UpdateInteractList,
+                 UpdateInteractListFrequency,
+                 true);
+
+   RTIMER_START (UpdateInteractCurrentHandle,
+                 this, &URPlayerInteractMgr::UpdateInteractCurrent,
+                 UpdateInteractCurrentFrequency,
+                 true);
 }
 
 //=============================================================================
-//                         Get functions
+//                         Current Interact
 //=============================================================================
 
 bool URPlayerInteractMgr::IsInteracting () const
@@ -65,28 +80,17 @@ URInteractComponent* URPlayerInteractMgr::GetCurrentInteract () const
    return InteractCurrent.IsValid () ? InteractCurrent.Get () : nullptr;
 }
 
-
-//=============================================================================
-//                         Functions
-//=============================================================================
-
-// Check if Interact is valid
-void URPlayerInteractMgr::InteractCheck ()
+void URPlayerInteractMgr::UpdateInteractCurrent ()
 {
    if (!WorldInteractMgr.IsValid ()) return;
 
-   FVector  PlayerLocation   = GetOwner ()->GetActorLocation ();
-   FVector  CameraLocation   = GetComponentLocation ();
-   FRotator CameraRotation   = GetComponentRotation ();
-   FVector  CameraForwardDir = CameraRotation.Vector ();
-   CameraForwardDir.Normalize ();
-
-   URInteractComponent* InteractNew
-      = WorldInteractMgr->Find (PlayerLocation, CameraLocation, CameraForwardDir);
+   // Search for new interact target
+   URInteractComponent* Closest = FindClosestInteract ();
 
    // Same interact target
-   if (InteractNew == InteractCurrent) return;
-
+   if (Closest == InteractCurrent) {
+      return;
+   }
 
    // Notify the old Interact
    if (InteractCurrent.IsValid ()) {
@@ -97,8 +101,8 @@ void URPlayerInteractMgr::InteractCheck ()
    InteractCurrent = nullptr;
 
    // Set new Interact and notify it
-   if (IsValid (InteractNew)) {
-      InteractCurrent = InteractNew;
+   if (IsValid (Closest)) {
+      InteractCurrent = Closest;
       InteractCurrent->SetIsInteracted (true);
 
       // Force InteractCheck if target actor was destroyed 
@@ -107,20 +111,71 @@ void URPlayerInteractMgr::InteractCheck ()
    }
 
    // Report
-   ReportInteractUpdate ();
+   ReportInteractCurrentUpdated ();
 
    // Notify server instance
-   if (R_IS_NET_CLIENT) SetInteractCurrent_Server (InteractNew);
+   if (R_IS_NET_CLIENT) SetInteractCurrent_Server (InteractCurrent.Get ());
+}
+
+void URPlayerInteractMgr::ReportInteractCurrentUpdated () const
+{
+   if (R_IS_VALID_WORLD && OnCurrentInteractUpdated.IsBound ()) OnCurrentInteractUpdated.Broadcast ();
 }
 
 void URPlayerInteractMgr::SetInteractCurrent_Server_Implementation (URInteractComponent* NewInteract)
 {
    InteractCurrent = NewInteract;
-   ReportInteractUpdate ();
+   ReportInteractCurrentUpdated ();
 }
 
-void URPlayerInteractMgr::ReportInteractUpdate () const
+//=============================================================================
+//                         Interact list
+//=============================================================================
+
+TArray<URInteractComponent*> URPlayerInteractMgr::GetInteractList () const
 {
-   if (R_IS_VALID_WORLD && OnInteractUpdated.IsBound ()) OnInteractUpdated.Broadcast ();
+   return InteractList;
+}
+
+void URPlayerInteractMgr::UpdateInteractList ()
+{
+   if (!WorldInteractMgr.IsValid ()) return;
+   InteractList = WorldInteractMgr->Find (GetOwner ()->GetActorLocation (), UpdateInteractListDistance);
+}
+
+//=============================================================================
+//                         Search
+//=============================================================================
+
+URInteractComponent* URPlayerInteractMgr::FindClosestInteract () const
+{
+   URInteractComponent* Closest      = nullptr;
+   float                ClosestAngle = CurrentAngleMax; // Minimum
+
+   FVector  PlayerLocation  = GetOwner ()->GetActorLocation ();
+   FVector  CameraLocation  = GetComponentLocation ();
+   FRotator CameraRotation  = GetComponentRotation ();
+   FVector  CameraDirection = CameraRotation.Vector ();
+   CameraDirection.Normalize ();
+
+   for (const auto &ItInteract : GetInteractList ()) {
+      // Check Interact
+      if (!IsValid (ItInteract)) continue;
+      if (!ItInteract->GetIsInteractable ()) continue;
+
+      FVector ItLocation  = ItInteract->GetComponentLocation ();
+      FVector ItDirection = ItLocation - CameraLocation;
+      ItDirection.Normalize ();
+      float ItAngle    = URUtil::GetAngle  (CameraDirection, ItDirection);
+      float ItDistance = FVector::Distance (PlayerLocation,  ItLocation);
+
+      if (ItDistance > CurrentDistanceMax) continue;
+      if (ItAngle > ClosestAngle) continue;
+      
+      Closest      = ItInteract;
+      ClosestAngle = ItAngle;
+   }
+
+   return Closest;
 }
 

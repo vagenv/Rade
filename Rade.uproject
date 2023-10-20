@@ -10,6 +10,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RLoadingScreenLib",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
 			"Name": "RInputLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
@@ -29,6 +34,11 @@
 		},
 		{
 			"Name": "RTargetLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "RInteractLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
@@ -71,11 +81,6 @@
 			"Name": "REquipmentLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "RLoadingScreenLib",
-			"Type": "Runtime",
-			"LoadingPhase": "PreLoadingScreen"
 		},
 		{
 			"Name": "Rade",

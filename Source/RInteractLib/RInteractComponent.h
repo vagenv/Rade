@@ -27,7 +27,7 @@ protected:
 public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
-      FRInteractEvent OnIsInteractable;
+      FRInteractEvent OnIsInteractableUpdated;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
       void SetIsInteractable (bool CanFind);
@@ -40,7 +40,7 @@ public:
    //==========================================================================
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
-      FRInteractEvent OnIsInteracted;
+      FRInteractEvent OnIsInteractedUpdated;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
       void SetIsInteracted (bool CanInteract);

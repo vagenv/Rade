@@ -43,7 +43,7 @@ void URInteractComponent::UnregisterInteract ()
 void URInteractComponent::SetIsInteractable (bool CanFind)
 {
    IsInteractable = CanFind;
-   if (R_IS_VALID_WORLD && OnIsInteractable.IsBound ()) OnIsInteractable.Broadcast ();
+   if (R_IS_VALID_WORLD && OnIsInteractableUpdated.IsBound ()) OnIsInteractableUpdated.Broadcast ();
 }
 
 bool URInteractComponent::GetIsInteractable () const
@@ -58,7 +58,7 @@ bool URInteractComponent::GetIsInteractable () const
 void URInteractComponent::SetIsInteracted (bool CanInteract)
 {
    IsInteracted = CanInteract;
-   if (R_IS_VALID_WORLD && OnIsInteracted.IsBound ()) OnIsInteracted.Broadcast ();
+   if (R_IS_VALID_WORLD && OnIsInteractedUpdated.IsBound ()) OnIsInteractedUpdated.Broadcast ();
 }
 
 bool URInteractComponent::GetIsInteracted () const

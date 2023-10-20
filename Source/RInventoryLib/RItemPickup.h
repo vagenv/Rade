@@ -11,6 +11,7 @@ class UMeshComponent;
 class UPrimitiveComponent;
 class AActor;
 class URInventoryComponent;
+class URInteractComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRItemPickupEvent);
 
@@ -35,13 +36,13 @@ public:
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-   // Trigger Sphere
-   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
-      TObjectPtr<USphereComponent> TriggerSphere;
-
    //  Inventory Component
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TObjectPtr<URInventoryComponent> Inventory;
+
+   //  Interact Component
+   UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
+      TObjectPtr<URInteractComponent> Interact;
 
    //==========================================================================
    //          Core properties
@@ -50,10 +51,6 @@ public:
    // Activation delay
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
       float PickupActivationDelay = 1.;
-
-   // Auto Pickup
-   UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
-      bool bAutoPickup = false;
 
    // Auto Pickup
    UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
@@ -76,34 +73,10 @@ public:
    //          Blueprint Events
    //==========================================================================
 
-   // BP Event that Player Entered Pickup Area
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_PlayerEntered (AActor* InventoryOwner);
-
-   // BP Event that Player Exited Pickup Area
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Inventory")
-      void BP_PlayerLeft (AActor* InventoryOwner);
-
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRItemPickupEvent OnPickupEmptied;
 
 protected:
-
-   // Player Entered
-   UFUNCTION()
-      void OnBeginOverlap (UPrimitiveComponent* OverlappedComponent,
-                           AActor* OtherActor,
-                           UPrimitiveComponent* OtherComp,
-                           int32 OtherBodyIndex,
-                           bool bFromSweep,
-                           const FHitResult & SweepResult);
-
-   // Player Exited
-   UFUNCTION()
-      void OnEndOverlap (UPrimitiveComponent* OverlappedComponent,
-                         AActor* OtherActor,
-                         UPrimitiveComponent* OtherComp,
-                         int32 OtherBodyIndex);
 
    // Inventory updated
    UFUNCTION()

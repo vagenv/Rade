@@ -15,6 +15,7 @@ public class RInventoryLib : ModuleRules
          "JsonUtilities",
          "RUtilLib",
          "RUILib",
+         "RInteractLib",
          "RSaveLib"
       });
    }

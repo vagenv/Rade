@@ -39,57 +39,86 @@ protected:
    //==========================================================================
    //                         Current interact
    //==========================================================================
-public:
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      virtual bool IsInteracting () const;
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      virtual URInteractComponent* GetCurrentInteract () const;
-
-   // Broadcasted when InteractCurrent has changed
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
-      FRInteractingEvent OnInteractUpdated;
-
 protected:
 	// Current focus Interact
    UPROPERTY()
       TWeakObjectPtr<URInteractComponent> InteractCurrent = nullptr;
 
-   //==========================================================================
-   //                         Interact search
-   //==========================================================================
-protected:
-
-   // How often should interact target be searched. In Seconds.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
-      float SearchFrequency = 1;
-
-   // Handle to InteractCheck
-   UPROPERTY()
-      FTimerHandle InteractCheckHandle;
-
-   // Search/Checks if Interacting actor is valid and within range
+   // Called when Interact is updated to broadcast event
    UFUNCTION()
-      virtual void InteractCheck ();
+      void ReportInteractCurrentUpdated () const;
 
    // Called by client to notify server
    UFUNCTION(Server, Reliable)
       void SetInteractCurrent_Server                (URInteractComponent* NewInteract);
       void SetInteractCurrent_Server_Implementation (URInteractComponent* NewInteract);
 
-   // Called when Interact is updated to broadcast event
-   UFUNCTION()
-      void ReportInteractUpdate () const;
+public:
+   // Broadcasted when InteractCurrent has changed
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
+      FRInteractingEvent OnCurrentInteractUpdated;
 
-   //==========================================================================
-   //                         Should search
-   //==========================================================================
-/*
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+      virtual bool IsInteracting () const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+      virtual URInteractComponent* GetCurrentInteract () const;
+
 protected:
-   UFUNCTION()
-      virtual void SetInteractCheckEnabled (bool Enabled);
+  UFUNCTION()
+      void UpdateInteractCurrent ();
 
-   bool ShouldSearch = true;
-*/
+   // Handle to UpdateInteractCurrent
+   UPROPERTY()
+      FTimerHandle UpdateInteractCurrentHandle;
+
+   // How often should interact list be updated
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
+      float UpdateInteractCurrentFrequency = 0.5;
+
+   //==========================================================================
+   //                         Interact List
+   //==========================================================================
+protected:
+   
+   // Current focus Interact
+   UPROPERTY()
+      TArray<URInteractComponent*> InteractList;
+
+   UFUNCTION()
+      void UpdateInteractList ();
+
+   // Handle to UpdateInteractList
+   UPROPERTY()
+      FTimerHandle UpdateInteractListHandle;
+
+   // How often should interact list be updated
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
+      float UpdateInteractListFrequency = 4;
+
+   // Distance for WorldInteractMgr
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
+      float UpdateInteractListDistance = 2000;
+
+public:
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+      TArray<URInteractComponent*> GetInteractList () const;
+
+   //==========================================================================
+   //                         Closest search
+   //==========================================================================
+protected:
+   UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
+      URInteractComponent* FindClosestInteract () const;
+
+   // Distance from Player actor at which Interact can be searched
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
+      float CurrentDistanceMax = 500;
+
+   // FOV angle of Camera to search Interacts
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Interact")
+      float CurrentAngleMax = 70;
+
 };
 

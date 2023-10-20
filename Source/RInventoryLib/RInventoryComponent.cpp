@@ -691,7 +691,6 @@ ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> Picku
 
    // Set pickup info
    Pickup->SetOwner (Player);
-   Pickup->bAutoPickup  = false;
    Pickup->bAutoDestroy = true;
 
    Pickup->Inventory->DefaultItems.Empty ();
