@@ -128,7 +128,7 @@ public:
                                                                 const TMap<FString, FString> &ExtraData);
 
 
-   DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRCreateSaveSlotsEvent, bool, Success);
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRCreateSaveSlotsEvent, bool, Success, FRSaveGameMeta, SaveMeta);
 
    // Called when save game slots have been created
 	UPROPERTY(BlueprintAssignable)
@@ -158,7 +158,7 @@ protected:
       TArray<uint8> ScreenShotData;
 
    UFUNCTION()
-      void ReportEnd (bool Success);
+      void ReportEnd (bool Success, const FRSaveGameMeta& SaveMeta = FRSaveGameMeta());
 };
 
 // ============================================================================

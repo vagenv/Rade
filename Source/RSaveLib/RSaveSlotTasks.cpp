@@ -206,14 +206,14 @@ void UCreateSaveGameSlotAsync::Activate ()
          return ReportEnd (false);
       }
 
-      return ReportEnd (true);
+      return ReportEnd (true, SaveMeta);
    });
 }
 
-void UCreateSaveGameSlotAsync::ReportEnd (bool Success)
+void UCreateSaveGameSlotAsync::ReportEnd (bool Success, const FRSaveGameMeta& SaveMeta)
 {
    // Schedule game thread and pass in result
-   AsyncTask (ENamedThreads::GameThread, [this, Success] () {
+   AsyncTask (ENamedThreads::GameThread, [this, Success, SaveMeta] () {
 
       // Report save game list update
       if (Success) {
@@ -225,7 +225,7 @@ void UCreateSaveGameSlotAsync::ReportEnd (bool Success)
       }
 
       // Report task end
-      Finished.Broadcast (Success);
+      Finished.Broadcast (Success, SaveMeta);
 
       // --- Cleanup
       WorldContextObject = nullptr;
