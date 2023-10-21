@@ -21,25 +21,14 @@ Ability use too often timer handle ensure
    World Interact interface
 =================================================
 
-WorldInteractWidget?
-- Action
-- AltAction ?
-
-World User Widget
-
- Press [X] to [Action Text]
-   [Detailed Description]
-
 
 ==============
 Implement
 ==============
 
-SavePoint : RUI_WorldInteractWindowWidget
-- Action -> GameInstance -> Save
-
 InteractPickup : RUI_WorldInteractWindowWidget
 - Action -> Open full Pickup window
+- AltAction -> Take everything
 
 InteractStore : RUI_WorldInteractWindowWidget
 - Action -> Open full Store window
