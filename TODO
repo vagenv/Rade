@@ -1,13 +1,3 @@
-==============
-Issues
-==============
-Cursor still visible for a few seconds after switch to gamepad.
-
-Equipment slot list order manually?
-
-Ability use too often timer handle ensure
-
-
 ===============================================================================
 ===============================================================================
 
@@ -18,10 +8,18 @@ Ability use too often timer handle ensure
 ===============================================================================
 ===============================================================================
 
+==============
+Issues
+==============
+
+Equipment slot list order manually?
+
+Ability use too often timer handle ensure
+
+
 =================================================
    World Interact interface
 =================================================
-
 
 WorldInteractWidget?
 - Action
