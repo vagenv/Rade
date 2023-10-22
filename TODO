@@ -16,25 +16,9 @@ Equipment slot list order manually?
 
 Ability use too often timer handle ensure
 
-
-=================================================
-   World Interact interface
-=================================================
-
-
-==============
-Implement
-==============
-
-InteractPickup : RUI_WorldInteractWindowWidget
-- Action -> Open full Pickup window
-- AltAction -> Take everything
-
-InteractStore : RUI_WorldInteractWindowWidget
-- Action -> Open full Store window
-
-BlessBall : RUI_WorldInteractWindowWidget
-- Action -> Toggle StatusEffectAura on Actor
+Inventory weight and Item count errors
+Client Can't always transfer items
+Remove drop into someones else inventory
 
 
 =================================================
