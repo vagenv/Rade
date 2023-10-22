@@ -22,7 +22,7 @@ URWorldInteractMgr* URWorldInteractMgr::GetInstance (const UObject* WorldContext
 TArray<URInteractComponent*> URWorldInteractMgr::GetInteractList () const
 {
    TArray<URInteractComponent*> Result;
-   for (const auto &ItInteract : InteractList) {
+   for (const TWeakObjectPtr<URInteractComponent> &ItInteract : InteractList) {
       if (ItInteract.IsValid ()) Result.Add (ItInteract.Get ());
    }
    return Result;
@@ -55,7 +55,7 @@ TArray<URInteractComponent*> URWorldInteractMgr::Find (const FVector &Location, 
    TArray<URInteractComponent*> Result;
 
    // --- Iterate over available Interacts
-   for (const TWeakObjectPtr<URInteractComponent> &ItInteract : GetInteractList ()) {
+   for (const TWeakObjectPtr<URInteractComponent> &ItInteract : InteractList) {
       if (!ItInteract.IsValid ()) continue;
       
       float ItDistance = FVector::Distance (Location, ItInteract->GetComponentLocation ());

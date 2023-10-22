@@ -89,7 +89,7 @@ bool URAbilityMgrComponent::CanAddAbility (const FRAbilityInfo& AbilityInfo) con
    if (GetAbility (AbilityInfo) != nullptr) {
       return false;
    }
-   if (AbilityPoints < AbilityInfo.LearnPointPrice) false;
+   if (AbilityPoints < AbilityInfo.LearnPointPrice) return false;
 
    if (AbilityInfo.RequiredAbilities.Num ()) {
       // --- Get all user abilities
