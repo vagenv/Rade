@@ -19,9 +19,8 @@
 #define RTIMER_STOP(TimerHandle, Object)                                       \
       {																								 \
          UWorld *TimerWorld = URUtil::GetWorld (Object);								 \
-         if (TimerWorld && TimerHandle.IsValid ()) {		         				 \
+         if (TimerWorld && TimerHandle.IsValid ()) {		                    	 \
             TimerWorld->GetTimerManager ().ClearTimer (TimerHandle);     		 \
-            TimerHandle.Invalidate ();                                         \
          }																					 		 \
       };		                                                                   \
 
