@@ -1,7 +1,6 @@
 // Copyright 2015-2023 Vagen Ayrapetyan
 
 #include "RInventoryComponent.h"
-#include "RItemPickup.h"
 
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
@@ -625,7 +624,7 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    FRItemData ItemData = Items[ItemIdx];
 
    // No Item drop type set
-   if (ItemData.Pickup.IsNull () && ItemData.PickupMesh.IsNull () && FallbackDropItemClass.IsNull ()) {
+   if (ItemData.Pickup.IsNull () && PickupClass.IsNull ()) {
       R_LOG_PRINTF ("Neither pickup class or mesh specified for %s", *ItemData.Description.Label);
       return false;
    }
@@ -640,42 +639,89 @@ bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
    // Error will be logged.
    if (!RemoveItem_Index (ItemIdx, Count)) return false;
 
+   SpawnPickup (ItemData);
+   return true;
+}
+
+void URInventoryComponent::SpawnPickup (const FRItemData &ItemData)
+{
+   TSoftClassPtr<AActor> PickupClass_;
+
    // Load pickup class async
    if (!ItemData.Pickup.IsNull ()) {
+      PickupClass_ = ItemData.Pickup;
+
+   // Load custom inventory drop pickup class async
+   } else if (!PickupClass.IsNull ()) {
+      PickupClass_ = PickupClass;
+   } else {
+      R_LOG ("Pickup actor class not found");
+      return;
+   }
+
+   URWorldAssetMgr::LoadAsync (PickupClass_.GetUniqueID (),
+                               this, [this, ItemData] (UObject* LoadedContent) {
+
+      UWorld* World = URUtil::GetWorld (this);
+      if (!World) return;
+
+      if (UClass* PickupActorClass = Cast<UClass> (LoadedContent)) {
+            
+         AActor *Player = GetOwner ();
+
+         // Get Player Rotation
+         FRotator Rotation    = Player->GetActorRotation ();
+         FVector  RotationDir = Rotation.Vector () * 300;
+                  RotationDir.Z = 0;
+         FVector SpawnLocation = Player->GetActorLocation () + RotationDir + FVector(0, 0, 50);
+         AActor *Pickup = World->SpawnActor<AActor> (PickupActorClass, SpawnLocation, Rotation);
+         if (!Pickup) {
+            R_LOG ("Failed to spawn pickup actor");
+            return;
+         }
+
+         URInventoryComponent* Inventory = URUtil::GetComponent<URInventoryComponent> (Pickup);
+         if (!Inventory) {
+            R_LOG ("Pickup doesn't have inventory");
+            return;
+         }
+
+         // Add items to inventory
+         Inventory->DefaultItems.Empty ();
+         Inventory->Items.Empty ();
+         Inventory->Items.Add (ItemData);
+
+
+         if (!ItemData.PickupMesh.IsNull ()) {
+            URWorldAssetMgr::LoadAsync (ItemData.PickupMesh.GetUniqueID (),
+                                        this, [this, Pickup] (UObject* LoadedContent) {
+               if (UStaticMesh* StaticMesh = Cast<UStaticMesh> (LoadedContent)) {
+                  UStaticMeshComponent* MeshComponent = URUtil::GetComponent<UStaticMeshComponent> (Pickup);
+                  if (!MeshComponent) {
+                     R_LOG ("Pickup doesn't have Static Mesh Component");
+                     return;
+                  }
+                  MeshComponent->SetStaticMesh (StaticMesh);
+               }
+            });
+         }
+      }
+   });
+
+
+
+   /*
+   UWorld* World = URUtil::GetWorld (this);
+   if (!World) return nullptr;
+
+
+
       URWorldAssetMgr::LoadAsync (ItemData.Pickup.GetUniqueID (),
                               this, [this, ItemData] (UObject* LoadedContent) {
          if (UClass* PickupClass = Cast<UClass> (LoadedContent)) {
             SpawnPickup (PickupClass, ItemData);
          }
       });
-
-   // Load pickup model async
-   } else if (!ItemData.PickupMesh.IsNull ()) {
-      URWorldAssetMgr::LoadAsync (ItemData.PickupMesh.GetUniqueID (),
-                              this, [this, ItemData] (UObject* LoadedContent) {
-         if (UStaticMesh* PickupMesh = Cast<UStaticMesh> (LoadedContent)) {
-            ARItemPickup* Pickup = SpawnPickup (ARItemPickup::StaticClass (), ItemData);
-            if (Pickup) Pickup->MeshComponent->SetStaticMesh (PickupMesh);
-         }
-      });
-
-   // Load custom inventory drop pickup class async
-   } else if (!FallbackDropItemClass.IsNull ()) {
-      URWorldAssetMgr::LoadAsync (FallbackDropItemClass.GetUniqueID (),
-                              this, [this, ItemData] (UObject* LoadedContent) {
-         if (UClass* PickupClass = Cast<UClass> (LoadedContent)) {
-            SpawnPickup (PickupClass, ItemData);
-         }
-      });
-   }
-
-   return true;
-}
-
-ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData)
-{
-   UWorld* World = URUtil::GetWorld (this);
-   if (!World) return nullptr;
 
    AActor *Player = GetOwner ();
 
@@ -686,7 +732,7 @@ ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> Picku
    FVector spawnLoc = Player->GetActorLocation () + forwardVector + FVector(0, 0, 50);
 
    // Create pickup
-   ARItemPickup *Pickup = World->SpawnActor<ARItemPickup> (PickupClass, spawnLoc, rot);
+   AActor *Pickup = World->SpawnActor<AActor> (PickupClass, spawnLoc, rot);
    if (!Pickup) return nullptr;
 
    // Set pickup info
@@ -698,6 +744,7 @@ ARItemPickup* URInventoryComponent::SpawnPickup (TSubclassOf<ARItemPickup> Picku
    Pickup->Inventory->Items.Add (ItemData);
 
    return Pickup;
+   */
 }
 
 //=============================================================================

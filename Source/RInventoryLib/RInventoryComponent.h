@@ -11,8 +11,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInventoryItemListEvent,
                                              const TArray<FRItemData>&, ItemDataList);
 
-class ARItemPickup;
-
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RINVENTORYLIB_API URInventoryComponent : public UActorComponent, public IRSaveInterface
@@ -196,9 +194,9 @@ public:
    //                 Drop Item
    //==========================================================================
 
-   // Item to be added upon game start
+   // Pickup class will be created and items added to it's inventory
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
-      TSoftClassPtr<ARItemPickup> FallbackDropItemClass;
+      TSoftClassPtr<AActor> PickupClass;
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool DropItem_Index (int32 ItemIdx, int32 Count = 0);
@@ -207,12 +205,11 @@ public:
       virtual bool DropItem_Data(const FRItemData &ItemData);
 
    //==========================================================================
-   //                 Util
+   //                 Spawn Pickup
    //==========================================================================
-private:
 
-   // Wrapper function
-   ARItemPickup* SpawnPickup (TSubclassOf<ARItemPickup> PickupClass, FRItemData ItemData);
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      void SpawnPickup (const FRItemData &ItemData);
 
    //==========================================================================
    //                 Server versions of functions

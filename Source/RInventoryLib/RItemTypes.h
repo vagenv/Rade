@@ -12,7 +12,6 @@
 //=============================================================================
 
 class  AActor;
-class  ARItemPickup;
 class  URItemAction;
 class  URInventoryComponent;
 class  UStaticMesh;
@@ -130,15 +129,15 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
       int32 Price = 0;
 
    // --- Pickup
-   //    If both are empty, item can not be dropped.
+   //    If both are empty, default inventory drop class will be used
 
-   // Pickup mesh
+   // Pickup mesh. Will search and update statis mesh component
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftObjectPtr<UStaticMesh> PickupMesh;
 
-   // Custom pickup class. Will be used if set.
+   // Custom pickup actor class. Will be used if set.
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      TSoftClassPtr<ARItemPickup> Pickup;
+      TSoftClassPtr<AActor> Pickup;
 
    // --- Internal Runtime information
 
