@@ -38,7 +38,6 @@ void URPlayerInteractMgr::EndPlay (const EEndPlayReason::Type EndPlayReason)
 
 void URPlayerInteractMgr::FindWorldInteractMgr ()
 {
-
    AActor* LocalPlayer = URUtil::GetLocalRadePlayer (this);
 
    WorldInteractMgr = URWorldInteractMgr::GetInstance (this);
@@ -64,6 +63,10 @@ void URPlayerInteractMgr::FindWorldInteractMgr ()
                  this, &URPlayerInteractMgr::UpdateInteractCurrent,
                  UpdateInteractCurrentFrequency,
                  true);
+
+   // First update is instant
+   UpdateInteractList ();
+   UpdateInteractCurrent ();
 }
 
 //=============================================================================
