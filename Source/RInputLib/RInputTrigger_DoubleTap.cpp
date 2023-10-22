@@ -8,7 +8,6 @@ ETriggerState URInputTrigger_DoubleTap::UpdateState_Implementation (const UEnhan
                                                                    FInputActionValue ModifiedValue,
                                                                    float DeltaTime)
 {
-   
    if (IsActuated (ModifiedValue) && !IsActuated (LastValue)) {
 
       UWorld* World = nullptr;

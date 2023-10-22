@@ -205,28 +205,28 @@ public:
 
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-	   static bool Item_IsValid (const FRItemData& ItemData);
+      static bool Item_IsValid (const FRItemData& ItemData);
 
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
              meta=(DisplayName="Equal (FRItemData, FRItemData)", CompactNodeTitle="=="))
-	   static bool Item_EqualEqual (const FRItemData& A,
+      static bool Item_EqualEqual (const FRItemData& A,
                                    const FRItemData& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
              meta=(DisplayName="NotEqual (FRItemData, FRItemData)", CompactNodeTitle="!="))
-	   static bool Item_NotEqual (const FRItemData& A,
+      static bool Item_NotEqual (const FRItemData& A,
                                  const FRItemData& B);
 
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
              meta=(DisplayName="Equal (FRItemData, FRActionItemData)", CompactNodeTitle="=="))
-	   static bool ActionItem_EqualEqual (const FRItemData& A,
+      static bool ActionItem_EqualEqual (const FRItemData& A,
                                              const FRActionItemData& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
              meta=(DisplayName="NotEqual (FRItemData, FRActionItemData)", CompactNodeTitle="!="))
-	   static bool ActionItem_NotEqual (const FRItemData& A,
+      static bool ActionItem_NotEqual (const FRItemData& A,
                                            const FRActionItemData& B);
 
    /// --- Item casts

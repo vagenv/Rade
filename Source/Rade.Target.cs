@@ -9,7 +9,7 @@ public class RadeTarget : TargetRules
    public RadeTarget (TargetInfo Target) : base(Target)
    {
       Type = TargetType.Game;
-	   bUsesSteam = true;
+      bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V4;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 

@@ -31,12 +31,12 @@ struct RUILIB_API FRUIDescription
 UINTERFACE(MinimalAPI)
 class URGetDescriptionInterface : public UInterface
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 };
 
 class RUILIB_API IRGetDescriptionInterface
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 
 public:
 
@@ -55,12 +55,12 @@ class RUILIB_API URUIDescriptionUtilLibrary : public UBlueprintFunctionLibrary
 public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Ability")
-	   static bool FRUIDescription_IsEmpty (const FRUIDescription& Description);
+      static bool FRUIDescription_IsEmpty (const FRUIDescription& Description);
 
    UFUNCTION(BlueprintPure, Category = "Rade|UI", meta=(DisplayName="==", CompactNodeTitle="=="))
-	   static bool FRUIDescription_EqualEqual (const FRUIDescription& A, const FRUIDescription& B);
+      static bool FRUIDescription_EqualEqual (const FRUIDescription& A, const FRUIDescription& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|UI", meta=(DisplayName="!=", CompactNodeTitle="!="))
-	   static bool FRUIDescription_NotEqual (const FRUIDescription& A, const FRUIDescription& B);
+      static bool FRUIDescription_NotEqual (const FRUIDescription& A, const FRUIDescription& B);
 };
 

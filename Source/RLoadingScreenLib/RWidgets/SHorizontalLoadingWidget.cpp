@@ -11,107 +11,107 @@
 
 void SHorizontalLoadingWidget::Construct(const FArguments& InArgs, const FLoadingWidgetSettings& Settings)
 {
-	bPlayReverse = Settings.ImageSequenceSettings.bPlayReverse;
+   bPlayReverse = Settings.ImageSequenceSettings.bPlayReverse;
 
-	// Root is a Horizontal Box of course
-	TSharedRef<SHorizontalBox> Root = SNew(SHorizontalBox);
+   // Root is a Horizontal Box of course
+   TSharedRef<SHorizontalBox> Root = SNew(SHorizontalBox);
 
-	// Construct Loading Icon Widget
-	ConstructLoadingIcon(Settings);
+   // Construct Loading Icon Widget
+   ConstructLoadingIcon(Settings);
 
-	EVisibility LoadingTextVisibility;
+   EVisibility LoadingTextVisibility;
 
-	if (Settings.LoadingText.IsEmpty())
-	{
-		LoadingTextVisibility = EVisibility::Collapsed;
-	}
-	else
-	{
-		LoadingTextVisibility = EVisibility::SelfHitTestInvisible;
-	}
+   if (Settings.LoadingText.IsEmpty())
+   {
+      LoadingTextVisibility = EVisibility::Collapsed;
+   }
+   else
+   {
+      LoadingTextVisibility = EVisibility::SelfHitTestInvisible;
+   }
 
-	// If loading text is on the right
-	if (Settings.bLoadingTextRightPosition)
-	{
-		// Add Loading Icon on the left first
-		Root.Get().AddSlot()
-			.HAlign(Settings.LoadingIconAlignment.HorizontalAlignment)
-			.VAlign(Settings.LoadingIconAlignment.VerticalAlignment)
-			.AutoWidth()
-			[
-				LoadingIcon
-			];
+   // If loading text is on the right
+   if (Settings.bLoadingTextRightPosition)
+   {
+      // Add Loading Icon on the left first
+      Root.Get().AddSlot()
+         .HAlign(Settings.LoadingIconAlignment.HorizontalAlignment)
+         .VAlign(Settings.LoadingIconAlignment.VerticalAlignment)
+         .AutoWidth()
+         [
+            LoadingIcon
+         ];
 
-		// Add a Spacer in middle
-		Root.Get().AddSlot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.AutoWidth()
-			[
-				SNew(SSpacer)
-				.Size(FVector2D(Settings.Space, 0.0f))
-			];
+      // Add a Spacer in middle
+      Root.Get().AddSlot()
+         .HAlign(HAlign_Fill)
+         .VAlign(VAlign_Fill)
+         .AutoWidth()
+         [
+            SNew(SSpacer)
+            .Size(FVector2D(Settings.Space, 0.0f))
+         ];
 
-		// Add Loading Text on the right
-		Root.Get().AddSlot()
-			.HAlign(Settings.TextAlignment.HorizontalAlignment)
-			.VAlign(Settings.TextAlignment.VerticalAlignment)
-			.AutoWidth()
-			[
-				SNew(STextBlock)
-				.Visibility(LoadingTextVisibility)
-				.ColorAndOpacity(Settings.Appearance.ColorAndOpacity)
-				.Font(Settings.Appearance.Font)
-				.ShadowOffset(Settings.Appearance.ShadowOffset)
-				.ShadowColorAndOpacity(Settings.Appearance.ShadowColorAndOpacity)
-				.Justification(Settings.Appearance.Justification)
-				.Text(Settings.LoadingText)
-			];
-	}
+      // Add Loading Text on the right
+      Root.Get().AddSlot()
+         .HAlign(Settings.TextAlignment.HorizontalAlignment)
+         .VAlign(Settings.TextAlignment.VerticalAlignment)
+         .AutoWidth()
+         [
+            SNew(STextBlock)
+            .Visibility(LoadingTextVisibility)
+            .ColorAndOpacity(Settings.Appearance.ColorAndOpacity)
+            .Font(Settings.Appearance.Font)
+            .ShadowOffset(Settings.Appearance.ShadowOffset)
+            .ShadowColorAndOpacity(Settings.Appearance.ShadowColorAndOpacity)
+            .Justification(Settings.Appearance.Justification)
+            .Text(Settings.LoadingText)
+         ];
+   }
 
-	// If loading text is on the left
-	else
-	{
-		// Add Loading Text on the left first
-		Root.Get().AddSlot()
-			.HAlign(Settings.TextAlignment.HorizontalAlignment)
-			.VAlign(Settings.TextAlignment.VerticalAlignment)
-			.AutoWidth()
-			[
-				SNew(STextBlock)
-				.Visibility(LoadingTextVisibility)
-				.ColorAndOpacity(Settings.Appearance.ColorAndOpacity)
-				.Font(Settings.Appearance.Font)
-				.ShadowOffset(Settings.Appearance.ShadowOffset)
-				.ShadowColorAndOpacity(Settings.Appearance.ShadowColorAndOpacity)
-				.Justification(Settings.Appearance.Justification)
-				.Text(Settings.LoadingText)
-			];
+   // If loading text is on the left
+   else
+   {
+      // Add Loading Text on the left first
+      Root.Get().AddSlot()
+         .HAlign(Settings.TextAlignment.HorizontalAlignment)
+         .VAlign(Settings.TextAlignment.VerticalAlignment)
+         .AutoWidth()
+         [
+            SNew(STextBlock)
+            .Visibility(LoadingTextVisibility)
+            .ColorAndOpacity(Settings.Appearance.ColorAndOpacity)
+            .Font(Settings.Appearance.Font)
+            .ShadowOffset(Settings.Appearance.ShadowOffset)
+            .ShadowColorAndOpacity(Settings.Appearance.ShadowColorAndOpacity)
+            .Justification(Settings.Appearance.Justification)
+            .Text(Settings.LoadingText)
+         ];
 
 
-		// Add a Spacer in middle
-		Root.Get().AddSlot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.AutoWidth()
-			[
-				SNew(SSpacer)
-				.Size(FVector2D(Settings.Space, 0.0f))
-			];
+      // Add a Spacer in middle
+      Root.Get().AddSlot()
+         .HAlign(HAlign_Fill)
+         .VAlign(VAlign_Fill)
+         .AutoWidth()
+         [
+            SNew(SSpacer)
+            .Size(FVector2D(Settings.Space, 0.0f))
+         ];
 
-		// Add Loading Icon on the right finally
-		Root.Get().AddSlot()
-			.HAlign(Settings.LoadingIconAlignment.HorizontalAlignment)
-			.VAlign(Settings.LoadingIconAlignment.VerticalAlignment)
-			.AutoWidth()
-			[
-				LoadingIcon
-			];
-	}
+      // Add Loading Icon on the right finally
+      Root.Get().AddSlot()
+         .HAlign(Settings.LoadingIconAlignment.HorizontalAlignment)
+         .VAlign(Settings.LoadingIconAlignment.VerticalAlignment)
+         .AutoWidth()
+         [
+            LoadingIcon
+         ];
+   }
 
-	// Add root to this widget
-	ChildSlot
-	[
-		Root
-	];
+   // Add root to this widget
+   ChildSlot
+   [
+      Root
+   ];
 }

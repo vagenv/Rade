@@ -56,7 +56,7 @@ void URAbility::PullAbilityInfo ()
    if (AbilityInfo.IsEmpty ()) {
       R_LOG_PRINTF ("[%s] Recieved invalid Ability Info from WorldAbilityMgr.", *GetName ());
    }
-   
+
    // Report that ability has been added only after pulling ability information
    WorldAbilityMgr->ReportAddAbility (this);
    if (OwnerAbilityMgr.IsValid ()) OwnerAbilityMgr->ReportAbilityListUpdated ();

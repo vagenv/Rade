@@ -12,9 +12,9 @@ struct FTipSettings;
 class STipWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(STipWidget) {}
+   SLATE_BEGIN_ARGS(STipWidget) {}
 
-	SLATE_END_ARGS()
+   SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, const FTipSettings& Settings);
+   void Construct(const FArguments& InArgs, const FTipSettings& Settings);
 };

@@ -25,8 +25,8 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Save")
       bool bSaveLoad = false;
 
-	// Should be called during BeginPlay
-	UFUNCTION()
+   // Should be called during BeginPlay
+   UFUNCTION()
       void ConnectToSaveMgr ();
 
 protected:
@@ -38,22 +38,22 @@ protected:
 /*
 void T::BeginPlay ()
 {
-	Super::BeginPlay ();
+   Super::BeginPlay ();
 
-	ConnectToSaveMgr ();
+   ConnectToSaveMgr ();
 }
 
 void T::ConnectToSaveMgr ()
 {
-	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+   if (!bSaveLoad || !R_IS_NET_ADMIN) return;
 
    // Careful with collision of 'UniqueSaveId'
    FString UniqueSaveId = GetOwner ()->GetName () + "_??????????????";
 
-	if (!InitSaveInterface (this, UniqueSaveId)) {
-		FTimerHandle RetryHandle;
-		RTIMER_START (RetryHandle, this, &T::ConnectToSaveMgr, 1, false);
-	}
+   if (!InitSaveInterface (this, UniqueSaveId)) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle, this, &T::ConnectToSaveMgr, 1, false);
+   }
 }
 
 void T::OnSave (FBufferArchive &SaveData)
@@ -72,22 +72,22 @@ void T::OnLoad (FMemoryReader &LoadData)
 UINTERFACE(MinimalAPI, NotBlueprintable)
 class URSaveInterface : public UInterface
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 };
 
 class RSAVELIB_API IRSaveInterface
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 
 protected:
 
-	virtual bool InitSaveInterface (const UObject* WorldContextObject, const FString &SaveId_);
+   virtual bool InitSaveInterface (const UObject* WorldContextObject, const FString &SaveId_);
 
-	// --- Must be implemented
-	virtual void OnSave (FBufferArchive &SaveData) = 0;
-	virtual void OnLoad (FMemoryReader  &LoadData) = 0;
+   // --- Must be implemented
+   virtual void OnSave (FBufferArchive &SaveData) = 0;
+   virtual void OnLoad (FMemoryReader  &LoadData) = 0;
 
-	// Internal events
+   // Internal events
    UFUNCTION()
       virtual void OnSave_Internal (URSaveGame* SaveGame);
 
@@ -96,9 +96,9 @@ protected:
 
 private:
 
-	// Values for internal tracking
-	FString SaveId;
+   // Values for internal tracking
+   FString SaveId;
 
-	//UPROPERTY()
-		TWeakObjectPtr<URWorldSaveMgr> WorldSaveMgr = nullptr;
+   //UPROPERTY()
+      TWeakObjectPtr<URWorldSaveMgr> WorldSaveMgr = nullptr;
 };

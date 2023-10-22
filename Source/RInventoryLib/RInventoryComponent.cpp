@@ -666,7 +666,7 @@ void URInventoryComponent::SpawnPickup (const FRItemData &ItemData)
       if (!World) return;
 
       if (UClass* PickupActorClass = Cast<UClass> (LoadedContent)) {
-            
+
          AActor *Player = GetOwner ();
 
          // Get Player Rotation
@@ -753,15 +753,15 @@ void URInventoryComponent::SpawnPickup (const FRItemData &ItemData)
 
 void URInventoryComponent::ConnectToSaveMgr ()
 {
-	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+   if (!bSaveLoad || !R_IS_NET_ADMIN) return;
 
    // Careful with collision of 'UniqueSaveId'
    FString UniqueSaveId = GetOwner ()->GetName () + "_InventoryMgr";
 
-	if (!InitSaveInterface (this, UniqueSaveId)) {
-		FTimerHandle RetryHandle;
-		RTIMER_START (RetryHandle, this, &URInventoryComponent::ConnectToSaveMgr, 1, false);
-	}
+   if (!InitSaveInterface (this, UniqueSaveId)) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle, this, &URInventoryComponent::ConnectToSaveMgr, 1, false);
+   }
 }
 
 void URInventoryComponent::OnSave (FBufferArchive &SaveData)

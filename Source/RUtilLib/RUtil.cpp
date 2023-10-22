@@ -29,13 +29,13 @@ ACharacter* URUtil::GetLocalRadePlayer (const UObject* WorldContextObject)
 
 float URUtil::GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime)
 {
-	// If an external curve is provided, we'll use that to evaluate
-	if (InCurve.ExternalCurve != nullptr) {
-		return InCurve.ExternalCurve->GetFloatValue (InTime);
-	}
+   // If an external curve is provided, we'll use that to evaluate
+   if (InCurve.ExternalCurve != nullptr) {
+      return InCurve.ExternalCurve->GetFloatValue (InTime);
+   }
 
-	// If no external curves are provided, we'll evaluate from the rich curve directly
-	return InCurve.GetRichCurveConst ()->Eval (InTime);
+   // If no external curves are provided, we'll evaluate from the rich curve directly
+   return InCurve.GetRichCurveConst ()->Eval (InTime);
 }
 
 float URUtil::GetAngle (FVector v1, FVector v2)
@@ -63,7 +63,7 @@ bool URUtil::ObjectArray_EqualEqual (const TArray<UObject*> &A,
 
       AMap.Add (ItA->GetUniqueID (), true);
    }
-   
+
    // Check if all B items occured in A map
    for (const UObject* ItB : B) {
       if (ItB == nullptr) continue;

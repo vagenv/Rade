@@ -57,7 +57,7 @@ TArray<URInteractComponent*> URWorldInteractMgr::Find (const FVector &Location, 
    // --- Iterate over available Interacts
    for (const TWeakObjectPtr<URInteractComponent> &ItInteract : InteractList) {
       if (!ItInteract.IsValid ()) continue;
-      
+
       float ItDistance = FVector::Distance (Location, ItInteract->GetComponentLocation ());
       if (ItDistance > Distance) continue;
       Result.Add (ItInteract.Get ());

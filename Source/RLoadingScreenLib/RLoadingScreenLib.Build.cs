@@ -5,17 +5,17 @@ using UnrealBuildTool;
 public class RLoadingScreenLib : ModuleRules
 {
    public RLoadingScreenLib (ReadOnlyTargetRules Target) : base(Target)
-	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+   {
+      PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {
-			"Core",
-			"CoreUObject",
-			"Engine",
-			"Slate",
-			"SlateCore",
-			"MoviePlayer",
-			"DeveloperSettings",
-			"RUtilLib"
-		});
-	}
+         "Core",
+         "CoreUObject",
+         "Engine",
+         "Slate",
+         "SlateCore",
+         "MoviePlayer",
+         "DeveloperSettings",
+         "RUtilLib"
+      });
+   }
 }

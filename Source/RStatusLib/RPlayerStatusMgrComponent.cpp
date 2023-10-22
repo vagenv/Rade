@@ -274,15 +274,15 @@ bool URPlayerStatusMgrComponent::HasStats (const FRCoreStats &RequiredStats) con
 
 void URPlayerStatusMgrComponent::ConnectToSaveMgr ()
 {
-	if (!bSaveLoad) return;
+   if (!bSaveLoad) return;
 
    // Careful with collision of 'UniqueSaveId'
    FString UniqueSaveId = GetOwner ()->GetName () + "_PlayerStatusMgr";
 
-	if (!InitSaveInterface (this, UniqueSaveId)) {
-		FTimerHandle RetryHandle;
-		RTIMER_START (RetryHandle, this, &URPlayerStatusMgrComponent::ConnectToSaveMgr, 1, false);
-	}
+   if (!InitSaveInterface (this, UniqueSaveId)) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle, this, &URPlayerStatusMgrComponent::ConnectToSaveMgr, 1, false);
+   }
 }
 void URPlayerStatusMgrComponent::OnSave (FBufferArchive &SaveData)
 {

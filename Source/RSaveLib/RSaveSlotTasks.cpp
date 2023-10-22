@@ -15,9 +15,9 @@
 
 UGetSaveGameSlotImageAsync* UGetSaveGameSlotImageAsync::GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta)
 {
-	UGetSaveGameSlotImageAsync* BlueprintNode = NewObject<UGetSaveGameSlotImageAsync>();
+   UGetSaveGameSlotImageAsync* BlueprintNode = NewObject<UGetSaveGameSlotImageAsync>();
    BlueprintNode->SlotMeta = SlotMeta;
-	return BlueprintNode;
+   return BlueprintNode;
 }
 
 void UGetSaveGameSlotImageAsync::Activate ()
@@ -56,8 +56,8 @@ void UGetSaveGameSlotImageAsync::Activate ()
 
 URListSaveGameSlotsAsync* URListSaveGameSlotsAsync::ListSaveGameSlotsAsync ()
 {
-	URListSaveGameSlotsAsync* BlueprintNode = NewObject<URListSaveGameSlotsAsync>();
-	return BlueprintNode;
+   URListSaveGameSlotsAsync* BlueprintNode = NewObject<URListSaveGameSlotsAsync>();
+   return BlueprintNode;
 }
 
 void URListSaveGameSlotsAsync::Activate ()
@@ -87,10 +87,10 @@ URemoveSaveGameSlotAsync* URemoveSaveGameSlotAsync::RemoveSaveGameSlotAsync (
    UObject* WorldContextObject,
    const FRSaveGameMeta &SaveMeta)
 {
-	URemoveSaveGameSlotAsync* BlueprintNode = NewObject<URemoveSaveGameSlotAsync>(WorldContextObject);
+   URemoveSaveGameSlotAsync* BlueprintNode = NewObject<URemoveSaveGameSlotAsync>(WorldContextObject);
    BlueprintNode->WorldContextObject = WorldContextObject;
    BlueprintNode->SaveMeta           = SaveMeta;
-	return BlueprintNode;
+   return BlueprintNode;
 }
 
 void URemoveSaveGameSlotAsync::Activate ()
@@ -140,11 +140,11 @@ UCreateSaveGameSlotAsync* UCreateSaveGameSlotAsync::CreateSaveGameSlotAsync (
    const FString &SlotName,
    const TMap<FString, FString> &ExtraData)
 {
-	UCreateSaveGameSlotAsync* BlueprintNode = NewObject<UCreateSaveGameSlotAsync>(WorldContextObject);
+   UCreateSaveGameSlotAsync* BlueprintNode = NewObject<UCreateSaveGameSlotAsync>(WorldContextObject);
    BlueprintNode->WorldContextObject = WorldContextObject;
    BlueprintNode->SlotName  = SlotName;
    BlueprintNode->ExtraData = ExtraData;
-	return BlueprintNode;
+   return BlueprintNode;
 }
 
 void UCreateSaveGameSlotAsync::Activate ()
@@ -242,10 +242,10 @@ ULoadSaveGameSlotAsync* ULoadSaveGameSlotAsync::LoadSaveGameSlotAsync (
    UObject* WorldContextObject,
    const FRSaveGameMeta &SaveMeta)
 {
-	ULoadSaveGameSlotAsync* BlueprintNode = NewObject<ULoadSaveGameSlotAsync>(WorldContextObject);
+   ULoadSaveGameSlotAsync* BlueprintNode = NewObject<ULoadSaveGameSlotAsync>(WorldContextObject);
    BlueprintNode->WorldContextObject = WorldContextObject;
    BlueprintNode->SaveMeta           = SaveMeta;
-	return BlueprintNode;
+   return BlueprintNode;
 }
 
 void ULoadSaveGameSlotAsync::Activate ()
@@ -255,9 +255,9 @@ void ULoadSaveGameSlotAsync::Activate ()
 
       // Read Save Slot Data to buffer
       FString SaveFilePath = FRSaveGameMeta::GetSaveDir () + SaveMeta.SlotName + "/save.data";
-	   if (!FFileHelper::LoadFileToArray (SaveBinary, *SaveFilePath)) {
-		   return ReportEnd (false);
-	   }
+      if (!FFileHelper::LoadFileToArray (SaveBinary, *SaveFilePath)) {
+         return ReportEnd (false);
+      }
 
       // Schedule game thread and pass in result
       AsyncTask (ENamedThreads::GameThread, [this] () {

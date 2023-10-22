@@ -20,7 +20,6 @@ TArray<FRPassiveStatusEffect> URPassiveStatusEffectUtilLibrary::MergeEffects (
             EffectMap.Add (ItEffect.EffectTarget, ItEffect);
          }
       }
-      
    }
 
    // Transform to Array

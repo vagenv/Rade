@@ -8,8 +8,8 @@
 class SRLayout : public SCompoundWidget
 {
 public:
-	static float PointSizeToSlateUnits (float PointSize);
+   static float PointSizeToSlateUnits (float PointSize);
 protected:
-	float GetDPIScale () const;
+   float GetDPIScale () const;
 };
 

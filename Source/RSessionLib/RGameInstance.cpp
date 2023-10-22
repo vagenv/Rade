@@ -284,7 +284,7 @@ void URGameInstance::OnStartSessionComplete (FName SessionName, bool bWasSuccess
    if (!World) return;
 
    FURL Url (nullptr, *World->GetLocalURL (), TRAVEL_Absolute);
-	World->Listen (Url);
+   World->Listen (Url);
 }
 
 

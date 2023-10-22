@@ -133,12 +133,12 @@ public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="Equal (FRCoreStats)", CompactNodeTitle="=="))
-	   static bool FRCoreStats_EqualEqual (const FRCoreStats& A,
+      static bool FRCoreStats_EqualEqual (const FRCoreStats& A,
                                           const FRCoreStats& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="NotEqual (FRCoreStats)", CompactNodeTitle="!="))
-	   static bool FRCoreStats_NotEqual (const FRCoreStats& A,
+      static bool FRCoreStats_NotEqual (const FRCoreStats& A,
                                         const FRCoreStats& B);
 
 
@@ -148,12 +148,12 @@ public:
 
       UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="Equal (FRSubStats)", CompactNodeTitle="=="))
-	   static bool FRSubStats_EqualEqual (const FRSubStats& A,
+      static bool FRSubStats_EqualEqual (const FRSubStats& A,
                                          const FRSubStats& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="NotEqual (FRCoreStats)", CompactNodeTitle="!="))
-	   static bool FRSubStats_NotEqual (const FRSubStats& A,
+      static bool FRSubStats_NotEqual (const FRSubStats& A,
                                        const FRSubStats& B);
 
 

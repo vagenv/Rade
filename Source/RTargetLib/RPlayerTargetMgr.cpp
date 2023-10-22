@@ -16,7 +16,7 @@
 
 URPlayerTargetMgr::URPlayerTargetMgr ()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+   PrimaryComponentTick.bCanEverTick = true;
 
    // --- Targetable
    FRichCurve* TargetAngleToLerpPowerData = TargetAngleToLerpPower.GetRichCurve ();
@@ -35,7 +35,7 @@ void URPlayerTargetMgr::GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &O
 
 void URPlayerTargetMgr::BeginPlay ()
 {
-	Super::BeginPlay ();
+   Super::BeginPlay ();
    FindWorldTargetMgr ();
    World = URUtil::GetWorld (this);
 }
@@ -82,7 +82,7 @@ void URPlayerTargetMgr::SetTargetCheckEnabled (bool Enabled)
 
 bool URPlayerTargetMgr::IsTargeting () const
 {
-	return (TargetCurrent.IsValid () || !CustomTargetDir.IsNearlyZero ());
+   return (TargetCurrent.IsValid () || !CustomTargetDir.IsNearlyZero ());
 }
 
 URTargetComponent* URPlayerTargetMgr::GetCurrentTarget () const

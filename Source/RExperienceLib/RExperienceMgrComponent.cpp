@@ -107,15 +107,15 @@ void URExperienceMgrComponent::LeveledUp ()
 
 void URExperienceMgrComponent::ConnectToSaveMgr ()
 {
-	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+   if (!bSaveLoad || !R_IS_NET_ADMIN) return;
 
    // Careful with collision of 'UniqueSaveId'
    FString UniqueSaveId = GetOwner ()->GetName () + "_ExperienceMgr";
 
-	if (!InitSaveInterface (this, UniqueSaveId)) {
-		FTimerHandle RetryHandle;
-		RTIMER_START (RetryHandle, this, &URExperienceMgrComponent::ConnectToSaveMgr, 1, false);
-	}
+   if (!InitSaveInterface (this, UniqueSaveId)) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle, this, &URExperienceMgrComponent::ConnectToSaveMgr, 1, false);
+   }
 }
 
 void URExperienceMgrComponent::OnSave (FBufferArchive &SaveData)

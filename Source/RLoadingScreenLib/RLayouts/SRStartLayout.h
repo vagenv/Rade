@@ -11,12 +11,12 @@ struct FStartLayoutSettings;
 class SRStartLayout : public SRLayout
 {
 public:
-	SLATE_BEGIN_ARGS(SRStartLayout) {}
+   SLATE_BEGIN_ARGS(SRStartLayout) {}
 
-	SLATE_END_ARGS()
+   SLATE_END_ARGS()
 
 
-	void Construct (const FArguments					 &InArgs,
-						 const FALoadingScreenSettings &ScreenSettings,
-						 const FStartLayoutSettings    &LayoutSettings);
+   void Construct (const FArguments                &InArgs,
+                   const FALoadingScreenSettings &ScreenSettings,
+                   const FStartLayoutSettings    &LayoutSettings);
 };

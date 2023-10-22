@@ -107,7 +107,7 @@ bool URAbilityMgrComponent::CanAddAbility (const FRAbilityInfo& AbilityInfo) con
          if (!AbilityMap.Contains (ItAbility.ToString ())) return false;
       }
    }
- 
+
    // Check stats
    if (!AbilityInfo.RequiredStats.IsEmpty ()) {
       if (URPlayerStatusMgrComponent* StatusMgr = URUtil::GetComponent<URPlayerStatusMgrComponent> (GetOwner ())) {
@@ -117,7 +117,7 @@ bool URAbilityMgrComponent::CanAddAbility (const FRAbilityInfo& AbilityInfo) con
       }
    }
 
-   return true;  
+   return true;
 }
 
 URAbility* URAbilityMgrComponent::GetAbility (const FRAbilityInfo& AbilityInfo) const
@@ -143,9 +143,9 @@ bool URAbilityMgrComponent::AddAbility (const FRAbilityInfo& AbilityInfo)
    if (!ensure (!AbilityInfo.IsEmpty ())) return false;
    if (!ensure (AbilityPoints > AbilityInfo.LearnPointPrice)) return false;
    if (!ensure (!URAbilityMgrComponent::GetAbility (AbilityInfo))) return false;
-      
+
    int LearnCost = AbilityInfo.LearnPointPrice;
-   
+
    URWorldAssetMgr::LoadAsync (AbilityInfo.AbilityClass.GetUniqueID (),
       this, [this, LearnCost] (UObject* LoadedContent) {
       if (UClass* AbilityClass = Cast<UClass> (LoadedContent)) {
@@ -196,15 +196,15 @@ void URAbilityMgrComponent::RmAbility_Server_Implementation (const FRAbilityInfo
 
 void URAbilityMgrComponent::ConnectToSaveMgr ()
 {
-	if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+   if (!bSaveLoad || !R_IS_NET_ADMIN) return;
 
    // Careful with collision of 'UniqueSaveId'
    FString UniqueSaveId = GetOwner ()->GetName () + "_AbilityMgr";
 
-	if (!InitSaveInterface (this, UniqueSaveId)) {
-		FTimerHandle RetryHandle;
-		RTIMER_START (RetryHandle, this, &URAbilityMgrComponent::ConnectToSaveMgr, 1, false);
-	}
+   if (!InitSaveInterface (this, UniqueSaveId)) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle, this, &URAbilityMgrComponent::ConnectToSaveMgr, 1, false);
+   }
 }
 
 void URAbilityMgrComponent::OnSave (FBufferArchive &SaveData)

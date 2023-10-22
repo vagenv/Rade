@@ -61,13 +61,13 @@ class RABILITYLIB_API URAbilityInfolLibrary : public UBlueprintFunctionLibrary
 public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Ability")
-	   static bool AbilityInfo_IsEmpty (const FRAbilityInfo& AbilityInfo);
+      static bool AbilityInfo_IsEmpty (const FRAbilityInfo& AbilityInfo);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Ability", meta=(DisplayName="==", CompactNodeTitle="=="))
-	   static bool AbilityInfo_EqualEqual (const FRAbilityInfo& A, const FRAbilityInfo& B);
+      static bool AbilityInfo_EqualEqual (const FRAbilityInfo& A, const FRAbilityInfo& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Ability", meta=(DisplayName="!=", CompactNodeTitle="!="))
-	   static bool AbilityInfo_NotEqual (const FRAbilityInfo& A, const FRAbilityInfo& B);
+      static bool AbilityInfo_NotEqual (const FRAbilityInfo& A, const FRAbilityInfo& B);
 };
 
 

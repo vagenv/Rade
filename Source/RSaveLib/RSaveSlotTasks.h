@@ -17,24 +17,24 @@ class URWorldSaveMgr;
 UCLASS()
 class RSAVELIB_API UGetSaveGameSlotImageAsync : public UBlueprintAsyncActionBase
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|Save",
              meta = (BlueprintInternalUseOnly = "true",
                      WorldContext = "WorldContextObject"))
-	   static UGetSaveGameSlotImageAsync* GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
+      static UGetSaveGameSlotImageAsync* GetSaveGameSlotImageAsync (const FRSaveGameMeta &SlotMeta);
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRReadSaveSlotImageEvent, const TArray<uint8>&, ImageBinary, bool, success);
 
    // Called when save game screenshot has been read
-	UPROPERTY(BlueprintAssignable)
-	   FRReadSaveSlotImageEvent Finished;
+   UPROPERTY(BlueprintAssignable)
+      FRReadSaveSlotImageEvent Finished;
 
    // Execution point
-	virtual void Activate () override;
+   virtual void Activate () override;
 
 protected:
    UPROPERTY()
@@ -51,24 +51,24 @@ protected:
 UCLASS()
 class RSAVELIB_API URListSaveGameSlotsAsync : public UBlueprintAsyncActionBase
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|Save",
              meta = (BlueprintInternalUseOnly = "true",
                      WorldContext = "WorldContextObject"))
-	   static URListSaveGameSlotsAsync* ListSaveGameSlotsAsync ();
+      static URListSaveGameSlotsAsync* ListSaveGameSlotsAsync ();
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRGetSaveSlotsEvent, const TArray<FRSaveGameMeta>&, SaveSlotsList);
 
    // Called when all save game slots meta information has been read
-	UPROPERTY(BlueprintAssignable)
-	   FRGetSaveSlotsEvent Finished;
+   UPROPERTY(BlueprintAssignable)
+      FRGetSaveSlotsEvent Finished;
 
    // Execution point
-	virtual void Activate () override;
+   virtual void Activate () override;
 };
 
 // ============================================================================
@@ -78,26 +78,26 @@ public:
 UCLASS()
 class RSAVELIB_API URemoveSaveGameSlotAsync : public UBlueprintAsyncActionBase
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|Save",
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
-	   static URemoveSaveGameSlotAsync* RemoveSaveGameSlotAsync (UObject* WorldContextObject,
+      static URemoveSaveGameSlotAsync* RemoveSaveGameSlotAsync (UObject* WorldContextObject,
                                                                 const FRSaveGameMeta &SaveMeta);
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRRemoveSaveSlotsEvent, bool, Success);
 
    // Called when all content associated with save slot has been removed
-	UPROPERTY(BlueprintAssignable)
-	   FRRemoveSaveSlotsEvent Finished;
+   UPROPERTY(BlueprintAssignable)
+      FRRemoveSaveSlotsEvent Finished;
 
    // Execution point
-	virtual void Activate () override;
+   virtual void Activate () override;
 
 protected:
    UPROPERTY()
@@ -115,15 +115,15 @@ protected:
 UCLASS()
 class RSAVELIB_API UCreateSaveGameSlotAsync : public UBlueprintAsyncActionBase
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|Save",
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
-	   static UCreateSaveGameSlotAsync* CreateSaveGameSlotAsync (UObject* WorldContextObject,
+      static UCreateSaveGameSlotAsync* CreateSaveGameSlotAsync (UObject* WorldContextObject,
                                                                 const FString &SlotName,
                                                                 const TMap<FString, FString> &ExtraData);
 
@@ -131,11 +131,11 @@ public:
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRCreateSaveSlotsEvent, bool, Success, FRSaveGameMeta, SaveMeta);
 
    // Called when save game slots have been created
-	UPROPERTY(BlueprintAssignable)
-	   FRCreateSaveSlotsEvent Finished;
+   UPROPERTY(BlueprintAssignable)
+      FRCreateSaveSlotsEvent Finished;
 
    // Execution point
-	virtual void Activate () override;
+   virtual void Activate () override;
 
 protected:
 
@@ -168,26 +168,26 @@ protected:
 UCLASS()
 class RSAVELIB_API ULoadSaveGameSlotAsync : public UBlueprintAsyncActionBase
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|Save",
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
-	   static ULoadSaveGameSlotAsync* LoadSaveGameSlotAsync (UObject* WorldContextObject,
+      static ULoadSaveGameSlotAsync* LoadSaveGameSlotAsync (UObject* WorldContextObject,
                                                             const FRSaveGameMeta &SaveMeta);
 
 
    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRLoadSaveSlotsEvent, bool, Success);
 
    // Called when save game slot content has been read
-	UPROPERTY(BlueprintAssignable)
-	   FRLoadSaveSlotsEvent Finished;
+   UPROPERTY(BlueprintAssignable)
+      FRLoadSaveSlotsEvent Finished;
 
    // Execution point
-	virtual void Activate () override;
+   virtual void Activate () override;
 
 protected:
    UPROPERTY()

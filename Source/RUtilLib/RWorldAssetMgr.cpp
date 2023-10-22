@@ -19,12 +19,12 @@ void URWorldAssetMgr::LoadAsync (const FSoftObjectPath &Path,
 
    TSharedPtr<FStreamableHandle> Handle = WorldAssetMgr->StreamableManager.RequestAsyncLoad (
    Path, [RequestKey, WorldAssetMgr, Callback] () {
-      
+
       if (!IsValid (WorldAssetMgr)) {
          R_LOG_STATIC ("World asset manager became invalid during load of asset.");
          return;
       }
-   
+
       if (!WorldAssetMgr->Requests.Contains (RequestKey)) {
          R_LOG_STATIC_PRINTF ("[%s] not found in World asset manager request list", *RequestKey);
          return;
@@ -57,7 +57,7 @@ void URWorldAssetMgr::LoadAsync (const FSoftObjectPath &Path,
       // // Release data from memory
       // Request.Handle->ReleaseHandle ();
       // Request.Handle.Reset ();
-      
+
       // Remove access key
       WorldAssetMgr->Requests.Remove (RequestKey);
    });

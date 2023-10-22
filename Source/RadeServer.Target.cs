@@ -6,8 +6,8 @@ using System.Collections.Generic;
 [SupportedPlatforms(UnrealPlatformClass.Server)]
 public class RadeServerTarget : TargetRules
 {
-	public RadeServerTarget (TargetInfo Target) : base(Target)
-	{
+   public RadeServerTarget (TargetInfo Target) : base(Target)
+   {
       Type = TargetType.Server;
       bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V4;
@@ -29,5 +29,5 @@ public class RadeServerTarget : TargetRules
       ExtraModuleNames.Add ("RAbilityLib");
       ExtraModuleNames.Add ("REquipmentLib");
       ExtraModuleNames.Add ("Rade");
-	}
+   }
 }

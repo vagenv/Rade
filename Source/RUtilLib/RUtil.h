@@ -22,7 +22,7 @@ public:
 
    // Get pawn of the first player controller
    static ACharacter* GetLocalRadePlayer (const UObject* WorldContextObject);
-   
+
    // Uses Eval call of FRuntimeFloatCurve as const object
    static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime);
 
@@ -105,7 +105,7 @@ public:
 
    // Uses Eval call of FRuntimeFloatCurve as const object
    UFUNCTION(BlueprintPure, Category = "Rade|Util")
-	   static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime) {
+      static float GetRuntimeFloatCurveValue (const FRuntimeFloatCurve& InCurve, float InTime) {
          return URUtil::GetRuntimeFloatCurveValue (InCurve, InTime);
       }
 
@@ -123,7 +123,7 @@ public:
       }
 
    UFUNCTION(BlueprintPure, Category = "Rade|Util", meta=(DisplayName="==", CompactNodeTitle="=="))
-	   static bool ObjectArray_EqualEqual (const TArray<UObject*> &A,
+      static bool ObjectArray_EqualEqual (const TArray<UObject*> &A,
                                           const TArray<UObject*> &B) {
          return URUtil::ObjectArray_EqualEqual (A, B);
       }

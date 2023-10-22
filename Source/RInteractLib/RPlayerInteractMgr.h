@@ -14,15 +14,15 @@ class URWorldInteractMgr;
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RINTERACTLIB_API URPlayerInteractMgr : public USceneComponent
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
    //==========================================================================
    //                         Core
    //==========================================================================
 
-	URPlayerInteractMgr ();
-	virtual void BeginPlay () override;
+   URPlayerInteractMgr ();
+   virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
    //==========================================================================
@@ -40,7 +40,7 @@ protected:
    //                         Current interact
    //==========================================================================
 protected:
-	// Current focus Interact
+   // Current focus Interact
    UPROPERTY()
       TWeakObjectPtr<URInteractComponent> InteractCurrent = nullptr;
 
@@ -58,10 +58,10 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
       FRInteractingEvent OnCurrentInteractUpdated;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
       virtual bool IsInteracting () const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
       virtual URInteractComponent* GetCurrentInteract () const;
 
 protected:
@@ -80,7 +80,7 @@ protected:
    //                         Interact List
    //==========================================================================
 protected:
-   
+
    // Current focus Interact
    UPROPERTY()
       TArray<URInteractComponent*> InteractList;
@@ -102,7 +102,7 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
       TArray<URInteractComponent*> GetInteractList () const;
 
    //==========================================================================

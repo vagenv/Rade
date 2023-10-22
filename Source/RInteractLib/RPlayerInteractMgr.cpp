@@ -16,12 +16,12 @@
 
 URPlayerInteractMgr::URPlayerInteractMgr ()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+   PrimaryComponentTick.bCanEverTick = false;
 }
 
 void URPlayerInteractMgr::BeginPlay ()
 {
-	Super::BeginPlay ();
+   Super::BeginPlay ();
    FindWorldInteractMgr ();
 }
 
@@ -75,7 +75,7 @@ void URPlayerInteractMgr::FindWorldInteractMgr ()
 
 bool URPlayerInteractMgr::IsInteracting () const
 {
-	return (InteractCurrent.IsValid ());
+   return (InteractCurrent.IsValid ());
 }
 
 URInteractComponent* URPlayerInteractMgr::GetCurrentInteract () const
@@ -108,7 +108,7 @@ void URPlayerInteractMgr::UpdateInteractCurrent ()
       InteractCurrent = Closest;
       InteractCurrent->SetIsInteracted (true);
 
-      // Force InteractCheck if target actor was destroyed 
+      // Force InteractCheck if target actor was destroyed
       //FActorDestroyedSignature OnTargetDestroy;
       //InteractCurrent->GetOwner ()->OnDestroyed;
    }
@@ -174,7 +174,7 @@ URInteractComponent* URPlayerInteractMgr::FindClosestInteract () const
 
       if (ItDistance > CurrentDistanceMax) continue;
       if (ItAngle > ClosestAngle) continue;
-      
+
       Closest      = ItInteract;
       ClosestAngle = ItAngle;
    }

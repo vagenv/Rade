@@ -49,7 +49,7 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-	   bool CanAddAbility (const FRAbilityInfo& AbilityInfo) const;
+      bool CanAddAbility (const FRAbilityInfo& AbilityInfo) const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       URAbility* GetAbility (const FRAbilityInfo& AbilityInfo) const;
@@ -98,8 +98,8 @@ public:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Save")
       bool bSaveLoad = false;
 
-	// Should be called during BeginPlay
-	UFUNCTION()
+   // Should be called during BeginPlay
+   UFUNCTION()
       void ConnectToSaveMgr ();
 
 protected:

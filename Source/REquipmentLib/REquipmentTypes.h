@@ -56,10 +56,10 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
       TSoftClassPtr<UREquipmentSlotComponent> EquipmentSlot;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	   TSoftObjectPtr<UStaticMesh> StaticMesh;
+      TSoftObjectPtr<UStaticMesh> StaticMesh;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	   TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
+      TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float CurrentDurability = 100;
@@ -91,22 +91,22 @@ public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
              meta=(DisplayName="Equal (FRItemData, FRConsumableItemData)", CompactNodeTitle="=="))
-	   static bool ConsumableItem_EqualEqual (const FRItemData& A,
+      static bool ConsumableItem_EqualEqual (const FRItemData& A,
                                              const FRConsumableItemData& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
              meta=(DisplayName="NotEqual (FRItemData, FRConsumableItemData)", CompactNodeTitle="!="))
-	   static bool ConsumableItem_NotEqual (const FRItemData& A,
+      static bool ConsumableItem_NotEqual (const FRItemData& A,
                                            const FRConsumableItemData& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
              meta=(DisplayName="Equal (FRItemData, FREquipmentData)", CompactNodeTitle="=="))
-	   static bool Equipment_EqualEqual (const FRItemData& A,
+      static bool Equipment_EqualEqual (const FRItemData& A,
                                         const FREquipmentData& B);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
              meta=(DisplayName="NotEqual (FRItemData, FREquipmentData)", CompactNodeTitle="!="))
-	   static bool Equipment_NotEqual (const FRItemData& A,
+      static bool Equipment_NotEqual (const FRItemData& A,
                                       const FREquipmentData& B);
 
 

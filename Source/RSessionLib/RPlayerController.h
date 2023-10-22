@@ -10,13 +10,13 @@
 UCLASS()
 class RSESSIONLIB_API ARPlayerController : public APlayerController
 {
-	GENERATED_BODY()
-	
+   GENERATED_BODY()
+
 public:
 
-	virtual void PawnLeavingGame () override;
+   virtual void PawnLeavingGame () override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Network")
-		bool DestroyPawnThenUnpossess = false;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Network")
+      bool DestroyPawnThenUnpossess = false;
 };
 

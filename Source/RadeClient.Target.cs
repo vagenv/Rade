@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 public class RadeClientTarget : TargetRules
 {
-	public RadeClientTarget (TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Client;
+   public RadeClientTarget (TargetInfo Target) : base(Target)
+   {
+      Type = TargetType.Client;
       bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V4;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;

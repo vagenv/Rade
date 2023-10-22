@@ -14,10 +14,10 @@ struct ROPTIONSLIB_API FRScreenResolution
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	   int32 Width = 0;
+      int32 Width = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	   int32 Height = 0;
+      int32 Height = 0;
 
    bool operator == (const FRScreenResolution &ScreenResolution) const noexcept;
 };
@@ -95,13 +95,13 @@ public:
       static FString FRScreenResolution_ToString (const FRScreenResolution &Resolution);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Settings", meta=(DisplayName="Equal (FRScreenResolution)", CompactNodeTitle="=="))
-	   static bool FRScreenResolution_EqualEqual (const FRScreenResolution& A, const FRScreenResolution& B);
+      static bool FRScreenResolution_EqualEqual (const FRScreenResolution& A, const FRScreenResolution& B);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static FRScreenResolution FRScreenResolution_FromString (const FString &Resolution);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Settings", meta=(DisplayName="Equal (FRVideoQualitySetting)", CompactNodeTitle="=="))
-	   static bool FRVideoQualitySetting_EqualEqual (const FRVideoQualitySetting& A, const FRVideoQualitySetting& B);
+      static bool FRVideoQualitySetting_EqualEqual (const FRVideoQualitySetting& A, const FRVideoQualitySetting& B);
 };
 
 // ============================================================================

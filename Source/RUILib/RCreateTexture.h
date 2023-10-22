@@ -20,7 +20,7 @@ class RUILIB_API URCreateTextureLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|UI",
              meta = (HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
@@ -37,16 +37,16 @@ public:
 UCLASS()
 class RUILIB_API URCreateTextureAsync : public UBlueprintAsyncActionBase
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 public:
 
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|UI",
              meta = (BlueprintInternalUseOnly = "true",
                      HidePin      = "WorldContextObject",
                      WorldContext = "WorldContextObject"))
-	   static URCreateTextureAsync* CreateTextureAsync (UObject* WorldContextObject,
+      static URCreateTextureAsync* CreateTextureAsync (UObject* WorldContextObject,
                                                        const TArray<uint8>& PixelData,
                                                        int32 InSizeX = 0, int32 InSizeY = 0,
                                                        EPixelFormat InPixelFormat = EPixelFormat::PF_B8G8R8A8);
@@ -59,11 +59,11 @@ public:
 
 
    // Called when all save game slots have been read
-	UPROPERTY(BlueprintAssignable)
-	   FRCreateTextureEvent Loaded;
+   UPROPERTY(BlueprintAssignable)
+      FRCreateTextureEvent Loaded;
 
    // Execution point
-	virtual void Activate () override;
+   virtual void Activate () override;
 private:
 
    UPROPERTY ()

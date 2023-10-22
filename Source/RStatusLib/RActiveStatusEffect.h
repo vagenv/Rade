@@ -61,7 +61,6 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
-   
    //==========================================================================
    //                 Status Mgr
    //==========================================================================
@@ -70,7 +69,7 @@ public:
 
    UPROPERTY()
       TWeakObjectPtr<URStatusMgrComponent> OwnerStatusMgr = nullptr;
-    
+
    UFUNCTION()
       void FindWorldStatusMgr ();
 
