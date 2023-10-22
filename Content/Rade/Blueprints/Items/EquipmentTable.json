@@ -93,7 +93,7 @@
 		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 900,
+		"Weight": 300,
 		"Price": 30,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -132,7 +132,7 @@
 		"Rarity": "D",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 3000,
+		"Weight": 1500,
 		"Price": 10,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -255,7 +255,7 @@
 		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -306,7 +306,7 @@
 		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -351,7 +351,7 @@
 		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -422,7 +422,7 @@
 		"Rarity": "B",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -467,7 +467,7 @@
 		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -512,9 +512,85 @@
 		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfBigBoi",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cone.Shape_Cone",
+		"SkeletalMesh": "None",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [
+			{
+				"DamageType": "/Game/Rade/Blueprints/Damage/RDamageType_Blunt.RDamageType_Blunt_C",
+				"Flat": 20,
+				"Percent": 10
+			}
+		],
+		"PassiveEffects": [
+			{
+				"EffectTarget": "STR",
+				"Flat": 100,
+				"Percent": 0
+			},
+			{
+				"EffectTarget": "HealthMax",
+				"Flat": 1000,
+				"Percent": 0
+			},
+			{
+				"EffectTarget": "HealthRegen",
+				"Flat": 10,
+				"Percent": 0
+			},
+			{
+				"EffectTarget": "MoveSpeed",
+				"Flat": 0,
+				"Percent": -50
+			},
+			{
+				"EffectTarget": "Evasion",
+				"Flat": 0,
+				"Percent": -50
+			},
+			{
+				"EffectTarget": "AttackSpeed",
+				"Flat": 0,
+				"Percent": -50
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 40,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"ID": "",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
+		"Description":
+		{
+			"Label": "Hat of a BIG boi",
+			"Tooltip": "ME BIG!!! ME STRONG!!!",
+			"Icon": "/Game/Rade/Sprites/TablerIcons/biohazard.biohazard"
+		},
+		"Rarity": "S",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 200,
+		"Price": 5,
+		"PickupMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cone.Shape_Cone",
 		"Pickup": "None",
 		"JsonData": ""
 	}
