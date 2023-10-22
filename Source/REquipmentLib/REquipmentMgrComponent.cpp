@@ -195,9 +195,45 @@ bool UREquipmentMgrComponent::UseItem_Index (int32 ItemIdx)
    return success;
 }
 
+bool UREquipmentMgrComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
+{
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return false;
+   }
+
+   // --- Check if Item should be unequiped
+   FREquipmentData EquipmentData;
+   // Is Equipment item
+   if (FREquipmentData::Cast (Items[ItemIdx], EquipmentData)) {
+
+      // Get target slot type
+      UREquipmentSlotComponent *EquipmentSlot = GetEquipmentSlot (EquipmentData.EquipmentSlot);
+
+      if (EquipmentSlot) {
+
+         // Item equiped
+         if (EquipmentSlot->EquipmentData.ID == EquipmentData.ID) {
+            UnEquip_Slot (EquipmentSlot);
+         }
+      }
+   }
+
+   return Super::RemoveItem_Index (ItemIdx, Count);
+}
+
 bool UREquipmentMgrComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
+
+   // Valid index
+   if (!Items.IsValidIndex (ItemIdx)) {
+      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
+         ItemIdx, Items.Num ());
+      return false;
+   }
 
    // --- Check if Item should be unequiped
    FREquipmentData EquipmentData;

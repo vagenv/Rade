@@ -31,9 +31,10 @@ public:
    //==========================================================================
    //                 Use / Drop override. Check if Item equiped.
    //==========================================================================
-   virtual bool UseItem_Index   (int32 ItemIdx) override;
-   virtual bool DropItem_Index  (int32 ItemIdx, int32 Count = 0) override;
-   virtual bool BreakItem_Index (int32 ItemIdx, const UDataTable* BreakItemTable) override;
+   virtual bool UseItem_Index    (int32 ItemIdx) override;
+   virtual bool RemoveItem_Index (int32 ItemIdx, int32 Count = 1) override;
+   virtual bool DropItem_Index   (int32 ItemIdx, int32 Count = 0) override;
+   virtual bool BreakItem_Index  (int32 ItemIdx, const UDataTable* BreakItemTable) override;
 
    //==========================================================================
    //                 Is Equiped
