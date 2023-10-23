@@ -1,17 +1,18 @@
 [
 	{
 		"Name": "Stick",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "F",
 		"Description":
 		{
 			"Label": "Wooden Stick",
 			"Tooltip": "A stick you can find anywhere around",
 			"Icon": "None"
 		},
+		"Rarity": "F",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -22,17 +23,18 @@
 	},
 	{
 		"Name": "Wood",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Wood plank",
 			"Tooltip": "A building material used all around the realm.",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -43,17 +45,18 @@
 	},
 	{
 		"Name": "AnimalHide",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Animal hide",
 			"Tooltip": "Belonged to Animal",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -64,17 +67,18 @@
 	},
 	{
 		"Name": "Leather",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Leather",
 			"Tooltip": "A durable and flexible material",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -85,17 +89,18 @@
 	},
 	{
 		"Name": "Bone",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Bone",
 			"Tooltip": "Nearly everyone has a few of them inside, right?",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 50,
 		"Weight": 1000,
@@ -106,17 +111,18 @@
 	},
 	{
 		"Name": "RawIron",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Raw Iron",
 			"Tooltip": "Just need to collect more...",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -127,17 +133,18 @@
 	},
 	{
 		"Name": "IronIngot",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "D",
 		"Description":
 		{
 			"Label": "Iron Ingot",
 			"Tooltip": "Kind of heavy.",
 			"Icon": "None"
 		},
+		"Rarity": "D",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -148,17 +155,18 @@
 	},
 	{
 		"Name": "SteelIngot",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Steel Ingot",
 			"Tooltip": "Heavy...",
 			"Icon": "None"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -169,17 +177,18 @@
 	},
 	{
 		"Name": "RawCopper",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Raw copper",
 			"Tooltip": "Why is it green?",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -190,17 +199,18 @@
 	},
 	{
 		"Name": "CopperIngot",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "D",
 		"Description":
 		{
 			"Label": "Copper Ingot",
 			"Tooltip": "Orange good!",
 			"Icon": "None"
 		},
+		"Rarity": "D",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -211,17 +221,18 @@
 	},
 	{
 		"Name": "RawSilver",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Raw Silver",
 			"Tooltip": "Unprocessed silver pelets",
 			"Icon": "None"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -232,17 +243,18 @@
 	},
 	{
 		"Name": "SilverIngot",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "B",
 		"Description":
 		{
 			"Label": "Silver Ingot",
 			"Tooltip": "Shiny!",
 			"Icon": "None"
 		},
+		"Rarity": "B",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -253,17 +265,18 @@
 	},
 	{
 		"Name": "RawGold",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "B",
 		"Description":
 		{
 			"Label": "Raw gold",
 			"Tooltip": "My precious...",
 			"Icon": "None"
 		},
+		"Rarity": "B",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,
@@ -274,17 +287,18 @@
 	},
 	{
 		"Name": "GoldIngot",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "A",
 		"Description":
 		{
 			"Label": "GoldIngot",
 			"Tooltip": "WE ARE RICH!",
 			"Icon": "None"
 		},
+		"Rarity": "A",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 1000,
@@ -295,17 +309,18 @@
 	},
 	{
 		"Name": "ManaStone_Small",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Small Mana Stone",
 			"Tooltip": "...mana...",
 			"Icon": "None"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 100,
@@ -316,17 +331,18 @@
 	},
 	{
 		"Name": "ManaStone_Medium",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "B",
 		"Description":
 		{
 			"Label": "Mana Stone",
 			"Tooltip": "Mana...",
 			"Icon": "None"
 		},
+		"Rarity": "B",
 		"Count": 1,
 		"MaxCount": 20,
 		"Weight": 300,
@@ -337,17 +353,18 @@
 	},
 	{
 		"Name": "ManaStone_Big",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "A",
 		"Description":
 		{
 			"Label": "Big mana stone",
 			"Tooltip": "Mana!!!",
 			"Icon": "None"
 		},
+		"Rarity": "A",
 		"Count": 1,
 		"MaxCount": 10,
 		"Weight": 1000,
@@ -358,17 +375,18 @@
 	},
 	{
 		"Name": "Sand",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Sand",
 			"Tooltip": "It's itchy",
 			"Icon": "None"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 100,
@@ -379,17 +397,18 @@
 	},
 	{
 		"Name": "Glass",
+		"ID": "",
 		"Type": "FRItemData",
 		"CastType": [
 			"FRItemData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Glass",
 			"Tooltip": "It's transperant",
 			"Icon": "None"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 100,
 		"Weight": 1000,

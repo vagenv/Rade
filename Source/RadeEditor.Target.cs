@@ -12,12 +12,14 @@ public class RadeEditorTarget : TargetRules
       bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V4;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-	  
+
       ExtraModuleNames.Add ("RUtilLib");
+      ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("RInputLib");
       ExtraModuleNames.Add ("RDamageLib");
       ExtraModuleNames.Add ("RExperienceLib");
       ExtraModuleNames.Add ("RTargetLib");
+      ExtraModuleNames.Add ("RInteractLib");
       ExtraModuleNames.Add ("RUILib");
       ExtraModuleNames.Add ("RSaveLib");
       ExtraModuleNames.Add ("ROptionsLib");
@@ -26,7 +28,6 @@ public class RadeEditorTarget : TargetRules
       ExtraModuleNames.Add ("RStatusLib");
       ExtraModuleNames.Add ("RAbilityLib");
       ExtraModuleNames.Add ("REquipmentLib");
-      ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("Rade");
    }
 }

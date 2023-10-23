@@ -13,12 +13,12 @@ class FDeferredCleanupSlateBrush;
 class SBackgroundWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SBackgroundWidget) {}
+   SLATE_BEGIN_ARGS(SBackgroundWidget) {}
 
-	SLATE_END_ARGS()
+   SLATE_END_ARGS()
 
-	void Construct(const FArguments& InArgs, const FBackgroundSettings& Settings);
+   void Construct(const FArguments& InArgs, const FBackgroundSettings& Settings);
 
 private:
-	TSharedPtr<FDeferredCleanupSlateBrush> ImageBrush;
+   TSharedPtr<FDeferredCleanupSlateBrush> ImageBrush;
 };

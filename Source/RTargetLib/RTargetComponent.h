@@ -16,9 +16,15 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
+protected:
+
+   void RegisterTarget ();
+   void UnregisterTarget ();
+
    //==========================================================================
    //         Can this target be selected
    //==========================================================================
+public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetEvent OnIsTargetable;

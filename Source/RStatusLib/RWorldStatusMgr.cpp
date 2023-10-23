@@ -54,13 +54,13 @@ URWorldStatusMgr::URWorldStatusMgr ()
    //                 Extra Stat
    //==========================================================================
 
-   FRichCurve* LevelUpExtraStatGainCurveData = LevelUpExtraStatGainCurve.GetRichCurve ();
-   LevelUpExtraStatGainCurveData->AddKey (  0, 3.0);
-   LevelUpExtraStatGainCurveData->AddKey ( 10, 2.8);
-   LevelUpExtraStatGainCurveData->AddKey ( 20, 2.5);
-   LevelUpExtraStatGainCurveData->AddKey ( 50, 2.0);
-   LevelUpExtraStatGainCurveData->AddKey (100, 1.5);
-   LevelUpExtraStatGainCurveData->AddKey (200, 1.0);
+   FRichCurve* LevelUpExtraGainCurveData = LevelUpExtraGainCurve.GetRichCurve ();
+   LevelUpExtraGainCurveData->AddKey (  0, 3.0);
+   LevelUpExtraGainCurveData->AddKey ( 10, 2.8);
+   LevelUpExtraGainCurveData->AddKey ( 20, 2.5);
+   LevelUpExtraGainCurveData->AddKey ( 50, 2.0);
+   LevelUpExtraGainCurveData->AddKey (100, 1.5);
+   LevelUpExtraGainCurveData->AddKey (200, 1.0);
 
    //==========================================================================
    //                 Status Value Curves
@@ -157,14 +157,25 @@ void URWorldStatusMgr::InitializeComponent ()
 
    // --- Parse Table and create Map for fast search
    if (StatusEffectTable) {
+
       MapStatusEffect.Empty ();
+      FString TablePath = URUtil::GetTablePath (StatusEffectTable);
       FString ContextString;
       TArray<FName> RowNames = StatusEffectTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
          FRActiveStatusEffectInfo* ItRow = StatusEffectTable->FindRow<FRActiveStatusEffectInfo> (ItRowName, ContextString);
-         if (ItRow && ItRow->EffectClass) {
-            MapStatusEffect.Add (ItRow->EffectClass, *ItRow);
+
+         if (!ItRow) {
+            R_LOG_PRINTF ("Invalid FRActiveStatusEffectInfo in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
          }
+
+         if (ItRow->EffectClass.IsNull ()) {
+            R_LOG_PRINTF ("Invalid Effect Class in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         MapStatusEffect.Add (ItRow->EffectClass.ToString (), *ItRow);
       }
    }
 }
@@ -177,11 +188,14 @@ void URWorldStatusMgr::BeginPlay ()
 FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEffect* StatusEffect) const
 {
    FRActiveStatusEffectInfo Result;
-   if (ensure (IsValid (StatusEffect))) {
-      if (MapStatusEffect.Contains (StatusEffect->GetClass ())) {
-         Result = MapStatusEffect[StatusEffect->GetClass ()];
+   if (ensure (StatusEffect)) {
+      FString StatusClassPath = StatusEffect->GetClass ()->GetPathName ();
+      if (MapStatusEffect.Contains (StatusClassPath)) {
+         Result = MapStatusEffect[StatusClassPath];
       } else {
-         R_LOG_PRINTF ("Error. [%s] Effect not found in [StatusEffectTable]", *StatusEffect->GetPathName ());
+         R_LOG_PRINTF ("Error. [%s] Effect not found in [%s]",
+                       *StatusClassPath,
+                       *URUtil::GetTablePath (StatusEffectTable));
       }
    }
 
@@ -192,46 +206,45 @@ FRActiveStatusEffectInfo URWorldStatusMgr::GetEffectInfo (const URActiveStatusEf
 //                Status Effect
 //=============================================================================
 
-
 void URWorldStatusMgr::ReportStatusEffectStart (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectStop (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectStop.IsBound ()) OnStatusEffectStop.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectRefresh (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
+   if (!ensure (Effect)) return;
    if (R_IS_VALID_WORLD && OnStatusEffectRefresh.IsBound ()) OnStatusEffectRefresh.Broadcast (Effect);
 }
 
 void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 {
-   if (!ensure (IsValid (Effect))) return;
-   if (R_IS_VALID_WORLD && OnStatusEffectStart.IsBound ()) OnStatusEffectStart.Broadcast (Effect);
+   if (!ensure (Effect)) return;
+   if (R_IS_VALID_WORLD && OnStatusEffectEnd.IsBound ()) OnStatusEffectEnd.Broadcast (Effect);
 }
 
 //=============================================================================
 //                Level Function
 //=============================================================================
 
-float URWorldStatusMgr::GetLevelUpExtraStatGain (int CurrentLevel) const
+float URWorldStatusMgr::GetLevelUpExtraGain (int CurrentLevel) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpExtraStatGainCurve, CurrentLevel);
+   return URUtil::GetRuntimeFloatCurveValue (LevelUpExtraGainCurve, CurrentLevel);
 }
 
 FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
 {
    FRCoreStats DeltaStat;
-   DeltaStat.STR = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel);
-   DeltaStat.AGI = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel);
-   DeltaStat.INT = URUtilLibrary::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel);
+   DeltaStat.STR = URUtil::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel);
+   DeltaStat.AGI = URUtil::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel);
+   DeltaStat.INT = URUtil::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel);
    return DeltaStat;
 }
 
@@ -243,50 +256,50 @@ FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
 
 float URWorldStatusMgr::GetStrToHealthMax    (float STR) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthMaxCurve, STR);
+   return URUtil::GetRuntimeFloatCurveValue (StrToHealthMaxCurve, STR);
 }
 
 float URWorldStatusMgr::GetStrToHealthRegen  (float STR) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (StrToHealthRegenCurve, STR);
+   return URUtil::GetRuntimeFloatCurveValue (StrToHealthRegenCurve, STR);
 }
 
 // --- AGI
 
 float URWorldStatusMgr::GetAgiToStaminaMax   (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaMaxCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToStaminaMaxCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToStaminaRegen (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToStaminaRegenCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToStaminaRegenCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToEvasion      (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToEvasionCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToEvasionCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToCritical     (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToCriticalCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToCriticalCurve, AGI);
 }
 
 float URWorldStatusMgr::GetAgiToAttackSpeed  (float AGI) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (AgiToAttackSpeedCurve, AGI);
+   return URUtil::GetRuntimeFloatCurveValue (AgiToAttackSpeedCurve, AGI);
 }
 
 // --- INT
 
 float URWorldStatusMgr::GetIntToManaMax      (float INT) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaMaxCurve, INT);
+   return URUtil::GetRuntimeFloatCurveValue (IntToManaMaxCurve, INT);
 }
 
 float URWorldStatusMgr::GetIntToManaRegen    (float INT) const
 {
-   return URUtilLibrary::GetRuntimeFloatCurveValue (IntToManaRegenCurve, INT);
+   return URUtil::GetRuntimeFloatCurveValue (IntToManaRegenCurve, INT);
 }
 

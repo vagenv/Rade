@@ -28,7 +28,11 @@ protected:
 
    // Experience
    UPROPERTY()
-      URExperienceMgrComponent* ExperienceMgr = nullptr;
+      TWeakObjectPtr<URExperienceMgrComponent> WorldExperienceMgr = nullptr;
+
+private:
+   UFUNCTION()
+      void ConnectToExperienceMgr ();
 
    //==========================================================================
    //                 Level Up
@@ -41,10 +45,7 @@ protected:
    //                 Recalc status
    //==========================================================================
 protected:
-   virtual void RecalcStatus       () override;
-   virtual void RecalcStatusValues () override;
-   virtual void RecalcCoreStats    ();
-   virtual void RecalcSubStats     ();
+   virtual void RecalcStatus () override;
 
    //==========================================================================
    //                 Extra stat Points
@@ -52,18 +53,18 @@ protected:
 protected:
    // To be assigned to core stats
    UPROPERTY(ReplicatedUsing = "OnRep_Stats", Replicated)
-      float CoreStats_Extra = 0;
+      float LevelUpExtraStat = 0;
 public:
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      float GetCoreStats_Extra () const;
+      float GetLevelUpExtraStat () const;
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool AddExtraStat (FRCoreStats ExtraStat);
+      bool AssignLevelUpExtraStat (FRCoreStats StatValues);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Status")
-      void AddExtraStat_Server                (FRCoreStats ExtraStat);
-      void AddExtraStat_Server_Implementation (FRCoreStats ExtraStat);
+      void AssignLevelUpExtraStat_Server                (FRCoreStats StatValues);
+      void AssignLevelUpExtraStat_Server_Implementation (FRCoreStats StatValues);
 
    //==========================================================================
    //                 Core and Sub Stats
@@ -123,15 +124,19 @@ public:
       FRPlayerStatusMgrEvent OnStatsUpdated;
 
    //==========================================================================
-   //                 Save/Load
+   //                 Save / Load
    //==========================================================================
 public:
    // Status Saved / Loaded between sessions.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Save")
       bool bSaveLoad = false;
+
+   // Should be called during BeginPlay
+   UFUNCTION()
+      void ConnectToSaveMgr ();
 
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
-   virtual void OnLoad (FMemoryReader &LoadData) override;
+   virtual void OnLoad (FMemoryReader  &LoadData) override;
 };
 

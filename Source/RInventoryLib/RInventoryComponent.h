@@ -8,8 +8,8 @@
 #include "RInventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
-
-class ARItemPickup;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInventoryItemListEvent,
+                                             const TArray<FRItemData>&, ItemDataList);
 
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -57,6 +57,10 @@ protected:
 
    virtual void CalcWeight ();
 
+   // Used to calculate what changed in inventory
+   UPROPERTY()
+      TArray<FRItemData> LastItems;
+
 public:
 
    // Item to be added upon game start
@@ -67,9 +71,19 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
       FRInventoryEvent OnInventoryUpdated;
 
+   // Delegate what Items have been added / removed
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInventoryItemListEvent OnItemsChanged;
+
 protected:
    UFUNCTION()
-      void ReportInventoryUpdate () const;
+      void ReportInventoryUpdate ();
+
+   UFUNCTION()
+      void ReportInventoryUpdateDelayed ();
+
+   UPROPERTY()
+      bool ReportInventoryUpdateDelayedTriggered = false;
 
    //==========================================================================
    //                 Check if contains
@@ -79,35 +93,39 @@ public:
    //     Convenience functions
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual bool HasItem_Arch (const FRItemDataHandle &CheckItem) const;
+      virtual bool HasItem_ID (const FString &ItemID, int32 Count) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual bool HasItem_Data (FRItemData CheckItem) const;
+      virtual bool HasItem_Data (const FRItemData &ItemData) const;
+
+      UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      virtual bool HasItem_Handle (const FRItemDataHandle &ItemHandle) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual bool HasItems (const TArray<FRItemDataHandle> &CheckItems) const;
+      virtual bool HasItems_Handles (const TArray<FRItemDataHandle> &ItemHandles) const;
 
    //==========================================================================
    //                 Get item count
    //==========================================================================
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual int GetCountItem (const FRItemData &CheckItem) const;
+      virtual int GetItemCount_ID (const FString &ItemID) const;
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
-      virtual int GetCountItem_Name (const FString &CheckItemname) const;
+      virtual int GetItemCount_Data (const FRItemData &ItemData) const;
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      virtual int GetItemCount_Handle (const FRItemDataHandle &ItemHandle) const;
 
    //==========================================================================
    //                 Add to Inventory
    //==========================================================================
 
-   // Add Default item
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool AddItem_Arch (const FRItemDataHandle &Item);
+      virtual bool AddItem_Data (FRItemData ItemData);
 
-   // Add Item struct
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool AddItem (FRItemData ItemData);
+      virtual bool AddItem_Handle (const FRItemDataHandle &ItemHandle);
 
    //==========================================================================
    //                 Remove from Inventory
@@ -117,13 +135,13 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool RemoveItem_Index (int32 ItemIdx, int32 Count = 1);
 
-   // Remove item arch
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool RemoveItem_Arch  (const FRItemDataHandle &ItemHandle);
-
    // Remove item data
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool RemoveItem_Data  (FRItemData ItemData);
+      virtual bool RemoveItem_Data (FRItemData ItemData);
+
+      // Remove item arch
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool RemoveItem_Handle (const FRItemDataHandle &ItemHandle);
 
    //==========================================================================
    //                 Transfer between Inventories
@@ -131,7 +149,7 @@ public:
 
    // Transfer everything
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool TransferAll  (URInventoryComponent *DstInventory);
+      virtual bool TransferAll (URInventoryComponent *DstInventory);
 
    // Transfer a single item
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
@@ -145,34 +163,63 @@ public:
 
    // Breaks item into components
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool BreakItem (int32 ItemIdx, UDataTable* BreakItemTable);
+      virtual bool BreakItem_Index (int32 ItemIdx,
+                                    const UDataTable* BreakItemTable);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool BreakItem_Data (const FRItemData &ItemData,
+                                   const UDataTable* BreakItemTable);
 
    //==========================================================================
    //                 Craft Item
    //==========================================================================
 
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      virtual bool CanCraftItem (const FDataTableRowHandle& CraftItem);
+
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       virtual bool CraftItem (const FDataTableRowHandle &CraftItem);
 
    //==========================================================================
-   //                 Item use / drop events
+   //                 Use Item
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool UseItem           (int32 ItemIdx);
+      virtual bool UseItem_Index (int32 ItemIdx);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0);
+      virtual bool UseItem_Data (const FRItemData &ItemData);
+
+   //==========================================================================
+   //                 Drop Item
+   //==========================================================================
+
+   // Pickup class will be created and items added to it's inventory
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
+      TSoftClassPtr<AActor> PickupClass;
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool DropItem_Index (int32 ItemIdx, int32 Count = 0);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      virtual bool DropItem_Data(const FRItemData &ItemData);
+
+   //==========================================================================
+   //                 Spawn Pickup
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
+      void SpawnPickup (const FRItemData &ItemData);
 
    //==========================================================================
    //                 Server versions of functions
    //==========================================================================
-
+public:
    // --- Add Item
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void AddItem_Server (
+      void AddItem_Data_Server (
          URInventoryComponent *DstInventory, FRItemData ItemData) const;
-      void AddItem_Server_Implementation (
+      void AddItem_Data_Server_Implementation (
          URInventoryComponent *DstInventory, FRItemData ItemData) const;
 
    // --- Remove Item
@@ -183,9 +230,9 @@ public:
          URInventoryComponent *SrcInventory, int32 ItemIdx, int32 Count = 1) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void RemoveItem_Arch_Server (
+      void RemoveItem_Handle_Server (
          URInventoryComponent *SrcInventory, const FRItemDataHandle &ItemHandle) const;
-      void RemoveItem_Arch_Server_Implementation (
+      void RemoveItem_Handle_Server_Implementation (
          URInventoryComponent *SrcInventory, const FRItemDataHandle &ItemHandle) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
@@ -211,50 +258,44 @@ public:
          int32 SrcItemIdx, int32 SrcItemCount) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void UseItem_Server (
+      void UseItem_Index_Server (
          URInventoryComponent *SrcInventory, int32 ItemIdx) const;
-      void UseItem_Server_Implementation (
+      void UseItem_Index_Server_Implementation (
          URInventoryComponent *SrcInventory, int32 ItemIdx) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void DropItem_Server (
+      void DropItem_Index_Server (
          URInventoryComponent *SrcInventory, int32 ItemIdx, int32 Count = 0) const;
-      void DropItem_Server_Implementation (
+      void DropItem_Index_Server_Implementation (
          URInventoryComponent *SrcInventory, int32 ItemIdx, int32 Count = 0) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
-      void BreakItem_Server (
-         URInventoryComponent *SrcInventory, int32 ItemIdx, UDataTable* BreakItemTable) const;
-      void BreakItem_Server_Implementation (
-         URInventoryComponent *SrcInventory, int32 ItemIdx, UDataTable* BreakItemTable) const;
+      void BreakItem_Index_Server (
+         URInventoryComponent *SrcInventory, int32 ItemIdx, const UDataTable* BreakItemTable) const;
+      void BreakItem_Index_Server_Implementation (
+         URInventoryComponent *SrcInventory, int32 ItemIdx, const UDataTable* BreakItemTable) const;
 
    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Rade|Inventory")
       void CraftItem_Server (
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
       void CraftItem_Server_Implementation (
          URInventoryComponent *SrcInventory, const FDataTableRowHandle &CraftItem) const;
-      
 
-   //==========================================================================
-   //                 Events
-   //==========================================================================
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Used (int32 ItemIdx);
-
-   UFUNCTION(BlueprintImplementableEvent, Category = "Rade|Item")
-      void BP_Droped (int32 ItemIdx, ARItemPickup *Pickup);
 
    //==========================================================================
    //                 Save / Load
    //==========================================================================
-
 public:
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
+   // Status Saved / Loaded between sessions.
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Save")
       bool bSaveLoad = false;
+
+   // Should be called during BeginPlay
+   UFUNCTION()
+      void ConnectToSaveMgr ();
 
 protected:
    virtual void OnSave (FBufferArchive &SaveData) override;
-   virtual void OnLoad (FMemoryReader &LoadData) override;
+   virtual void OnLoad (FMemoryReader  &LoadData) override;
 };
 

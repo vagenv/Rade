@@ -7,6 +7,9 @@
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
+#include "RUtilLib/RWorldAssetMgr.h"
+
 #include "RDamageLib/RDamageTypes.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 #include "RExperienceLib/RExperienceMgrComponent.h"
@@ -63,15 +66,14 @@ void URStatusMgrComponent::BeginPlay ()
       MovementComponent = Character->GetCharacterMovement ();
    }
 
-   // For reporting applied status effect
-   WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
-
    if (R_IS_NET_ADMIN) {
       bDead = false;
 
       // Bind To AActor::OnTakeAnyDamage
       GetOwner ()->OnTakeAnyDamage.AddDynamic (this, &URStatusMgrComponent::AnyDamage);
    }
+
+   FindWorldMgrs ();
 }
 
 void URStatusMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -85,6 +87,27 @@ void URStatusMgrComponent::TickComponent (float DeltaTime, enum ELevelTick TickT
    StatusRegen (DeltaTime);
 }
 
+void URStatusMgrComponent::FindWorldMgrs ()
+{
+   if (!WorldStatusMgr.IsValid ()) {
+      WorldStatusMgr = URWorldStatusMgr::GetInstance (this);
+   }
+
+   if (!WorldDamageMgr.IsValid ()) {
+      WorldDamageMgr = URWorldDamageMgr::GetInstance (this);
+   }
+
+   if (!WorldStatusMgr.IsValid () || !WorldDamageMgr.IsValid ()) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle,
+                    this, &URStatusMgrComponent::FindWorldMgrs,
+                    1, false);
+      return;
+   }
+
+   if (R_IS_NET_ADMIN) RecalcStatus ();
+}
+
 //=============================================================================
 //                 Dead
 //=============================================================================
@@ -95,8 +118,6 @@ void URStatusMgrComponent::SetDead (bool Dead)
    if (Dead == bDead) return;
    bDead = Dead;
 
-   URWorldDamageMgr *DamageMgr = URWorldDamageMgr::GetInstance (this);
-
    // Broadcast only after value has been changed;
    if (!Dead) {
       // --- Reset to original values
@@ -105,11 +126,10 @@ void URStatusMgrComponent::SetDead (bool Dead)
       Stamina = Start_Stamina;
 
       ReportRevive ();
-      if (DamageMgr) DamageMgr->ReportRevive (GetOwner ());
+      if (WorldDamageMgr.IsValid ()) WorldDamageMgr->ReportRevive (GetOwner ());
    }
 
    if (Dead) {
-
       // Stop active effects
       TArray<URActiveStatusEffect*> StillActiveEffects;
       GetOwner ()->GetComponents (StillActiveEffects);
@@ -159,41 +179,45 @@ void URStatusMgrComponent::ReportRevive ()
 void URStatusMgrComponent::RecalcStatus ()
 {
    R_RETURN_IF_NOT_ADMIN;
-   RecalcStatusValues ();
+   if (!WorldStatusMgr.IsValid ()) return;
 
+   // --- Status
+   Health.Max    = Start_Health.Max;
+   Health.Regen  = Start_Health.Regen;
+   Mana.Max      = Start_Mana.Max;
+   Mana.Regen    = Start_Mana.Regen;
+   Stamina.Max   = Start_Stamina.Max;
+   Stamina.Regen = Start_Stamina.Regen;
+
+   // Flat
+   for (const FRPassiveStatusEffect &ItEffect : GetPassiveEffects_Flat ()) {
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Flat;
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Flat;
+   }
+
+   // Percentage
+   for (const FRPassiveStatusEffect &ItEffect : GetPassiveEffects_Flat ()) {
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Percent) / 100.);
+      if (ItEffect.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Percent) / 100.);
+   }
+
+   // Clamp current values;
+   Health.Current  = FMath::Clamp (Health.Current,  0, Health.Max);
+   Mana.Current    = FMath::Clamp (Mana.Current,    0, Mana.Max);
+   Stamina.Current = FMath::Clamp (Stamina.Current, 0, Stamina.Max);
+
+   // Force update values to all clients
    SetHealth  (Health);
    SetStamina (Stamina);
    SetMana    (Mana);
-}
-
-void URStatusMgrComponent::RecalcStatusValues ()
-{
-   R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (WorldStatusMgr))) return;
-
-   // --- Status
-   Health  = Start_Health;
-   Mana    = Start_Mana;
-   Stamina = Start_Stamina;
-
-   // Flat
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      += ItEffect.Value.Flat;
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    += ItEffect.Value.Flat;
-   }
-   // Percentage
-   for (const FRPassiveStatusEffectWithTag &ItEffect : GetPassiveEffectsWithTag ()) {
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthMax)    Health.Max    *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::HealthRegen)  Health.Regen  *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaMax)   Stamina.Max   *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::StaminaRegen) Stamina.Regen *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaMax)      Mana.Max      *= ((100. + ItEffect.Value.Percent) / 100.);
-      if (ItEffect.Value.EffectTarget == ERStatusEffectTarget::ManaRegen)    Mana.Regen    *= ((100. + ItEffect.Value.Percent) / 100.);
-   }
 }
 
 //=============================================================================
@@ -206,7 +230,7 @@ void URStatusMgrComponent::StatusRegen (float DeltaTime)
    Health.Tick (DeltaTime);
    Mana.Tick (DeltaTime);
 
-   if (MovementComponent && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
+   if (MovementComponent.IsValid () && MovementComponent->IsMovingOnGround ()) Stamina.Tick (DeltaTime);
 }
 
 FRStatusValue URStatusMgrComponent::GetHealth () const
@@ -278,33 +302,44 @@ bool URStatusMgrComponent::RollEvasion () const
 //                 Passive Effect
 //==========================================================================
 
-TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects () const
+TArray<FRPassiveStatusEffect> URStatusMgrComponent::GetPassiveEffects_Flat () const
 {
    return URPassiveStatusEffectUtilLibrary::MergeEffects (PassiveEffects);
 }
 
-TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffectsWithTag () const
+TArray<FRPassiveStatusEffectWithTag> URStatusMgrComponent::GetPassiveEffects () const
 {
    return PassiveEffects;
 }
 
-bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &AddValues)
+bool URStatusMgrComponent::HasPassiveEffectWithTag (const FString& Tag) const
+{
+   for (const auto& ItEffect : GetPassiveEffects ()) {
+      if (ItEffect.Tag == Tag) return true;
+   }
+   return false;
+}
+
+bool URStatusMgrComponent::SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect> &Effects)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Tag.IsEmpty ())) return false;
+
    // Clean
    RmPassiveEffects (Tag);
 
-   // Add again
-   for (const FRPassiveStatusEffect& ItAddValue : AddValues) {
-      FRPassiveStatusEffectWithTag newRes;
-      newRes.Tag   = Tag;
-      newRes.Value = ItAddValue;
-      PassiveEffects.Add (newRes);
+   // Nothing new to add
+   if (Effects.IsEmpty ()) {
+      return false;
    }
 
-   RecalcStatus ();
-   ReporPassiveEffectsUpdated ();
+   // -- Add new
+   FRPassiveStatusEffectWithTag NewEffect;
+   NewEffect.Tag     = Tag;
+   NewEffect.Effects = Effects;
+   PassiveEffects.Add (NewEffect);
+
+   DelayedPassiveUpdate ();
    return true;
 }
 
@@ -312,66 +347,83 @@ bool URStatusMgrComponent::RmPassiveEffects (const FString &Tag)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (!Tag.IsEmpty ())) return false;
-   TArray<int32> ToRemove;
+   if (!HasPassiveEffectWithTag (Tag)) return false;
+
+   // --- Can remove only single item because of tag collision
    for (int32 iEffect = 0; iEffect < PassiveEffects.Num (); iEffect++) {
       const FRPassiveStatusEffectWithTag& ItEffect = PassiveEffects[iEffect];
-      if (ItEffect.Tag == Tag) ToRemove.Add (iEffect);
-   }
-   // Nothing to remove
-   if (!ToRemove.Num ()) return false;
-
-   // Remove in reverse order;
-   for (int32 iToRemove = ToRemove.Num () - 1; iToRemove >= 0; iToRemove--) {
-      PassiveEffects.RemoveAt (ToRemove[iToRemove]);
+      if (ItEffect.Tag == Tag)  {
+         PassiveEffects.RemoveAt (iEffect);
+         DelayedPassiveUpdate ();
+         return true;
+      }
    }
 
-   RecalcStatus ();
-   ReporPassiveEffectsUpdated ();
-   return true;
+   // This should not happen
+   ensure (false);
+
+   return false;
 }
 
 void URStatusMgrComponent::OnRep_PassiveEffects ()
 {
-   ReporPassiveEffectsUpdated ();
+   ReportPassiveEffectsUpdated ();
 }
 
-void URStatusMgrComponent::ReporPassiveEffectsUpdated ()
+void URStatusMgrComponent::ReportPassiveEffectsUpdated ()
 {
    if (R_IS_VALID_WORLD && OnPassiveEffectsUpdated.IsBound ()) OnPassiveEffectsUpdated.Broadcast ();
+}
+
+void URStatusMgrComponent::DelayedPassiveUpdate ()
+{
+   // Already started
+   if (DelayedPassiveUpdateTriggered) return;
+   if (UWorld* World = URUtil::GetWorld (this)) {
+      DelayedPassiveUpdateTriggered = true;
+      World->GetTimerManager ().SetTimerForNextTick ([this](){
+         // Recalculate the accumulated changes over the last tick
+         RecalcStatus ();
+
+         // Report Update
+         ReportPassiveEffectsUpdated ();
+
+         // Reset
+         DelayedPassiveUpdateTriggered = false;
+      });
+   }
 }
 
 //==========================================================================
 //                 Active Effect
 //==========================================================================
 
-
 bool URStatusMgrComponent::ApplyActiveStatusEffect (
    AActor* Causer_,
    AActor* Target_,
-   const TSubclassOf<URActiveStatusEffect> Effect_)
+   const TSoftClassPtr<URActiveStatusEffect> Effect_)
 {
    // --- Check Values
-   if (!ensure (IsValid (Causer_))) return false;
-   if (!ensure (IsValid (Target_))) return false;
-   if (!ensure (IsValid (Effect_))) return false;
+   if (!ensure (Causer_)) return false;
+   if (!ensure (Target_)) return false;
+   if (!ensure (!Effect_.IsNull ())) return false;
 
-   UWorld* World = Target_->GetWorld ();
-   if (!World)                            return false;
+   UWorld* World = URUtil::GetWorld (Target_);
+   if (!World) return false;
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Target_);
-   if (!ensure (StatusMgr))               return false;
+   if (!ensure (StatusMgr)) return false;
 
    return StatusMgr->AddActiveStatusEffect (Causer_, Effect_);
 }
 
-
 bool URStatusMgrComponent::AddActiveStatusEffect (
    AActor* Causer_,
-   const TSubclassOf<URActiveStatusEffect> Effect_)
+   const TSoftClassPtr<URActiveStatusEffect> Effect_)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   if (!ensure (IsValid (Causer_))) return false;
-   if (!ensure (IsValid (Effect_))) return false;
-   if (IsDead ())                   return false;
+   if (!ensure (Causer_)) return false;
+   if (!ensure (!Effect_.IsNull ())) return false;
+   if (IsDead ())                    return false;
 
    TArray<URActiveStatusEffect*> CurrentEffects;
    GetOwner()->GetComponents (CurrentEffects);
@@ -384,10 +436,14 @@ bool URStatusMgrComponent::AddActiveStatusEffect (
       }
    }
 
-   URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), Effect_);
-   if (Effect) Effect->Causer = Causer_;
+   URWorldAssetMgr::LoadAsync (Effect_.GetUniqueID (), this, [this, Causer_] (UObject* LoadedContent) {
+      if (UClass* EffectClass = Cast<UClass> (LoadedContent)) {
+         URActiveStatusEffect* Effect = URUtil::AddComponent<URActiveStatusEffect> (GetOwner (), EffectClass);
+         if (Effect) Effect->Causer = Causer_;
+      }
+   });
 
-   return Effect != nullptr;
+   return true;
 }
 
 void URStatusMgrComponent::ReportActiveEffectsUpdated ()
@@ -414,7 +470,8 @@ FRDamageResistance URStatusMgrComponent::GetResistanceFor (TSubclassOf<UDamageTy
    FRDamageResistance Result;
    if (!ensure (DamageType)) return Result;
    for (const FRDamageResistanceWithTag& ItResistance : Resistance) {
-      if (DamageType == ItResistance.Value.DamageType) {
+      if (!ItResistance.Value.DamageType) continue;
+      if (DamageType->GetPathName () == ItResistance.Value.DamageType.ToString ()) {
          Result.Flat    += ItResistance.Value.Flat;
          Result.Percent += ItResistance.Value.Percent;
       }
@@ -481,9 +538,9 @@ void URStatusMgrComponent::AnyDamage (AActor*            Target,
                                       AActor*            Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Target))) return;
-   if (!ensure (Type_))            return;
-   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Target)) return;
+   if (!ensure (Type_))  return;
+   if (!ensure (Causer)) return;
 
    if (!IsDead ()) {
       const URDamageType* Type = Cast<URDamageType>(Type_);
@@ -503,7 +560,7 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
                                                          const URDamageType* Type,
                                                          AActor*             Causer)
 {
-   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Causer)) return;
 
    if (Type) {
       FRDamageResistance DamageResistance = GetResistanceFor (Type->GetClass ());
@@ -515,12 +572,11 @@ void URStatusMgrComponent::ReportRDamage_Implementation (float               Amo
 
    UseHealth (Amount);
 
-   URWorldDamageMgr* DamageMgr = URWorldDamageMgr::GetInstance (this);
-   if (DamageMgr) DamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
+   if (WorldDamageMgr.IsValid ()) WorldDamageMgr->ReportDamage (GetOwner (), Amount, Type, Causer);
 
    if (!Health.Current) {
       if (R_IS_NET_ADMIN) SetDead (true);
-      if (DamageMgr) DamageMgr->ReportDeath (GetOwner (), Causer, Type);
+      if (WorldDamageMgr.IsValid ()) WorldDamageMgr->ReportDeath (GetOwner (), Causer, Type);
    }
 
    if (R_IS_VALID_WORLD && OnAnyRDamage.IsBound ()) OnAnyRDamage.Broadcast (Amount, Type, Causer);
@@ -533,4 +589,3 @@ void URStatusMgrComponent::ReportREvade_Implementation (float               Amou
    if (!ensure (Causer)) return;
    if (R_IS_VALID_WORLD && OnEvadeRDamage.IsBound ()) OnEvadeRDamage.Broadcast (Amount, Type, Causer);
 }
-

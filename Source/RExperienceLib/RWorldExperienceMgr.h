@@ -9,18 +9,18 @@
 class URDamageType;
 class ACharacter;
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct REXPERIENCELIB_API FREnemyExp : public FTableRowBase
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<ACharacter> TargetClass;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftClassPtr<ACharacter> TargetClass;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float PerDamage = 1;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float PerDeath = 500;
 };
 
@@ -35,17 +35,21 @@ public:
    virtual void InitializeComponent () override;
    virtual void BeginPlay () override;
 
+private:
+   UFUNCTION()
+      void ConnetToWorldDamageMgr ();
+
    //==========================================================================
    //          Experience table
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<UClass *, FREnemyExp> MapEnemyExp;
+      TMap<FString, FREnemyExp> MapEnemyExp;
 public:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Experience",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RExperienceLib.REnemyExp"))
-      UDataTable* EnemyExpTable = nullptr;
+      TObjectPtr<const UDataTable> EnemyExpTable = nullptr;
 
 public:
    // Provides experience required for level

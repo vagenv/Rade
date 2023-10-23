@@ -26,44 +26,121 @@ public:
 
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment")
-      UREquipmentSlotComponent* GetEquipmentSlot (const TSubclassOf<UREquipmentSlotComponent> Type) const;
+      UREquipmentSlotComponent* GetEquipmentSlot (const TSoftClassPtr<UREquipmentSlotComponent> Type) const;
 
    //==========================================================================
    //                 Use / Drop override. Check if Item equiped.
    //==========================================================================
-   virtual bool          UseItem  (int32 ItemIdx) override;
-   virtual ARItemPickup* DropItem (int32 ItemIdx, int32 Count = 0) override;
+   virtual bool UseItem_Index    (int32 ItemIdx) override;
+   virtual bool RemoveItem_Index (int32 ItemIdx, int32 Count = 1) override;
+   virtual bool DropItem_Index   (int32 ItemIdx, int32 Count = 0) override;
+   virtual bool BreakItem_Index  (int32 ItemIdx, const UDataTable* BreakItemTable) override;
 
    //==========================================================================
-   //                 Equip/unequip
+   //                 Is Equiped
    //==========================================================================
 public:
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
-      virtual bool EquipItem (const FREquipmentData &EquipmentData);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      virtual bool IsEquiped_Index (int32 ItemIdx);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      virtual bool IsEquiped_Item (const FRItemData &ItemData);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      virtual bool IsEquiped_Equipment (const FREquipmentData &ItemData);
+
+   //==========================================================================
+   //                 Equip
+   //==========================================================================
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
-      virtual bool Equip (UREquipmentSlotComponent *EquipmentSlot, const FREquipmentData &EquipmentData);
+      virtual bool Equip_Index (int32 ItemIdx);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
-      virtual bool UnEquip (UREquipmentSlotComponent *EquipmentSlot);
+      virtual bool Equip_Item (const FRItemData &ItemData);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool Equip_Equipment (const FREquipmentData &EquipmentData);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool Equip_Slot (UREquipmentSlotComponent *EquipmentSlot,
+                               const FREquipmentData &EquipmentData);
+
+   //==========================================================================
+   //                 Unquiped
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool UnEquip_Index (int32 ItemIdx);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool UnEquip_Item (const FRItemData &ItemData);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool UnEquip_Equipment (const FREquipmentData &ItemData);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual bool UnEquip_Slot (UREquipmentSlotComponent *EquipmentSlot);
 
    //==========================================================================
    //                 Server versions of the functions
    //==========================================================================
 
+   // --- Equip
    UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
-      virtual void EquipItem_Server                (const FREquipmentData &EquipmentData);
-      virtual void EquipItem_Server_Implementation (const FREquipmentData &EquipmentData);
+      virtual void Equip_Index_Server (
+         UREquipmentMgrComponent *DstEquipment, int32 ItemIdx);
+      virtual void Equip_Index_Server_Implementation (
+         UREquipmentMgrComponent *DstEquipment, int32 ItemIdx);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
-      virtual void Equip_Server                (UREquipmentSlotComponent *EquipmentSlot,
-                                                const FREquipmentData    &EquipmentData);
-      virtual void Equip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot,
-                                                const FREquipmentData    &EquipmentData);
+      virtual void Equip_Item_Server (
+         UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData);
+      virtual void Equip_Item_Server_Implementation (
+         UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData);
 
    UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
-      virtual void UnEquip_Server                (UREquipmentSlotComponent *EquipmentSlot);
-      virtual void UnEquip_Server_Implementation (UREquipmentSlotComponent *EquipmentSlot);
+      virtual void Equip_Equipment_Server (
+         UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData);
+      virtual void Equip_Equipment_Server_Implementation (
+         UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData);
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void Equip_Slot_Server (
+         UREquipmentMgrComponent  *DstEquipment,
+         UREquipmentSlotComponent *EquipmentSlot,
+         const FREquipmentData    &EquipmentData);
+      virtual void Equip_Slot_Server_Implementation (
+         UREquipmentMgrComponent  *DstEquipment,
+         UREquipmentSlotComponent *EquipmentSlot,
+         const FREquipmentData    &EquipmentData);
+
+   // --- Unequip
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void UnEquip_Index_Server (
+         UREquipmentMgrComponent *DstEquipment, int32 ItemIdx);
+      virtual void UnEquip_Index_Server_Implementation (
+         UREquipmentMgrComponent *DstEquipment, int32 ItemIdx);
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void UnEquip_Item_Server (
+         UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData);
+      virtual void UnEquip_Item_Server_Implementation (
+         UREquipmentMgrComponent *DstEquipment, const FRItemData &ItemData);
+
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void UnEquip_Equipment_Server (
+         UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData);
+      virtual void UnEquip_Equipment_Server_Implementation (
+         UREquipmentMgrComponent *DstEquipment, const FREquipmentData &EquipmentData);
+   UFUNCTION(Server, Reliable, BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Equipment")
+      virtual void UnEquip_Slot_Server (
+         UREquipmentMgrComponent  *DstEquipment,
+         UREquipmentSlotComponent *EquipmentSlot);
+      virtual void UnEquip_Slot_Server_Implementation (
+         UREquipmentMgrComponent  *DstEquipment,
+         UREquipmentSlotComponent *EquipmentSlot);
 
    //==========================================================================
    //                 Weight calculation
@@ -75,7 +152,7 @@ protected:
    UFUNCTION()
       void OnStatsUpdated ();
 private:
-   // To evade endless when:
+   // To evade endless loop when:
    // OnStatusUpdated -> CalcWeight -> SetEffect -> OnStatusUpdated
    int32 LastWeightMax = 0;
 

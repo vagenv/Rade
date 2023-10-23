@@ -2,8 +2,11 @@
 
 #include "RExperienceMgrComponent.h"
 #include "RWorldExperienceMgr.h"
-#include "RUtilLib/RCheck.h"
+
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -28,17 +31,8 @@ void URExperienceMgrComponent::OnRep_Exp ()
 void URExperienceMgrComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   GlobalMgr = URWorldExperienceMgr::GetInstance (this);
 
-   if (R_IS_NET_ADMIN) {
-
-      // Save/Load Status
-      if (bSaveLoad) {
-         // Careful with collision of 'UniqueSaveId'
-         FString UniqueSaveId = GetOwner ()->GetName () + "_ExperienceMgr";
-         Init_Save (this, UniqueSaveId);
-      }
-   }
+   ConnectToSaveMgr ();
 }
 
 void URExperienceMgrComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
@@ -77,9 +71,10 @@ int64 URExperienceMgrComponent::GetExperiencePoints () const
 
 void URExperienceMgrComponent::CheckLevel ()
 {
-   if (!IsValid (GlobalMgr)) return;
+   if (!WorldExpMgr.IsValid ()) WorldExpMgr = URWorldExperienceMgr::GetInstance (this);
+   if (!WorldExpMgr.IsValid ()) return;
 
-   int NewLevel = GlobalMgr->ExperienceToLevel (GetExperiencePoints ());
+   int NewLevel = WorldExpMgr->ExperienceToLevel (GetExperiencePoints ());
    // R_LOG_PRINTF ("Leveled change [%d => %d]", CurrentLevel, NewLevel);
    int dtLevel = NewLevel - GetCurrentLevel ();
    if (dtLevel <= 0) return;
@@ -107,6 +102,20 @@ void URExperienceMgrComponent::LeveledUp ()
    // R_LOG_PRINTF ("Leveled up!!! [%d => %d]", CurrentLevel, CurrentLevel + 1);
    CurrentLevel++;
    ReportLevelUp ();
+}
+
+
+void URExperienceMgrComponent::ConnectToSaveMgr ()
+{
+   if (!bSaveLoad || !R_IS_NET_ADMIN) return;
+
+   // Careful with collision of 'UniqueSaveId'
+   FString UniqueSaveId = GetOwner ()->GetName () + "_ExperienceMgr";
+
+   if (!InitSaveInterface (this, UniqueSaveId)) {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle, this, &URExperienceMgrComponent::ConnectToSaveMgr, 1, false);
+   }
 }
 
 void URExperienceMgrComponent::OnSave (FBufferArchive &SaveData)

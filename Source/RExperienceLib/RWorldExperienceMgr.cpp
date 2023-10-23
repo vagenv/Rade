@@ -5,6 +5,7 @@
 #include "RUtilLib/RLog.h"
 #include "RUtilLib/RUtil.h"
 #include "RUtilLib/RCheck.h"
+#include "RUtilLib/RTimer.h"
 #include "RDamageLib/RWorldDamageMgr.h"
 
 //=============================================================================
@@ -127,14 +128,25 @@ void URWorldExperienceMgr::InitializeComponent ()
 
    // --- Parse Table and create Map for fast search
    if (EnemyExpTable) {
+
       MapEnemyExp.Empty ();
+      FString TablePath = URUtil::GetTablePath (EnemyExpTable);
       FString ContextString;
       TArray<FName> RowNames = EnemyExpTable->GetRowNames ();
       for (const FName& ItRowName : RowNames) {
          FREnemyExp* ItRow = EnemyExpTable->FindRow<FREnemyExp> (ItRowName, ContextString);
-         if (ItRow && ItRow->TargetClass) {
-            MapEnemyExp.Add (ItRow->TargetClass, *ItRow);
+
+         if (!ItRow) {
+            R_LOG_PRINTF ("Invalid FREnemyExp in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
          }
+
+         if (ItRow->TargetClass.IsNull ()) {
+            R_LOG_PRINTF ("Invalid Target Class in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         MapEnemyExp.Add (ItRow->TargetClass.ToString (), *ItRow);
       }
    }
 }
@@ -142,12 +154,21 @@ void URWorldExperienceMgr::InitializeComponent ()
 void URWorldExperienceMgr::BeginPlay ()
 {
    Super::BeginPlay ();
+   ConnetToWorldDamageMgr ();
+}
 
+void URWorldExperienceMgr::ConnetToWorldDamageMgr ()
+{
    if (R_IS_NET_ADMIN) {
       // --- Subscribe to Damage and Death Events
       if (URWorldDamageMgr *WorldDamageMgr = URWorldDamageMgr::GetInstance (this)) {
          WorldDamageMgr->OnAnyRDamage.AddDynamic (this, &URWorldExperienceMgr::OnDamage);
          WorldDamageMgr->OnDeath.AddDynamic (this, &URWorldExperienceMgr::OnDeath);
+      } else {
+         FTimerHandle RetryHandle;
+         RTIMER_START (RetryHandle,
+                       this, &URWorldExperienceMgr::ConnetToWorldDamageMgr,
+                       1, false);
       }
    }
 }
@@ -158,16 +179,16 @@ void URWorldExperienceMgr::OnDamage (AActor*             Victim,
                                      AActor*             Causer)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Victim))) return;
-   if (!ensure (Type))             return;
-   if (!ensure (IsValid (Causer))) return;
+   if (!ensure (Victim)) return;
+   if (!ensure (Type))   return;
+   if (!ensure (Causer)) return;
 
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
-   if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
-
-   ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDamage * Amount);
+   FString VictimClassPath = Victim->GetClass ()->GetPathName ();
+   if (!MapEnemyExp.Contains (VictimClassPath)) return;
+   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassPath].PerDamage * Amount);
 }
 
 void URWorldExperienceMgr::OnDeath (AActor* Victim,
@@ -175,15 +196,15 @@ void URWorldExperienceMgr::OnDeath (AActor* Victim,
                                     const URDamageType* Type)
 {
    R_RETURN_IF_NOT_ADMIN;
-   if (!ensure (IsValid (Victim))) return;
-   if (!ensure (IsValid (Causer))) return;
-   if (!ensure (Type))             return;
+   if (!ensure (Victim)) return;
+   if (!ensure (Causer)) return;
+   if (!ensure (Type))   return;
 
    URExperienceMgrComponent *ExpMgr = URUtil::GetComponent<URExperienceMgrComponent> (Causer);
    if (!ExpMgr) return;
 
-   if (!MapEnemyExp.Contains (Victim->GetClass ())) return;
-
-   ExpMgr->AddExperiencePoints (MapEnemyExp[Victim->GetClass ()].PerDeath);
+   FString VictimClassPath = Victim->GetClass ()->GetPathName ();
+   if (!MapEnemyExp.Contains (VictimClassPath)) return;
+   ExpMgr->AddExperiencePoints (MapEnemyExp[VictimClassPath].PerDeath);
 }
 

@@ -1,14 +1,14 @@
 [
 	{
 		"Name": "Sword",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C",
 		"StaticMesh": "None",
 		"SkeletalMesh": "/Game/Rade/Meshes/Weapons/Sword/Sword_Mesh.Sword_Mesh",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [
 			{
-				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Pierce.RDamageType_Pierce_C'",
+				"DamageType": "/Game/Rade/Blueprints/Damage/RDamageType_Pierce.RDamageType_Pierce_C",
 				"Flat": 10,
 				"Percent": 1
 			}
@@ -38,19 +38,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Sword",
 			"Tooltip": "I poke!",
-			"Icon": "/Game/Rade/Sprites/Icons/browser.browser"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/browser.browser"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 3500,
@@ -61,7 +62,7 @@
 	},
 	{
 		"Name": "Pistol",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_R_BP.EquipmentSlot_Hand_R_BP_C",
 		"StaticMesh": "None",
 		"SkeletalMesh": "/Game/Rade/Meshes/Weapons/HandGun/HandGun_Mesh.HandGun_Mesh",
 		"CurrentDurability": 100,
@@ -76,22 +77,23 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Pistol",
 			"Tooltip": "I shoot!",
-			"Icon": "/Game/Rade/Sprites/Icons/bug.bug"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/bug.bug"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 900,
+		"Weight": 300,
 		"Price": 30,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -99,7 +101,7 @@
 	},
 	{
 		"Name": "WoodenShield",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_L_BP.EquipmentSlot_Hand_L_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Hand_L_BP.EquipmentSlot_Hand_L_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -108,28 +110,29 @@
 		"PassiveEffects": [],
 		"RequiredStats":
 		{
-			"STR": 0,
+			"STR": 10,
 			"AGI": 0,
 			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "D",
 		"Description":
 		{
 			"Label": "Wooden Shield",
 			"Tooltip": "Better than nothing",
-			"Icon": "/Game/Rade/Sprites/Icons/circle.circle"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/circle.circle"
 		},
+		"Rarity": "D",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 3000,
+		"Weight": 1500,
 		"Price": 10,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -137,7 +140,7 @@
 	},
 	{
 		"Name": "ShoesOfSpeed",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Legs_BP.EquipmentSlot_Legs_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Legs_BP.EquipmentSlot_Legs_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Pipe.Shape_Pipe",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -152,19 +155,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Shoes Of Speed",
 			"Tooltip": "Gotta go fast",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 500,
@@ -175,7 +179,7 @@
 	},
 	{
 		"Name": "ClothArmor",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Torso_BP.EquipmentSlot_Torso_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Torso_BP.EquipmentSlot_Torso_BP_C",
 		"StaticMesh": "None",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -190,19 +194,20 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Cloth Armor",
 			"Tooltip": "Better than naked",
-			"Icon": "/Game/Rade/Sprites/Icons/ball-football.ball-football"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/ball-football.ball-football"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
 		"Weight": 2000,
@@ -213,7 +218,7 @@
 	},
 	{
 		"Name": "HatOfStrength",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Architecture/MaterialSphere.MaterialSphere",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -234,22 +239,23 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Strength",
 			"Tooltip": "ME STRONG!!!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -257,15 +263,15 @@
 	},
 	{
 		"Name": "HatOfAgility",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cone.Shape_Cone",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [
 			{
-				"DamageType": "None",
-				"Flat": 0,
+				"DamageType": "/Game/Rade/Blueprints/Damage/RDamageType_Fall.RDamageType_Fall_C",
+				"Flat": 10,
 				"Percent": 0
 			}
 		],
@@ -279,27 +285,28 @@
 		"RequiredStats":
 		{
 			"STR": 0,
-			"AGI": 0,
+			"AGI": 5,
 			"INT": 0
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Agility",
 			"Tooltip": "ME FAST!!!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -307,7 +314,7 @@
 	},
 	{
 		"Name": "HatOfIntelligence",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Pipe.Shape_Pipe",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -328,22 +335,23 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Intelligence",
 			"Tooltip": "ME SMART!!!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -351,19 +359,19 @@
 	},
 	{
 		"Name": "HatOfBadBoi",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Pipe_90.Shape_Pipe_90",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
 		"MaxDurability": 100,
 		"Resistence": [
 			{
-				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Fire.RDamageType_Fire_C'",
+				"DamageType": "/Game/Rade/Blueprints/Damage/RDamageType_Fire.RDamageType_Fire_C",
 				"Flat": 0,
 				"Percent": -20
 			},
 			{
-				"DamageType": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Damage/RDamageType_Light.RDamageType_Light_C'",
+				"DamageType": "/Game/Rade/Blueprints/Damage/RDamageType_Light.RDamageType_Light_C",
 				"Flat": 0,
 				"Percent": -20
 			}
@@ -392,28 +400,29 @@
 		],
 		"RequiredStats":
 		{
-			"STR": 0,
-			"AGI": 0,
-			"INT": 0
+			"STR": 10,
+			"AGI": 10,
+			"INT": 10
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "B",
 		"Description":
 		{
 			"Label": "Hat of Bad Boi...  It has effects... good luck...",
 			"Tooltip": "A funny hat that has many questionable effects. Only use this if you really know what you're doing... It's your hat... Do whatever you want man.",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "B",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -421,7 +430,7 @@
 	},
 	{
 		"Name": "HatOfRegen",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_WideCapsule.Shape_WideCapsule",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -442,22 +451,23 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Regeneration",
 			"Tooltip": "ME HEAL FAST!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
 		"Pickup": "None",
@@ -465,7 +475,7 @@
 	},
 	{
 		"Name": "HatOfEvasion",
-		"EquipmentSlot": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C'",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
 		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Torus.Shape_Torus",
 		"SkeletalMesh": "None",
 		"CurrentDurability": 100,
@@ -486,24 +496,101 @@
 		},
 		"Action": "None",
 		"DestroyOnAction": false,
+		"ID": "",
 		"Type": "FREquipmentData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FREquipmentData"
 		],
-		"Rarity": "C",
 		"Description":
 		{
 			"Label": "Hat Of Evasion",
 			"Tooltip": "ME SHADOW!",
-			"Icon": "/Game/Rade/Sprites/Icons/arrow-big-right.arrow-big-right"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/arrow-big-right.arrow-big-right"
 		},
+		"Rarity": "C",
 		"Count": 1,
 		"MaxCount": 1,
-		"Weight": 500,
+		"Weight": 200,
 		"Price": 5,
 		"PickupMesh": "None",
+		"Pickup": "None",
+		"JsonData": ""
+	},
+	{
+		"Name": "HatOfBigBoi",
+		"EquipmentSlot": "/Game/Rade/Blueprints/Equipment/Slots/EquipmentSlot_Head_BP.EquipmentSlot_Head_BP_C",
+		"StaticMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cone.Shape_Cone",
+		"SkeletalMesh": "None",
+		"CurrentDurability": 100,
+		"MaxDurability": 100,
+		"Resistence": [
+			{
+				"DamageType": "/Game/Rade/Blueprints/Damage/RDamageType_Blunt.RDamageType_Blunt_C",
+				"Flat": 20,
+				"Percent": 10
+			}
+		],
+		"PassiveEffects": [
+			{
+				"EffectTarget": "STR",
+				"Flat": 100,
+				"Percent": 0
+			},
+			{
+				"EffectTarget": "HealthMax",
+				"Flat": 1000,
+				"Percent": 0
+			},
+			{
+				"EffectTarget": "HealthRegen",
+				"Flat": 10,
+				"Percent": 0
+			},
+			{
+				"EffectTarget": "MoveSpeed",
+				"Flat": 0,
+				"Percent": -50
+			},
+			{
+				"EffectTarget": "Evasion",
+				"Flat": 0,
+				"Percent": -50
+			},
+			{
+				"EffectTarget": "AttackSpeed",
+				"Flat": 0,
+				"Percent": -50
+			}
+		],
+		"RequiredStats":
+		{
+			"STR": 40,
+			"AGI": 0,
+			"INT": 0
+		},
+		"Action": "None",
+		"DestroyOnAction": false,
+		"ID": "",
+		"Type": "FREquipmentData",
+		"CastType": [
+			"FRItemData",
+			"FRActionItemData",
+			"FREquipmentData"
+		],
+		"Description":
+		{
+			"Label": "Hat of a BIG boi",
+			"Tooltip": "ME BIG!!! ME STRONG!!!",
+			"Icon": "/Game/Rade/Sprites/TablerIcons/biohazard.biohazard"
+		},
+		"Rarity": "S",
+		"Count": 1,
+		"MaxCount": 1,
+		"Weight": 200,
+		"Price": 5,
+		"PickupMesh": "/Game/Rade/Meshes/BasicMeshes/Shapes/Shape_Cone.Shape_Cone",
 		"Pickup": "None",
 		"JsonData": ""
 	}

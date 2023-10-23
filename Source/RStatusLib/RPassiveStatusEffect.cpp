@@ -7,22 +7,25 @@
 //=============================================================================
 
 TArray<FRPassiveStatusEffect> URPassiveStatusEffectUtilLibrary::MergeEffects (
-   const TArray<FRPassiveStatusEffectWithTag>& Effects)
+   const TArray<FRPassiveStatusEffectWithTag>& TagEffects)
 {
-   TArray<FRPassiveStatusEffect> Result;
-   for (const FRPassiveStatusEffectWithTag& ItEffects : Effects) {
-      bool found = false;
-      // Combine
-      for (FRPassiveStatusEffect& ItRes : Result) {
-         if (ItRes.EffectTarget == ItEffects.Value.EffectTarget) {
-            found = true;
-            ItRes.Flat    += ItEffects.Value.Flat;
-            ItRes.Percent += ItEffects.Value.Percent;
-            break;
+   // --- Merge list by target
+   TMap<ERStatusEffectTarget, FRPassiveStatusEffect> EffectMap;
+   for (const FRPassiveStatusEffectWithTag& ItTagEffects : TagEffects) {
+      for (const FRPassiveStatusEffect& ItEffect : ItTagEffects.Effects) {
+         if (EffectMap.Contains (ItEffect.EffectTarget)) {
+            EffectMap[ItEffect.EffectTarget].Flat    += ItEffect.Flat;
+            EffectMap[ItEffect.EffectTarget].Percent += ItEffect.Percent;
+         } else {
+            EffectMap.Add (ItEffect.EffectTarget, ItEffect);
          }
       }
-      // Add new entry
-      if (!found) Result.Add (ItEffects.Value);
+   }
+
+   // Transform to Array
+   TArray<FRPassiveStatusEffect> Result;
+   for (const auto &ItEffect : EffectMap) {
+      Result.Add (ItEffect.Value);
    }
 
    return Result;

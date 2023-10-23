@@ -3,50 +3,50 @@
 #include "RSaveInterface.h"
 #include "RSaveGame.h"
 #include "RWorldSaveMgr.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RCheck.h"
 
-void IRSaveInterface::Init_Save (const UObject* WorldContextObject, const FString &SaveId)
+bool IRSaveInterface::InitSaveInterface (const UObject* WorldContextObject, const FString &SaveId_)
 {
-   if (!ensure (IsValid (WorldContextObject))) return;
-   if (!ensure (!SaveId.IsEmpty ()))           return;
+   if (!ensure (WorldContextObject))  return false;
+   if (!ensure (!SaveId_.IsEmpty ())) return false;
+   if (URUtil::GetWorld (WorldContextObject) == nullptr) return false;
 
-   const UWorld *World_ = WorldContextObject->GetWorld ();
-   if (!ensure (IsValid (World_))) return;
-   URWorldSaveMgr *SaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
-   if (!ensure (IsValid (SaveMgr_))) return;
+   URWorldSaveMgr *WorldSaveMgr_ = URWorldSaveMgr::GetInstance (WorldContextObject);
+   if (!WorldSaveMgr_) return false;
 
-   ObjectSaveId = SaveId;
-   World        = World_;
-   SaveMgr      = SaveMgr_;
+   SaveId = SaveId_;
+   WorldSaveMgr = WorldSaveMgr_;
 
-   SaveMgr->OnSave.AddDynamic (this, &IRSaveInterface::OnSave_Internal);
-   SaveMgr->OnLoad.AddDynamic (this, &IRSaveInterface::OnLoad_Internal);
+   WorldSaveMgr->OnSave.AddDynamic (this, &IRSaveInterface::OnSave_Internal);
+   WorldSaveMgr->OnLoad.AddDynamic (this, &IRSaveInterface::OnLoad_Internal);
 
    // Check if save is already loaded => Manually trigger event
-   if (IsValid (SaveMgr->SaveGameObject) && SaveMgr->SaveGameObject->IsAlreadyLoaded) {
-      OnLoad_Internal (SaveMgr->SaveGameObject);
+   if (WorldSaveMgr->SaveGameObject.IsValid () && WorldSaveMgr->SaveGameObject->IsAlreadyLoaded) {
+      OnLoad_Internal (WorldSaveMgr->SaveGameObject.Get ());
    }
+   return true;
 }
 
 void IRSaveInterface::OnSave_Internal (URSaveGame* SaveGame)
 {
-   if (!IsValid (SaveMgr))  return;
-   if (!IsValid (SaveGame)) return;
+   if (!ensure (SaveGame)) return;
+   if (!WorldSaveMgr.IsValid ()) return;
 
    FBufferArchive ToBinary;
    OnSave (ToBinary);
 
-   SaveGame->SetBuffer (ObjectSaveId, ToBinary);
+   SaveGame->SetBuffer (SaveId, ToBinary);
 }
 
 void IRSaveInterface::OnLoad_Internal (URSaveGame* SaveGame)
 {
-   if (!IsValid (SaveMgr))  return;
-   if (!IsValid (SaveGame)) return;
-
+   if (!ensure (SaveGame)) return;
+   if (!WorldSaveMgr.IsValid ()) return;
 
    TArray<uint8> Data;
-   if (!SaveGame->GetBuffer (ObjectSaveId, Data)) return;
+   if (!SaveGame->GetBuffer (SaveId, Data)) return;
 
    FMemoryReader FromBinary = FMemoryReader (Data, true);
    FromBinary.Seek(0);

@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRTargetableMgrEvent);
 
 class URTargetComponent;
-class URTargetingComponent;
+class URPlayerTargetMgr;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RTARGETLIB_API URWorldTargetMgr : public UActorComponent
@@ -19,57 +19,112 @@ public:
    URWorldTargetMgr ();
 
    //==========================================================================
-   //                  Params
+   //                  Target list
    //==========================================================================
-protected:
+private:
    // Container for current targets
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Target")
-      TArray<URTargetComponent*> TargetableList;
+   UPROPERTY()
+      TArray<TWeakObjectPtr<URTargetComponent> > TargetList;
+protected:
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
+      const TArray<URTargetComponent*> GetTargetList () const;
 public:
    // Called when target list has been modified
    UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetableMgrEvent OnListUpdated;
 
+   //==========================================================================
+   //          Functions called by target components
+   //==========================================================================
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
+      virtual void RegisterTarget (URTargetComponent* Target);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
+      virtual void UnregisterTarget  (URTargetComponent* Target);
+
+   //==========================================================================
+   //                  Minimum search requirnments
+   //==========================================================================
+
    // Distance at which target can be searched
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
-      float SearchDistance = 3000;
+      float SearchDistanceMax = 5000;
 
    // FOV angle to search targets
    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
-      float SearchAngle = 50;
+      float SearchAngleMax = 70;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
-      float InputHWeight = 1;
+   // Check if target can be targeted
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
+      bool IsValidTarget (
+         const URTargetComponent*          Target,
+         const FVector                    &SearchOrigin,
+         const FVector                    &SearchDirection,
+         const TArray<AActor*>            &ExcludeActors,
+         const TArray<URTargetComponent*> &ExcludeTargets) const;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Rade|Target")
-      float InputVWeight = 0.5f;
-
-   //==========================================================================
-   //          Functions called by targetable components
-   //==========================================================================
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
-      virtual void AddTarget (URTargetComponent* Target);
-
-   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
-      virtual void RmTarget  (URTargetComponent* Target);
 
    //==========================================================================
-   //          Functions called by targeting components
+   //          Target to point
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
-      virtual URTargetComponent* Find (URTargetingComponent*      Targeter,
-                                       TArray<AActor*>            FilterOutActors,
-                                       TArray<URTargetComponent*> FilterOutTargets);
+   // Angle in degrees to point
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
+      FRuntimeFloatCurve SearchAnglePoint;
 
+   // Distance to point
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
+      FRuntimeFloatCurve SearchDistancePoint;
+
+   // Calculate target point value
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Target")
+      float GetTargetPoint (
+         const URTargetComponent*          Target,
+         const FVector                    &SearchOrigin,
+         const FVector                    &SearchDirection,
+         const TArray<AActor*>            &ExcludeActors,
+         const TArray<URTargetComponent*> &ExcludeTargets) const;
+
+
+   //==========================================================================
+   //          Find Target
+   //==========================================================================
+
+   // Find by world location and forward direction
    UFUNCTION(BlueprintCallable, Category = "Rade|Target")
-      virtual URTargetComponent* FindNear (URTargetingComponent*      Targeter,
-                                           URTargetComponent*         CurrentTarget,
-                                           float                      InputOffsetX,
-                                           float                      InputOffsetY,
-                                           TArray<AActor*>            FilterOutActors,
-                                           TArray<URTargetComponent*> FilterOutTargets);
+      virtual URTargetComponent* Find_Direction (
+         const FVector                    &SearchOrigin,
+         const FVector                    &SearchDirection,
+         const TArray<AActor*>            &ExcludeActors,
+         const TArray<URTargetComponent*> &ExcludeTargets);
+
+   // Find using params from targeting component
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
+      virtual URTargetComponent* Find_Target (
+         const URPlayerTargetMgr*          Targeter,
+         const TArray<AActor*>            &ExcludeActors,
+         const TArray<URTargetComponent*> &ExcludeTargets);
+
+   //==========================================================================
+   //         Adjust target
+   //==========================================================================
+
+   // Dot value to point. [0-1]
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
+      FRuntimeFloatCurve SearchScreenDotPoint;
+
+   // Screen distance to point. Normized to screen size [0-1]
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Target")
+      FRuntimeFloatCurve SearchScreenDistancePoint;
+
+   // Find target in by input direction from center of screen
+   UFUNCTION(BlueprintCallable, Category = "Rade|Target")
+      virtual URTargetComponent* Find_Screen (
+         const URPlayerTargetMgr*          Targeter,
+         FVector2D                         InputVector,
+         const TArray<AActor*>            &ExcludeActors,
+         const TArray<URTargetComponent*> &ExcludeTargets);
 
    //==========================================================================
    //                  Get instance -> GameState component

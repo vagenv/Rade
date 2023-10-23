@@ -10,42 +10,42 @@ int32 URLoadingScreenLibrary::DisplayMovieIndex = -1;
 bool  URLoadingScreenLibrary::bShowLoadingScreen = true;
 
 void URLoadingScreenLibrary::SetDisplayBackgroundIndex (int32 BackgroundIndex) {
-	URLoadingScreenLibrary::DisplayBackgroundIndex = BackgroundIndex;
+   URLoadingScreenLibrary::DisplayBackgroundIndex = BackgroundIndex;
 }
 
 void URLoadingScreenLibrary::SetDisplayTipTextIndex (int32 TipTextIndex) {
-	URLoadingScreenLibrary::DisplayTipTextIndex = TipTextIndex;
+   URLoadingScreenLibrary::DisplayTipTextIndex = TipTextIndex;
 }
 
 void URLoadingScreenLibrary::SetDisplayMovieIndex (int32 MovieIndex) {
-	URLoadingScreenLibrary::DisplayMovieIndex = MovieIndex;
+   URLoadingScreenLibrary::DisplayMovieIndex = MovieIndex;
 }
 
 void URLoadingScreenLibrary::SetEnableLoadingScreen (bool bIsEnableLoadingScreen) {
-	bShowLoadingScreen = bIsEnableLoadingScreen;
+   bShowLoadingScreen = bIsEnableLoadingScreen;
 }
 
 void URLoadingScreenLibrary::StopLoadingScreen ()
 {
-	GetMoviePlayer ()->StopMovie ();
+   GetMoviePlayer ()->StopMovie ();
 }
 
 void URLoadingScreenLibrary::PreloadBackgroundImages ()
 {
-	if (FRLoadingScreenModule::IsAvailable ()) {
-		FRLoadingScreenModule &LoadingScreenModule = FRLoadingScreenModule::Get ();
-		LoadingScreenModule.LoadBackgroundImages ();
-		if (LoadingScreenModule.IsPreloadBackgroundImagesEnabled ()) {
-			LoadingScreenModule.LoadBackgroundImages ();
-		}
-	}
+   if (FRLoadingScreenModule::IsAvailable ()) {
+      FRLoadingScreenModule &LoadingScreenModule = FRLoadingScreenModule::Get ();
+      LoadingScreenModule.LoadBackgroundImages ();
+      if (LoadingScreenModule.IsPreloadBackgroundImagesEnabled ()) {
+         LoadingScreenModule.LoadBackgroundImages ();
+      }
+   }
 }
 
 void URLoadingScreenLibrary::RemovePreloadedBackgroundImages ()
 {
-	if (FRLoadingScreenModule::IsAvailable ()) {
-		FRLoadingScreenModule &LoadingScreenModule = FRLoadingScreenModule::Get ();
-		LoadingScreenModule.RemoveAllBackgroundImages ();
-	}
+   if (FRLoadingScreenModule::IsAvailable ()) {
+      FRLoadingScreenModule &LoadingScreenModule = FRLoadingScreenModule::Get ();
+      LoadingScreenModule.RemoveAllBackgroundImages ();
+   }
 }
 

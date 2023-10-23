@@ -2,23 +2,38 @@
 
 #include "RTargetComponent.h"
 #include "RWorldTargetMgr.h"
-#include "RUtilLib/RCheck.h"
+#include "RUtilLib/RUtil.h"
 #include "RUtilLib/RLog.h"
+#include "RUtilLib/RTimer.h"
 
 void URTargetComponent::BeginPlay ()
 {
    Super::BeginPlay ();
-   if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->AddTarget (this);
-   }
+   RegisterTarget ();
 }
 
 void URTargetComponent::EndPlay (const EEndPlayReason::Type EndPlayReason)
 {
-   if (URWorldTargetMgr *Mgr = URWorldTargetMgr::GetInstance (this)) {
-      Mgr->RmTarget (this);
-   }
+   UnregisterTarget ();
    Super::EndPlay (EndPlayReason);
+}
+
+void URTargetComponent::RegisterTarget ()
+{
+   if (URWorldTargetMgr *WorldTargetMgr = URWorldTargetMgr::GetInstance (this)) {
+      WorldTargetMgr->RegisterTarget (this);
+   } else {
+      FTimerHandle RetryHandle;
+      RTIMER_START (RetryHandle,
+                    this, &URTargetComponent::RegisterTarget,
+                    1, false);
+   }
+}
+void URTargetComponent::UnregisterTarget ()
+{
+   if (URWorldTargetMgr *WorldTargetMgr = URWorldTargetMgr::GetInstance (this)) {
+      WorldTargetMgr->UnregisterTarget (this);
+   }
 }
 
 //=============================================================================
@@ -37,7 +52,7 @@ bool URTargetComponent::GetIsTargetable () const
 }
 
 //=============================================================================
-//         Is this target be selected
+//         Is this target selected by someone
 //=============================================================================
 
 void URTargetComponent::SetIsTargeted (bool CanTarget)

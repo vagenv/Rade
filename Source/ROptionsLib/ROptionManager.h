@@ -8,25 +8,25 @@
 //                   Screen Resolution
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct ROPTIONSLIB_API FRScreenResolution
 {
    GENERATED_BODY()
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Width = 0;
+      int32 Width = 0;
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Height = 0;
+      int32 Height = 0;
 
-   bool operator == (const FRScreenResolution &res) const noexcept;
+   bool operator == (const FRScreenResolution &ScreenResolution) const noexcept;
 };
 
 // ============================================================================
 //                   Video Quality
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct ROPTIONSLIB_API FRVideoQualitySetting
 {
    GENERATED_BODY()
@@ -42,6 +42,10 @@ struct ROPTIONSLIB_API FRVideoQualitySetting
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly)
       bool DynamicResolution = false;
+
+   // 5 == Custom
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0, ClampMax = 5))
+      int32 QualityPreset = 0;
 
 
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0, ClampMax = 4))
@@ -74,7 +78,7 @@ struct ROPTIONSLIB_API FRVideoQualitySetting
    UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0, ClampMax = 4))
       int32 PostProcessQuality = 0;
 
-   bool operator == (const FRVideoQualitySetting &res) const noexcept;
+   bool operator == (const FRVideoQualitySetting &QualitySettings) const noexcept;
 };
 
 // ============================================================================
@@ -91,13 +95,13 @@ public:
       static FString FRScreenResolution_ToString (const FRScreenResolution &Resolution);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Settings", meta=(DisplayName="Equal (FRScreenResolution)", CompactNodeTitle="=="))
-	   static bool FRScreenResolution_EqualEqual (const FRScreenResolution& A, const FRScreenResolution& B);
+      static bool FRScreenResolution_EqualEqual (const FRScreenResolution& A, const FRScreenResolution& B);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Settings")
       static FRScreenResolution FRScreenResolution_FromString (const FString &Resolution);
 
    UFUNCTION(BlueprintPure, Category = "Rade|Settings", meta=(DisplayName="Equal (FRVideoQualitySetting)", CompactNodeTitle="=="))
-	   static bool FRVideoQualitySetting_EqualEqual (const FRVideoQualitySetting& A, const FRVideoQualitySetting& B);
+      static bool FRVideoQualitySetting_EqualEqual (const FRVideoQualitySetting& A, const FRVideoQualitySetting& B);
 };
 
 // ============================================================================
@@ -143,7 +147,7 @@ public:
 
    // Set Video Quality Settings
    UFUNCTION(BlueprintCallable, Category = "Rade|Settings")
-      static bool SetVideoQualitySettings (const FRVideoQualitySetting& QualitySettings);
+      static bool SetVideoQualitySettings (FRVideoQualitySetting QualitySettings);
 
    //==========================================================================
    //               Input Settings

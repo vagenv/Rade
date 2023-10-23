@@ -5,7 +5,7 @@
 #include "Engine.h"
 #include "RMacro.h"
 
-RUTILLIB_API DECLARE_LOG_CATEGORY_EXTERN (RadeLog, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN (RadeLog, Error, All);
 
 //=============================================================================
 //                        Custom Print Methods

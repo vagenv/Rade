@@ -38,12 +38,12 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<UClass *, FRActiveStatusEffectInfo> MapStatusEffect;
+      TMap<FString, FRActiveStatusEffectInfo> MapStatusEffect;
 protected:
    // List of Enemies and experience for attacking / killing them
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RStatusLib.RActiveStatusEffectInfo"))
-      UDataTable* StatusEffectTable = nullptr;
+      TObjectPtr<const UDataTable> StatusEffectTable = nullptr;
 public:
    // Gets Effect info and scaling
    UFUNCTION (BlueprintPure, Category = "Rade|Status")
@@ -71,18 +71,19 @@ protected:
       FRuntimeFloatCurve LevelUpIntGainCurve;
 
    //==========================================================================
-   //                Extra stat functions
+   //                User assignable stat functions
    //==========================================================================
 public:
    // Gets delta stats growth per level
    UFUNCTION (BlueprintPure, Category = "Rade|Status")
-      float GetLevelUpExtraStatGain (int CurrentLevel) const;
+      float GetLevelUpExtraGain (int CurrentLevel) const;
+
    //==========================================================================
-   //                Extram stat Curves
+   //                User assignable stat gain curve
    //==========================================================================
 protected:
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
-      FRuntimeFloatCurve LevelUpExtraStatGainCurve;
+      FRuntimeFloatCurve LevelUpExtraGainCurve;
 
    //==========================================================================
    //                Get stat effect functions

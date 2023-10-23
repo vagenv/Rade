@@ -2,7 +2,7 @@
 
 #include "REquipmentSlotComponent.h"
 #include "RUtilLib/RLog.h"
-#include "RUtilLib/RCheck.h"
+#include "RUtilLib/RUtil.h"
 #include "Net/UnrealNetwork.h"
 
 //=============================================================================
@@ -11,6 +11,7 @@
 
 UREquipmentSlotComponent::UREquipmentSlotComponent ()
 {
+   Description.Label = "Equipment Slot";
    SetIsReplicatedByDefault (true);
 }
 
@@ -19,6 +20,11 @@ void UREquipmentSlotComponent::GetLifetimeReplicatedProps (TArray<FLifetimePrope
    Super::GetLifetimeReplicatedProps (OutLifetimeProps);
    DOREPLIFETIME (UREquipmentSlotComponent, Busy);
    DOREPLIFETIME (UREquipmentSlotComponent, EquipmentData);
+}
+
+FRUIDescription UREquipmentSlotComponent::GetDescription_Implementation () const
+{
+   return Description;
 }
 
 void UREquipmentSlotComponent::OnRep_Slot ()

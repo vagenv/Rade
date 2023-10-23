@@ -11,12 +11,12 @@ struct FLoadingLayoutSettings;
 class SRLoadingLayout : public SRLayout
 {
 public:
-	SLATE_BEGIN_ARGS(SRLoadingLayout) {}
+   SLATE_BEGIN_ARGS(SRLoadingLayout) {}
 
-	SLATE_END_ARGS()
+   SLATE_END_ARGS()
 
-	void Construct (const FArguments &InArgs,
-						 const FALoadingScreenSettings &ScreenSettings,
-						 const FLoadingLayoutSettings  &LayoutSettings);
+   void Construct (const FArguments &InArgs,
+                   const FALoadingScreenSettings &ScreenSettings,
+                   const FLoadingLayoutSettings  &LayoutSettings);
 };
 

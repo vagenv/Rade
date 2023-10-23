@@ -50,14 +50,16 @@ FString FRSaveGameMeta::GetSaveDir ()
 
 bool FRSaveGameMeta::Create (FRSaveGameMeta& SaveMeta, UObject* WorldContextObject)
 {
-   if (!IsValid (WorldContextObject)) return false;
+   if (!ensure (IsValid (WorldContextObject))) return false;
+   UWorld *World = URUtil::GetWorld (WorldContextObject);
+   if (!World) return false;
 
    if (SaveMeta.SlotName.IsEmpty ())
       SaveMeta.SlotName = FDateTime::Now ().ToFormattedString (TEXT ("%y%m%d_%H%M"));
 
    SaveMeta.Date  = FDateTime::Now ().ToFormattedString (TEXT ("%Y-%m-%d %H:%M"));
-   SaveMeta.Map   = WorldContextObject->GetWorld ()->GetMapName ();
-   SaveMeta.Level = WorldContextObject->GetWorld ();
+   SaveMeta.Map   = World->GetMapName ();
+   SaveMeta.Level = World;
 
    return true;
 }

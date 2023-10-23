@@ -11,7 +11,7 @@ class FOnlineSessionSearch;
 //          Available session information
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSESSIONLIB_API FRAvaiableSessionsData
 {
    GENERATED_BODY()

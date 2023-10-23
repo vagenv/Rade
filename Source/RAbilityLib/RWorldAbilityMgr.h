@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Engine/DataTable.h"
 #include "RAbilityTypes.h"
 #include "RWorldAbilityMgr.generated.h"
 
@@ -34,17 +33,21 @@ public:
    //==========================================================================
 private:
    UPROPERTY ()
-      TMap<UClass *, FRAbilityInfo> MapAbility;
+      TMap<FString, FRAbilityInfo> MapAbility;
 protected:
    // List of abilties
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Ability",
             meta=(RequiredAssetDataTags = "RowStructure=/Script/RAbilityLib.RAbilityInfo"))
-      UDataTable* AbilityTable = nullptr;
+      TObjectPtr<const UDataTable> AbilityTable = nullptr;
 public:
 
    // Get ability info and scaling.
    UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
-      FRAbilityInfo GetAbilityInfo (const URAbility* Ability) const;
+      FRAbilityInfo GetAbilityInfo_Object (const URAbility* Ability) const;
+
+   // Get ability info and scaling.
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      FRAbilityInfo GetAbilityInfo_Class (const TSoftClassPtr<URAbility> AbilityClass) const;
 
    UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       TArray<FRAbilityInfo> GetAllAbilities () const;

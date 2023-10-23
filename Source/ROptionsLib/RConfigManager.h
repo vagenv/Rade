@@ -15,7 +15,7 @@ public:
       static bool ReloadConfig ();
 
    // Send FileName-> Recieve Full path in config folder
-   FORCEINLINE static FString GetConfigFullAddress (const FString & FileName);
+   FORCEINLINE static FString GetConfigFullAddress (const FString &FileName);
 
 
    //==========================================================================

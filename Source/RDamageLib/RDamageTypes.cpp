@@ -13,6 +13,12 @@
 
 URDamageType::URDamageType ()
 {
+   Description.Label = "Rade Damage Type";
+}
+
+FRUIDescription URDamageType::GetDescription_Implementation () const
+{
+   return Description;
 }
 
 float URDamageType::CalcDamage (float Damage, const FRDamageResistance &Resistance) const

@@ -12,7 +12,6 @@
 //=============================================================================
 
 class  AActor;
-class  ARItemPickup;
 class  URItemAction;
 class  URInventoryComponent;
 class  UStaticMesh;
@@ -23,15 +22,15 @@ struct FRItemData;
 //          Handle for ItemData defined in a table
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRItemDataHandle
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
+   UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(RowType="/Script/RInventoryLib.RItemData"))
       FDataTableRowHandle Arch;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Count = 1;
 
    // Converts Handle to ItemData;
@@ -42,15 +41,15 @@ struct RINVENTORYLIB_API FRItemDataHandle
 //          Item Recipe. Mapping Item <=> Array Of Items
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRCraftRecipe : public FTableRowBase
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(RowType="/Script/RInventoryLib.RItemData"))
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(RowType="/Script/RInventoryLib.RItemData"))
       FRItemDataHandle CreateItem;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRItemDataHandle> RequiredItems;
 };
 
@@ -84,61 +83,61 @@ enum class ERItemRarity : uint8
 // ============================================================================
 //          Minimal data for Item Descrption
 // ============================================================================
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
 
    FRItemData();
 
+   // Data table row Unique ID
+   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+      FString ID;
+
    // Must be defined in all subclasses for type checking and casting
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       FString Type;
 
+   // Into what types can the 'JsonData' be converted to
    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
       TArray<FString> CastType;
 
-   // --- Base data every item should have
-
-   // Rarity
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      ERItemRarity Rarity = ERItemRarity::None;
-
-   // Data table row Unique ID
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FString Name;
-
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   // UI Information
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRUIDescription Description;
 
+   // Rarity
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      ERItemRarity Rarity = ERItemRarity::None;
+
    // Number of item instances
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       int32 Count = 1;
 
    // Max number of item instances per item slot
    // Stackable: MaxCount > 1
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       int32 MaxCount = 100;
 
    // Item Weight of each instance. In gramms.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (ClampMin = 0))
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = 0))
       int32 Weight = 0;
 
    // Selling price
    // 0 -> Can't sell
-   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
       int32 Price = 0;
 
    // --- Pickup
-   //    If both are empty, item can not be dropped.
+   //    If both are empty, default inventory drop class will be used
 
-   // Pickup mesh
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   // Pickup mesh. Will search and update statis mesh component
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TSoftObjectPtr<UStaticMesh> PickupMesh;
 
-   // Custom pickup class. Will be used if set.
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<ARItemPickup> Pickup;
+   // Custom pickup actor class. Will be used if set.
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftClassPtr<AActor> Pickup;
 
    // --- Internal Runtime information
 
@@ -157,6 +156,8 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    // Sets the internal value
    void    SetJSON (const FString &data) { JsonData = data; };
 
+   bool    IsValid () const;
+
 protected:
 
    // This data will be serialized. Subclasses must write data into here
@@ -168,7 +169,7 @@ protected:
 //          Item with use action
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RINVENTORYLIB_API FRActionItemData : public FRItemData
 {
    GENERATED_BODY()
@@ -176,20 +177,20 @@ struct RINVENTORYLIB_API FRActionItemData : public FRItemData
    FRActionItemData ();
 
    // Use interface callback
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URItemAction> Action;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftClassPtr<URItemAction> Action;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       bool DestroyOnAction = false;
 
    virtual bool ReadJSON  () override;
    virtual bool WriteJSON () override;
 
-   static bool Cast (const FRItemData &src, FRActionItemData &dst);
+   static bool CanCast (const FRItemData &src);
+   static bool Cast    (const FRItemData &src, FRActionItemData &dst);
 
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory);
 };
-
 
 
 // ============================================================================
@@ -202,19 +203,62 @@ class RINVENTORYLIB_API URItemUtilLibrary : public UBlueprintFunctionLibrary
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
-      static void ItemHandle_To_Item (const FRItemDataHandle &src, FRItemData &ItemData,
-                                      ERActionResult &Outcome);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      static bool Item_IsValid (const FRItemData& ItemData);
+
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="Equal (FRItemData, FRItemData)", CompactNodeTitle="=="))
+      static bool Item_EqualEqual (const FRItemData& A,
+                                   const FRItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="NotEqual (FRItemData, FRItemData)", CompactNodeTitle="!="))
+      static bool Item_NotEqual (const FRItemData& A,
+                                 const FRItemData& B);
+
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="Equal (FRItemData, FRActionItemData)", CompactNodeTitle="=="))
+      static bool ActionItem_EqualEqual (const FRItemData& A,
+                                             const FRActionItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
+             meta=(DisplayName="NotEqual (FRItemData, FRActionItemData)", CompactNodeTitle="!="))
+      static bool ActionItem_NotEqual (const FRItemData& A,
+                                           const FRActionItemData& B);
+
+   /// --- Item casts
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
-      static void Item_To_ActionItem (const FRItemData &src, FRActionItemData &ItemData,
-                                      ERActionResult &Outcome);
+      static void ItemHandle_To_Item (const FRItemDataHandle &ItemHandle,
+                                      FRItemData             &ItemData,
+                                      ERActionResult         &Outcome);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Inventory")
+      static bool Item_Is_ActionItem (const FRItemData &ItemData);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory", Meta = (ExpandEnumAsExecs = "Outcome"))
+      static void Item_To_ActionItem (const FRItemData &ItemData,
+                                      FRActionItemData &ActionItem,
+                                      ERActionResult   &Outcome);
+
+
+   /// --- Recipe / break operations
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool Item_IsBreakable (const FRItemData &BreakItem, UDataTable* BreakItemTable);
+      static bool Item_GetRecipe (const UDataTable *RecipeTable,
+                                  const FRItemData &ItemData,
+                                  FRCraftRecipe    &Recipe);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
-      static bool Item_GetBreakList (const FRItemData &BreakItem, UDataTable* BreakItemTable,
+      static bool Item_IsBreakable (const FRItemData &BreakItem,
+                                    const UDataTable *BreakItemTable);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Inventory")
+      static bool Item_GetBreakList (const FRItemData         &BreakItem,
+                                     const UDataTable         *BreakItemTable,
                                      TArray<FRItemDataHandle> &ResultItems);
 };
 

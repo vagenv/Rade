@@ -19,15 +19,11 @@ URWorldSaveMgr* URWorldSaveMgr::GetInstance (const UObject* WorldContextObject)
 //                   Member calls
 //=============================================================================
 
-URWorldSaveMgr::URWorldSaveMgr ()
-{
-}
-
 void URWorldSaveMgr::ReportSave (URSaveGame* SaveGame)
 {
    if (!IsValid (SaveGame)) return;
    SaveGameObject = SaveGame;
-   if (R_IS_VALID_WORLD && OnSave.IsBound ()) OnSave.Broadcast (SaveGameObject);
+   if (R_IS_VALID_WORLD && OnSave.IsBound ()) OnSave.Broadcast (SaveGameObject.Get ());
 }
 
 void URWorldSaveMgr::ReportLoad (URSaveGame* SaveGame)
@@ -35,7 +31,7 @@ void URWorldSaveMgr::ReportLoad (URSaveGame* SaveGame)
    if (!IsValid (SaveGame)) return;
    SaveGameObject = SaveGame;
    SaveGameObject->IsAlreadyLoaded = false;
-   if (R_IS_VALID_WORLD && OnLoad.IsBound ()) OnLoad.Broadcast (SaveGameObject);
+   if (R_IS_VALID_WORLD && OnLoad.IsBound ()) OnLoad.Broadcast (SaveGameObject.Get ());
    SaveGameObject->IsAlreadyLoaded = true;
 }
 

@@ -8,7 +8,7 @@
 //                   Core Stat
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRCoreStats
 {
    GENERATED_BODY()
@@ -16,30 +16,31 @@ struct RSTATUSLIB_API FRCoreStats
    FRCoreStats ();
    FRCoreStats (float Value);
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float STR = 0;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float AGI = 0;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float INT = 0;
 
    // Are any values set
-   bool Empty () const;
+   bool IsEmpty () const noexcept;
 
    // All values are higher than
-   bool MoreThan (const FRCoreStats &stat) const;
+   bool MoreThan (const FRCoreStats &stat) const noexcept;
 
-   FRCoreStats  operator +  (const FRCoreStats &stat) const;
-   FRCoreStats  operator -  (const FRCoreStats &stat) const;
-   FRCoreStats& operator += (const FRCoreStats &stat);
+   bool         operator == (const FRCoreStats &CoreStat) const noexcept;
+   bool         operator != (const FRCoreStats &CoreStat) const noexcept;
+   FRCoreStats  operator +  (const FRCoreStats &CoreStat) const noexcept;
+   FRCoreStats  operator -  (const FRCoreStats &CoreStat) const noexcept;
+   FRCoreStats& operator += (const FRCoreStats &CoreStat)       noexcept;
 
-
-   friend FArchive& operator << (FArchive& Ar, FRCoreStats &Data) {
-      Ar << Data.STR;
-      Ar << Data.AGI;
-      Ar << Data.INT;
+   friend FArchive& operator << (FArchive& Ar, FRCoreStats &CoreStat) {
+      Ar << CoreStat.STR;
+      Ar << CoreStat.AGI;
+      Ar << CoreStat.INT;
       return Ar;
    }
 };
@@ -48,36 +49,41 @@ struct RSTATUSLIB_API FRCoreStats
 //                   Extra Stat
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRSubStats
 {
    GENERATED_BODY()
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float Evasion = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float Critical = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float MoveSpeed = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float AttackSpeed = 0;
 
-   UPROPERTY (EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY (EditAnywhere, BlueprintReadOnly)
       float AttackPower = 0;
 
-   FRSubStats  operator +  (const FRSubStats &stat) const;
-   FRSubStats  operator -  (const FRSubStats &stat) const;
-   FRSubStats& operator += (const FRSubStats &stat);
+   // Are any values set
+   bool IsEmpty () const noexcept;
 
-   friend FArchive& operator << (FArchive& Ar, FRSubStats &Value) {
-      Ar << Value.Evasion;
-      Ar << Value.Critical;
-      Ar << Value.MoveSpeed;
-      Ar << Value.AttackSpeed;
-      Ar << Value.AttackPower;
+   bool        operator == (const FRSubStats &SubStat) const noexcept;
+   bool        operator != (const FRSubStats &SubStat) const noexcept;
+   FRSubStats  operator +  (const FRSubStats &SubStat) const noexcept;
+   FRSubStats  operator -  (const FRSubStats &SubStat) const noexcept;
+   FRSubStats& operator += (const FRSubStats &SubStat)       noexcept;
+
+   friend FArchive& operator << (FArchive& Ar, FRSubStats &SubStat) {
+      Ar << SubStat.Evasion;
+      Ar << SubStat.Critical;
+      Ar << SubStat.MoveSpeed;
+      Ar << SubStat.AttackSpeed;
+      Ar << SubStat.AttackPower;
       return Ar;
    }
 };
@@ -86,19 +92,19 @@ struct RSTATUSLIB_API FRSubStats
 //                   Status Value (Health, Stamina, Mana)
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRStatusValue
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Current = 50;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Max = 100;
 
    // Per second
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Regen = 1;
 
    void Tick (float DeltaTime);
@@ -122,7 +128,37 @@ class RSTATUSLIB_API URStatusUtilLibrary : public UBlueprintFunctionLibrary
 public:
 
    UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="IsEmpty (FRCoreStats)", CompactNodeTitle="IsEmpty"))
+      static bool FRCoreStats_IsEmpty (const FRCoreStats &CoreStat);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="Equal (FRCoreStats)", CompactNodeTitle="=="))
+      static bool FRCoreStats_EqualEqual (const FRCoreStats& A,
+                                          const FRCoreStats& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="NotEqual (FRCoreStats)", CompactNodeTitle="!="))
+      static bool FRCoreStats_NotEqual (const FRCoreStats& A,
+                                        const FRCoreStats& B);
+
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="IsEmpty (FRSubStats)", CompactNodeTitle="IsEmpty"))
+      static bool FRSubStats_IsEmpty (const FRSubStats &SubStat);
+
+      UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="Equal (FRSubStats)", CompactNodeTitle="=="))
+      static bool FRSubStats_EqualEqual (const FRSubStats& A,
+                                         const FRSubStats& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
+             meta=(DisplayName="NotEqual (FRCoreStats)", CompactNodeTitle="!="))
+      static bool FRSubStats_NotEqual (const FRSubStats& A,
+                                       const FRSubStats& B);
+
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Status",
              meta=(DisplayName="ToString (FRStatusValue)", CompactNodeTitle="ToString"))
-      static FString FRStatusValue_ToString (const FRStatusValue &Value);
+      static FString FRStatusValue_ToString (const FRStatusValue &StatusValue);
 };
 

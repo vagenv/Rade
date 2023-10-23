@@ -9,15 +9,17 @@ public class RadeTarget : TargetRules
    public RadeTarget (TargetInfo Target) : base(Target)
    {
       Type = TargetType.Game;
-	   bUsesSteam = true;
+      bUsesSteam = true;
       DefaultBuildSettings = BuildSettingsVersion.V4;
       IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-	  
+
       ExtraModuleNames.Add ("RUtilLib");
+      ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("RInputLib");
       ExtraModuleNames.Add ("RDamageLib");
       ExtraModuleNames.Add ("RExperienceLib");
       ExtraModuleNames.Add ("RTargetLib");
+      ExtraModuleNames.Add ("RInteractLib");
       ExtraModuleNames.Add ("RUILib");
       ExtraModuleNames.Add ("RSaveLib");
       ExtraModuleNames.Add ("ROptionsLib");
@@ -26,7 +28,6 @@ public class RadeTarget : TargetRules
       ExtraModuleNames.Add ("RStatusLib");
       ExtraModuleNames.Add ("RAbilityLib");
       ExtraModuleNames.Add ("REquipmentLib");
-      ExtraModuleNames.Add ("RLoadingScreenLib");
       ExtraModuleNames.Add ("Rade");
    }
 }

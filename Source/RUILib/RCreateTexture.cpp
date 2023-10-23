@@ -80,13 +80,13 @@ URCreateTextureAsync* URCreateTextureAsync::CreateTextureAsync (
    if (!ensure ((PixelFormatSize * InSizeX * InSizeY) == BufferSize)) return nullptr;
 
 
-	URCreateTextureAsync* BlueprintNode = NewObject<URCreateTextureAsync>();
+   URCreateTextureAsync* BlueprintNode = NewObject<URCreateTextureAsync>();
    BlueprintNode->Outer     = Outer;
    BlueprintNode->PixelData = PixelData;
    BlueprintNode->SizeX     = InSizeX;
    BlueprintNode->SizeY     = InSizeY;
    BlueprintNode->Format    = InFormat;
-	return BlueprintNode;
+   return BlueprintNode;
 }
 
 void URCreateTextureAsync::Activate ()

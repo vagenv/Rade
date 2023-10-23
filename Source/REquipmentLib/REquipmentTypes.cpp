@@ -25,18 +25,27 @@ bool FRConsumableItemData::Used (AActor* Owner, URInventoryComponent *Inventory)
    URStatusMgrComponent* StatusMgr = URUtil::GetComponent<URStatusMgrComponent> (Owner);
    if (!ensure (StatusMgr)) return false;
 
-   for (const TSubclassOf<URActiveStatusEffect> &ItEffect : ActiveEffects) {
+   for (const TSoftClassPtr<URActiveStatusEffect> &ItEffect : ActiveEffects) {
       if (!StatusMgr->AddActiveStatusEffect (Owner, ItEffect)) {
          return false;
       }
    }
-   return Super::Used (Owner, Inventory);
+   if (!Action.IsNull ()) return Super::Used (Owner, Inventory);
+   return true;
+}
+
+bool FRConsumableItemData::CanCast (const FRItemData &src)
+{
+   return src.CastType.Contains (FRConsumableItemData().Type);
 }
 
 bool FRConsumableItemData::Cast (const FRItemData &src, FRConsumableItemData &dst)
 {
-   if (!src.CastType.Contains (dst.Type)) return false;
-   return RJSON::ToStruct (src.GetJSON (), dst);
+   if (!src.IsValid ()) return false;
+   if (!CanCast (src)) return false;
+   bool res = RJSON::ToStruct (src.GetJSON (), dst);
+   dst.ID = src.ID;
+   return res;
 }
 
 bool FRConsumableItemData::ReadJSON ()
@@ -78,11 +87,18 @@ FREquipmentData::FREquipmentData ()
    CastType.AddUnique (Type);
 }
 
+bool FREquipmentData::CanCast (const FRItemData &src)
+{
+   return src.CastType.Contains (FREquipmentData().Type);
+}
 
 bool FREquipmentData::Cast (const FRItemData &src, FREquipmentData &dst)
 {
-   if (!src.CastType.Contains (dst.Type)) return false;
-   return RJSON::ToStruct (src.GetJSON (), dst);
+   if (!src.IsValid ()) return false;
+   if (!FREquipmentData::CanCast (src)) return false;
+   bool res = RJSON::ToStruct (src.GetJSON (), dst);
+   dst.ID = src.ID;
+   return res;
 }
 
 bool FREquipmentData::ReadJSON ()
@@ -120,12 +136,51 @@ bool FREquipmentData::WriteJSON ()
 //                      UREquipmentUtilLibrary
 // ============================================================================
 
+
+bool UREquipmentUtilLibrary::ConsumableItem_EqualEqual (
+   const FRItemData& A,
+   const FRConsumableItemData& B)
+{
+   return A.ID == B.ID;
+}
+
+bool UREquipmentUtilLibrary::ConsumableItem_NotEqual (
+   const FRItemData& A,
+   const FRConsumableItemData& B)
+{
+   return !UREquipmentUtilLibrary::ConsumableItem_EqualEqual (A, B);
+}
+
+bool UREquipmentUtilLibrary::Equipment_EqualEqual (
+   const FRItemData& A,
+   const FREquipmentData& B)
+{
+   return A.ID == B.ID;
+}
+
+bool UREquipmentUtilLibrary::Equipment_NotEqual (
+   const FRItemData& A,
+   const FREquipmentData& B)
+{
+   return !UREquipmentUtilLibrary::Equipment_EqualEqual (A, B);
+}
+
+bool UREquipmentUtilLibrary::Item_Is_ConsumableItem (const FRItemData &src)
+{
+   return FRConsumableItemData::CanCast (src);
+}
+
 void UREquipmentUtilLibrary::Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &dst,
                                                      ERActionResult &Branches)
 {
    bool res = FRConsumableItemData::Cast (src, dst);
    if (res) Branches = ERActionResult::Success;
    else     Branches = ERActionResult::Failure;
+}
+
+bool UREquipmentUtilLibrary::Item_Is_EquipmentItem (const FRItemData &src)
+{
+   return FREquipmentData::CanCast (src);
 }
 
 void UREquipmentUtilLibrary::Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &dst,

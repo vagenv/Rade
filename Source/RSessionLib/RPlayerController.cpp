@@ -4,9 +4,9 @@
 
 void ARPlayerController::PawnLeavingGame ()
 {
-	if (GetPawn () != NULL && DestroyPawnThenUnpossess) {
-		GetPawn ()->Destroy ();
-		SetPawn (NULL);
-	}
+   if (GetPawn () != NULL && DestroyPawnThenUnpossess) {
+      GetPawn ()->Destroy ();
+      SetPawn (NULL);
+   }
 }
 

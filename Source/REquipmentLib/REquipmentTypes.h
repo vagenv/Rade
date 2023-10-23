@@ -21,7 +21,7 @@ class UWorld;
 //                Consumable Items
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 {
    GENERATED_BODY()
@@ -30,11 +30,11 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 
    virtual bool Used (AActor* Owner, URInventoryComponent *Inventory) override;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TArray<TSubclassOf<URActiveStatusEffect> > ActiveEffects;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TArray<TSoftClassPtr<URActiveStatusEffect> > ActiveEffects;
 
-   static bool Cast (const FRItemData &src, FRConsumableItemData &dst);
-
+   static bool CanCast (const FRItemData &src);
+   static bool Cast    (const FRItemData &src, FRConsumableItemData &dst);
 
    virtual bool ReadJSON () override;
    virtual bool WriteJSON () override;
@@ -44,7 +44,7 @@ struct REQUIPMENTLIB_API FRConsumableItemData : public FRActionItemData
 //          Equipment
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
 {
    GENERATED_BODY()
@@ -52,31 +52,32 @@ struct REQUIPMENTLIB_API FREquipmentData : public FRActionItemData
    FREquipmentData ();
 
    // Slot to which item will be attached on spawn
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<UREquipmentSlotComponent> EquipmentSlot;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftClassPtr<UREquipmentSlotComponent> EquipmentSlot;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	   TSoftObjectPtr<UStaticMesh> StaticMesh;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftObjectPtr<UStaticMesh> StaticMesh;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	   TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float CurrentDurability = 100;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float MaxDurability = 100;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRDamageResistance> Resistence;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRCoreStats RequiredStats;
 
-   static bool Cast (const FRItemData &src, FREquipmentData &dst);
+   static bool CanCast (const FRItemData &src);
+   static bool Cast    (const FRItemData &src, FREquipmentData &dst);
 
    virtual bool ReadJSON () override;
    virtual bool WriteJSON () override;
@@ -88,12 +89,43 @@ class REQUIPMENTLIB_API UREquipmentUtilLibrary : public UBlueprintFunctionLibrar
    GENERATED_BODY()
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
-      static void Item_To_ConsumableItem (const FRItemData &src, FRConsumableItemData &ItemData,
-                                          ERActionResult &Branches);
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="Equal (FRItemData, FRConsumableItemData)", CompactNodeTitle="=="))
+      static bool ConsumableItem_EqualEqual (const FRItemData& A,
+                                             const FRConsumableItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="NotEqual (FRItemData, FRConsumableItemData)", CompactNodeTitle="!="))
+      static bool ConsumableItem_NotEqual (const FRItemData& A,
+                                           const FRConsumableItemData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="Equal (FRItemData, FREquipmentData)", CompactNodeTitle="=="))
+      static bool Equipment_EqualEqual (const FRItemData& A,
+                                        const FREquipmentData& B);
+
+   UFUNCTION(BlueprintPure, Category = "Rade|Equipment",
+             meta=(DisplayName="NotEqual (FRItemData, FREquipmentData)", CompactNodeTitle="!="))
+      static bool Equipment_NotEqual (const FRItemData& A,
+                                      const FREquipmentData& B);
+
+
+
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      static bool Item_Is_ConsumableItem (const FRItemData &ItemData);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
-      static void Item_To_EquipmentItem (const FRItemData &src, FREquipmentData &ItemData,
-                                         ERActionResult &Branches);
+      static void Item_To_ConsumableItem (const FRItemData     &ItemData,
+                                          FRConsumableItemData &ConsumableItem,
+                                          ERActionResult       &Branches);
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Equipment")
+      static bool Item_Is_EquipmentItem (const FRItemData &ItemData);
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Equipment", Meta = (ExpandEnumAsExecs = "Branches"))
+      static void Item_To_EquipmentItem (const FRItemData &ItemData,
+                                         FREquipmentData  &EquipmentData,
+                                         ERActionResult   &Branches);
 };
 

@@ -11,31 +11,32 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRActiveStatusEffectEvent);
 
 class AActor;
 class URStatusMgrComponent;
+class URWorldStatusMgr;
 class URActiveStatusEffect;
 
 // ============================================================================
 //                   Active Status Effect Info
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRActiveStatusEffectInfo : public FTableRowBase
 {
    GENERATED_BODY()
 public:
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URActiveStatusEffect> EffectClass;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftClassPtr<URActiveStatusEffect> EffectClass;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRUIDescription Description;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Duration = 5;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<FRPassiveStatusEffect> PassiveEffects;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       TArray<float> StackScaling;
 
    bool IsValid () const {
@@ -48,7 +49,8 @@ public:
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RSTATUSLIB_API URActiveStatusEffect : public UActorComponent
+class RSTATUSLIB_API URActiveStatusEffect : public UActorComponent,
+                                            public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 public:
@@ -58,6 +60,18 @@ public:
    virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty> &OutLifetimeProps) const override;
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+
+   //==========================================================================
+   //                 Status Mgr
+   //==========================================================================
+   UPROPERTY()
+      TWeakObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
+
+   UPROPERTY()
+      TWeakObjectPtr<URStatusMgrComponent> OwnerStatusMgr = nullptr;
+
+   UFUNCTION()
+      void FindWorldStatusMgr ();
 
    //==========================================================================
    //                 Functions
@@ -93,38 +107,37 @@ public:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
       FRActiveStatusEffectInfo GetEffectInfo () const;
 
+   virtual FRUIDescription GetDescription_Implementation () const override {
+      return GetEffectInfo ().Description;
+   }
+
    //==========================================================================
    //                 Values
    //==========================================================================
 
    // Must be set by server
    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-      AActor* Causer = nullptr;
-
-protected:
-
-   //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rade|Status")
-   //   URStatusMgrComponent* StatusMgr = nullptr;
+      TWeakObjectPtr<AActor> Causer = nullptr;
 
    //==========================================================================
    //                 Events
    //==========================================================================
 public:
-    // Component created
-    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-       FRActiveStatusEffectEvent OnStart;
+   // Component created
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRActiveStatusEffectEvent OnStart;
 
-    // Canceled
-    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-       FRActiveStatusEffectEvent OnStop;
+   // Canceled
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRActiveStatusEffectEvent OnStop;
 
    // Effect was re-applied
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRActiveStatusEffectEvent OnRefresh;
 
-    // Destroying component
-    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
-       FRActiveStatusEffectEvent OnEnd;
+   // Destroying component
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
+      FRActiveStatusEffectEvent OnEnd;
 
 protected:
 
@@ -150,7 +163,7 @@ protected:
       int StackCurrent = 1;
 
    UPROPERTY()
-      FTimerHandle TimerToEnd;
+      FTimerHandle TimeoutHandle;
 
    UPROPERTY()
       bool IsRunning = false;

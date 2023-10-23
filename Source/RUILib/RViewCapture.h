@@ -34,13 +34,13 @@ public:
       bool CapturePlayersView (int32 Resolution, TArray<FColor> &ColorData);
 
 
-   UPROPERTY(EditAnywhere, Transient)
-      USceneCaptureComponent2D* Camera;
+   UPROPERTY(VisibleAnywhere, Transient)
+      TObjectPtr<USceneCaptureComponent2D> Camera;
 
-	UFUNCTION(BlueprintCallable,
+   UFUNCTION(BlueprintCallable,
              Category = "Rade|UI",
                meta = (HidePin          = "WorldContextObject",
                        DefaultToSelf    = "WorldContextObject"))
-		static bool GetScreenShot (UObject* WorldContextObject, TArray<uint8> &TextureData);
+      static bool GetScreenShot (UObject* WorldContextObject, TArray<uint8> &TextureData);
 };
 

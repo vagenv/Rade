@@ -12,14 +12,9 @@
 UENUM(Blueprintable, BlueprintType)
 enum class ERStatusEffectTarget : uint8
 {
-   None UMETA (DisplayName = "Please select"),
+   None         UMETA (DisplayName = "NOT SELECTED"),
 
-   // --- Attribute
-   STR UMETA (DisplayName = "STR Attribute"),
-   AGI UMETA (DisplayName = "AGI Attribute"),
-   INT UMETA (DisplayName = "INT Attribute"),
-
-   // --- Status
+   // --- Status Value
    HealthMax    UMETA (DisplayName = "Maximum Health"),
    HealthRegen  UMETA (DisplayName = "Health Regeneration"),
    StaminaMax   UMETA (DisplayName = "Maximum Stamina"),
@@ -27,12 +22,17 @@ enum class ERStatusEffectTarget : uint8
    ManaMax      UMETA (DisplayName = "Maximum Mana"),
    ManaRegen    UMETA (DisplayName = "Mana Regeneration"),
 
-   // --- World
-   Evasion     UMETA (DisplayName = "Evasion Chance"),
-   Critical    UMETA (DisplayName = "Critical Chance"),
-   MoveSpeed   UMETA (DisplayName = "Move Speed"),
-   AttackSpeed UMETA (DisplayName = "Attack Speed"),
-   AttackPower UMETA (DisplayName = "Attack Power")
+   // --- Core Stats
+   STR          UMETA (DisplayName = "Strength"),
+   AGI          UMETA (DisplayName = "Agility"),
+   INT          UMETA (DisplayName = "Intelligence"),
+
+   // --- Sub Stats
+   Evasion      UMETA (DisplayName = "Evasion Chance"),
+   Critical     UMETA (DisplayName = "Critical Chance"),
+   MoveSpeed    UMETA (DisplayName = "Move Speed"),
+   AttackSpeed  UMETA (DisplayName = "Attack Speed"),
+   AttackPower  UMETA (DisplayName = "Attack Power")
 };
 
 // ============================================================================
@@ -44,28 +44,36 @@ struct RSTATUSLIB_API FRPassiveStatusEffect
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       ERStatusEffectTarget EffectTarget = ERStatusEffectTarget::None;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float Flat = 0;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      float Flat = 0.;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      float Percent = 0;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      float Percent = 0.;
+
+   bool IsEmpty () const {
+      return (Flat == 0. && Percent == 0.);
+   };
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RSTATUSLIB_API FRPassiveStatusEffectWithTag
 {
    GENERATED_BODY()
 
    // Who or What is applying effect
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FString Tag;
 
    // What value is added
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      FRPassiveStatusEffect Value;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TArray<FRPassiveStatusEffect> Effects;
+
+   bool IsEmpty () const {
+      return Effects.IsEmpty ();
+   };
 };
 
 

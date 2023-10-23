@@ -2,54 +2,56 @@
 	{
 		"Name": "HealthPack",
 		"ActiveEffects": [
-			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C'"
+			"/Game/Rade/Blueprints/Effects/TemporaryHealthRegen_BP.TemporaryHealthRegen_BP_C"
 		],
-		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C'",
+		"Action": "/Game/Rade/Blueprints/Items/Action/AddHealth_BP.AddHealth_BP_C",
 		"DestroyOnAction": true,
+		"ID": "",
 		"Type": "FRConsumableItemData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FRConsumableItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Health Pack",
 			"Tooltip": "Health. MORE HEALTH!",
-			"Icon": "/Game/Rade/Sprites/Icons/alert-triangle.alert-triangle"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/alert-triangle.alert-triangle"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 10,
-		"Weight": 200,
+		"Weight": 100,
 		"Price": 20,
 		"PickupMesh": "None",
-		"Pickup": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C'",
+		"Pickup": "/Game/Rade/Blueprints/Items/Pickup/HealthPickup_BP.HealthPickup_BP_C",
 		"JsonData": ""
 	},
 	{
 		"Name": "ManaPack",
 		"ActiveEffects": [
-			"/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C'"
+			"/Game/Rade/Blueprints/Effects/TemporaryManaRegen_BP.TemporaryManaRegen_BP_C"
 		],
-		"Action": "/Script/Engine.BlueprintGeneratedClass'/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C'",
+		"Action": "/Game/Rade/Blueprints/Items/Action/AddMana_BP.AddMana_BP_C",
 		"DestroyOnAction": true,
+		"ID": "",
 		"Type": "FRConsumableItemData",
 		"CastType": [
 			"FRItemData",
 			"FRActionItemData",
 			"FRConsumableItemData"
 		],
-		"Rarity": "E",
 		"Description":
 		{
 			"Label": "Mana Pack",
 			"Tooltip": "ME DRINK. ME SMARTER!",
-			"Icon": "/Game/Rade/Sprites/Icons/ball-tennis.ball-tennis"
+			"Icon": "/Game/Rade/Sprites/TablerIcons/ball-tennis.ball-tennis"
 		},
+		"Rarity": "E",
 		"Count": 1,
 		"MaxCount": 10,
-		"Weight": 200,
+		"Weight": 100,
 		"Price": 30,
 		"PickupMesh": "None",
 		"Pickup": "None",

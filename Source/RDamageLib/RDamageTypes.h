@@ -14,32 +14,32 @@ class AActor;
 //                   Resistance
 // ============================================================================
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RDAMAGELIB_API FRDamageResistance
 {
    GENERATED_BODY()
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-      TSubclassOf<URDamageType> DamageType;
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
+      TSoftClassPtr<URDamageType> DamageType;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Flat = 0;
 
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       float Percent = 0;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct RDAMAGELIB_API FRDamageResistanceWithTag
 {
    GENERATED_BODY()
 
    // Who or What is applying Resistance
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FString Tag;
 
    // What value is added
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   UPROPERTY(EditAnywhere, BlueprintReadOnly)
       FRDamageResistance Value;
 };
 
@@ -49,7 +49,8 @@ struct RDAMAGELIB_API FRDamageResistanceWithTag
 // ============================================================================
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(_Rade))
-class RDAMAGELIB_API URDamageType : public UDamageType
+class RDAMAGELIB_API URDamageType : public UDamageType,
+                                    public IRGetDescriptionInterface
 {
    GENERATED_BODY()
 public:
@@ -58,6 +59,8 @@ public:
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       FRUIDescription Description;
+
+   virtual FRUIDescription GetDescription_Implementation () const override;
 
    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Status")
       bool Evadeable = true;

@@ -7,6 +7,7 @@
 #include "RStatusMgrComponent.generated.h"
 
 class URDamageType;
+class URWorldDamageMgr;
 class URActiveStatusEffect;
 class URInventoryComponent;
 class URWorldStatusMgr;
@@ -41,11 +42,19 @@ public:
 protected:
    // Owners Movement Component. For stamina Regen.
    UPROPERTY()
-      UCharacterMovementComponent* MovementComponent = nullptr;
+      TWeakObjectPtr<UCharacterMovementComponent> MovementComponent = nullptr;
 
    // For reporting applied status effects
    UPROPERTY()
-      URWorldStatusMgr* WorldStatusMgr = nullptr;
+      TWeakObjectPtr<URWorldStatusMgr> WorldStatusMgr = nullptr;
+
+   UPROPERTY()
+      TWeakObjectPtr<URWorldDamageMgr> WorldDamageMgr = nullptr;
+
+private:
+
+   UFUNCTION()
+      void FindWorldMgrs ();
 
    //==========================================================================
    //                 Dead
@@ -78,12 +87,9 @@ public:
    //==========================================================================
    //                 Recalc status
    //==========================================================================
-private:
+protected:
    UFUNCTION()
       virtual void RecalcStatus ();
-
-   UFUNCTION()
-      virtual void RecalcStatusValues ();
 
    //==========================================================================
    //                 Status
@@ -170,17 +176,31 @@ protected:
    UFUNCTION()
       void OnRep_PassiveEffects ();
 public:
-   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool SetPassiveEffects (const FString& Tag, const TArray<FRPassiveStatusEffect>& AddValues);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
-      bool RmPassiveEffects (const FString& Tag);
+      bool SetPassiveEffects (const FString &Tag, const TArray<FRPassiveStatusEffect>& Effects);
+
+   UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
+      bool RmPassiveEffects (const FString &Tag);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffect> GetPassiveEffects () const;
+      TArray<FRPassiveStatusEffect> GetPassiveEffects_Flat () const;
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
-      TArray<FRPassiveStatusEffectWithTag> GetPassiveEffectsWithTag () const;
+      TArray<FRPassiveStatusEffectWithTag> GetPassiveEffects () const;
+
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Status")
+      bool HasPassiveEffectWithTag (const FString &Tag) const;
+
+private:
+
+   // Can be called multiple times per tick
+   UFUNCTION()
+      void DelayedPassiveUpdate ();
+
+   UPROPERTY()
+      bool DelayedPassiveUpdateTriggered = false;
+
 
    //==========================================================================
    //                 Active Effect
@@ -188,12 +208,12 @@ public:
 public:
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       bool AddActiveStatusEffect (AActor* Causer_,
-                                  const TSubclassOf<URActiveStatusEffect> Effect_);
+                                  const TSoftClassPtr<URActiveStatusEffect> Effect_);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Status")
       static bool ApplyActiveStatusEffect (AActor* Causer_,
                                            AActor* Target_,
-                                           const TSubclassOf<URActiveStatusEffect> Effect_);
+                                           const TSoftClassPtr<URActiveStatusEffect> Effect_);
 
    //==========================================================================
    //                 Resistance
@@ -228,7 +248,7 @@ public:
 public:
 
    UFUNCTION()
-      void ReporPassiveEffectsUpdated ();
+      void ReportPassiveEffectsUpdated ();
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnPassiveEffectsUpdated;
@@ -244,7 +264,6 @@ public:
 
    UPROPERTY(BlueprintAssignable, Category = "Rade|Status")
       FRStatusMgrEvent OnResistanceUpdated;
-
 
    //==========================================================================
    //                 Damage / Evade (Hooking to AnyDamage)
