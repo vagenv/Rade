@@ -13,6 +13,7 @@ public class RadeEditor : ModuleRules
 			"RUILib",
 			"RStatusLib",
 			"RExperienceLib",
+			"RInventoryLib",
 			"Rade",
 
 			"InputCore",

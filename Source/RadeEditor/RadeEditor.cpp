@@ -10,6 +10,8 @@
 #include "RStatus/RStatusValue_Property.h"
 #include "RStatus/RPassiveStatusEffect_Property.h"
 #include "RExperience/REnemyExp_Property.h"
+#include "RInventory/RItemDataHandle_Property.h"
+#include "RInventory/RItemData_Property.h"
 
 IMPLEMENT_GAME_MODULE(FRadeEditorModule, RadeEditor);
 
@@ -51,6 +53,18 @@ void FRadeEditorModule::StartupModule()
 		FREnemyExp::StaticStruct ()->GetFName (),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FREnemyExp_Property::MakeInstance));
 
+	/*
+	// RItemHandle
+	PropertyModule.RegisterCustomPropertyTypeLayout (
+		FRItemDataHandle::StaticStruct ()->GetFName (),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemDataHandle_Property::MakeInstance));
+
+
+	// RItemData
+	PropertyModule.RegisterCustomPropertyTypeLayout (
+		FRItemData::StaticStruct ()->GetFName (),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemData_Property::MakeInstance));
+	*/
 
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
@@ -67,6 +81,8 @@ void FRadeEditorModule::ShutdownModule()
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RPassiveStatusEffect");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("REnemyExp");
+		//PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemDataHandle");
+		//PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemData");
 
 		PropertyModule.NotifyCustomizationModuleChanged ();
 	}
