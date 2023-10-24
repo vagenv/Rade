@@ -37,6 +37,11 @@ void FRUIDescription_Property::CustomizeChildren (
 	TSharedPtr<IPropertyHandle> TooltipPropertyHandle
 		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRUIDescription, Tooltip));
 
+	// --- Perform checks
+	check (  IconPropertyHandle.IsValid ()
+			&& LabelPropertyHandle.IsValid ()
+			&& TooltipPropertyHandle.IsValid ());
+
 	// Draw
 	StructBuilder.AddCustomRow(LOCTEXT("RUIDescriptionRow", "RUIDescription"))
 	[

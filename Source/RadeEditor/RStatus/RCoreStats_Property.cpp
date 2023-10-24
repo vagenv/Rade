@@ -37,6 +37,11 @@ void FRCoreStats_Property::CustomizeChildren (
 	TSharedPtr<IPropertyHandle> IntPropertyHandle
 		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRCoreStats, INT));
 
+	// --- Perform checks
+	check (  StrPropertyHandle.IsValid ()
+			&& AgiPropertyHandle.IsValid ()
+			&& IntPropertyHandle.IsValid ());
+
 	// Draw
 	StructBuilder.AddCustomRow(LOCTEXT("FRCoreStatsRow", "FRCoreStats"))
 	[
