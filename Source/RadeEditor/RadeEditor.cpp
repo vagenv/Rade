@@ -5,6 +5,7 @@
 #include "PropertyEditorModule.h"
 
 #include "RUI/RUIDescription_Property.h"
+#include "RStatus/RCoreStats_Property.h"
 
 
 IMPLEMENT_GAME_MODULE(FRadeEditorModule, RadeEditor);
@@ -20,6 +21,10 @@ void FRadeEditorModule::StartupModule()
 		FRUIDescription::StaticStruct ()->GetFName (),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRUIDescription_Property::MakeInstance));
 
+	PropertyModule.RegisterCustomPropertyTypeLayout (
+		FRCoreStats::StaticStruct ()->GetFName (),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRCoreStats_Property::MakeInstance));
+
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
@@ -30,6 +35,7 @@ void FRadeEditorModule::ShutdownModule()
 		FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule> ("PropertyEditor");
 
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RUIDescription");
+		PropertyModule.UnregisterCustomPropertyTypeLayout ("RCoreStats");
 
 		PropertyModule.NotifyCustomizationModuleChanged ();
 	}

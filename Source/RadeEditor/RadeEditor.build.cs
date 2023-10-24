@@ -11,6 +11,7 @@ public class RadeEditor : ModuleRules
          "Engine",
          "RUtilLib",
 			"RUILib",
+			"RStatusLib",
 			"Rade",
 
 			"InputCore",
