@@ -9,6 +9,7 @@
 #include "RStatus/RSubStats_Property.h"
 #include "RStatus/RStatusValue_Property.h"
 #include "RStatus/RPassiveStatusEffect_Property.h"
+#include "RExperience/REnemyExp_Property.h"
 
 IMPLEMENT_GAME_MODULE(FRadeEditorModule, RadeEditor);
 
@@ -45,6 +46,12 @@ void FRadeEditorModule::StartupModule()
 		FRPassiveStatusEffect::StaticStruct ()->GetFName (),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRPassiveStatusEffect_Property::MakeInstance));
 
+	// REnemyExp
+	PropertyModule.RegisterCustomPropertyTypeLayout (
+		FREnemyExp::StaticStruct ()->GetFName (),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FREnemyExp_Property::MakeInstance));
+
+
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
@@ -59,6 +66,7 @@ void FRadeEditorModule::ShutdownModule()
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RSubStats");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RPassiveStatusEffect");
+		PropertyModule.UnregisterCustomPropertyTypeLayout ("REnemyExp");
 
 		PropertyModule.NotifyCustomizationModuleChanged ();
 	}
