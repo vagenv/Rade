@@ -7,6 +7,7 @@
 #include "RUI/RUIDescription_Property.h"
 #include "RStatus/RCoreStats_Property.h"
 #include "RStatus/RSubStats_Property.h"
+#include "RStatus/RStatusValue_Property.h"
 
 
 IMPLEMENT_GAME_MODULE(FRadeEditorModule, RadeEditor);
@@ -34,6 +35,11 @@ void FRadeEditorModule::StartupModule()
 		FRSubStats::StaticStruct ()->GetFName (),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRSubStats_Property::MakeInstance));
 
+	// RStatusValue
+	PropertyModule.RegisterCustomPropertyTypeLayout (
+		FRStatusValue::StaticStruct ()->GetFName (),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRStatusValue_Property::MakeInstance));
+
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
@@ -46,6 +52,7 @@ void FRadeEditorModule::ShutdownModule()
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RUIDescription");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RCoreStats");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RSubStats");
+		PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
 
 		PropertyModule.NotifyCustomizationModuleChanged ();
 	}
