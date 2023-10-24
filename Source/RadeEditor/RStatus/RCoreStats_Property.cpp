@@ -42,6 +42,9 @@ void FRCoreStats_Property::CustomizeChildren (
 			&& AgiPropertyHandle.IsValid ()
 			&& IntPropertyHandle.IsValid ());
 
+	const float MinWidth = 70.f;
+	const float HPadding = 10.f;
+
 	// Draw
 	StructBuilder.AddCustomRow(LOCTEXT("FRCoreStatsRow", "FRCoreStats"))
 	[
@@ -54,10 +57,10 @@ void FRCoreStats_Property::CustomizeChildren (
 			SNew(SWrapBox)
 			.UseAllottedWidth(true)
 			+SWrapBox::Slot()
-			.Padding(10.f, 0.f)
+			.Padding(HPadding, 0.f)
 			[
 				SNew(SBox)
-				.MinDesiredWidth(70.f)
+				.MinDesiredWidth(MinWidth)
 				[
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot()
@@ -73,10 +76,10 @@ void FRCoreStats_Property::CustomizeChildren (
 				]
 			]
 			+SWrapBox::Slot()
-			.Padding(10.f, 0.f)
+			.Padding(HPadding, 0.f)
 			[
 				SNew(SBox)
-				.MinDesiredWidth(70.f)
+				.MinDesiredWidth(MinWidth)
 				[
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot()
@@ -92,10 +95,10 @@ void FRCoreStats_Property::CustomizeChildren (
 				]
 			]
 			+SWrapBox::Slot()
-			.Padding(10.f, 0.f)
+			.Padding(HPadding, 0.f)
 			[
 				SNew(SBox)
-				.MinDesiredWidth(70.f)
+				.MinDesiredWidth(MinWidth)
 				[
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot()
