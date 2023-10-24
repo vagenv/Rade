@@ -8,7 +8,7 @@
 #include "RStatus/RCoreStats_Property.h"
 #include "RStatus/RSubStats_Property.h"
 #include "RStatus/RStatusValue_Property.h"
-
+#include "RStatus/RPassiveStatusEffect_Property.h"
 
 IMPLEMENT_GAME_MODULE(FRadeEditorModule, RadeEditor);
 
@@ -40,6 +40,11 @@ void FRadeEditorModule::StartupModule()
 		FRStatusValue::StaticStruct ()->GetFName (),
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRStatusValue_Property::MakeInstance));
 
+	// RPassiveStatusEffect
+	PropertyModule.RegisterCustomPropertyTypeLayout (
+		FRPassiveStatusEffect::StaticStruct ()->GetFName (),
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRPassiveStatusEffect_Property::MakeInstance));
+
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
@@ -53,6 +58,7 @@ void FRadeEditorModule::ShutdownModule()
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RCoreStats");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RSubStats");
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
+		PropertyModule.UnregisterCustomPropertyTypeLayout ("RPassiveStatusEffect");
 
 		PropertyModule.NotifyCustomizationModuleChanged ();
 	}
