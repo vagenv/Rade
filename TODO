@@ -2,7 +2,7 @@
 ===============================================================================
 
 
-                                 UI
+                                 Inventory
 
 
 ===============================================================================
@@ -59,50 +59,6 @@ Replication only for owner?
 JsonData is a large FString member variable. Very expensive to replicate.
 
 
-=================================================
-   Editor UI
-=================================================
-
-https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
-https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
-https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
-
-
-Custom Module with "Editor" suffix.
-
-RadeTypesEditor / RadeEditor
-
-==============
-Custom Widget for:
-==============
-
-[FRCoreStats]
-
-[FRSubStats]
-
-[FRStatusValue]
-
-[FRPassiveStatusEffect]
-
-[FREnemyExp]
-
-[RUI_Description]
-| Icon |[  LABEL  ]
-| Icon |[ Tooltip ]
-
-[FRItemDataHandle]
-[Table] [Item]  [<] x[Cound] [>]
-
-[FRItemData]
-[Rarity] [Name] [RUI_Description] [Max Count] [Weight] [Price] [PickupMesh] [Pickup class]
-
-[FRActionItemData]
-[AutoDestroy] [Action class] [FRItemData]
-
-[FRConsumableItemData]
-[Effect List] [FRActionItemData]
-
-[FREquipmentData]
 
 =================================================
          Weapons
@@ -158,77 +114,24 @@ Ranged
 Melee
 - Delay
 
-
-=================================================
-         Teams
-=================================================
-List of Teams and their ID
-Join / Switch between teams?
-Damage / Status effect on Allies / Enemies
+===============================================================================
+===============================================================================
 
 
-=================================================
-         Chat
-=================================================
-URChatMgr.
-- GameStateComponent
-- New UI build in
+                                 UI
 
-Emotions
-- Icon / Emoji (Animation)
-- Sound
-- On top of player
-- Character animation
+
+===============================================================================
+===============================================================================
+
+
+Hide Status / Abilities if not in fight/use
 
 
 =================================================
-      UI Rework
+         Camera
 =================================================
-- Real Mono Font
-- Less is more
-- Hide Status / Abilities if not in fight/use
-
-
-==============
-Settings
-==============
-- Audio channels with Persistent Audio Settings
-- Input mapping
-
-
-==============
-UserWidgets Create/Destroy performance
-==============
-AddToViewport is expensive
-
-Solution:
-- Simplify Widgets
-- Cache them
-
-Create Widgets then Hide/Unhide
-
-Create everthing in the beggining.
-This will not affect gameplay framerate.
-Sync load before game starts and keep alive
-
-ResetWidget interface when visiblity changes
-
-
-==============
-RUI_GridContainer
-==============
-Uniform grid size
-Will require RUI_ListContainer redesign
-
-Can also use focusable.
-Or implement global interface list with their center as move direction
-
-
-==============
-Grid Inventory
-==============
-RUI_GridContainer
-- Use RUI_ItemWidget_Icon
+Texture Effects and Shake based on damage type
 
 
 =================================================
@@ -241,6 +144,39 @@ Custom icons for
 - Enemies
 - Friends
 - Pickups
+- Interact
+
+
+==============
+Settings
+==============
+- Audio channels with Persistent Audio Settings
+- Input mapping
+
+
+==============
+RUI_GridContainer
+==============
+Uniform grid size
+Will require RUI_ListContainer redesign
+
+Can also use focusable.
+Or implement global interface list with their center as move direction
+
+Inventory
+Icon Select
+
+
+=================================================
+         Chat
+=================================================
+Uses same component as Damage, but with icons?
+
+Emotions
+- Icon / Emoji (Animation)
+- Sound
+- On top of player
+- Character animation
 
 
 =================================================
@@ -256,6 +192,25 @@ UI
 - Select option
 
 
+==============
+UserWidgets Create/Destroy performance
+==============
+AddToViewport is expensive
+
+Solution:
+- Simplify Widgets
+- Cache them
+
+Create Widgets then Hide/Unhide
+At least the status menu and other complex windows.
+
+Create everthing in the beggining.
+This will not affect gameplay framerate.
+Sync load before game starts and keep alive
+
+ResetWidget interface when visiblity changes
+
+
 =================================================
          Health Bars
 =================================================
@@ -265,18 +220,11 @@ Health/Stamina/Mana
 
 
 =================================================
-         Camera
+         Teams
 =================================================
-Texture Effects and Shake based on damage type
-
-
-=================================================
-         Status
-=================================================
-MoveSpeed and Critical Substat used
-
-Stamina/Mana/Health
-- If used, stop restoring, and resume after N seconds.
+List of Teams and their ID
+Join / Switch between teams?
+Damage / Status effect on Allies / Enemies
 
 
 =================================================
@@ -289,8 +237,36 @@ Stamina/Mana/Health
 =================================================
          Crafting
 =================================================
-- Personal craft list. Recipes
+- Personal craft recipes.
+- List of gathered recipes?
 
+
+=================================================
+   Editor UI (Try again)
+=================================================
+
+https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
+https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
+https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
+
+==============
+Custom Widget for:
+==============
+
+[FRItemData]
+[Rarity] [Name] [RUI_Description] [Max Count] [Weight] [Price] [PickupMesh] [Pickup class]
+
+[FRActionItemData]
+[AutoDestroy] [Action class] [FRItemData]
+
+[FRConsumableItemData]
+[Effect List] [FRActionItemData]
+
+[FREquipmentData]
+
+
+[FRItemDataHandle]
+[Table] [Item]  [<] x[Cound] [>]
 
 
 
@@ -306,6 +282,15 @@ Stamina/Mana/Health
 
 ===============================================================================
 ===============================================================================
+
+
+=================================================
+         Status
+=================================================
+MoveSpeed and Critical Substat used
+
+Stamina/Mana/Health
+- If used, stop restoring, and resume after N seconds.
 
 ==============
 Hit Component Damage Multiplier
@@ -352,31 +337,11 @@ Each anim style must have:
 ===============================================================================
 ===============================================================================
 
-=================================================
-         Enemy + AI
-=================================================
-
-Character
-- Mesh
-- Animation
-- Material
-- Attacks
-
-AI
-- Pathfinding
-- Patrol
-- Melee and ranged
-- React if attacked
-- Attack together
-- Hide
 
 
 =================================================
          Animation
 =================================================
-Animation Blueprint (Network)
-
-
 
 Partial body blend.
 - Overlaps
@@ -384,8 +349,6 @@ Partial body blend.
 - Upper body
 - Head Movement with camera
 - IK for hands to weapons attach sockets
-
-Smooth animations
 
 Animations:
 - Head animation. Look around (Camera rotation)
@@ -395,12 +358,9 @@ Animations:
 - Roll/Phase (With Invincible Frame and Cost)
 
 
-========
-Hopping Bunny
-========
-Mesh
-Path finding
-Hop Animation with body deformation while in movement
+Smooth animations
+
+Animation Blueprint (Network)
 
 
 =================================================
@@ -419,6 +379,32 @@ With texture
 - State machine?
 
 
+========
+Static mesh animation
+========
+Bunny mesh moving away from point and slowly disappearing.
+Hop Animation with body deformation while in movement
+Path finding
+
+
+=================================================
+         Enemy + AI
+=================================================
+Character
+- Mesh
+- Animation
+- Material
+- Attacks
+
+AI
+- Pathfinding
+- Patrol
+- Melee and ranged
+- React if attacked
+- Attack together
+- Hide
+
+
 
 
 
@@ -434,25 +420,20 @@ With texture
 ===============================================================================
 
 =================================================
-   Level Transition.
+         Outline
 =================================================
-'Seamless' travel to next level
-- Mark Actors that will persist to the Transition Level
-- Travel to the Transition Level
-- Mark Actors that will persist to the Final Level
-- Travel to the Final Level
+OutLined overlap issue.
 
-- Posses / Unposses ?
-- Hide / show pawn?
-- Enable / Disable Input?
-
+Colors
+- White : Interact
+- Gold  : Pickup
+- Red   : Enemy
 
 =================================================
          Shaders
 =================================================
-- Look into shaders
-- OutLined overlap.
-- Toon Shaders
+- Toon Shaders. From store?
+- Test own version
 
 
 =================================================
@@ -485,17 +466,6 @@ Enemy Death -> Bunny Explosion
 
 
 =================================================
-         Sound
-=================================================
-- Jump / Land
-- Running
-- Weapon Attack / Reloading
-- Getting hit
-- Explosion
-- Environment
-
-
-=================================================
          Chaos System
 =================================================
 Destructable Level
@@ -508,6 +478,22 @@ Destructable Level
 =================================================
 - Load high detail models on demand
 - Analyse budget, resource usage and disk read pattern
+
+
+=================================================
+   Level Transition.
+=================================================
+'Seamless' travel to next level (with other player)
+- Mark Actors that will persist to the Transition Level
+- Travel to the Transition Level
+- Mark Actors that will persist to the Final Level
+- Travel to the Final Level
+
+- Posses / Unposses ?
+- Hide / show pawn?
+- Enable / Disable Input?
+
+
 
 
 
@@ -546,6 +532,42 @@ InstanceMesh->Add/Rm based on range
 
 https://www.youtube.com/watch?v=XMKFTzfPqXs
 
+
+
+===============================================================================
+===============================================================================
+
+
+                           Sound
+
+
+===============================================================================
+===============================================================================
+
+=================================================
+         UI
+=================================================
+Button clicked.
+Selection changed
+Menus opened/closed
+
+=================================================
+         Character
+=================================================
+- Jump / Land
+- Running
+- Attack
+- Weapon Attack
+- Getting hit
+- Status effects
+- Abilities
+
+=================================================
+         Environment
+=================================================
+- Explosion
+- Forest
+- Water
 
 
 
@@ -648,7 +670,7 @@ GameMode
 
 
 =================================================
-Remove all float and int
+         Remove all float and int
 =================================================
 For now ok.
 
@@ -661,7 +683,7 @@ int   -> int64
 
 
 =================================================
-Graphics
+         Graphics
 =================================================
 Set Graphics settings custom profiles.
 - *.ini files
