@@ -7,7 +7,7 @@
 #include "PropertyHandle.h"
 #include "EditorStyleSet.h"
 
-#define LOCTEXT_NAMESPACE "RadeEditor"
+#define LOCTEXT_NAMESPACE "RTypesEditor"
 
 TSharedRef<IPropertyTypeCustomization> FREnemyExp_Property::MakeInstance ()
 {

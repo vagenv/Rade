@@ -8,7 +8,7 @@
 #include "EditorStyleSet.h"
 #include "PropertyCustomizationHelpers.h"
 
-#define LOCTEXT_NAMESPACE "RadeEditor"
+#define LOCTEXT_NAMESPACE "RTypesEditor"
 
 TSharedRef<IPropertyTypeCustomization> FRItemDataHandle_Property::MakeInstance ()
 {

@@ -30,6 +30,6 @@ public class RadeEditorTarget : TargetRules
       ExtraModuleNames.Add ("REquipmentLib");
       ExtraModuleNames.Add ("Rade");
 
-      ExtraModuleNames.Add ("RadeEditor");
+      ExtraModuleNames.Add ("RTypesEditor");
    }
 }

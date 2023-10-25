@@ -1,3 +1,5 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #pragma once
 
 #include "Engine.h"
@@ -5,7 +7,7 @@
 #include "Modules/ModuleManager.h"
 #include "UnrealEd.h"
 
-class FRadeEditorModule : public IModuleInterface
+class RTypesEditorModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;

@@ -9,7 +9,7 @@
 #include "../RUI/RUIDescription_Property.h"
 
 
-#define LOCTEXT_NAMESPACE "RadeEditor"
+#define LOCTEXT_NAMESPACE "RTypesEditor"
 
 TSharedRef<IPropertyTypeCustomization> FRItemData_Property::MakeInstance ()
 {

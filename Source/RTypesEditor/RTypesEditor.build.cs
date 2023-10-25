@@ -1,8 +1,10 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 using UnrealBuildTool;
 
-public class RadeEditor : ModuleRules
+public class RTypesEditor : ModuleRules
 {
-	public RadeEditor(ReadOnlyTargetRules Target) : base(Target)
+	public RTypesEditor (ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       PublicDependencyModuleNames.AddRange (new string[] {

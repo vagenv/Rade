@@ -1,4 +1,6 @@
-#include "RadeEditor.h"
+// Copyright 2015-2023 Vagen Ayrapetyan
+
+#include "RTypesEditor.h"
 
 #include "Modules/ModuleInterface.h"
 #include "Modules/ModuleManager.h"
@@ -13,11 +15,11 @@
 #include "RInventory/RItemDataHandle_Property.h"
 #include "RInventory/RItemData_Property.h"
 
-IMPLEMENT_GAME_MODULE(FRadeEditorModule, RadeEditor);
+IMPLEMENT_GAME_MODULE(RTypesEditorModule, RTypesEditor);
 
-#define LOCTEXT_NAMESPACE "RadeEditor"
+#define LOCTEXT_NAMESPACE "RTypesEditor"
 
-void FRadeEditorModule::StartupModule()
+void RTypesEditorModule::StartupModule()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule> ("PropertyEditor");
 
@@ -69,10 +71,11 @@ void FRadeEditorModule::StartupModule()
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
-void FRadeEditorModule::ShutdownModule()
+void RTypesEditorModule::ShutdownModule()
 {
 	if (FModuleManager::Get ().IsModuleLoaded ("PropertyEditor")) {
-		// unregister properties when the module is shutdown
+
+		// --- Unregister properties when the module is shutdown
 		FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule> ("PropertyEditor");
 
 		PropertyModule.UnregisterCustomPropertyTypeLayout ("RUIDescription");
