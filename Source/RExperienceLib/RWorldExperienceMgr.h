@@ -4,25 +4,10 @@
 
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
+#include "RExperienceTypes.h"
 #include "RWorldExperienceMgr.generated.h"
 
 class URDamageType;
-class ACharacter;
-
-USTRUCT(Blueprintable, BlueprintType)
-struct REXPERIENCELIB_API FREnemyExp : public FTableRowBase
-{
-   GENERATED_BODY()
-
-   UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      TSoftClassPtr<ACharacter> TargetClass;
-
-   UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      float PerDamage = 1;
-
-   UPROPERTY(EditAnywhere, BlueprintReadOnly)
-      float PerDeath = 500;
-};
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class REXPERIENCELIB_API URWorldExperienceMgr : public UActorComponent
