@@ -46,13 +46,14 @@ void URInventoryComponent::BeginPlay()
 
 void URInventoryComponent::ReportInventoryUpdateDelayed ()
 {
+   // Recalculate weight. Is instant and doesn't emit signals
+   CalcWeight ();
+
    // Already started
    if (ReportInventoryUpdateDelayedTriggered) return;
    if (UWorld* World = URUtil::GetWorld (this)) {
       ReportInventoryUpdateDelayedTriggered = true;
       World->GetTimerManager ().SetTimerForNextTick ([this](){
-         // Recalculate the accumulated changes over the last tick
-         CalcWeight ();
 
          // Report Update
          ReportInventoryUpdate ();
@@ -429,7 +430,7 @@ void URInventoryComponent::CalcWeight ()
    R_RETURN_IF_NOT_ADMIN;
    int32 WeightNew = 0;
    // Find same kind of item
-   for (const FRItemData &ItItem : Items) {
+   for (const FRItemData &ItItem : GetItems ()) {
       WeightNew += (ItItem.Count * ItItem.Weight);
    }
 
