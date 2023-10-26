@@ -13,6 +13,15 @@
 #include "RStatusLib/RPlayerStatusMgrComponent.h"
 #include "RInventoryLib/RItemAction.h"
 
+#define R_RETURN_IF_INVALID_INDEX_BOOL(ItemIdx)                                 \
+      {                                                                         \
+         if (!Items.IsValidIndex (ItemIdx)) {                                   \
+            R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",  \
+               ItemIdx, Items.Num ());                                          \
+            return false;                                                       \
+         }                                                                      \
+      };   
+
 //=============================================================================
 //                 Core
 //=============================================================================
@@ -157,13 +166,7 @@ void UREquipmentMgrComponent::OnStatsUpdated ()
 bool UREquipmentMgrComponent::UseItem_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    FRItemData ItemData = Items[ItemIdx];
 
@@ -197,12 +200,7 @@ bool UREquipmentMgrComponent::UseItem_Index (int32 ItemIdx)
 
 bool UREquipmentMgrComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    // --- Check if Item should be unequiped
    FREquipmentData EquipmentData;
@@ -227,13 +225,7 @@ bool UREquipmentMgrComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 bool UREquipmentMgrComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    // --- Check if Item should be unequiped
    FREquipmentData EquipmentData;
@@ -258,13 +250,7 @@ bool UREquipmentMgrComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 bool UREquipmentMgrComponent::BreakItem_Index (int32 ItemIdx, const UDataTable* BreakItemTable)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    // Unequip, if equiped.
    UnEquip_Index (ItemIdx);
@@ -279,13 +265,7 @@ bool UREquipmentMgrComponent::BreakItem_Index (int32 ItemIdx, const UDataTable* 
 bool UREquipmentMgrComponent::IsEquiped_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    return IsEquiped_Item (Items[ItemIdx]);
 }
@@ -325,13 +305,7 @@ void UREquipmentMgrComponent::Equip_Index_Server_Implementation (
 bool UREquipmentMgrComponent::Equip_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    return Equip_Item (Items[ItemIdx]);
 }
@@ -460,13 +434,7 @@ void UREquipmentMgrComponent::UnEquip_Index_Server_Implementation (
 bool UREquipmentMgrComponent::UnEquip_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    return UnEquip_Item (Items[ItemIdx]);
 }

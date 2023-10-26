@@ -11,6 +11,15 @@
 
 #include "Net/UnrealNetwork.h"
 
+#define R_RETURN_IF_INVALID_INDEX_BOOL(ItemIdx)                                 \
+      {                                                                         \
+         if (!Items.IsValidIndex (ItemIdx)) {                                   \
+            R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",  \
+               ItemIdx, Items.Num ());                                          \
+            return false;                                                       \
+         }                                                                      \
+      };   
+
 //=============================================================================
 //                 Core
 //=============================================================================
@@ -280,12 +289,7 @@ void URInventoryComponent::RemoveItem_Index_Server_Implementation (URInventoryCo
 bool URInventoryComponent::RemoveItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    FRItemData RemoveItem = Items[ItemIdx];
    RemoveItem.Count = Count;
@@ -393,11 +397,7 @@ bool URInventoryComponent::TransferItem (URInventoryComponent *DstInventory,
    R_RETURN_IF_NOT_ADMIN_BOOL;
    if (!ensure (DstInventory)) return false;
 
-   if (!Items.IsValidIndex (SrcItemIdx)) {
-      R_LOG_PRINTF ("Invalid Source Inventory Item Index [%d]. Must be [0-%d]",
-         SrcItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (SrcItemIdx);
 
    FRItemData ItemData = Items[SrcItemIdx];
 
@@ -455,14 +455,8 @@ bool URInventoryComponent::BreakItem_Index (int32 ItemIdx,
                                             const UDataTable* BreakItemTable)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
-
-   if (!IsValid (BreakItemTable)) return false;
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
+   if (!ensure (BreakItemTable)) return false;
 
    FRItemData BreakItem = Items[ItemIdx];
 
@@ -552,12 +546,7 @@ void URInventoryComponent::UseItem_Index_Server_Implementation (
 bool URInventoryComponent::UseItem_Index (int32 ItemIdx)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    FRActionItemData ItemData;
    if (!FRActionItemData::Cast (Items[ItemIdx], ItemData)) {
@@ -614,13 +603,7 @@ bool URInventoryComponent::DropItem_Data (const FRItemData &ItemData)
 bool URInventoryComponent::DropItem_Index (int32 ItemIdx, int32 Count)
 {
    R_RETURN_IF_NOT_ADMIN_BOOL;
-
-   // Valid index
-   if (!Items.IsValidIndex (ItemIdx)) {
-      R_LOG_PRINTF ("Invalid Inventory Item Index [%d]. Must be [0-%d]",
-         ItemIdx, Items.Num ());
-      return false;
-   }
+   R_RETURN_IF_INVALID_INDEX_BOOL (ItemIdx);
 
    FRItemData ItemData = Items[ItemIdx];
 
@@ -708,44 +691,6 @@ void URInventoryComponent::SpawnPickup (const FRItemData &ItemData)
          }
       }
    });
-
-
-
-   /*
-   UWorld* World = URUtil::GetWorld (this);
-   if (!World) return nullptr;
-
-
-
-      URWorldAssetMgr::LoadAsync (ItemData.Pickup.GetUniqueID (),
-                              this, [this, ItemData] (UObject* LoadedContent) {
-         if (UClass* PickupClass = Cast<UClass> (LoadedContent)) {
-            SpawnPickup (PickupClass, ItemData);
-         }
-      });
-
-   AActor *Player = GetOwner ();
-
-   // Get Player Rotation
-   FRotator rot = Player->GetActorRotation ();
-   FVector forwardVector   = rot.Vector () * 300;
-           forwardVector.Z = 0;
-   FVector spawnLoc = Player->GetActorLocation () + forwardVector + FVector(0, 0, 50);
-
-   // Create pickup
-   AActor *Pickup = World->SpawnActor<AActor> (PickupClass, spawnLoc, rot);
-   if (!Pickup) return nullptr;
-
-   // Set pickup info
-   Pickup->SetOwner (Player);
-   Pickup->bAutoDestroy = true;
-
-   Pickup->Inventory->DefaultItems.Empty ();
-   Pickup->Inventory->Items.Empty ();
-   Pickup->Inventory->Items.Add (ItemData);
-
-   return Pickup;
-   */
 }
 
 //=============================================================================
