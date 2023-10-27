@@ -236,15 +236,15 @@ void URWorldStatusMgr::ReportStatusEffectEnd (URActiveStatusEffect* Effect)
 
 float URWorldStatusMgr::GetLevelUpExtraGain (int CurrentLevel) const
 {
-   return URUtil::GetRuntimeFloatCurveValue (LevelUpExtraGainCurve, CurrentLevel);
+   return FMath::TruncToInt64 (10. * URUtil::GetRuntimeFloatCurveValue (LevelUpExtraGainCurve, CurrentLevel)) / 10.;
 }
 
 FRCoreStats URWorldStatusMgr::GetLevelUpStatGain (int CurrentLevel) const
 {
    FRCoreStats DeltaStat;
-   DeltaStat.STR = URUtil::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel);
-   DeltaStat.AGI = URUtil::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel);
-   DeltaStat.INT = URUtil::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel);
+   DeltaStat.STR = FMath::TruncToInt64 (10. * URUtil::GetRuntimeFloatCurveValue (LevelUpStrGainCurve, CurrentLevel)) / 10.;
+   DeltaStat.AGI = FMath::TruncToInt64 (10. * URUtil::GetRuntimeFloatCurveValue (LevelUpAgiGainCurve, CurrentLevel)) / 10.;
+   DeltaStat.INT = FMath::TruncToInt64 (10. * URUtil::GetRuntimeFloatCurveValue (LevelUpIntGainCurve, CurrentLevel)) / 10.;
    return DeltaStat;
 }
 
