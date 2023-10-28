@@ -650,47 +650,59 @@ void URInventoryComponent::SpawnPickup (const FRItemData &ItemData)
       if (!World) return;
 
       if (UClass* PickupActorClass = Cast<UClass> (LoadedContent)) {
-
-         AActor *Player = GetOwner ();
-
-         // Get Player Rotation
-         FRotator Rotation    = Player->GetActorRotation ();
-         FVector  RotationDir = Rotation.Vector () * 300;
-                  RotationDir.Z = 0;
-         FVector SpawnLocation = Player->GetActorLocation () + RotationDir + FVector(0, 0, 50);
-         AActor *Pickup = World->SpawnActor<AActor> (PickupActorClass, SpawnLocation, Rotation);
-         if (!Pickup) {
-            R_LOG ("Failed to spawn pickup actor");
-            return;
-         }
-
-         URInventoryComponent* Inventory = URUtil::GetComponent<URInventoryComponent> (Pickup);
-         if (!Inventory) {
-            R_LOG ("Pickup doesn't have inventory");
-            return;
-         }
-
-         // Add items to inventory
-         Inventory->DefaultItems.Empty ();
-         Inventory->Items.Empty ();
-         Inventory->Items.Add (ItemData);
-
-
          if (!ItemData.PickupMesh.IsNull ()) {
             URWorldAssetMgr::LoadAsync (ItemData.PickupMesh.GetUniqueID (),
-                                        this, [this, Pickup] (UObject* LoadedContent) {
+                                        this, [this, ItemData, PickupActorClass] (UObject* LoadedContent) {
                if (UStaticMesh* StaticMesh = Cast<UStaticMesh> (LoadedContent)) {
-                  UStaticMeshComponent* MeshComponent = URUtil::GetComponent<UStaticMeshComponent> (Pickup);
-                  if (!MeshComponent) {
-                     R_LOG ("Pickup doesn't have Static Mesh Component");
-                     return;
-                  }
-                  MeshComponent->SetStaticMesh (StaticMesh);
+                  SpawnPickup (ItemData, PickupActorClass, StaticMesh);
                }
             });
+         } else {
+            SpawnPickup (ItemData, PickupActorClass);
          }
       }
    });
+}
+
+void URInventoryComponent::SpawnPickup (const FRItemData  &ItemData,
+                                              UClass      *PickupActorClass,
+                                              UStaticMesh *StaticMesh)
+{
+   UWorld* World = URUtil::GetWorld (this);
+   if (!World) return;
+
+   AActor *Player = GetOwner ();
+
+   // Get Player Rotation
+   FRotator Rotation    = Player->GetActorRotation ();
+   FVector  RotationDir = Rotation.Vector () * 300;
+            RotationDir.Z = 0;
+   FVector SpawnLocation = Player->GetActorLocation () + RotationDir + FVector(0, 0, 50);
+   AActor *Pickup = World->SpawnActor<AActor> (PickupActorClass, SpawnLocation, Rotation);
+   if (!Pickup) {
+      R_LOG ("Failed to spawn pickup actor");
+      return;
+   }
+
+   URInventoryComponent* Inventory = URUtil::GetComponent<URInventoryComponent> (Pickup);
+   if (!Inventory) {
+      R_LOG ("Pickup doesn't have inventory");
+      return;
+   }
+
+   // Add items to inventory
+   Inventory->DefaultItems.Empty ();
+   Inventory->Items.Empty ();
+   Inventory->Items.Add (ItemData);
+
+   if (StaticMesh) {
+      UStaticMeshComponent* MeshComponent = URUtil::GetComponent<UStaticMeshComponent> (Pickup);
+      if (!MeshComponent) {
+         R_LOG ("Pickup doesn't have Static Mesh Component");
+         return;
+      }
+      MeshComponent->SetStaticMesh (StaticMesh);
+   }
 }
 
 //=============================================================================

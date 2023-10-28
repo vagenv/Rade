@@ -202,7 +202,7 @@ public:
       virtual bool DropItem_Index (int32 ItemIdx, int32 Count = 0);
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
-      virtual bool DropItem_Data(const FRItemData &ItemData);
+      virtual bool DropItem_Data (const FRItemData &ItemData);
 
    //==========================================================================
    //                 Spawn Pickup
@@ -210,6 +210,11 @@ public:
 
    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Rade|Inventory")
       void SpawnPickup (const FRItemData &ItemData);
+
+   // Called when all content has been loaded
+   void SpawnPickup (const FRItemData  &ItemData,
+                           UClass      *PickupActorClass,
+                           UStaticMesh *StaticMesh = nullptr);
 
    //==========================================================================
    //                 Server versions of functions
