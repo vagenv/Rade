@@ -114,6 +114,11 @@ Ranged
 Melee
 - Delay
 
+
+
+
+
+
 ===============================================================================
 ===============================================================================
 
@@ -125,7 +130,18 @@ Melee
 ===============================================================================
 
 
+=================================================
+         Fixes
+=================================================
+Evasion and Critical GameplayEvents
+
+
+=================================================
+         Less cluttered UI
+=================================================
 Hide Status / Abilities if not in fight/use
+Button press to show again?
+
 
 =================================================
          Camera
@@ -138,7 +154,7 @@ Texture Effects and Shake based on damage type
 =================================================
 Right Top Corner
 
-Custom icons for
+Custom Icons with distance for
 - NSWE
 - Enemies
 - Friends
@@ -146,9 +162,17 @@ Custom icons for
 - Interact
 
 
-==============
-Settings
-==============
+=================================================
+         Health Bars
+=================================================
+Health/Stamina/Mana
+- Smooth movement.
+- Colors when increase (green) / decrease (red)
+
+
+=================================================
+         Settings
+=================================================
 - Audio channels with Persistent Audio Settings
 - Input mapping
 
@@ -163,6 +187,21 @@ Emotions
 - Sound
 - On top of player
 - Character animation
+
+
+=================================================
+   Editor UI
+=================================================
+
+https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
+https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
+https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
+
+
+[FRItemDataHandle]
+[Table] [Item]  [<] x[Count] [>]
+
+Change table -> Reset Item and Count
 
 
 =================================================
@@ -198,14 +237,6 @@ ResetWidget interface when visiblity changes
 
 
 =================================================
-         Health Bars
-=================================================
-Health/Stamina/Mana
-- Smooth movement.
-- Colors when increase (green) / decrease (red)
-
-
-=================================================
          Teams
 =================================================
 List of Teams and their ID
@@ -228,7 +259,7 @@ Damage / Status effect on Allies / Enemies
 
 
 =================================================
-      C++ RUI
+         C++ RUI (Optional)
 =================================================
 Look into focused again
 
@@ -236,34 +267,6 @@ Custom RUserWidget
 - World center location
 - Set Selected
 - Replaced grid and list
-
-
-=================================================
-   Editor UI (Try again)
-=================================================
-
-https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
-https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
-https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
-
-==============
-Custom Widget for:
-==============
-
-[FRItemData]
-[Rarity] [Name] [RUI_Description] [Max Count] [Weight] [Price] [PickupMesh] [Pickup class]
-
-[FRActionItemData]
-[AutoDestroy] [Action class] [FRItemData]
-
-[FRConsumableItemData]
-[Effect List] [FRActionItemData]
-
-[FREquipmentData]
-
-
-[FRItemDataHandle]
-[Table] [Item]  [<] x[Count] [>]
 
 
 
@@ -280,6 +283,13 @@ Custom Widget for:
 ===============================================================================
 ===============================================================================
 
+=================================================
+         Firing Target
+=================================================
+Can't hit casters
+Spawn origin must be further from caster
+
+
 
 =================================================
          Status
@@ -289,9 +299,10 @@ MoveSpeed and Critical Substat used
 Stamina/Mana/Health
 - If used, stop restoring, and resume after N seconds.
 
-==============
-Hit Component Damage Multiplier
-==============
+
+=================================================
+         Hit Component Damage Multiplier
+=================================================
 ApplyRDamage (based on what body part was hit) (bone name?):
 - Headshot
 - Protected by armor
@@ -300,18 +311,18 @@ ApplyRDamage (based on what body part was hit) (bone name?):
 =================================================
          Combo manager
 =================================================
-
-Roll Invincibility?
-
-Chain use abilities or attacks
+Chain use abilities or attacks.
 - Jump => Double Jump
 - Fireball => Fireball => FireNova
 - Attack => Attack => Power Attack => Get Status Effect
 
+List of possible combos.
 
-==============
-Combo / Style Rating
-==============
+
+
+=================================================
+      Combo / Style Rating
+=================================================
 Each anim style must have:
 - Simple Attack
 - Strong Attack
@@ -546,6 +557,7 @@ Button clicked.
 Selection changed
 Menus opened/closed
 
+
 =================================================
          Character
 =================================================
@@ -557,14 +569,23 @@ Menus opened/closed
 - Status effects
 - Abilities
 
+
 =================================================
          Environment
 =================================================
-- Explosion
 - Forest
 - Water
+- Village
+- Castle
 
 
+=================================================
+         Effects
+=================================================
+- Explosion
+- Burning
+- Frozen
+- Poison
 
 
 
@@ -585,7 +606,7 @@ Menus opened/closed
 
 Stress test low bandwidth and lagging.
 
-Dedicated server instance build
+Dedicated server instance build. (Requires C++ Engine build)
 - Linux / Windows
 - Optimization
 
@@ -767,13 +788,11 @@ Frozen
 ==============
 Attack types
 ==============
-- Melee / Ranged
-- Guns
-- Attack combo
+- Melee. Sword, Clubs, Spears?
+- Ranged. Guns?
 - Spells. Instant + Casting
-- Environment
-- Turrents / Towers
-- Ally NPCs
+- Environment. Traps and localized aura effects.
+- Spawns. Turrents / Towers. Bunnies.
 
 
 ==============
@@ -795,21 +814,8 @@ Another Player can be summoned for help
 
 
 ==============
-Random Content
-==============
-- Item quality affects strength of effects?
-- Equipment stats/effect
-- Weapon stats/effects
-- Level?
-
-
-
-==============
 Character Classes
 ==============
-Class tree reqirnment?
-- Stats?
-- Levels?
 
 Warrior (StrongBoi)
 - Berserk (AngryBoi/BonkBoi) (big weapon)
