@@ -127,7 +127,6 @@ Melee
 
 Hide Status / Abilities if not in fight/use
 
-
 =================================================
          Camera
 =================================================
@@ -152,19 +151,6 @@ Settings
 ==============
 - Audio channels with Persistent Audio Settings
 - Input mapping
-
-
-==============
-RUI_GridContainer
-==============
-Uniform grid size
-Will require RUI_ListContainer redesign
-
-Can also use focusable.
-Or implement global interface list with their center as move direction
-
-Inventory
-Icon Select
 
 
 =================================================
@@ -242,6 +228,17 @@ Damage / Status effect on Allies / Enemies
 
 
 =================================================
+      C++ RUI
+=================================================
+Look into focused again
+
+Custom RUserWidget
+- World center location
+- Set Selected
+- Replaced grid and list
+
+
+=================================================
    Editor UI (Try again)
 =================================================
 
@@ -266,7 +263,7 @@ Custom Widget for:
 
 
 [FRItemDataHandle]
-[Table] [Item]  [<] x[Cound] [>]
+[Table] [Item]  [<] x[Count] [>]
 
 
 
@@ -336,8 +333,6 @@ Each anim style must have:
 
 ===============================================================================
 ===============================================================================
-
-
 
 =================================================
          Animation
