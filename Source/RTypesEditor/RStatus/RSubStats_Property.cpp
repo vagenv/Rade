@@ -22,7 +22,10 @@ void FRSubStats_Property::CustomizeHeader (
 	FDetailWidgetRow&						HeaderRow,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	HeaderRow.NameContent()[StructPropertyHandle->CreatePropertyNameWidget()];
+	// Don't show header if not an array item
+	if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
+		HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
+	}
 }
 
 void FRSubStats_Property::CustomizeChildren (
@@ -56,6 +59,7 @@ void FRSubStats_Property::CustomizeChildren (
 
 	const float MinWidth = 70.f;
 	const float HPadding = 10.f;
+	bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
 
 	// Draw
 	StructBuilder.AddCustomRow(LOCTEXT("FSubStatsRow", "FSubStats_Proper"))
@@ -65,111 +69,125 @@ void FRSubStats_Property::CustomizeChildren (
 		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
 		.Content()
 		[
-			// Wrap content
-			SNew(SWrapBox)
-			.UseAllottedWidth(true)
-
-			// Evasion
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			.HAlign (EHorizontalAlignment::HAlign_Center)
 			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				SNew(STextBlock)
+				.Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })	
+				.Text (StructPropertyHandle->GetPropertyDisplayName ())
+			]
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+
+				// Wrap content
+				SNew(SWrapBox)
+				.UseAllottedWidth(true)
+
+				// Evasion
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						EvasionPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						EvasionPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							EvasionPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							EvasionPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
-			]
 
-			// Critical
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
-			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				// Critical
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						CriticalPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						CriticalPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							CriticalPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							CriticalPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
-			]
 
-			// Move speed
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
-			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				// Move speed
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						MoveSpeedPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						MoveSpeedPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							MoveSpeedPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							MoveSpeedPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
-			]
 
-			// Attack speed
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
-			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				// Attack speed
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						AttackSpeedPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						AttackSpeedPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							AttackSpeedPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							AttackSpeedPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
-			]
 
-			// Attack power
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
-			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				// Attack power
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						AttackPowerPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						AttackPowerPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							AttackPowerPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							AttackPowerPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
 			]

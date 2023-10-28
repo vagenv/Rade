@@ -22,7 +22,10 @@ void FRStatusValue_Property::CustomizeHeader (
 	FDetailWidgetRow&						HeaderRow,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	HeaderRow.NameContent()[StructPropertyHandle->CreatePropertyNameWidget()];
+	// Don't show header if not an array item
+	if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
+		HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
+	}
 }
 
 void FRStatusValue_Property::CustomizeChildren (
@@ -47,6 +50,7 @@ void FRStatusValue_Property::CustomizeChildren (
 
 	const float MinWidth = 70.f;
 	const float HPadding = 10.f;
+	bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
 
 	// Draw
 	StructBuilder.AddCustomRow(LOCTEXT("FRStatusValueRow", "FRStatusValue"))
@@ -56,63 +60,77 @@ void FRStatusValue_Property::CustomizeChildren (
 		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
 		.Content()
 		[
-			// Wrap content
-			SNew(SWrapBox)
-			.UseAllottedWidth(true)
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			.HAlign (EHorizontalAlignment::HAlign_Center)
 			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				SNew(STextBlock)
+				.Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })	
+				.Text (StructPropertyHandle->GetPropertyDisplayName ())
+			]
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+
+				// Wrap content
+				SNew(SWrapBox)
+				.UseAllottedWidth(true)
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						CurrentPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						CurrentPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							CurrentPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							CurrentPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
-			]
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
-			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						MaxPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						MaxPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							MaxPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							MaxPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
-			]
-			+SWrapBox::Slot()
-			.Padding(HPadding, 0.f)
-			[
-				SNew(SBox)
-				.MinDesiredWidth(MinWidth)
+				+SWrapBox::Slot()
+				.Padding(HPadding, 0.f)
 				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot()
-					.AutoHeight()
+					SNew(SBox)
+					.MinDesiredWidth(MinWidth)
 					[
-						RegenPropertyHandle->CreatePropertyNameWidget()
-					]
-					+ SVerticalBox::Slot()
-					.AutoHeight()
-					[
-						RegenPropertyHandle->CreatePropertyValueWidget()
+						SNew(SVerticalBox)
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							RegenPropertyHandle->CreatePropertyNameWidget()
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							RegenPropertyHandle->CreatePropertyValueWidget()
+						]
 					]
 				]
 			]

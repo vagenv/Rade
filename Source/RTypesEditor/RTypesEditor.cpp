@@ -32,7 +32,7 @@ void RTypesEditorModule::StartupModule()
 
 	// RCoreStats
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"FRCoreStats",
+		"RCoreStats",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRCoreStats_Property::MakeInstance));
 
 	// RSubStats

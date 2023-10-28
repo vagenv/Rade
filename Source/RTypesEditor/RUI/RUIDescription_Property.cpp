@@ -3,6 +3,8 @@
 #include "RUIDescription_Property.h"
 #include "RUILib/RUIDescription.h"
 
+#include "RUtilLib/RLog.h"
+
 #include "IDetailChildrenBuilder.h"
 #include "SlateBasics.h"
 #include "DetailLayoutBuilder.h"
@@ -22,7 +24,10 @@ void FRUIDescription_Property::CustomizeHeader (
 	FDetailWidgetRow&						HeaderRow,
 	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	HeaderRow.NameContent()[StructPropertyHandle->CreatePropertyNameWidget()];
+	// Don't show header if not an array item
+	if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
+		HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
+	}
 }
 
 void FRUIDescription_Property::CustomizeChildren (
@@ -45,6 +50,8 @@ void FRUIDescription_Property::CustomizeChildren (
 			&& LabelPropertyHandle.IsValid ()
 			&& TooltipPropertyHandle.IsValid ());
 
+	bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
+
 	// Draw
 	StructBuilder.AddCustomRow(LOCTEXT("RUIDescriptionRow", "RUIDescription"))
 	[
@@ -53,66 +60,80 @@ void FRUIDescription_Property::CustomizeChildren (
 		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
 		.Content()
 		[
-			// Wrap content
-			SNew(SWrapBox)
-			.UseAllottedWidth(true)
-			+SWrapBox::Slot()
-			.Padding(5.f, 0.f)
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			.HAlign (EHorizontalAlignment::HAlign_Center)
 			[
-				// Icon
-				SNew(SVerticalBox)
-				+ SVerticalBox::Slot()
-				.AutoHeight()
-				[
-					IconPropertyHandle->CreatePropertyValueWidget()
-				]
+				SNew(STextBlock)
+				.Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })	
+				.Text (StructPropertyHandle->GetPropertyDisplayName ())
 			]
-			+SWrapBox::Slot()
-			.Padding(5.f, 0.f)
-			.FillEmptySpace(true)
+			+SVerticalBox::Slot()
+			.AutoHeight()
 			[
-				// Label + Tooltip vertically
-				SNew(SVerticalBox)
-				+ SVerticalBox::Slot()
-				.AutoHeight()
+
+				// Wrap content
+				SNew(SWrapBox)
+				.UseAllottedWidth(true)
+				+SWrapBox::Slot()
+				.Padding(5.f, 0.f)
 				[
+					// Icon
 					SNew(SVerticalBox)
-
-					// Label
 					+ SVerticalBox::Slot()
+					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						+ SHorizontalBox::Slot()
-						.Padding(10.f, 5.f, 18.f, 5.f)
-						.AutoWidth()
-						[
-							LabelPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SHorizontalBox::Slot()
-						.FillWidth(1)
-						[
-							LabelPropertyHandle->CreatePropertyValueWidget()
-						]
+						IconPropertyHandle->CreatePropertyValueWidget()
 					]
-
-					// Tooltip
+				]
+				+SWrapBox::Slot()
+				.Padding(5.f, 0.f)
+				.FillEmptySpace(true)
+				[
+					// Label + Tooltip vertically
+					SNew(SVerticalBox)
 					+ SVerticalBox::Slot()
+					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						+ SHorizontalBox::Slot()
-						.Padding(10.f, 5.f)
-						.AutoWidth()
+						SNew(SVerticalBox)
+
+						// Label
+						+ SVerticalBox::Slot()
 						[
-							TooltipPropertyHandle->CreatePropertyNameWidget()
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot()
+							.Padding(10.f, 5.f, 18.f, 5.f)
+							.AutoWidth()
+							[
+								LabelPropertyHandle->CreatePropertyNameWidget()
+							]
+							+ SHorizontalBox::Slot()
+							.FillWidth(1)
+							[
+								LabelPropertyHandle->CreatePropertyValueWidget()
+							]
 						]
-						+ SHorizontalBox::Slot()
-						.FillWidth(1)
+
+						// Tooltip
+						+ SVerticalBox::Slot()
 						[
-							TooltipPropertyHandle->CreatePropertyValueWidget()
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot()
+							.Padding(10.f, 5.f)
+							.AutoWidth()
+							[
+								TooltipPropertyHandle->CreatePropertyNameWidget()
+							]
+							+ SHorizontalBox::Slot()
+							.FillWidth(1)
+							[
+								TooltipPropertyHandle->CreatePropertyValueWidget()
+							]
 						]
 					]
 				]
-			]
+			]	
 		]
 	];
 }
