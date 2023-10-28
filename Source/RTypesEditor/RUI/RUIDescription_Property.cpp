@@ -1,4 +1,7 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #include "RUIDescription_Property.h"
+#include "RUILib/RUIDescription.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "SlateBasics.h"

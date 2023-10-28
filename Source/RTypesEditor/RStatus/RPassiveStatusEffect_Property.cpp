@@ -1,4 +1,7 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #include "RPassiveStatusEffect_Property.h"
+#include "RStatusLib/RPassiveStatusEffect.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "SlateBasics.h"

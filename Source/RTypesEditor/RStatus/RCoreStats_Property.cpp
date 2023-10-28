@@ -1,4 +1,7 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #include "RCoreStats_Property.h"
+#include "RStatusLib/RStatusTypes.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "SlateBasics.h"

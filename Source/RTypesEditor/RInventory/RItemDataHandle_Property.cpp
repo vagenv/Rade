@@ -1,4 +1,7 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #include "RItemDataHandle_Property.h"
+#include "RInventoryLib/RItemTypes.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "SlateBasics.h"

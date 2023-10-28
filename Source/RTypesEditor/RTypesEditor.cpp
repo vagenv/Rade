@@ -27,48 +27,47 @@ void RTypesEditorModule::StartupModule()
 
 	// RUIDescription
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRUIDescription::StaticStruct ()->GetFName (),
+		"RUIDescription",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRUIDescription_Property::MakeInstance));
 
 	// RCoreStats
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRCoreStats::StaticStruct ()->GetFName (),
+		"FRCoreStats",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRCoreStats_Property::MakeInstance));
 
 	// RSubStats
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRSubStats::StaticStruct ()->GetFName (),
+		"RSubStats",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRSubStats_Property::MakeInstance));
 
 	// RStatusValue
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRStatusValue::StaticStruct ()->GetFName (),
+		"RStatusValue",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRStatusValue_Property::MakeInstance));
 
 	// RPassiveStatusEffect
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRPassiveStatusEffect::StaticStruct ()->GetFName (),
+		"RPassiveStatusEffect",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRPassiveStatusEffect_Property::MakeInstance));
 
 	// REnemyExp
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FREnemyExp::StaticStruct ()->GetFName (),
+		"REnemyExp",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FREnemyExp_Property::MakeInstance));
 
 	/*
 	// RItemHandle
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRItemDataHandle::StaticStruct ()->GetFName (),
+		"RItemDataHandle",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemDataHandle_Property::MakeInstance));
-
 
 	// RItemData
 	PropertyModule.RegisterCustomPropertyTypeLayout (
-		FRItemData::StaticStruct ()->GetFName (),
+		"RItemData",
 		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemData_Property::MakeInstance));
 	*/
 
-	PropertyModule.NotifyCustomizationModuleChanged();
+	PropertyModule.NotifyCustomizationModuleChanged ();
 }
 
 void RTypesEditorModule::ShutdownModule()

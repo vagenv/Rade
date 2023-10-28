@@ -1,9 +1,9 @@
-#pragma once
+// Copyright 2015-2023 Vagen Ayrapetyan
 
+#pragma once
 
 #include "DetailCustomizations.h"
 #include "IPropertyTypeCustomization.h"
-#include "RInventoryLib/RItemTypes.h"
 
 class FDetailWidgetRow;
 class IDetailChildrenBuilder;

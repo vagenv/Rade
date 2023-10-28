@@ -1,4 +1,7 @@
+// Copyright 2015-2023 Vagen Ayrapetyan
+
 #include "REnemyExp_Property.h"
+#include "RExperienceLib/RExperienceTypes.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "SlateBasics.h"
