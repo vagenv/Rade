@@ -68,22 +68,22 @@ bool FRItemData::ReadJSON ()
    FRItemData &obj = *this;
 
    // Create a backup of JsonData. It will be overwritten by assignment.
-   FString JsonDataBackup = JsonData;
+   FString JsonDataBackup = GetJSON ();
 
    // Should assign all the member variables
    obj = dst;
 
    // Restore backup
-   obj.JsonData = JsonDataBackup;
+   obj.SetJSON (JsonDataBackup);
    return true;
 }
 
 bool FRItemData::WriteJSON ()
 {
    FString dst;
-   JsonData = "";
+   SetJSON ("");
    if (!RJSON::ToString (*this, dst)) return false;
-   JsonData = dst;
+   SetJSON (dst);
    return true;
 }
 
@@ -107,28 +107,28 @@ bool FRActionItemData::ReadJSON ()
 {
    // Destination of data to be read
    FRActionItemData dst;
-   if (!RJSON::ToStruct (JsonData, dst)) return false;
+   if (!RJSON::ToStruct (GetJSON (), dst)) return false;
 
    // Create reference for direct assignment
    FRActionItemData &obj = *this;
 
    // Create a backup of JsonData. It will be overwritten by assignment.
-   FString JsonDataBackup = JsonData;
+   FString JsonDataBackup = GetJSON ();
 
    // Should assign all the member variables
    obj = dst;
 
    // Restore backup
-   obj.JsonData = JsonDataBackup;
+   obj.SetJSON (JsonDataBackup);
    return true;
 }
 
 bool FRActionItemData::WriteJSON ()
 {
    FString dst;
-   JsonData = "";
+   SetJSON ("");
    if (!RJSON::ToString (*this, dst)) return false;
-   JsonData = dst;
+   SetJSON (dst);
    return true;
 }
 

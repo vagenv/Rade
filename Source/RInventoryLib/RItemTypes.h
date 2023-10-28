@@ -91,15 +91,15 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    FRItemData();
 
    // Data table row Unique ID
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY()
       FString ID;
 
-   // Must be defined in all subclasses for type checking and casting
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   // Must be set in all subclasses for type checking and casting
+   UPROPERTY()
       FString Type;
 
    // Into what types can the 'JsonData' be converted to
-   UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+   UPROPERTY()
       TArray<FString> CastType;
 
    // UI Information
@@ -150,19 +150,21 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    // DANGEROUS!!! Only call it on correct subclass version.
    virtual bool WriteJSON ();
 
+   bool    IsValid () const;
+
+private:
+
+   // This data will be serialized. Subclasses must write data into here
+   UPROPERTY()
+      FString JsonData;
+
+public:
    // Get a copy of internal value
    FString GetJSON () const              { return JsonData; };
 
    // Sets the internal value
    void    SetJSON (const FString &data) { JsonData = data; };
 
-   bool    IsValid () const;
-
-protected:
-
-   // This data will be serialized. Subclasses must write data into here
-   UPROPERTY()
-      FString JsonData;
 };
 
 // ============================================================================
