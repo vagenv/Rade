@@ -5,10 +5,10 @@
 
 UWorld* URUtil::GetWorld (const UObject* WorldContextObject)
 {
-   if (!ensure (WorldContextObject)) return nullptr;
-   if (!GEngine) return nullptr;
+   if (!WorldContextObject)   return nullptr;
+   if (!GEngine)              return nullptr;
    UWorld* World = GEngine->GetWorldFromContextObject (WorldContextObject, EGetWorldErrorMode::ReturnNull);
-   if (!World) return nullptr;
+   if (!World)                return nullptr;
    if (World->bIsTearingDown) return nullptr;
 
    return World;
