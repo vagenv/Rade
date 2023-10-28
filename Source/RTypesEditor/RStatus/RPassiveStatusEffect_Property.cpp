@@ -14,129 +14,129 @@
 
 TSharedRef<IPropertyTypeCustomization> FRPassiveStatusEffect_Property::MakeInstance ()
 {
-	return MakeShareable (new FRPassiveStatusEffect_Property ());
+   return MakeShareable (new FRPassiveStatusEffect_Property ());
 }
 
 void FRPassiveStatusEffect_Property::CustomizeHeader (
-	TSharedRef<IPropertyHandle>      StructPropertyHandle,
-	FDetailWidgetRow&						HeaderRow,
-	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+   TSharedRef<IPropertyHandle>      StructPropertyHandle,
+   FDetailWidgetRow&                  HeaderRow,
+   IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	// Don't show header if not an array item
-	if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
-		HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
-	}
+   // Don't show header if not an array item
+   if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
+      HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
+   }
 }
 
 void FRPassiveStatusEffect_Property::CustomizeChildren (
-	TSharedRef<IPropertyHandle>      StructPropertyHandle,
-	IDetailChildrenBuilder&          StructBuilder,
-	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+   TSharedRef<IPropertyHandle>      StructPropertyHandle,
+   IDetailChildrenBuilder&          StructBuilder,
+   IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	// --- Get handles
-	TSharedPtr<IPropertyHandle> TargetPropertyHandle
-		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRPassiveStatusEffect, EffectTarget));
+   // --- Get handles
+   TSharedPtr<IPropertyHandle> TargetPropertyHandle
+      = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRPassiveStatusEffect, EffectTarget));
 
-	TSharedPtr<IPropertyHandle> FlatPropertyHandle
-		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRPassiveStatusEffect, Flat));
+   TSharedPtr<IPropertyHandle> FlatPropertyHandle
+      = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRPassiveStatusEffect, Flat));
 
-	TSharedPtr<IPropertyHandle> PercentPropertyHandle
-		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRPassiveStatusEffect, Percent));
+   TSharedPtr<IPropertyHandle> PercentPropertyHandle
+      = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRPassiveStatusEffect, Percent));
 
-	// --- Perform checks
-	check (  TargetPropertyHandle.IsValid ()
-			&& FlatPropertyHandle.IsValid ()
-			&& PercentPropertyHandle.IsValid ());
+   // --- Perform checks
+   check (  TargetPropertyHandle.IsValid ()
+         && FlatPropertyHandle.IsValid ()
+         && PercentPropertyHandle.IsValid ());
 
-	const float TargetMinWidth = 130.f;
-	const float ValueMinWidth  = 70.f;
-	const float HPadding       = 10.f;
-	bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
+   const float TargetMinWidth = 130.f;
+   const float ValueMinWidth  = 70.f;
+   const float HPadding       = 10.f;
+   bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
 
-	// Draw
-	StructBuilder.AddCustomRow(LOCTEXT("FRPassiveStatusEffectRow", "FRPassiveStatusEffect"))
-	[
-		// ROOT
-		SNew(SBorder)
-		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
-		.Content()
-		[
-			SNew(SVerticalBox)
-			+SVerticalBox::Slot()
-			.AutoHeight()
-			.HAlign (EHorizontalAlignment::HAlign_Center)
-			[
-				SNew(STextBlock)
-				.Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })	
-				.Text (StructPropertyHandle->GetPropertyDisplayName ())
-			]
-			+SVerticalBox::Slot()
-			.AutoHeight()
-			[
+   // Draw
+   StructBuilder.AddCustomRow(LOCTEXT("FRPassiveStatusEffectRow", "FRPassiveStatusEffect"))
+   [
+      // ROOT
+      SNew(SBorder)
+      .BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+      .Content()
+      [
+         SNew(SVerticalBox)
+         +SVerticalBox::Slot()
+         .AutoHeight()
+         .HAlign (EHorizontalAlignment::HAlign_Center)
+         [
+            SNew(STextBlock)
+            .Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })
+            .Text (StructPropertyHandle->GetPropertyDisplayName ())
+         ]
+         +SVerticalBox::Slot()
+         .AutoHeight()
+         [
 
-				// Wrap content
-				SNew(SWrapBox)
-				.UseAllottedWidth(true)
-				+SWrapBox::Slot()
-				.Padding(HPadding, 0.f)
-				[
-					SNew(SBox)
-					.MinDesiredWidth(TargetMinWidth)
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							TargetPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							TargetPropertyHandle->CreatePropertyValueWidget()
-						]
-					]
-				]
-				+SWrapBox::Slot()
-				.Padding(HPadding, 0.f)
-				[
-					SNew(SBox)
-					.MinDesiredWidth(ValueMinWidth)
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							FlatPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							FlatPropertyHandle->CreatePropertyValueWidget()
-						]
-					]
-				]
-				+SWrapBox::Slot()
-				.Padding(HPadding, 0.f)
-				[
-					SNew(SBox)
-					.MinDesiredWidth(ValueMinWidth)
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							PercentPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							PercentPropertyHandle->CreatePropertyValueWidget()
-						]
-					]
-				]
-			]
-		]
-	];
+            // Wrap content
+            SNew(SWrapBox)
+            .UseAllottedWidth(true)
+            +SWrapBox::Slot()
+            .Padding(HPadding, 0.f)
+            [
+               SNew(SBox)
+               .MinDesiredWidth(TargetMinWidth)
+               [
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     TargetPropertyHandle->CreatePropertyNameWidget()
+                  ]
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     TargetPropertyHandle->CreatePropertyValueWidget()
+                  ]
+               ]
+            ]
+            +SWrapBox::Slot()
+            .Padding(HPadding, 0.f)
+            [
+               SNew(SBox)
+               .MinDesiredWidth(ValueMinWidth)
+               [
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     FlatPropertyHandle->CreatePropertyNameWidget()
+                  ]
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     FlatPropertyHandle->CreatePropertyValueWidget()
+                  ]
+               ]
+            ]
+            +SWrapBox::Slot()
+            .Padding(HPadding, 0.f)
+            [
+               SNew(SBox)
+               .MinDesiredWidth(ValueMinWidth)
+               [
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     PercentPropertyHandle->CreatePropertyNameWidget()
+                  ]
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     PercentPropertyHandle->CreatePropertyValueWidget()
+                  ]
+               ]
+            ]
+         ]
+      ]
+   ];
 }
 
 #undef LOCTEXT_NAMESPACE

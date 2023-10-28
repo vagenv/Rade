@@ -14,128 +14,128 @@
 
 TSharedRef<IPropertyTypeCustomization> FRStatusValue_Property::MakeInstance ()
 {
-	return MakeShareable (new FRStatusValue_Property ());
+   return MakeShareable (new FRStatusValue_Property ());
 }
 
 void FRStatusValue_Property::CustomizeHeader (
-	TSharedRef<IPropertyHandle>      StructPropertyHandle,
-	FDetailWidgetRow&						HeaderRow,
-	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+   TSharedRef<IPropertyHandle>      StructPropertyHandle,
+   FDetailWidgetRow&                  HeaderRow,
+   IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	// Don't show header if not an array item
-	if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
-		HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
-	}
+   // Don't show header if not an array item
+   if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
+      HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
+   }
 }
 
 void FRStatusValue_Property::CustomizeChildren (
-	TSharedRef<IPropertyHandle>      StructPropertyHandle,
-	IDetailChildrenBuilder&          StructBuilder,
-	IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+   TSharedRef<IPropertyHandle>      StructPropertyHandle,
+   IDetailChildrenBuilder&          StructBuilder,
+   IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	// --- Get handles
-	TSharedPtr<IPropertyHandle> CurrentPropertyHandle
-		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRStatusValue, Current));
+   // --- Get handles
+   TSharedPtr<IPropertyHandle> CurrentPropertyHandle
+      = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRStatusValue, Current));
 
-	TSharedPtr<IPropertyHandle> MaxPropertyHandle
-		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRStatusValue, Max));
+   TSharedPtr<IPropertyHandle> MaxPropertyHandle
+      = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRStatusValue, Max));
 
-	TSharedPtr<IPropertyHandle> RegenPropertyHandle
-		= StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRStatusValue, Regen));
+   TSharedPtr<IPropertyHandle> RegenPropertyHandle
+      = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRStatusValue, Regen));
 
-	// --- Perform checks
-	check (  CurrentPropertyHandle.IsValid ()
-			&& MaxPropertyHandle.IsValid ()
-			&& RegenPropertyHandle.IsValid ());
+   // --- Perform checks
+   check (  CurrentPropertyHandle.IsValid ()
+         && MaxPropertyHandle.IsValid ()
+         && RegenPropertyHandle.IsValid ());
 
-	const float MinWidth = 70.f;
-	const float HPadding = 10.f;
-	bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
+   const float MinWidth = 70.f;
+   const float HPadding = 10.f;
+   bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
 
-	// Draw
-	StructBuilder.AddCustomRow(LOCTEXT("FRStatusValueRow", "FRStatusValue"))
-	[
-		// ROOT
-		SNew(SBorder)
-		.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
-		.Content()
-		[
-			SNew(SVerticalBox)
-			+SVerticalBox::Slot()
-			.AutoHeight()
-			.HAlign (EHorizontalAlignment::HAlign_Center)
-			[
-				SNew(STextBlock)
-				.Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })	
-				.Text (StructPropertyHandle->GetPropertyDisplayName ())
-			]
-			+SVerticalBox::Slot()
-			.AutoHeight()
-			[
+   // Draw
+   StructBuilder.AddCustomRow(LOCTEXT("FRStatusValueRow", "FRStatusValue"))
+   [
+      // ROOT
+      SNew(SBorder)
+      .BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+      .Content()
+      [
+         SNew(SVerticalBox)
+         +SVerticalBox::Slot()
+         .AutoHeight()
+         .HAlign (EHorizontalAlignment::HAlign_Center)
+         [
+            SNew(STextBlock)
+            .Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })
+            .Text (StructPropertyHandle->GetPropertyDisplayName ())
+         ]
+         +SVerticalBox::Slot()
+         .AutoHeight()
+         [
 
-				// Wrap content
-				SNew(SWrapBox)
-				.UseAllottedWidth(true)
-				+SWrapBox::Slot()
-				.Padding(HPadding, 0.f)
-				[
-					SNew(SBox)
-					.MinDesiredWidth(MinWidth)
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							CurrentPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							CurrentPropertyHandle->CreatePropertyValueWidget()
-						]
-					]
-				]
-				+SWrapBox::Slot()
-				.Padding(HPadding, 0.f)
-				[
-					SNew(SBox)
-					.MinDesiredWidth(MinWidth)
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							MaxPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							MaxPropertyHandle->CreatePropertyValueWidget()
-						]
-					]
-				]
-				+SWrapBox::Slot()
-				.Padding(HPadding, 0.f)
-				[
-					SNew(SBox)
-					.MinDesiredWidth(MinWidth)
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							RegenPropertyHandle->CreatePropertyNameWidget()
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							RegenPropertyHandle->CreatePropertyValueWidget()
-						]
-					]
-				]
-			]
-		]
-	];
+            // Wrap content
+            SNew(SWrapBox)
+            .UseAllottedWidth(true)
+            +SWrapBox::Slot()
+            .Padding(HPadding, 0.f)
+            [
+               SNew(SBox)
+               .MinDesiredWidth(MinWidth)
+               [
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     CurrentPropertyHandle->CreatePropertyNameWidget()
+                  ]
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     CurrentPropertyHandle->CreatePropertyValueWidget()
+                  ]
+               ]
+            ]
+            +SWrapBox::Slot()
+            .Padding(HPadding, 0.f)
+            [
+               SNew(SBox)
+               .MinDesiredWidth(MinWidth)
+               [
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     MaxPropertyHandle->CreatePropertyNameWidget()
+                  ]
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     MaxPropertyHandle->CreatePropertyValueWidget()
+                  ]
+               ]
+            ]
+            +SWrapBox::Slot()
+            .Padding(HPadding, 0.f)
+            [
+               SNew(SBox)
+               .MinDesiredWidth(MinWidth)
+               [
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     RegenPropertyHandle->CreatePropertyNameWidget()
+                  ]
+                  + SVerticalBox::Slot()
+                  .AutoHeight()
+                  [
+                     RegenPropertyHandle->CreatePropertyValueWidget()
+                  ]
+               ]
+            ]
+         ]
+      ]
+   ];
 }
 
 #undef LOCTEXT_NAMESPACE

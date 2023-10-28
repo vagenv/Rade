@@ -21,73 +21,74 @@ IMPLEMENT_GAME_MODULE(RTypesEditorModule, RTypesEditor);
 
 void RTypesEditorModule::StartupModule()
 {
-	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule> ("PropertyEditor");
+   FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule> ("PropertyEditor");
 
-	// --- Register Custom property
+   // --- Register Custom property
 
-	// RUIDescription
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RUIDescription",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRUIDescription_Property::MakeInstance));
+   // RUIDescription
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RUIDescription",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRUIDescription_Property::MakeInstance));
 
-	// RCoreStats
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RCoreStats",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRCoreStats_Property::MakeInstance));
+   // RCoreStats
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RCoreStats",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRCoreStats_Property::MakeInstance));
 
-	// RSubStats
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RSubStats",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRSubStats_Property::MakeInstance));
+   // RSubStats
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RSubStats",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRSubStats_Property::MakeInstance));
 
-	// RStatusValue
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RStatusValue",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRStatusValue_Property::MakeInstance));
+   // RStatusValue
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RStatusValue",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRStatusValue_Property::MakeInstance));
 
-	// RPassiveStatusEffect
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RPassiveStatusEffect",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRPassiveStatusEffect_Property::MakeInstance));
+   // RPassiveStatusEffect
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RPassiveStatusEffect",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRPassiveStatusEffect_Property::MakeInstance));
 
-	// REnemyExp
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"REnemyExp",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FREnemyExp_Property::MakeInstance));
+   // REnemyExp
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "REnemyExp",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FREnemyExp_Property::MakeInstance));
 
-	/*
-	// RItemHandle
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RItemDataHandle",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemDataHandle_Property::MakeInstance));
 
-	// RItemData
-	PropertyModule.RegisterCustomPropertyTypeLayout (
-		"RItemData",
-		FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemData_Property::MakeInstance));
-	*/
+   /*
+   // RItemHandle
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RItemDataHandle",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemDataHandle_Property::MakeInstance));
 
-	PropertyModule.NotifyCustomizationModuleChanged ();
+   // RItemData
+   PropertyModule.RegisterCustomPropertyTypeLayout (
+      "RItemData",
+      FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemData_Property::MakeInstance));
+   */
+
+   PropertyModule.NotifyCustomizationModuleChanged ();
 }
 
 void RTypesEditorModule::ShutdownModule()
 {
-	if (FModuleManager::Get ().IsModuleLoaded ("PropertyEditor")) {
+   if (FModuleManager::Get ().IsModuleLoaded ("PropertyEditor")) {
 
-		// --- Unregister properties when the module is shutdown
-		FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule> ("PropertyEditor");
+      // --- Unregister properties when the module is shutdown
+      FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule> ("PropertyEditor");
 
-		PropertyModule.UnregisterCustomPropertyTypeLayout ("RUIDescription");
-		PropertyModule.UnregisterCustomPropertyTypeLayout ("RCoreStats");
-		PropertyModule.UnregisterCustomPropertyTypeLayout ("RSubStats");
-		PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
-		PropertyModule.UnregisterCustomPropertyTypeLayout ("RPassiveStatusEffect");
-		PropertyModule.UnregisterCustomPropertyTypeLayout ("REnemyExp");
-		//PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemDataHandle");
-		//PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemData");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("RUIDescription");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("RCoreStats");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("RSubStats");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("RPassiveStatusEffect");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("REnemyExp");
+      //PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemDataHandle");
+      //PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemData");
 
-		PropertyModule.NotifyCustomizationModuleChanged ();
-	}
+      PropertyModule.NotifyCustomizationModuleChanged ();
+   }
 }
 
 #undef LOCTEXT_NAMESPACE
