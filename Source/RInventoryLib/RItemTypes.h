@@ -209,6 +209,9 @@ public:
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
       static bool Item_IsValid (const FRItemData& ItemData);
 
+   UFUNCTION(BlueprintPure, Category = "Rade|Inventory")
+      static FString Item_GetId (const FRItemData& ItemData);
+
 
    UFUNCTION(BlueprintPure, Category = "Rade|Inventory",
              meta=(DisplayName="Equal (FRItemData, FRItemData)", CompactNodeTitle="=="))

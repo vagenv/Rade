@@ -167,6 +167,11 @@ bool URItemUtilLibrary::Item_IsValid (const FRItemData& ItemData)
    return ItemData.IsValid ();
 }
 
+FString URItemUtilLibrary::Item_GetId (const FRItemData& ItemData)
+{
+   return ItemData.ID;
+}
+
 bool URItemUtilLibrary::Item_EqualEqual (const FRItemData& A,
                                          const FRItemData& B)
 {
