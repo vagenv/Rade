@@ -133,7 +133,7 @@ Melee
 =================================================
          Fixes
 =================================================
-Evasion and Critical GameplayEvents
+Critical GameplayEvents
 
 
 =================================================
@@ -187,21 +187,6 @@ Emotions
 - Sound
 - On top of player
 - Character animation
-
-
-=================================================
-   Editor UI
-=================================================
-
-https://unrealcommunity.wiki/customizing-details-amp-property-type-panel-tutorial-00deskro
-https://github.com/NansPellicari/UE4-HowTo-DetailsPanelCustomization/
-https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Slate/DetailsCustomization/
-
-
-[FRItemDataHandle]
-[Table] [Item]  [<] x[Count] [>]
-
-Change table -> Reset Item and Count
 
 
 =================================================
