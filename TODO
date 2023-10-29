@@ -13,6 +13,7 @@
 =================================================
 
 Remove Durability?
+Remove item from inventory if equiped?
 
 List of Interfaces for actions?
 Map / Array of FStrings for content serialization and replication?
@@ -56,7 +57,7 @@ bool FRWeaponItem::Get (ItemData)
 
 
 Replication only for owner?
-JsonData is a large FString member variable. Very expensive to replicate.
+JsonData is a large FString member variable.
 
 
 
@@ -150,9 +151,40 @@ Texture Effects and Shake based on damage type
 
 
 =================================================
-         World Map
+         Interact visible from distance
 =================================================
-Right Top Corner
+UInteractIconComponent
+- If is interacted -> hide
+- If in list of close interactable -> set visible
+
+
+=================================================
+         World Map / Mini map
+=================================================
+
+Texture for map
+Material for rendering map
+
+URMapComponent?
+- Icon on map
+- Size of icon
+- Visible on world map
+- Visible on minimap
+- Bound to minimap
+- IsDiscovered? Not visible until player gets close to them. Requires Save/Load
+
+Table with URMapComponent values
+Class to FRMapInfo
+
+
+RWorldMapMgr->Register/Unregister
+
+WorldMapWidget
+- Zoom in / out
+
+MiniMapWidget
+- Tick
+
 
 Custom Icons with distance for
 - NSWE
@@ -160,6 +192,8 @@ Custom Icons with distance for
 - Friends
 - Pickups
 - Interact
+
+Fog of war?
 
 
 =================================================
