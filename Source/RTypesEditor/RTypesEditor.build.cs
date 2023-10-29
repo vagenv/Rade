@@ -23,7 +23,8 @@ public class RTypesEditor : ModuleRules
          "SlateCore",
          "UnrealEd",
          "PropertyEditor",
-         "EditorStyle"
+         "EditorStyle",
+         "ToolWidgets"
       });
    }
 }

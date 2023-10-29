@@ -56,12 +56,12 @@ void RTypesEditorModule::StartupModule()
       FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FREnemyExp_Property::MakeInstance));
 
 
-   /*
+
    // RItemHandle
    PropertyModule.RegisterCustomPropertyTypeLayout (
       "RItemDataHandle",
       FOnGetPropertyTypeCustomizationInstance::CreateStatic (&FRItemDataHandle_Property::MakeInstance));
-
+   /*
    // RItemData
    PropertyModule.RegisterCustomPropertyTypeLayout (
       "RItemData",
@@ -84,7 +84,7 @@ void RTypesEditorModule::ShutdownModule()
       PropertyModule.UnregisterCustomPropertyTypeLayout ("RStatusValue");
       PropertyModule.UnregisterCustomPropertyTypeLayout ("RPassiveStatusEffect");
       PropertyModule.UnregisterCustomPropertyTypeLayout ("REnemyExp");
-      //PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemDataHandle");
+      PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemDataHandle");
       //PropertyModule.UnregisterCustomPropertyTypeLayout ("RItemData");
 
       PropertyModule.NotifyCustomizationModuleChanged ();

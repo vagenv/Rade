@@ -15,7 +15,6 @@ class  AActor;
 class  URItemAction;
 class  URInventoryComponent;
 class  UStaticMesh;
-struct FRItemDataHandle;
 struct FRItemData;
 
 // ============================================================================
