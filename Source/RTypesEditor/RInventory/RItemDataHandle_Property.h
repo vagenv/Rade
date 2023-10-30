@@ -34,6 +34,5 @@ private:
 
    UFUNCTION()
       void RefreshRowList (TSharedRef<SSearchableComboBox> ComboBoxWidget, const UDataTable* DataTable);
-
 };
 

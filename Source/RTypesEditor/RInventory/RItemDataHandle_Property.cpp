@@ -35,7 +35,7 @@ void FRItemDataHandle_Property::CustomizeChildren (
    IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 
-// --- Get handles
+   // --- Get handles
    TSharedPtr<IPropertyHandle> ArchPropertyHandle
       = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRItemDataHandle, Arch));
 
@@ -43,13 +43,13 @@ void FRItemDataHandle_Property::CustomizeChildren (
       = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FRItemDataHandle, Count));
 
    {
-      uint32 ChildCount = 0;
-      ArchPropertyHandle->GetNumChildren (ChildCount);
-
       // --- Perform checks
       check (  ArchPropertyHandle.IsValid ()
-            && CountPropertyHandle.IsValid ()
-            && ChildCount == 2);
+            && CountPropertyHandle.IsValid ());
+
+      uint32 ChildCount = 0;
+      ArchPropertyHandle->GetNumChildren (ChildCount);
+      check (ChildCount == 2);
    }
 
    const TSharedRef<IPropertyHandle> TableHandle = ArchPropertyHandle->GetChildHandle (0).ToSharedRef();
@@ -59,14 +59,10 @@ void FRItemDataHandle_Property::CustomizeChildren (
    const float HPadding = 10.f;
    bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
 
-
    // Create initial list
-
    TSharedRef<SSearchableComboBox> ComboBoxWidget = SNew(SSearchableComboBox)
       .OptionsSource(&RowNames)
-      //.OnSelectionChanged(this, &FTextComboListCustomization::HandleTextComboSelectionChanged, StructPropertyHandle)
       .OnSelectionChanged_Lambda ([this, RowHandle] (TSharedPtr<FString> ProposedSelection, ESelectInfo::Type SelectInfo) {
-         //R_LOG_STATIC ("Selection changed");
          FName Result = FName (*ProposedSelection);
          if (RowHandle->IsValidHandle ()) RowHandle->SetValue (Result);
       })
