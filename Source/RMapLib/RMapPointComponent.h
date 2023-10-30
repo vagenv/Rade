@@ -40,6 +40,6 @@ protected:
 
    // Is this Interact selected
    UPROPERTY()
-      bool CanFind = false;
+      bool CanFind = true;
 };
 

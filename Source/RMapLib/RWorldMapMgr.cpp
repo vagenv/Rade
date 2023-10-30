@@ -19,6 +19,74 @@ URWorldMapMgr* URWorldMapMgr::GetInstance (const UObject* WorldContextObject)
 //                   Member calls
 //=============================================================================
 
+URWorldMapMgr::URWorldMapMgr ()
+{
+   bWantsInitializeComponent = true;
+}
+
+void URWorldMapMgr::InitializeComponent ()
+{
+   Super::InitializeComponent ();
+
+   // --- Parse Table and create Map for fast search
+   if (MapPointTable) {
+
+      MapOfMapPoints.Empty ();
+      FString TablePath = URUtil::GetTablePath (MapPointTable);
+      FString ContextString;
+      TArray<FName> RowNames = MapPointTable->GetRowNames ();
+      for (const FName& ItRowName : RowNames) {
+         FRMapPointInfo* ItRow = MapPointTable->FindRow<FRMapPointInfo> (ItRowName, ContextString);
+
+         if (!ItRow) {
+            R_LOG_PRINTF ("Invalid FRMapPointInfo in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         if (ItRow->TargetClass.IsNull ()) {
+            R_LOG_PRINTF ("Invalid Target Class in row [%s] table [%s]", *ItRowName.ToString (), *TablePath);
+            continue;
+         }
+
+         MapOfMapPoints.Add (ItRow->TargetClass.ToString (), *ItRow);
+      }
+   }
+}
+
+FRMapPointInfo URWorldMapMgr::GetMapPointInfo_Actor (const AActor* TargetActor) const
+{
+   FRMapPointInfo Result;
+   if (ensure (TargetActor)) {
+      FString AbilityClassPath = TargetActor->GetClass ()->GetPathName ();
+      if (MapOfMapPoints.Contains (AbilityClassPath)) {
+         Result = MapOfMapPoints[AbilityClassPath];
+      } else {
+         R_LOG_PRINTF ("Error. [%s] MapPointInfo not found in [%s]",
+                       *AbilityClassPath,
+                       *URUtil::GetTablePath (MapPointTable));
+      }
+   }
+
+   return Result;
+}
+
+FRMapPointInfo URWorldMapMgr::GetMapPointInfo_Class (const TSoftClassPtr<AActor> AbilityClass) const
+{
+   FRMapPointInfo Result;
+   if (ensure (!AbilityClass.IsNull ())) {
+      FString AbilityClassPath = AbilityClass.ToString ();
+      if (MapOfMapPoints.Contains (AbilityClassPath)) {
+         Result = MapOfMapPoints[AbilityClassPath];
+      } else {
+         R_LOG_PRINTF ("Error. [%s] MapPointInfo not found in [%s]",
+                       *AbilityClassPath,
+                       *URUtil::GetTablePath (MapPointTable));
+      }
+   }
+
+   return Result;
+}
+
 TArray<URMapPointComponent*> URWorldMapMgr::GetMapPointList () const
 {
    TArray<URMapPointComponent*> Result;

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "RMapTypes.h"
 #include "RWorldMapMgr.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRMapMgrEvent);
@@ -15,29 +16,55 @@ class RMAPLIB_API URWorldMapMgr : public UActorComponent
    GENERATED_BODY()
 public:
 
+   URWorldMapMgr();
+
+   // Read table before begin play
+   virtual void InitializeComponent () override;
+
    //==========================================================================
-   //                  Interact list
+   //             Map Point table
+   //==========================================================================
+private:
+   UPROPERTY ()
+      TMap<FString, FRMapPointInfo> MapOfMapPoints;
+protected:
+   // List of abilties
+   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Map",
+            meta=(RequiredAssetDataTags = "RowStructure=/Script/RMapLib.RMapPointInfo"))
+      TObjectPtr<const UDataTable> MapPointTable = nullptr;
+public:
+
+   // Get ability info and scaling.
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+      FRMapPointInfo GetMapPointInfo_Actor (const AActor* TargetActor) const;
+
+   // Get ability info and scaling.
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Map")
+      FRMapPointInfo GetMapPointInfo_Class (const TSoftClassPtr<AActor> ActorClass) const;
+
+   //==========================================================================
+   //                  Map point list
    //==========================================================================
 private:
    // Container all map actor
    UPROPERTY()
       TArray<TWeakObjectPtr<URMapPointComponent> > MapPointList;
 protected:
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Map")
       TArray<URMapPointComponent*> GetMapPointList () const;
 public:
    // Called when map list has been modified
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Map")
       FRMapMgrEvent OnListUpdated;
 
    //==========================================================================
-   //          Functions called by Interact components
+   //          Functions called by Map components
    //==========================================================================
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Map")
       virtual void RegisterMapPoint  (URMapPointComponent* MapActor);
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
+   UFUNCTION(BlueprintCallable, Category = "Rade|Map")
       virtual void UnregisterMapPoint (URMapPointComponent* MapActor);
 
    //==========================================================================
