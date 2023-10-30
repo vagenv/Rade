@@ -43,6 +43,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "RMapLib",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "ROptionsLib",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
