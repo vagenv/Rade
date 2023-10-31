@@ -703,6 +703,8 @@ void URInventoryComponent::SpawnPickup (const FRItemData  &ItemData,
       }
       MeshComponent->SetStaticMesh (StaticMesh);
    }
+
+   if (R_IS_VALID_WORLD && OnPickupSpawned.IsBound ()) OnPickupSpawned.Broadcast (Pickup);
 }
 
 //=============================================================================

@@ -11,6 +11,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRInventoryEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInventoryItemListEvent,
                                              const TArray<FRItemData>&, ItemDataList);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam (FRInventoryPickupSpawnEvent,
+                                             AActor*, PickupActor);
+
 // Inventory Component. Holds all items an actor own
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RINVENTORYLIB_API URInventoryComponent : public UActorComponent, public IRSaveInterface
@@ -215,6 +218,10 @@ public:
    void SpawnPickup (const FRItemData  &ItemData,
                            UClass      *PickupActorClass,
                            UStaticMesh *StaticMesh = nullptr);
+
+   // Delegate what Items have been added / removed
+   UPROPERTY(BlueprintAssignable, Category = "Rade|Inventory")
+      FRInventoryPickupSpawnEvent OnPickupSpawned;
 
    //==========================================================================
    //                 Server versions of functions
