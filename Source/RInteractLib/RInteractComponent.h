@@ -22,7 +22,7 @@ protected:
    void UnregisterInteract ();
 
    //==========================================================================
-   //         Can this Interact be selected
+   //         Can this Interact be found/selected/interacted
    //==========================================================================
 public:
 
@@ -30,20 +30,25 @@ public:
       FRInteractEvent OnIsInteractableUpdated;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
-      void SetIsInteractable (bool CanFind);
+      void SetCanInteract (bool CanInteract_);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      bool GetIsInteractable () const;
+      bool GetCanInteract () const;
+protected:
+
+   // Can this Interact be selected
+   UPROPERTY()
+      bool CanInteract = true;
 
    //==========================================================================
    //         Is this Interact selected
    //==========================================================================
-
+public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
       FRInteractEvent OnIsInteractedUpdated;
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
-      void SetIsInteracted (bool CanInteract);
+      void SetIsInteracted (bool IsInteracted_);
 
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
       bool GetIsInteracted () const;
@@ -53,9 +58,5 @@ protected:
    // Is this Interact selected
    UPROPERTY()
       bool IsInteracted = false;
-
-   // Can this Interact be selected
-   UPROPERTY()
-      bool IsInteractable = true;
 };
 

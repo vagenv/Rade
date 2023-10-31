@@ -40,24 +40,26 @@ void URInteractComponent::UnregisterInteract ()
 //         Can this Interact be selected
 //=============================================================================
 
-void URInteractComponent::SetIsInteractable (bool CanFind)
+void URInteractComponent::SetCanInteract (bool CanInteract_)
 {
-   IsInteractable = CanFind;
+   if (CanInteract == CanInteract_) return;
+   CanInteract = CanInteract_;
    if (R_IS_VALID_WORLD && OnIsInteractableUpdated.IsBound ()) OnIsInteractableUpdated.Broadcast ();
 }
 
-bool URInteractComponent::GetIsInteractable () const
+bool URInteractComponent::GetCanInteract () const
 {
-   return IsInteractable;
+   return CanInteract;
 }
 
 //=============================================================================
 //         Is this Interact selected by someone
 //=============================================================================
 
-void URInteractComponent::SetIsInteracted (bool CanInteract)
+void URInteractComponent::SetIsInteracted (bool IsInteracted_)
 {
-   IsInteracted = CanInteract;
+   if (IsInteracted == IsInteracted_) return;
+   IsInteracted = IsInteracted_;
    if (R_IS_VALID_WORLD && OnIsInteractedUpdated.IsBound ()) OnIsInteractedUpdated.Broadcast ();
 }
 

@@ -64,6 +64,14 @@ void URPlayerInteractMgr::FindWorldInteractMgr ()
                  UpdateInteractCurrentFrequency,
                  true);
 
+
+   ForceRefreshInteractList ();
+}
+
+void URPlayerInteractMgr::ForceRefreshInteractList ()
+{
+   if (!WorldInteractMgr.IsValid ()) return;
+
    // First update is instant
    UpdateInteractList ();
    UpdateInteractCurrent ();
@@ -164,7 +172,7 @@ URInteractComponent* URPlayerInteractMgr::FindClosestInteract () const
    for (const auto &ItInteract : GetInteractList ()) {
       // Check Interact
       if (!IsValid (ItInteract)) continue;
-      if (!ItInteract->GetIsInteractable ()) continue;
+      if (!ItInteract->GetCanInteract ()) continue;
 
       FVector ItLocation  = ItInteract->GetComponentLocation ();
       FVector ItDirection = ItLocation - CameraLocation;

@@ -25,6 +25,10 @@ public:
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
+
+   UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
+      virtual void ForceRefreshInteractList ();
+
    //==========================================================================
    //                         World Mgr
    //==========================================================================
