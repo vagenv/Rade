@@ -114,4 +114,3 @@ void URWorldMapMgr::UnregisterMapPoint (URMapPointComponent* Interact)
    if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
 }
 
-
