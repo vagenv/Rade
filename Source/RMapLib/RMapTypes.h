@@ -13,6 +13,28 @@ class AActor;
 // ============================================================================
 
 USTRUCT(Blueprintable, BlueprintType)
+struct RMAPLIB_API FRMapPointSetting
+{
+   GENERATED_BODY()
+
+   // Show on map
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      bool Show = true;
+
+   // If outside render bound, show it on border
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      bool AlwaysShow = false;
+
+   // In pixels
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      float IconSize = 25;
+
+   // false => constant IconSize
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      bool ScaleWithZoom = true;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
 struct RMAPLIB_API FRMapPointInfo : public FTableRowBase
 {
    GENERATED_BODY()
@@ -25,22 +47,13 @@ struct RMAPLIB_API FRMapPointInfo : public FTableRowBase
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       TSoftObjectPtr<UTexture2D> Icon;
 
-   // In pixels
+   // Shown during gameplay
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float IconSize = 25;
+      FRMapPointSetting MiniMap;
 
-   // Will appear on gameplay mini map
+   // Large world map
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      bool ShowOnMinimap = true;
-
-   // Distance at which icon will become visible
-   // 0 -> Always on minimap
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      float ShowOnMinimap_Range = 0;
-
-   // Will appear on menu map
-   UPROPERTY(EditAnywhere, BlueprintReadWrite)
-      bool ShowOnMenumap = true;
+      FRMapPointSetting MenuMap;
 };
 
 UCLASS(ClassGroup=(_Rade))

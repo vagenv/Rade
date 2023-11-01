@@ -34,11 +34,11 @@ protected:
       TObjectPtr<const UDataTable> MapPointTable = nullptr;
 public:
 
-   // Get ability info and scaling.
+   // Get map point info
    UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
       FRMapPointInfo GetMapPointInfo_Actor (const AActor* TargetActor) const;
 
-   // Get ability info and scaling.
+   // Get map point info
    UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Map")
       FRMapPointInfo GetMapPointInfo_Class (const TSoftClassPtr<AActor> ActorClass) const;
 
