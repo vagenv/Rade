@@ -1,6 +1,6 @@
 
 =================================================
-         Bugs
+         Bugs / Features
 =================================================
 
 Hide Window flashes shortly before becoming hidden
@@ -9,46 +9,29 @@ Hide Window flashes shortly before becoming hidden
 Ability used too often hits ensure check
 
 
-Drop pickup
-- Refresh world interact list
+RActionClass
+- Interact with actor
+- Use Item
+- Step on platform
 
 
-Property editor
-- Add button / Remove last / Clear in header
-- Delete button for item if in array
+Fog of war
+- Texture alpha channel. Update / Save / Load
+- Map / Minimap visibility only if discovered?
 
-
-Inventory
-- Default items editiable in level
-
-
-Interact
-- Message editiable in level
+URDiscoveredComponent?
+- Disable by default
+- Not visible /active until player gets close to them.
+- bool IsDiscovered? Requires Save/Load
 
 
 =================================================
          World Map / Mini map
 =================================================
 
-Character death
-- Remove/Disable icon from map
-
-Healing fountain
-- Remove/Disable icon after usage
-
-
-URMapComponent
-- Disable by default
-- Not visible until player gets close to them.
-
-Separate component
-- bool IsDiscovered? Requires Save/Load
-
-
-Map Fog of war
-- Texture alpha channel. Update map / Save / Load
-
-
+Minimap
+- Map cutout range
+- Icon visible after that cutout
 
 
 ===============================================================================
@@ -796,9 +779,7 @@ Blueprint validation scripts
 ===============================================================================
 
 
-
-                              Game Design
-
+                          Game Design (Bone Boi)
 
 
 ===============================================================================
@@ -886,5 +867,105 @@ Mage (SmartBoi)
 - Wizard (MagicBoi) (Spells)
 - Warlock (PainBoi) (Curses)
 - Summoner (PartyBoi/ClubBoi) (Skeletons / Ghosts)
+
+
+
+
+
+===============================================================================
+===============================================================================
+
+
+                          Game Design (Shape Rummble)
+
+
+===============================================================================
+===============================================================================
+
+=================================================
+Character States / Classes
+=================================================
+
+==============
+Sphere
+==============
+Movement
+- Speed : Fastest (Rolling)
+- Roll  : Fast
+- Jump  : Double
+
+Attack
+- Amount   : Low
+- Distance : Close
+- Speed    : Medium
+- Type     : Radial
+Crushing with body, Jumping on enemies
+
+Defense
+- Amount : Low
+- Bounce
+- Repel
+
+
+==============
+Cone / Pyramid
+==============
+Speed
+- Speed : Lowest (Shifting on ground)
+- Roll  : None
+- Jump  : None
+
+Attack (High)
+- Amount   : Medium
+- Distance : Close
+- Speed    : Slow
+- Type     : Target
+Aura buffs/debuffs, curses
+
+Defense
+- Amount : Medium
+- Shield
+
+
+==============
+Cube
+==============
+Movement
+- Speed : Medium (Shifting on ground)
+- Roll  : Slow. Falling to side and crushing
+- Jump  : One
+
+Attack
+- Amount   : Medium
+- Distance : Far
+- Speed    : Slow
+- Type     : One/Two/Four directions
+Crushing with body, Jumping on enemies
+
+Defense
+- Amount : Medium
+
+
+
+==============
+Star / Octahedron
+==============
+Movement
+- Speed : Medium. Jerky rolling.
+- Roll  : Medium
+- Jump  : One
+
+Attack
+- Amount   : Highest
+- Distance : Medium
+- Speed    : Medium
+- Type     : Target
+Spells
+
+Defense
+- Amount : Lowest
+
+
+
 
 =================================================
