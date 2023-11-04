@@ -32,6 +32,10 @@ struct RMAPLIB_API FRMapPointSetting
    // false => constant IconSize
    UPROPERTY(EditAnywhere, BlueprintReadWrite)
       bool ScaleWithZoom = true;
+
+   // Rotate icon in the direction of actor forward vector
+   UPROPERTY(EditAnywhere, BlueprintReadWrite)
+      bool Rotate = false;
 };
 
 USTRUCT(Blueprintable, BlueprintType)
