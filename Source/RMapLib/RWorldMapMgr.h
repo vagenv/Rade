@@ -52,6 +52,12 @@ private:
 protected:
    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Map")
       TArray<URMapPointComponent*> GetMapPointList () const;
+
+   UFUNCTION()
+      virtual void ReportListUpdateDelayed ();
+
+   bool ReportListUpdatedDelayedTriggered = false;
+
 public:
    // Called when map list has been modified
    UPROPERTY(BlueprintAssignable, Category = "Rade|Map")
@@ -62,10 +68,10 @@ public:
    //==========================================================================
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Map")
-      virtual void RegisterMapPoint  (URMapPointComponent* MapActor);
+      virtual void RegisterMapPoint  (URMapPointComponent* MapPoint);
 
    UFUNCTION(BlueprintCallable, Category = "Rade|Map")
-      virtual void UnregisterMapPoint (URMapPointComponent* MapActor);
+      virtual void UnregisterMapPoint (URMapPointComponent* MapPoint);
 
    //==========================================================================
    //                  Get instance -> GameState component

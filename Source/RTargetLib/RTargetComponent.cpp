@@ -40,9 +40,10 @@ void URTargetComponent::UnregisterTarget ()
 //         Can this target be selected
 //=============================================================================
 
-void URTargetComponent::SetIsTargetable (bool CanFind)
+void URTargetComponent::SetIsTargetable (bool IsTargetable_)
 {
-   IsTargetable = CanFind;
+   if (IsTargetable == IsTargetable_) return;
+   IsTargetable = IsTargetable_;
    if (R_IS_VALID_WORLD && OnIsTargetable.IsBound ()) OnIsTargetable.Broadcast ();
 }
 
@@ -55,9 +56,10 @@ bool URTargetComponent::GetIsTargetable () const
 //         Is this target selected by someone
 //=============================================================================
 
-void URTargetComponent::SetIsTargeted (bool CanTarget)
+void URTargetComponent::SetIsTargeted (bool IsTargeted_)
 {
-   IsTargeted = CanTarget;
+   if (IsTargeted == IsTargeted_) return;
+   IsTargeted = IsTargeted_;
    if (R_IS_VALID_WORLD && OnIsTargeted.IsBound ()) OnIsTargeted.Broadcast ();
 }
 

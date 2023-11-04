@@ -28,6 +28,23 @@ TArray<URInteractComponent*> URWorldInteractMgr::GetInteractList () const
    return Result;
 }
 
+void URWorldInteractMgr::ReportListUpdateDelayed ()
+{
+   // Already started
+   if (ReportListUpdatedDelayedTriggered) return;
+   if (UWorld* World = URUtil::GetWorld (this)) {
+      ReportListUpdatedDelayedTriggered = true;
+      World->GetTimerManager ().SetTimerForNextTick ([this]() {
+
+         // Report Update
+         if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+
+         // Reset
+         ReportListUpdatedDelayedTriggered = false;
+      });
+   }
+}
+
 //=============================================================================
 //                   Register / Unregister
 //=============================================================================
@@ -35,15 +52,19 @@ TArray<URInteractComponent*> URWorldInteractMgr::GetInteractList () const
 void URWorldInteractMgr::RegisterInteract (URInteractComponent* Interact)
 {
    if (!ensure (Interact)) return;
-   InteractList.Add (Interact);
-   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+   if (!InteractList.Contains (Interact)) {
+      InteractList.Add (Interact);
+      ReportListUpdateDelayed ();
+   }
 }
 
 void URWorldInteractMgr::UnregisterInteract (URInteractComponent* Interact)
 {
    if (!ensure (Interact)) return;
-   InteractList.Remove (Interact);
-   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+   if (InteractList.Contains (Interact)) {
+      InteractList.Remove (Interact);
+      ReportListUpdateDelayed ();
+   }
 }
 
 //=============================================================================

@@ -5,8 +5,6 @@
 #include "Components/ActorComponent.h"
 #include "RMapPointComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE (FRMapPointEvent);
-
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
 class RMAPLIB_API URMapPointComponent : public UActorComponent
 {
@@ -18,28 +16,29 @@ public:
 
 protected:
 
-   void RegisterMapPoint ();
-   void UnregisterMapPoint ();
+   // Add to the List in WorldMapMgr
+   UFUNCTION()
+      void RegisterMapPoint ();
+
+   // remove from the List in WorldMapMgr
+   UFUNCTION()
+      void UnregisterMapPoint ();
 
    //==========================================================================
    //         Can this Point be found
    //==========================================================================
 public:
 
-   UFUNCTION(BlueprintCallable, Category = "Rade|Interact")
-      void SetCanFind (bool CanFind);
+   UFUNCTION(BlueprintCallable, Category = "Rade|Map")
+      void SetIsVisible (bool IsVisible_);
 
-   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Interact")
-      bool GetCanFind () const;
-
-   // Called when map list has been modified
-   UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
-      FRMapPointEvent OnCanFindChanged;
+   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Rade|Map")
+      bool GetIsVisible () const;
 
 protected:
 
-   // Is this Interact selected
+   // Can this map point be found
    UPROPERTY()
-      bool CanFind = true;
+      bool IsVisible = true;
 };
 

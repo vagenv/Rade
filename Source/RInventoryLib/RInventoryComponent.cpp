@@ -62,7 +62,7 @@ void URInventoryComponent::ReportInventoryUpdateDelayed ()
    if (ReportInventoryUpdateDelayedTriggered) return;
    if (UWorld* World = URUtil::GetWorld (this)) {
       ReportInventoryUpdateDelayedTriggered = true;
-      World->GetTimerManager ().SetTimerForNextTick ([this](){
+      World->GetTimerManager ().SetTimerForNextTick ([this]() {
 
          // Report Update
          ReportInventoryUpdate ();

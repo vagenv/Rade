@@ -53,7 +53,6 @@ void URPlayerInteractMgr::FindWorldInteractMgr ()
       return;
    }
 
-
    RTIMER_START (UpdateInteractListHandle,
                  this, &URPlayerInteractMgr::UpdateInteractList,
                  UpdateInteractListFrequency,

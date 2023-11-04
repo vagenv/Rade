@@ -33,6 +33,11 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Target")
       FRTargetableMgrEvent OnListUpdated;
 
+   UFUNCTION()
+      virtual void ReportListUpdateDelayed ();
+
+   bool ReportListUpdatedDelayedTriggered = false;
+
    //==========================================================================
    //          Functions called by target components
    //==========================================================================

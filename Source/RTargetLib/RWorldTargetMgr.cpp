@@ -63,6 +63,23 @@ const TArray<URTargetComponent*> URWorldTargetMgr::GetTargetList () const
    return Result;
 }
 
+void URWorldTargetMgr::ReportListUpdateDelayed ()
+{
+   // Already started
+   if (ReportListUpdatedDelayedTriggered) return;
+   if (UWorld* World = URUtil::GetWorld (this)) {
+      ReportListUpdatedDelayedTriggered = true;
+      World->GetTimerManager ().SetTimerForNextTick ([this]() {
+
+         // Report Update
+         if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+
+         // Reset
+         ReportListUpdatedDelayedTriggered = false;
+      });
+   }
+}
+
 bool URWorldTargetMgr::IsValidTarget (
    const URTargetComponent*          Target,
    const FVector                    &SearchOrigin,
@@ -126,15 +143,19 @@ float URWorldTargetMgr::GetTargetPoint (
 void URWorldTargetMgr::RegisterTarget (URTargetComponent* Target)
 {
    if (!ensure (Target)) return;
-   TargetList.Add (Target);
-   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+   if (!TargetList.Contains (Target)) {
+      TargetList.Add (Target);
+      ReportListUpdateDelayed ();
+   }
 }
 
 void URWorldTargetMgr::UnregisterTarget (URTargetComponent* Target)
 {
    if (!ensure (Target)) return;
-   TargetList.Remove (Target);
-   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+   if (TargetList.Contains (Target)) {
+      TargetList.Remove (Target);
+      ReportListUpdateDelayed ();
+   }
 }
 
 //=============================================================================

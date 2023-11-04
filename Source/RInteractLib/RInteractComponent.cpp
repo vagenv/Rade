@@ -45,6 +45,9 @@ void URInteractComponent::SetCanInteract (bool CanInteract_)
    if (CanInteract == CanInteract_) return;
    CanInteract = CanInteract_;
    if (R_IS_VALID_WORLD && OnIsInteractableUpdated.IsBound ()) OnIsInteractableUpdated.Broadcast ();
+
+   if (CanInteract) RegisterInteract ();
+   else             UnregisterInteract ();
 }
 
 bool URInteractComponent::GetCanInteract () const

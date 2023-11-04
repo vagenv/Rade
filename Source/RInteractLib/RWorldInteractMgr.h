@@ -30,6 +30,11 @@ public:
    UPROPERTY(BlueprintAssignable, Category = "Rade|Interact")
       FRInteractMgrEvent OnListUpdated;
 
+   UFUNCTION()
+      virtual void ReportListUpdateDelayed ();
+
+   bool ReportListUpdatedDelayedTriggered = false;
+
    //==========================================================================
    //          Functions called by Interact components
    //==========================================================================

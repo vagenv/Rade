@@ -37,18 +37,19 @@ void URMapPointComponent::UnregisterMapPoint ()
 }
 
 //=============================================================================
-//         Can this Interact be selected
+//         Is this map point visible on map
 //=============================================================================
 
-void URMapPointComponent::SetCanFind (bool CanFind_)
+void URMapPointComponent::SetIsVisible (bool IsVisible_)
 {
-   if (CanFind == CanFind_) return;
-   CanFind = CanFind_;
-   if (R_IS_VALID_WORLD && OnCanFindChanged.IsBound ()) OnCanFindChanged.Broadcast ();
+   if (IsVisible == IsVisible_) return;
+   IsVisible = IsVisible_;
+   if (IsVisible) RegisterMapPoint ();
+   else           UnregisterMapPoint ();
 }
 
-bool URMapPointComponent::GetCanFind () const
+bool URMapPointComponent::GetIsVisible () const
 {
-   return CanFind;
+   return IsVisible;
 }
 

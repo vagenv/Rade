@@ -96,21 +96,42 @@ TArray<URMapPointComponent*> URWorldMapMgr::GetMapPointList () const
    return Result;
 }
 
+void URWorldMapMgr::ReportListUpdateDelayed ()
+{
+   // Already started
+   if (ReportListUpdatedDelayedTriggered) return;
+   if (UWorld* World = URUtil::GetWorld (this)) {
+      ReportListUpdatedDelayedTriggered = true;
+      World->GetTimerManager ().SetTimerForNextTick ([this]() {
+
+         // Report Update
+         if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+
+         // Reset
+         ReportListUpdatedDelayedTriggered = false;
+      });
+   }
+}
+
 //=============================================================================
 //                   Register / Unregister
 //=============================================================================
 
-void URWorldMapMgr::RegisterMapPoint (URMapPointComponent* Interact)
+void URWorldMapMgr::RegisterMapPoint (URMapPointComponent* MapPoint)
 {
-   if (!ensure (Interact)) return;
-   MapPointList.Add (Interact);
-   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+   if (!ensure (MapPoint)) return;
+   if (!MapPointList.Contains (MapPoint)) {
+      MapPointList.Add (MapPoint);
+      ReportListUpdateDelayed ();
+   }
 }
 
-void URWorldMapMgr::UnregisterMapPoint (URMapPointComponent* Interact)
+void URWorldMapMgr::UnregisterMapPoint (URMapPointComponent* MapPoint)
 {
-   if (!ensure (Interact)) return;
-   MapPointList.Remove (Interact);
-   if (R_IS_VALID_WORLD && OnListUpdated.IsBound ()) OnListUpdated.Broadcast ();
+   if (!ensure (MapPoint)) return;
+   if (MapPointList.Contains (MapPoint)) {
+      MapPointList.Remove (MapPoint);
+      ReportListUpdateDelayed ();
+   }
 }
 
