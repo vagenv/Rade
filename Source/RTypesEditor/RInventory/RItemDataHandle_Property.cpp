@@ -23,10 +23,7 @@ void FRItemDataHandle_Property::CustomizeHeader (
    FDetailWidgetRow&                HeaderRow,
    IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-   // Don't show header if not an array item
-   if (StructPropertyHandle->GetIndexInArray () != INDEX_NONE) {
-      HeaderRow.NameContent ()[StructPropertyHandle->CreatePropertyNameWidget()];
-   }
+   // Empty
 }
 
 void FRItemDataHandle_Property::CustomizeChildren (
@@ -55,9 +52,48 @@ void FRItemDataHandle_Property::CustomizeChildren (
    const TSharedRef<IPropertyHandle> TableHandle = ArchPropertyHandle->GetChildHandle (0).ToSharedRef();
    const TSharedRef<IPropertyHandle> RowHandle   = ArchPropertyHandle->GetChildHandle (1).ToSharedRef();
 
-   const float MinWidth = 160.f;
-   const float HPadding = 10.f;
+   const float TableMinWidth = 160.f;
+   const float RowMinWidth = 120.f;
+   const float HPadding = 5.f;
    bool IsInArray = StructPropertyHandle->GetIndexInArray () != INDEX_NONE;
+
+   TSharedPtr<SWidget> DeleteArrayItemWidget;
+   if (IsInArray) {
+      const float ButtonSize = 25.f;
+
+	   DeleteArrayItemWidget =
+         SNew(SBox)
+			.HAlign (HAlign_Center)
+			.VAlign (VAlign_Center)
+			[
+				SNew(SButton)
+				.ContentPadding (0)
+            .OnClicked_Lambda ([this, StructPropertyHandle] {
+               if (!StructPropertyHandle->IsValidHandle ()) return FReply::Unhandled ();
+               TSharedPtr<IPropertyHandle> ParentHandle = StructPropertyHandle->GetParentHandle ();
+               if (!ParentHandle.IsValid ()) return FReply::Unhandled ();
+               TSharedPtr<IPropertyHandleArray> ArrayHandle = ParentHandle->AsArray ();
+               if (!ArrayHandle.IsValid ()) return FReply::Unhandled ();
+
+               int32  ChildIndex = StructPropertyHandle->GetArrayIndex ();
+               uint32 ChildNum   = 0;
+               ArrayHandle->GetNumElements (ChildNum);
+
+               if (ChildIndex < (int32)ChildNum && ChildNum) {
+                  ArrayHandle->DeleteItem (ChildIndex);
+               }
+               return FReply::Handled ();
+            })
+				[ 
+					SNew(SImage)
+					.Image (FAppStyle::GetBrush ("Icons.Delete"))
+					.ColorAndOpacity (FSlateColor::UseForeground ())
+               .DesiredSizeOverride (FVector2D (ButtonSize, ButtonSize))
+				]
+         ];
+   } else {
+      DeleteArrayItemWidget = SNullWidget::NullWidget;
+   }
 
    // Create initial list
    TSharedRef<SSearchableComboBox> ComboBoxWidget = SNew(SSearchableComboBox)
@@ -96,146 +132,168 @@ void FRItemDataHandle_Property::CustomizeChildren (
       .BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
       .Content()
       [
-         SNew(SVerticalBox)
-
-         // Header
-         +SVerticalBox::Slot()
-         .AutoHeight()
-         .HAlign (EHorizontalAlignment::HAlign_Center)
+         SNew(SHorizontalBox)
+         +SHorizontalBox::Slot()
+         .FillWidth (1)
          [
-            SNew(STextBlock)
-            .Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })
-            .Text (StructPropertyHandle->GetPropertyDisplayName ())
-         ]
+            SNew(SVerticalBox)
 
-         // Table
-         +SVerticalBox::Slot()
-         .AutoHeight()
-         [
-            SNew(SWrapBox)
-            .UseAllottedWidth(true)
-
-            +SWrapBox::Slot()
-            .Padding(HPadding, 0.f)
+            // Header
+            +SVerticalBox::Slot()
+            .AutoHeight()
+            .HAlign (EHorizontalAlignment::HAlign_Center)
             [
-               SNew(SBox)
-               .MinDesiredWidth(MinWidth)
-               [
-                  SNew(SVerticalBox)
-                  + SVerticalBox::Slot()
-                  .AutoHeight()
-                  .HAlign (EHorizontalAlignment::HAlign_Center)
-                  [
-                     TableHandle->CreatePropertyNameWidget()
-                  ]
-                  + SVerticalBox::Slot()
-                  .AutoHeight()
-                  [
-                     SNew(SObjectPropertyEntryBox)
-		               .AllowedClass(UDataTable::StaticClass())
-                     .OnShouldFilterAsset_Lambda ([this] (const FAssetData& AssetData) {
-                        if (UDataTable *ItTable = Cast<UDataTable>(AssetData.GetAsset ())) {
-                           if (ItTable->GetRowStruct ()->IsChildOf (FRItemData::StaticStruct ())) return false;
-                        }
-                        return true;
-                     })
-		               .AllowClear(true)
-                     .ObjectPath_Lambda([this, TableHandle] () {
-                        FString Result; 
-                        if (TableHandle->IsValidHandle ()) TableHandle->GetValueAsDisplayString (Result);
-                        return Result;
-                     })
-		               .OnObjectChanged_Lambda ([this, TableHandle, RowHandle, ComboBoxWidget] (const FAssetData& AssetData) {
-                        if (!TableHandle->IsValidHandle ()) return;
-                        if (!RowHandle->IsValidHandle ()) return;
-
-                        TableHandle->SetValue (AssetData);
-                        RowHandle->SetValue (NAME_None);
-                        RefreshRowList (ComboBoxWidget, Cast<UDataTable>(AssetData.GetAsset ()));
-                     })
-                  ]
-            ]
+               SNew(STextBlock)
+               .Visibility_Lambda ([this, IsInArray] { return IsInArray ? EVisibility::Collapsed : EVisibility::Visible; })
+               .Text (StructPropertyHandle->GetPropertyDisplayName ())
             ]
 
-            // Row
-            + SWrapBox::Slot()
-            .Padding(HPadding, 0.f)
+            +SVerticalBox::Slot()
+            .AutoHeight()
             [
-               SNew(SBox)
-               .MinDesiredWidth(MinWidth)
+               SNew(SWrapBox)
+               .UseAllottedWidth(true)
+
+               // Table
+               +SWrapBox::Slot()
+               .Padding (HPadding, 0.f)
+               .FillEmptySpace (true)
                [
-                  SNew(SVerticalBox)
-                  + SVerticalBox::Slot()
-                  .AutoHeight()
-                  .HAlign (EHorizontalAlignment::HAlign_Center)
+                  SNew(SBox)
+                  .MinDesiredWidth (TableMinWidth)
                   [
-                     RowHandle->CreatePropertyNameWidget()
-                  ]
-                  + SVerticalBox::Slot()
-                  .AutoHeight()
-                  [
-                     ComboBoxWidget
+                     SNew(SVerticalBox)
+                     + SVerticalBox::Slot()
+                     .AutoHeight ()
+                     .HAlign (EHorizontalAlignment::HAlign_Center)
+                     [
+                        TableHandle->CreatePropertyNameWidget()
+                     ]
+                     + SVerticalBox::Slot()
+                     .AutoHeight ()
+                     [
+                        SNew(SObjectPropertyEntryBox)
+		                  .AllowedClass (UDataTable::StaticClass ())
+                        .OnShouldFilterAsset_Lambda ([this] (const FAssetData& AssetData) {
+                           if (UDataTable *ItTable = Cast<UDataTable>(AssetData.GetAsset ())) {
+                              if (ItTable->GetRowStruct ()->IsChildOf (FRItemData::StaticStruct ())) return false;
+                           }
+                           return true;
+                        })
+		                  .AllowClear (true)
+                        .ObjectPath_Lambda ([this, TableHandle] () {
+                           FString Result; 
+                           if (TableHandle->IsValidHandle ()) TableHandle->GetValueAsDisplayString (Result);
+                           return Result;
+                        })
+		                  .OnObjectChanged_Lambda ([this, TableHandle, RowHandle, ComboBoxWidget] (const FAssetData& AssetData) {
+                           if (!TableHandle->IsValidHandle ()) return;
+                           if (!RowHandle->IsValidHandle ()) return;
+
+                           TableHandle->SetValue (AssetData);
+                           RowHandle->SetValue (NAME_None);
+                           RefreshRowList (ComboBoxWidget, Cast<UDataTable>(AssetData.GetAsset ()));
+                        })
+                     ]
                   ]
                ]
-            ]
 
-            // Count button
-            +SWrapBox::Slot()
-            .Padding(HPadding * 2, 0.f)
-            [
-
-               SNew(SVerticalBox)
-               + SVerticalBox::Slot()
-               .AutoHeight()
-               .HAlign (EHorizontalAlignment::HAlign_Center)
-               [
-                  CountPropertyHandle->CreatePropertyNameWidget()
-               ]
-               + SVerticalBox::Slot()
-               .AutoHeight()
-               .VAlign (EVerticalAlignment::VAlign_Center)
+               +SWrapBox::Slot ()
                [
                   SNew(SHorizontalBox)
-                  +SHorizontalBox::Slot ()
-                  .AutoWidth ()
+                  +SHorizontalBox::Slot()
+                  .FillWidth (1)
                   [
-                     SNew(SButton)
-                     .OnClicked_Lambda ([this, CountPropertyHandle] {
-                        if (!CountPropertyHandle->IsValidHandle ()) return FReply::Unhandled ();
-                        int32 Current = 0;
-                        CountPropertyHandle->GetValue (Current);
-                        CountPropertyHandle->SetValue (Current - 1);
-                        return FReply::Handled ();
-                     })
+                     SNullWidget::NullWidget
+                  ]
+               ]
+
+               // Row
+               + SWrapBox::Slot ()
+               .FillEmptySpace (true)
+               [
+                  SNew(SBox)
+                  .MinDesiredWidth (RowMinWidth)
+                  [
+                     SNew(SVerticalBox)
+                     + SVerticalBox::Slot ()
+                     .AutoHeight ()
+                     .HAlign (EHorizontalAlignment::HAlign_Center)
                      [
-                           SNew(STextBlock)
-                        .Text (LOCTEXT("CountDecreaseBtn", "-"))
+                        RowHandle->CreatePropertyNameWidget ()
+                     ]
+                     + SVerticalBox::Slot ()
+                     .AutoHeight ()
+                     [
+                        ComboBoxWidget
                      ]
                   ]
-                  +SHorizontalBox::Slot ()
-                  .AutoWidth ()
-                  .Padding(HPadding, 0.f)
+               ]
+
+               // Count button
+               +SWrapBox::Slot ()
+               .Padding (HPadding, 0.f)
+               [
+
+                  SNew(SVerticalBox)
+                  + SVerticalBox::Slot ()
+                  .AutoHeight ()
+                  .HAlign (EHorizontalAlignment::HAlign_Center)
                   [
-                     CountPropertyHandle->CreatePropertyValueWidget()
+                     CountPropertyHandle->CreatePropertyNameWidget()
                   ]
-                  +SHorizontalBox::Slot ()
-                  .AutoWidth ()
+                  + SVerticalBox::Slot ()
+                  .AutoHeight ()
+                  .VAlign (EVerticalAlignment::VAlign_Center)
                   [
-                     SNew(SButton)
-                     .OnClicked_Lambda ([this, CountPropertyHandle] {
-                        if (!CountPropertyHandle->IsValidHandle ()) return FReply::Unhandled ();
-                        int32 Current = 0;
-                        CountPropertyHandle->GetValue (Current);
-                        CountPropertyHandle->SetValue (Current + 1);
-                        return FReply::Handled ();
-                     })
+                     SNew(SHorizontalBox)
+                     +SHorizontalBox::Slot ()
+                     .AutoWidth ()
                      [
+                        SNew(SButton)
+                        .OnClicked_Lambda ([this, CountPropertyHandle] {
+                           if (!CountPropertyHandle->IsValidHandle ()) return FReply::Unhandled ();
+                           int32 Current = 0;
+                           CountPropertyHandle->GetValue (Current);
+                           CountPropertyHandle->SetValue (Current - 1);
+                           return FReply::Handled ();
+                        })
+                        [
                            SNew(STextBlock)
-                        .Text (LOCTEXT("CountIncreaseBtn", "+"))
+                           .Text (LOCTEXT("CountDecreaseBtn", "-"))
+                        ]
+                     ]
+                     +SHorizontalBox::Slot ()
+                     .AutoWidth ()
+                     .Padding (HPadding, 0.f)
+                     [
+                        CountPropertyHandle->CreatePropertyValueWidget()
+                     ]
+                     +SHorizontalBox::Slot ()
+                     .AutoWidth ()
+                     [
+                        SNew(SButton)
+                        .OnClicked_Lambda ([this, CountPropertyHandle] {
+                           if (!CountPropertyHandle->IsValidHandle ()) return FReply::Unhandled ();
+                           int32 Current = 0;
+                           CountPropertyHandle->GetValue (Current);
+                           CountPropertyHandle->SetValue (Current + 1);
+                           return FReply::Handled ();
+                        })
+                        [
+                           SNew(STextBlock)
+                           .Text (LOCTEXT("CountIncreaseBtn", "+"))
+                        ]
                      ]
                   ]
                ]
             ]
+         ]
+         + SHorizontalBox::Slot ()
+         .AutoWidth ()
+         .VAlign (EVerticalAlignment::VAlign_Center)
+         [
+            DeleteArrayItemWidget.ToSharedRef ()
          ]
       ]
    ];
