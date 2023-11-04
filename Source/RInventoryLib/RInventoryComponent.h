@@ -67,7 +67,7 @@ protected:
 public:
 
    // Item to be added upon game start
-   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rade|Inventory")
+   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rade|Inventory")
       TArray<FRItemDataHandle> DefaultItems;
 
    // Delegate when Item list updated
