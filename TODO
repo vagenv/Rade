@@ -495,7 +495,8 @@ Enemy Death -> Bunny Explosion
 
 - Blood
 - Explosion
-- Smoke
+- Smoke puff
+- Gound walk smoke
 - GPU particles
 - Niagara
 
@@ -899,16 +900,19 @@ Attack
 - Distance : Close
 - Speed    : Medium
 - Type     : Radial
-Crushing with body, Jumping on enemies
+Crushing with body, Jumping on enemies, pushing them around.
 
 Defense
 - Amount : Low
 - Bounce
 - Repel
 
+Drawbacks
+- Small damage / Can't damage?
+
 
 ==============
-Cone / Pyramid
+Cone / Pyramid / Cylinder
 ==============
 Speed
 - Speed : Lowest (Shifting on ground)
@@ -925,6 +929,9 @@ Aura buffs/debuffs, curses
 Defense
 - Amount : Medium
 - Shield
+
+Drawbacks
+- Can't move?
 
 
 ==============
@@ -945,6 +952,10 @@ Crushing with body, Jumping on enemies
 Defense
 - Amount : Medium
 
+Drawbacks
+- Hard to move
+- Only direction damage
+- Only directional move?
 
 
 ==============
@@ -965,7 +976,17 @@ Spells
 Defense
 - Amount : Lowest
 
+Drawbacks
+- Glass canon
 
+
+
+=================================================
+Combo
+=================================================
+
+- Double jump as ball.
+- Transform to cube. Crush down.
 
 
 =================================================
