@@ -9,29 +9,11 @@ Hide Window flashes shortly before becoming hidden
 Ability used too often hits ensure check
 
 
-RActionClass
+RAction Class / Interface?
 - Interact with actor
 - Use Item
 - Step on platform
 
-
-Fog of war
-- Texture alpha channel. Update / Save / Load
-- Map / Minimap visibility only if discovered?
-
-URDiscoveredComponent?
-- Disable by default
-- Not visible /active until player gets close to them.
-- bool IsDiscovered? Requires Save/Load
-
-
-=================================================
-         World Map / Mini map
-=================================================
-
-Minimap
-- Map cutout range
-- Icon visible after that cutout
 
 
 ===============================================================================
@@ -246,9 +228,25 @@ UI
 - Select option
 
 
-==============
+
+=================================================
+         Fog of war
+=================================================
+
+Runtime Texture with alpha channel
+Update / Save / Load
+
+Map / Minimap
+- Blend between gray texture to map texture
+- Visibility MapPoints only if location is discovered
+
+Gray fog during gameplay?
+
+
+
+=================================================
 UserWidgets Create/Destroy performance
-==============
+=================================================
 AddToViewport is expensive
 
 Solution:
