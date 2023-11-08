@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "RMapTypes.h"
 #include "RMapPointComponent.generated.h"
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(_Rade), meta=(BlueprintSpawnableComponent))
@@ -13,6 +14,10 @@ public:
 
    virtual void BeginPlay () override;
    virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
+
+   // Wrapper around URWorldMapMgr::GetMapPointInfo_Actor
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Map")
+      FRMapPointInfo GetMapPointInfo () const;
 
 protected:
 

@@ -16,7 +16,7 @@ class RMAPLIB_API URWorldMapMgr : public UActorComponent
    GENERATED_BODY()
 public:
 
-   URWorldMapMgr();
+   URWorldMapMgr ();
 
    // Read table before begin play
    virtual void InitializeComponent () override;
@@ -35,7 +35,7 @@ protected:
 public:
 
    // Get map point info
-   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Ability")
+   UFUNCTION (BlueprintCallable, BlueprintPure, Category = "Rade|Map")
       FRMapPointInfo GetMapPointInfo_Actor (const AActor* TargetActor) const;
 
    // Get map point info

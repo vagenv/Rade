@@ -36,6 +36,13 @@ void URMapPointComponent::UnregisterMapPoint ()
    }
 }
 
+FRMapPointInfo URMapPointComponent::GetMapPointInfo () const
+{
+   URWorldMapMgr *WorldMapMgr = URWorldMapMgr::GetInstance (this);
+   if (!ensure (WorldMapMgr)) return FRMapPointInfo ();
+   return WorldMapMgr->GetMapPointInfo_Actor (GetOwner ());
+}
+
 //=============================================================================
 //         Is this map point visible on map
 //=============================================================================
