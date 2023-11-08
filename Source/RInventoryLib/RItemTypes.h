@@ -87,7 +87,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 {
    GENERATED_BODY()
 
-   FRItemData();
+   FRItemData ();
 
    // Data table row Unique ID
    UPROPERTY()
@@ -140,8 +140,6 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
 
    // --- Internal Runtime information
 
-   // Refreshes member variables from internal JsonData
-
    // Parse JsonData and update current class variables
    virtual bool ReadJSON ();
 
@@ -149,7 +147,7 @@ struct RINVENTORYLIB_API FRItemData : public FTableRowBase
    // DANGEROUS!!! Only call it on correct subclass version.
    virtual bool WriteJSON ();
 
-   bool    IsValid () const;
+   bool IsValid () const;
 
 private:
 

@@ -13,22 +13,15 @@
 
 bool FRItemDataHandle::ToItem (FRItemData &dst) const
 {
-   // /Script/RInventoryLib.RItemData == Arch.DataTable->RowStructPathName.ToString ()
-   //                       RItemData == Arch.DataTable->RowStruct->GetName ();
-
    if (!ensure (Arch.DataTable    )) return false;
    if (!ensure (Arch.RowName != "")) return false;
 
-   const FRItemData *RowData = Arch.GetRow<FRItemData> ("");
+   FRItemData *RowData = Arch.GetRow<FRItemData> ("");
 
    if (!ensure (RowData)) return false;
 
-   // Get data as base struct
-   FRItemData Item (*RowData);
-   Item.Count = Count;
-
-   // Copy link to original type
-   // Item.Arch = Arch;
+   // Set Id
+   RowData->ID = Arch.RowName.ToString ();
 
    // Get Data Type
    UScriptStruct* RowType = Arch.DataTable->RowStruct;
@@ -36,15 +29,19 @@ bool FRItemDataHandle::ToItem (FRItemData &dst) const
    // JSON data destination
    FString JsonData;
 
-   // Convert
+   // Convert to with correct arch time
    bool res = FJsonObjectConverter::UStructToJsonObjectString (RowType, RowData, JsonData, 0, 0, 0);
-
    if (!ensure (res)) return false;
+   
+   // Copy data from handle
+   dst = *RowData;
 
-   // Set RAW data
-   Item.SetJSON (JsonData);
-   Item.ID = Arch.RowName.ToString ();
-   dst = Item;
+   // Set json of correct type
+   dst.SetJSON (JsonData);
+
+   // Reset handle data
+   RowData->SetJSON ("");
+   
    return true;
 }
 
