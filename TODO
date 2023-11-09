@@ -9,10 +9,24 @@ Hide Window flashes shortly before becoming hidden
 Ability used too often hits ensure check
 
 
-RAction Class / Interface?
+AbilityFramework
+
+
+URAction : UObject
+- CanUse
+- Use
+
+RActionClass / Interface?
 - Interact with actor
-- Use Item
 - Step on platform
+- Lifetime, instancing? vs getdefault.
+- Use Item / Equip Item / BreakItem? / DropItem
+
+
+ItemData
+- List<RActionClass>
+- Async load list and call event
+- CallContext. Array of params. Pointers, objects, structs, classes and more
 
 
 
@@ -26,9 +40,6 @@ RAction Class / Interface?
 ===============================================================================
 ===============================================================================
 
-Inventory
-- Pickup dropped event
-- ActionClass async load
 
 =================================================
    RItem Redesign?
