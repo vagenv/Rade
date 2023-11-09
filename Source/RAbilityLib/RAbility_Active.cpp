@@ -49,7 +49,7 @@ double URAbility_Active::GetCooldownLeft () const
    if (UseLastTime == 0) return 0;
 
    if (!World.IsValid () || World->bIsTearingDown) return 1;
-   return FMath::Clamp (UseLastTime + Cooldown - World->GetTimeSeconds (), 0, Cooldown);
+   return FMath::Clamp<double> (UseLastTime + Cooldown - World->GetTimeSeconds (), 0, Cooldown);
 }
 
 void URAbility_Active::CooldownReset ()
@@ -111,8 +111,12 @@ void URAbility_Active::Use_Global_Implementation ()
       if (ManaCost   ) StatusMgr->UseMana    (ManaCost);
    }
 
-   // Report can use
-   RTIMER_START (CooldownResetHandle, this, &URAbility_Active::CooldownReset, Cooldown, false);
+   // --- Start timer handle
+   if (CooldownResetHandle.IsValid ()) {
+      RTIMER_STOP (CooldownResetHandle, this);
+   } else {
+      RTIMER_START (CooldownResetHandle, this, &URAbility_Active::CooldownReset, Cooldown, false);
+   }
 
    // Report used
    if (OnAbilityUsed.IsBound ()) OnAbilityUsed.Broadcast ();

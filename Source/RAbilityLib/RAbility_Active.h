@@ -77,7 +77,9 @@ protected:
    //                 Use
    //==========================================================================
 
-   // Called by user
+   // Called by player input.
+   // Client: Use -> Use_Server -> Use_Global
+   // Server: Use -> Use_Global
    UFUNCTION(BlueprintCallable, Category = "Rade|Ability")
       virtual void Use ();
 
@@ -92,11 +94,10 @@ protected:
               void Use_Server ();
       virtual void Use_Server_Implementation ();
 
-   // Effect has been re-applied
-   UFUNCTION(NetMulticast, Unreliable, Category = "Rade|Ability")
+   // --- All clients recieve this event
+   UFUNCTION(NetMulticast, Reliable, Category = "Rade|Ability")
               void Use_Global ();
       virtual void Use_Global_Implementation ();
-
 
    //==========================================================================
    //                 World objects
