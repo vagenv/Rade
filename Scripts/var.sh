@@ -1,6 +1,7 @@
 #/bin/bash
 
-ROOTDIR=$(dirname "$(realpath "$0")")
+SCRIPTDIR=$(dirname "$(realpath "$0")")
+ROOTDIR=$(dirname "$SCRIPTDIR")
 UE_DIR="$(dirname "$ROOTDIR")/UE/LINUX/UE_5.3"
 
 
