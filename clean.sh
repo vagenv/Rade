@@ -1,6 +1,7 @@
 #/bin/sh
 
-. $(pwd)/var.sh
+ROOTDIR=$(dirname "$(realpath "$0")")
+. $ROOTDIR/var.sh
 
 rm -rf $PROJECT_DIR/Intermediate/
 rm -rf $PROJECT_DIR/Binaries/

@@ -1,6 +1,7 @@
 #/bin/sh
 
-. $(pwd)/var.sh
+ROOTDIR=$(dirname "$(realpath "$0")")
+. $ROOTDIR/var.sh
 
 PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
 
@@ -37,3 +38,4 @@ PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
    -clientconfig="$BUILD_CONFIGURATION" \
    -nocompile                           \
    -nocompileuat
+
