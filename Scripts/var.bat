@@ -1,8 +1,7 @@
 @echo off
 
-set ROOTDIR=%~dp0
-set ROOTDIR=%ROOTDIR:~0,-1%
-set UE_DIR=%~dp0/../UE/WINDOWS/UE_5.3
+set ROOTDIR=%~dp0/../
+set UE_DIR=%~dp0/../../UE/WINDOWS/UE_5.3
 
 set BUILD_PLATFORM=Win64
 set BUILD_CONFIGURATION=Development
