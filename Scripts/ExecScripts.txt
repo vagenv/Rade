@@ -1,11 +1,10 @@
 
-Windows
-Rade.exe -trace=default,memory -StatCmds="startfile"
-Rade.exe -statnamedevents -trace=cpu,gpu,frame,logbookmark,file,loadtime -StatCmds="startfile"
+Gather PSO Cache.
+-logPSO -clearPSODriverCache
 
-LINUX
-Rade.sh -trace=default,memory -StatCmds="startfile"
-Rade.sh -statnamedevents -trace=cpu,gpu,frame,logbookmark,file,loadtime -StatCmds="startfile"
+Gather Memory and GC
+-trace=default,memory -StatCmds="startfile"
 
-
+Trace everything
+-statnamedevents -trace=cpu,gpu,frame,logbookmark,file,loadtime -StatCmds="startfile"
 

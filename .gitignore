@@ -60,6 +60,9 @@ Plugins/*/Binaries/*
 # Builds
 Build/*
 
+# Packaged content
+Package/*
+
 # PSO build folder
 PSOCache/*
 
