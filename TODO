@@ -6,11 +6,76 @@
 Hide Window flashes shortly before becoming hidden
 
 
-Ability used too often hits ensure check
+===============================================================================
+===============================================================================
 
 
-AbilityFramework
+                                 PSO
 
+
+===============================================================================
+===============================================================================
+Gameplay stutters caused by compiling of PSO during runtime.
+https://www.tomlooman.com/psocaching-unreal-engine/
+https://docs.unrealengine.com/5.3/en-US/manually-creating-bundled-pso-caches-in-unreal-engine/
+
+Generate game trace of shader use.
+Use trace for future packages.
+
+
+
+
+
+
+===============================================================================
+===============================================================================
+
+
+                                 Ability System
+
+
+===============================================================================
+===============================================================================
+
+- Designed by EPIC for multiplayer RPG
+- Replaces RStatusLib and RAbilityLib
+- Has build in replication and events
+- Has predictions
+- Can be used with animations
+- Has character state which blocks abilities / status
+- Has block/ignore/require status/state checking
+
+
+Create a minimal proof of concept
+- Slowly migrate content
+
+Documentation:
+https://docs.unrealengine.com/5.0/en-US/understanding-the-unreal-engine-gameplay-ability-system/
+https://docs.unrealengine.com/5.3/en-US/gameplay-ability-system-component-and-gameplay-attributes-in-unreal-engine/
+https://github.com/tranek/GASDocumentation
+
+Tutorials:
+https://www.youtube.com/watch?v=s3-kOmP5bVw
+https://www.youtube.com/watch?v=YvXvWa6vbAA
+https://www.youtube.com/playlist?list=PLuS6-Pdt2hhYGZkME7K7ZDT2qf4vbY5c3
+
+Template:
+https://github.com/tomlooman/ActionRoguelike
+
+
+
+
+
+
+===============================================================================
+===============================================================================
+
+
+                                 Inventory
+
+
+===============================================================================
+===============================================================================
 
 URAction : UObject
 - CanUse
@@ -28,17 +93,6 @@ ItemData
 - Async load list and call event
 - CallContext. Array of params. Pointers, objects, structs, classes and more
 
-
-
-===============================================================================
-===============================================================================
-
-
-                                 Inventory
-
-
-===============================================================================
-===============================================================================
 
 
 =================================================
