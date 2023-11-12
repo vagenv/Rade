@@ -5,26 +5,7 @@
 
 Hide Window flashes shortly before becoming hidden
 
-
-===============================================================================
-===============================================================================
-
-
-                                 PSO
-
-
-===============================================================================
-===============================================================================
-Gameplay stutters caused by compiling of PSO during runtime.
-https://www.tomlooman.com/psocaching-unreal-engine/
-https://docs.unrealengine.com/5.3/en-US/manually-creating-bundled-pso-caches-in-unreal-engine/
-
-Generate game trace of shader use.
-Use trace for future packages.
-
-
-
-
+RUI Graphics resolution scaling keeps returning to 70%
 
 
 ===============================================================================
