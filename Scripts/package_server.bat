@@ -2,7 +2,7 @@
 
 call %~dp0\var.bat
 
-set PACKAGE_DIR=%PROJECT_DIR%/Build/%OS_TARGET%Server/
+set PACKAGE_DIR=%PACKAGE_DIR%_Server
 
 call "%UE_BUILD_UAT%"                    ^
    -ScriptsForProject="%UPROJECT_PATH%"  ^
