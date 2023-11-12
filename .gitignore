@@ -60,6 +60,9 @@ Plugins/*/Binaries/*
 # Builds
 Build/*
 
+# PSO build folder
+PSOCache/*
+
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
 Build/*/**
