@@ -1,9 +1,6 @@
 #/bin/sh
 
-ROOTDIR=$(dirname "$(realpath "$0")")
-. $ROOTDIR/var.sh
-
-PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
+ROOTDIR=$(dirname "$(realpath "$0")") && . $ROOTDIR/var.sh
 
 "$UE_BUILD_UAT"                         \
    -ScriptsForProject="$UPROJECT_PATH"  \
@@ -21,7 +18,7 @@ PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
    -skipbuildeditor                     \
    -cook                                \
    -project="$UPROJECT_PATH"            \
-   -target=$PROJECT                     \
+   -target=$PROJECT_NAME                \
    -unrealexe="$UE_EDITOR_CMD"          \
    -platform=$BUILD_PLATFORM            \
    -installed                           \

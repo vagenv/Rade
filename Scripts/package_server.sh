@@ -1,9 +1,8 @@
 #/bin/sh
 
-ROOTDIR=$(dirname "$(realpath "$0")")
-. $ROOTDIR/var.sh
+ROOTDIR=$(dirname "$(realpath "$0")") && . $ROOTDIR/var.sh
 
-PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
+PACKAGE_DIR=$(PACKAGE_DIR)_server
 
 "$UE_BUILD_UAT"                         \
    -ScriptsForProject="$UPROJECT_PATH"  \
@@ -21,7 +20,7 @@ PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
    -skipbuildeditor                     \
    -cook                                \
    -project="$UPROJECT_PATH"            \
-   -target=$PROJECT"Server"             \
+   -target=$PROJECT_NAME"Server"        \
    -unrealexe="$UE_EDITOR_CMD"          \
    -platform=$BUILD_PLATFORM            \
    -installed                           \
@@ -33,7 +32,7 @@ PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
    -iostore                             \
    -compressed                          \
    -prereqs                             \
-   -archivedirectory="$PACKAGE_DIR"     \
+   -archivedirectory="$(PACKAGE_DIR)"   \
    -CrashReporter                       \
    -server                              \
    -serverconfig="$BUILD_CONFIGURATION" \
