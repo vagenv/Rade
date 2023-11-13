@@ -1,10 +1,8 @@
-#/bin/sh
+#!/bin/sh
 
-ROOTDIR=$(dirname "$(realpath "$0")")
-. $ROOTDIR/var.sh
+ROOTDIR=$(dirname "$(realpath "$0")") && . $ROOTDIR/var.sh
 
-PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
-
+# Create package
 "$UE_BUILD_UAT"                         \
    -ScriptsForProject="$UPROJECT_PATH"  \
    Turnkey                              \
@@ -21,7 +19,7 @@ PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
    -skipbuildeditor                     \
    -cook                                \
    -project="$UPROJECT_PATH"            \
-   -target=$PROJECT                     \
+   -target=$PROJECT_NAME                \
    -unrealexe="$UE_EDITOR_CMD"          \
    -platform=$BUILD_PLATFORM            \
    -installed                           \
@@ -38,4 +36,16 @@ PACKAGE_DIR=$PROJECT_DIR/Build/$OS_TARGET/
    -clientconfig="$BUILD_CONFIGURATION" \
    -nocompile                           \
    -nocompileuat
+
+
+# Create shortcuts
+SCRIPT_PREFIX=$PACKAGE_DIR/$PROJECT_NAME
+echo "#!/bin/sh
+. $SCRIPT_PREFIX.sh -logPSO -clearPSODriverCache" > $SCRIPT_PREFIX"_PSO.sh"
+echo "#!/bin/sh
+. $SCRIPT_PREFIX.sh -statnamedevents -trace=cpu,gpu,frame,logbookmark,file,loadtime -StatCmds=\"startfile\"" > $SCRIPT_PREFIX"_TRACE.sh"
+echo "#!/bin/sh
+. $SCRIPT_PREFIX.sh -trace=default,memory -StatCmds=\"startfile\"" > $SCRIPT_PREFIX"_MEMORY.sh"
+
+chmod +x $SCRIPT_PREFIX"_PSO.sh" $SCRIPT_PREFIX"_TRACE.sh" $SCRIPT_PREFIX"_MEMORY.sh"
 

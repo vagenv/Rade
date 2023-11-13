@@ -17,5 +17,9 @@ xcopy /s /i %USER_PSO_DIR% %ALL_PSO_DIR%
 @REM Copy Engine PSO config
 xcopy /s /i %PROJECT_PSO_DIR% %ALL_PSO_DIR%
 
-call %UE_EDITOR_CMD% "%UPROJECT_PATH%" -run=ShaderPipelineCacheTools expand %ALL_PSO_DIR%\*.rec.upipelinecache %ALL_PSO_DIR%\*.shk %ALL_PSO_DIR%\%PSO_PREFIX%%PROJECT%%SHADER_FORMAT%.spc
+call %UE_EDITOR_CMD% "%UPROJECT_PATH%"  ^
+   -run=ShaderPipelineCacheTools expand ^
+    %ALL_PSO_DIR%\*.rec.upipelinecache  ^
+    %ALL_PSO_DIR%\*.shk                 ^
+    %ALL_PSO_DIR%\%PSO_PREFIX%%PROJECT%%SHADER_FORMAT%.spc
 

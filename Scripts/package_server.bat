@@ -20,7 +20,7 @@ call "%UE_BUILD_UAT%"                    ^
    -skipbuildeditor                      ^
    -cook                                 ^
    -project="%UPROJECT_PATH%"            ^
-   -target=%PROJECT%Server               ^
+   -target=%PROJECT_Name%Server          ^
    -unrealexe="%UE_EDITOR_CMD%"          ^
    -platform=%BUILD_PLATFORM%            ^
    -installed                            ^
