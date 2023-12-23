@@ -8,7 +8,7 @@ Unreal Engine 5 Project template.
 
 The remake of the project introduced breaking changes.
 
-Please fork the project rather as a clone/download of the project significantly impacts my Git LFS Data quota.
+Please fork the project as a clone/download of the project significantly impacts my Git LFS Data quota.
 
 
 ## Components
