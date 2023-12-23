@@ -1,3 +1,17 @@
+# General
+#*           text=auto
+#*.txt       text
+#*.log       text
+#*.ini       text
+#*.json      text
+
+# Windows line-endings
+*.vcproj    text eol=crlf
+*.bat       text eol=crlf
+
+# Linux line-endings
+*.sh        text eol=lf
+
 # UE file types
 *.uasset filter=lfs diff=lfs merge=lfs -text
 *.umap filter=lfs diff=lfs merge=lfs -text
