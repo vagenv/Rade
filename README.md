@@ -17,7 +17,7 @@ Please fork the project as a clone/download of the project significantly impacts
 General purpose utility library.
 
 ### RLoadingScreenLib
-Slight modification of https://github.com/ue4plugins/LoadingScreen
+Slight modification of https://github.com/truong-bui/AsyncLoadingScreen
 
 ### RInputLib
 Small library for custom input management.
