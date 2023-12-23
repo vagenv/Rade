@@ -4,7 +4,7 @@ ROOTDIR=$(dirname "$(realpath "$0")") && . $ROOTDIR/var.sh
 
 # TODO: Replace prefix with build id 
 PSO_PREFIX="psoprefix"
-SHADER_FORMAT="SF_VULKAN_SM5"
+SHADER_FORMAT="SF_VULKAN_SM6"
 
 
 USER_PSO_DIR=$PACKAGE_DIR/$PROJECT_NAME/Saved/CollectedPSOs

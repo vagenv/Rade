@@ -4,7 +4,7 @@ call %~dp0\var.bat
 
 @REM TODO: Replace prefix with build id 
 set PSO_PREFIX=psoprefix
-set SHADER_FORMAT=SF_VULKAN_SM5
+set SHADER_FORMAT=SF_VULKAN_SM6
 
 
 set USER_PSO_DIR=%PACKAGE_DIR%\%PROJECT_NAME%\Saved\CollectedPSOs
